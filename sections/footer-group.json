@@ -56,11 +56,11 @@
             "text_LWt8Pz": {
               "type": "text",
               "settings": {
-                "text": "<h2>กลุ่มสินค้าและในบริการในเครือ</h2><p><a href=\"https://abcmixsign.shop/\"><strong>ABCmix อักษรไฟสำเร็จรูป</strong></a></p><p><a href=\"https://barrisol-thailand.com/\"><strong>Barrisol ฝ้าขึงผ้า กล่องไฟผ้า</strong></a></p><p><a href=\"https://alphadigital.co/\"><strong>Alpha Digital signage จอ LED</strong></a></p><p><a href=\"https://www.facebook.com/lmagine.creation/?locale=th_TH\"><strong>Imagine Creation ออกแบบ ตกแต่ง ก่อสร้าง</strong></a></p><p><a href=\"https://www.octopus.co.th/\"><strong>Octopus Media Solutions ป้ายและสื่อสิ่งพิมพ์</strong></a></p>",
+                "text": "<h3>กลุ่มสินค้าและในบริการในเครือ</h3><p><a href=\"https://abcmixsign.shop/\">ABCmix อักษรไฟสำเร็จรูป</a></p><p><a href=\"https://barrisol-thailand.com/\">Barrisol ฝ้าขึงผ้า กล่องไฟผ้า</a></p><p><a href=\"https://alphadigital.co/\">Alpha Digital signage จอ LED</a></p><p><a href=\"https://www.facebook.com/lmagine.creation/?locale=th_TH\">Imagine Creation ออกแบบ ตกแต่ง ก่อสร้าง</a></p><p><a href=\"https://www.octopus.co.th/\">Octopus Media Solutions ป้ายและสื่อสิ่งพิมพ์</a></p>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
-                "type_preset": "paragraph",
+                "type_preset": "rte",
                 "font": "var(--font-body--family)",
                 "font_size": "1rem",
                 "line_height": "normal",
@@ -81,7 +81,7 @@
             "text_f9CFLH": {
               "type": "text",
               "settings": {
-                "text": "<h2>การให้บริการ</h2><p><a href=\"https://www.octopus.co.th/pages/how-to-order\">วิธีการสั่งซื้อ</a></p><p><a href=\"https://www.octopus.co.th/\">วิธีเตรียมไฟล์ artwork</a></p><p><a href=\"https://www.octopus.co.th/blogs/support/policies\">นโยบายการให้บริการ</a></p><p><a href=\"https://drive.google.com/file/d/1aTDN2yQ_vlC-xUxWJjzUKuPrPlvCCe_9/view?usp=sharing\">ใบภพ.20 หนังสือรับรองบริษัท</a></p><p><a href=\"https://www.octopus.co.th/blogs/product/apply-job\">ร่วมงานกับเรา</a></p>",
+                "text": "<h3>การให้บริการ</h3><p><a href=\"https://www.octopus.co.th/pages/how-to-order\">วิธีการสั่งซื้อ</a></p><p><a href=\"https://www.octopus.co.th/\">วิธีเตรียมไฟล์ artwork</a></p><p><a href=\"https://www.octopus.co.th/blogs/support/policies\">นโยบายการให้บริการ</a></p><p><a href=\"https://drive.google.com/file/d/1aTDN2yQ_vlC-xUxWJjzUKuPrPlvCCe_9/view?usp=sharing\">ใบภพ.20 หนังสือรับรองบริษัท</a></p><p><a href=\"https://www.octopus.co.th/blogs/product/apply-job\">ร่วมงานกับเรา</a></p>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
@@ -107,7 +107,7 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "<h2><a href=\"https://www.octopus.co.th/pages/contact-map\" target=\"_blank\" title=\"Contact Us - ติดต่อเรา\"><strong>ติดต่อเรา</strong></a></h2><p>บริษัท ออคโทพุส มีเดีย โซลูชันส์ จำกัด</p><p>18/1 รามอินทรา 23 อนุสาวรีย์ บางเขน กทม. 10220</p><p>VAT: ‍0-1055-56091-67-5</p><p>Email: info@octopus.co.th</p><p>Line: @octopusdesign</p><p>Tel: <a href=\"tel:+66817768329\" target=\"_blank\" title=\"tel:+66817768329\">081 776 8329</a> | <a href=\"tel:+66613539555\" title=\"tel:+66613539555\">061 353 9555 </a>| <a href=\"tel:+66613539555\" title=\"tel:+66980969294\">098 096 9294</a></p>",
+                "text": "<h3><a href=\"https://www.octopus.co.th/pages/contact-map\" target=\"_blank\" title=\"Contact Us - ติดต่อเรา\"><strong>ติดต่อเรา</strong></a></h3><p>บริษัท ออคโทพุส มีเดีย โซลูชันส์ จำกัด</p><p>18/1 รามอินทรา 23 อนุสาวรีย์ บางเขน กทม. 10220</p><p>VAT: ‍0-1055-56091-67-5</p><p>Email: info@octopus.co.th</p><p>Line: @octopusdesign</p><p>Tel: <a href=\"tel:+66817768329\" target=\"_blank\" title=\"tel:+66817768329\">081 776 8329</a> | <a href=\"tel:+66613539555\" title=\"tel:+66613539555\">061 353 9555 </a>| <a href=\"tel:+66613539555\" title=\"tel:+66980969294\">098 096 9294</a></p>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
