@@ -1,0 +1,199 @@
+{{ 'section-promotion-bar.css' | asset_url | stylesheet_tag }}
+
+<style>
+  /* --- RESERVED HEIGHT to kill CLS --- */
+  :root { --promo-h: 44px; }         /* mobile/tablet */
+  @media (min-width: 992px){ :root { --promo-h: 48px; } }  /* desktop */
+
+  /* Prevent wrapper from stretching unexpectedly */
+  #shopify-section-{{ section.id }}{
+    height:auto !important;
+    min-height:0 !important;
+  }
+
+  /* Reserve height: padding(8+8) + content ~28–32px */
+  .promotion-bar{
+    min-height: var(--promo-h);
+    animation: none !important;
+  }
+
+  /* Content height calculation */
+  .promotion-bar .promotion-container,
+  .promotion-bar .block-item-list{
+    min-height: calc(var(--promo-h) - 16px); /* - padding 8px top/bottom */
+  }
+
+  /* Dynamic Colors */
+  {% assign bg_promotion_color =  section.settings.bg_promotion_color %}
+  {% assign text_promotion_color =  section.settings.text_promotion_color %}
+  .promotion-bar { background: {{ bg_promotion_color }}; }
+  .promotion-bar .block-item a,
+  .promotion-bar .block-item-a a,
+  .promotion-bar .block-item-b a,
+  .promotion-bar .block-item-c a { color: {{ text_promotion_color }}; }
+</style>
+ 
+<div class="promotion-bar" data-row="3" data-rowtb="3" data-rowtblg="3" data-rowbm="1">
+  <div class="promotion-container">
+    <div class="block-item-list">
+      <div class="promotion-item-left">
+        <div class="block-item">
+          <h2 class="left_header"> 
+            <a href="{{ section.settings.main_text_url }}" title="">
+              {%- if section.settings.main_text1 != blank -%}
+                {{ section.settings.main_text1 }} 
+              {%- endif -%}
+            </a>
+          </h2>
+        </div>
+      </div>
+      <div class="promotion-item-right">
+        <div class="block-item-a">
+          <a href="{{ section.settings.link_1 }}" title="">
+            {%- if section.settings.anounce_img_1 != blank -%}
+               <span class="promo-icon">
+                  <img src="{{ section.settings.anounce_img_1 | img_url: '100x100' }}"
+                   srcset="{{ section.settings.anounce_img_1 | img_url: '100x100' }} 1x, 
+                           {{ section.settings.anounce_img_1 | img_url: '200x200' }} 2x"
+                   sizes="(max-width: 600px) 25px, 25px"
+                    height="24"
+                   width="24"
+                   loading="lazy"
+                   alt="{{ section.settings.anounce_img_1.alt }}"
+                   title="{{ section.settings.anounce_img_1.alt }}">
+              </span>
+            {%- endif -%}
+            {{ section.settings.text_1 }} 
+          </a>
+        </div>
+        <div class="block-item-b">
+          <a href="{{ section.settings.link_2 }}" title="">
+            {%- if section.settings.anounce_img_2 != blank -%}
+              <span class="promo-icon">
+              <img src="{{ section.settings.anounce_img_2 | img_url: '100x100' }}"
+                   srcset="{{ section.settings.anounce_img_2 | img_url: '100x100' }} 1x, 
+                           {{ section.settings.anounce_img_2 | img_url: '200x200' }} 2x"
+                   sizes="(max-width: 600px) 27px, 27px"
+                 height="24"
+                   width="24"
+                   loading="lazy"
+                   alt="{{ section.settings.anounce_img_2.alt }}"
+                   title="{{ section.settings.anounce_img_2.alt }}">
+
+                    </span>
+            {%- endif -%}
+            {{ section.settings.text_2 }} 
+          </a>
+        </div>
+        <div class="block-item-c">
+          <a href="{{ section.settings.link_3 }}" title="">
+            {%- if section.settings.anounce_img_3 != blank -%}
+              <span class="promo-icon">
+              <img src="{{ section.settings.anounce_img_3 | img_url: '100x100' }}"
+                   srcset="{{ section.settings.anounce_img_3 | img_url: '100x100' }} 1x, 
+                           {{ section.settings.anounce_img_3 | img_url: '200x200' }} 2x"
+                   sizes="(max-width: 600px) 24px, 24px"
+                   height="24"
+                   width="24"
+                   loading="lazy"
+                   alt="{{ section.settings.anounce_img_3.alt }}"
+                   title="{{ section.settings.anounce_img_3.alt }}">
+                    </span>
+            {%- endif -%}
+            {{ section.settings.text_3 }} 
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% schema %}
+  {
+    "name": "Promotion Bar",
+    "settings": [
+    {
+      "type": "color",
+      "id": "bg_promotion_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_promotion_color",
+      "label": "Text Color",
+      "default": "#000000"
+    },
+       {
+      "type" : "url",
+      "id" : "main_text_url",
+      "label" : "Main Text Link",
+      "info" : "======================"
+    },
+   
+     {
+      "type" : "text",
+      "id" : "main_text1",
+      "label" : "Main Text",
+      "default" : "Main Text"
+    },
+      {
+              "type" : "image_picker",
+              "id" : "anounce_img_1",
+              "label" : "Anounment Image"
+            },
+    {
+      "type" : "text",
+      "id" : "text_1",
+      "label" : "Text #01",
+      "default" : "Free Delivery Worldwide"
+    },
+    {
+      "type" : "url",
+      "id" : "link_1",
+      "label" : "Link #01",
+      "info" : "======================"
+    },
+       {
+              "type" : "image_picker",
+              "id" : "anounce_img_2",
+              "label" : "Anounment Image"
+            },
+    {
+      "type" : "text",
+      "id" : "text_2",
+      "label" : "Text #02",
+      "default" : "Free Returns InStore"
+    },
+    {
+      "type" : "url",
+      "id" : "link_2",
+      "label" : "Link #02",
+      "info" : "======================"
+    },
+       {
+              "type" : "image_picker",
+              "id" : "anounce_img_3",
+              "label" : "Anounment Image"
+            },
+    {
+      "type" : "text",
+      "id" : "text_3",
+      "label" : "Text #03",
+      "default" : "Rewards Program"
+    },
+    {
+      "type" : "url",
+      "id" : "link_3",
+      "label" : "Link #03",
+      "info" : "======================"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Promotion Bar"
+    }
+  ]
+}
+{% endschema %}

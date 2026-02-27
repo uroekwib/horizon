@@ -1,0 +1,81 @@
+/* Reconstructed styles for Promotion Bar */
+.promotion-bar {
+  padding: 8px 0;
+  width: 100%;
+  display: block;
+}
+
+.promotion-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.block-item-list {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.promotion-item-left {
+  flex: 1;
+  min-width: 200px;
+}
+
+.promotion-item-right {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.block-item h2.left_header {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.2;
+}
+
+.block-item h2.left_header a {
+  text-decoration: none;
+  color: inherit;
+  font-weight: bold;
+}
+
+.block-item-a a,
+.block-item-b a,
+.block-item-c a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: inherit;
+  font-size: 14px;
+}
+
+.promo-icon {
+  display: inline-flex;
+  align-items: center;
+}
+
+.promo-icon img {
+  display: block;
+  object-fit: contain;
+}
+
+@media (max-width: 768px) {
+  .block-item-list {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .promotion-item-right {
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .block-item-a, .block-item-b, .block-item-c {
+      margin-bottom: 5px;
+  }
+}
