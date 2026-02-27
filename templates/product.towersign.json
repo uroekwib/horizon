@@ -1,12 +1,3 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
     "main": {
@@ -265,150 +256,810 @@
         "padding-block-end": 0
       }
     },
-    "product_recommendations_qggXJq": {
-      "type": "product-recommendations",
+    "description_4gaWr3": {
+      "type": "description",
+      "disabled": true,
+      "custom_css": [
+        ".product_desc {margin-top: 24px; margin-bottom: 32px;}"
+      ],
+      "settings": {
+        "description_header": "รายละเอียดสินค้า"
+      }
+    },
+    "rich_text_V8NMEV": {
+      "type": "rich-text",
       "blocks": {
-        "text_cbcgyb": {
-          "type": "text",
-          "name": "t:names.header",
+        "heading_Hrm7jr": {
+          "type": "heading",
           "settings": {
-            "text": "<h3>You may also like </h3>",
-            "width": "fit-content",
-            "max_width": "normal",
-            "alignment": "left",
-            "type_preset": "h4",
-            "font": "var(--font-primary--family)",
-            "font_size": "",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "pretty",
-            "color": "",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
+            "heading": "รับทำป้ายเสาสูงครบวงจร  Pylon Sign / Tower Sign / Pole Sign / Totem Sign / Billboard",
+            "heading_size": "h2"
+          }
         },
-        "static-product-card": {
-          "type": "_product-card",
-          "name": "t:names.product_card",
-          "static": true,
+        "text_XNyPgd": {
+          "type": "text",
           "settings": {
-            "product_card_gap": 8,
-            "inherit_color_scheme": true,
-            "color_scheme": "",
-            "border": "none",
-            "border_width": 1,
-            "border_opacity": 100,
-            "border_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 8,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {
-            "product_card_gallery_DNizbJ": {
-              "type": "_product-card-gallery",
-              "name": "t:names.product_card_media",
-              "settings": {
-                "image_ratio": "adapt",
-                "border": "none",
-                "border_width": 1,
-                "border_opacity": 100,
-                "border_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "product_title_M7MJkb": {
-              "type": "product-title",
-              "name": "t:names.product_title",
-              "settings": {
-                "width": "100%",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "rte",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "color": "var(--color-foreground)",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 4,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "price_gLWgA6": {
-              "type": "price",
-              "settings": {
-                "show_sale_price_first": true,
-                "show_installments": false,
-                "show_tax_info": false,
-                "type_preset": "h6",
-                "width": "100%",
-                "alignment": "left",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "color": "var(--color-foreground)",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "product_card_gallery_DNizbJ",
-            "product_title_M7MJkb",
-            "price_gLWgA6"
-          ]
+            "text": "<p>รับผลิตและติดตั้ง<strong>ป้ายทาวเวอร์ ป้ายไพลอน และป้ายเสาสูง</strong>สำหรับหน้าโครงการ อาคาร บริษัท โรงงาน และห้างสรรพสินค้า ออกแบบให้<strong>มองเห็นได้จากระยะไกล</strong>โครงสร้างเหล็กแข็งแรง พร้อมฐานรากที่คำนวณตามหน้างานจริง เหมาะกับงานที่ต้องการภาพลักษณ์ชัด ความปลอดภัยสูง และการใช้งานระยะยาว ครอบคลุมงานป้ายเสาหน้าบริษัท ป้ายเสาหน้าโครงการ ป้ายเสาหน้าตึก ป้ายเสาริมถนน และงานป้ายเชิงพาณิชย์ขนาดใหญ่</p>"
+          }
         }
       },
       "block_order": [
-        "text_cbcgyb"
+        "heading_Hrm7jr",
+        "text_XNyPgd"
       ],
-      "name": "t:names.product_recommendations",
+      "custom_css": [
+        "h2 {line-height: calc(1 + 0.8 / max(1, var(--font-heading-scale))); letter-spacing: calc(var(--font-heading-scale) * 0.08rem);}"
+      ],
+      "name": "t:sections.rich-text.presets.name",
       "settings": {
-        "product": "{{ closest.product }}",
-        "recommendation_type": "related",
-        "layout_type": "grid",
-        "carousel_on_mobile": false,
-        "max_products": 4,
-        "columns": 4,
-        "mobile_columns": "2",
-        "columns_gap": 12,
-        "rows_gap": 24,
-        "icons_style": "arrow",
-        "icons_shape": "none",
-        "section_width": "page-width",
-        "gap": 28,
-        "color_scheme": "scheme-1",
-        "padding-block-start": 48,
-        "padding-block-end": 48
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "accent-1",
+        "full_width": true,
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "multicolumn_98WBjn": {
+      "type": "multicolumn",
+      "blocks": {
+        "column_g3Rf48": {
+          "type": "column",
+          "settings": {
+            "title": "",
+            "text": "<p><strong>เรามีทีมงานครบ </strong>ทั้งในส่วนของสถาปัตย์ วิศวกร และช่างมืออาชีพ<br/>ดูแลงานออกแบบ คำนวนเซ็นรับรอง ติดตั้งครบวงจร  ตรวจสอบไซต์งานได้ ถอดแบบประเมินราคาเร็ว ราคายุติธรรม</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_PGLLdW": {
+          "type": "column",
+          "settings": {
+            "title": "",
+            "text": "<p><strong>สามารถรับงานทั้งสร้างใหม่และเป็นโปรเจคต่อเติมปรับปรุง (Renovate)</strong> ได้ครบวงจร จบตั้งแต่ฐานราก โครงสร้างเหล็ก และงานวัสดุกรุปิดผิวพร้อมป้ายโลโก้ ป้ายไฟ LED ครบที่เดียว</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_btjgxh": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/IMG_8461-889804.jpg",
+            "title": "",
+            "text": "",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_FRPWR7": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/IMG_8446-699355.jpg",
+            "title": "",
+            "text": "",
+            "link_label": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "column_g3Rf48",
+        "column_PGLLdW",
+        "column_btjgxh",
+        "column_FRPWR7"
+      ],
+      "custom_css": [],
+      "name": "t:sections.multicolumn.presets.name",
+      "settings": {
+        "title": "",
+        "heading_size": "h1",
+        "image_width": "full",
+        "image_ratio": "adapt",
+        "columns_desktop": 2,
+        "column_alignment": "center",
+        "background_style": "none",
+        "button_label": "",
+        "button_link": "",
+        "color_scheme": "background-1",
+        "columns_mobile": "2",
+        "swipe_on_mobile": false,
+        "padding_top": 20,
+        "padding_bottom": 36
+      }
+    },
+    "video_Q4WYJm": {
+      "type": "video",
+      "name": "t:sections.video.presets.name",
+      "settings": {
+        "heading": "<strong>ศูนย์บริการครบวงจร ป้ายเสา ป้ายโลโก้ ป้ายโฆษณา</strong>",
+        "heading_size": "h1",
+        "enable_video_looping": false,
+        "autoplay": true,
+        "add_video_url": "https://www.youtube.com/watch?v=hOlRewrC9LA",
+        "video_url": "https://www.youtube.com/watch?v=hOlRewrC9LA",
+        "cover_image": "shopify://shop_images/Instagram_Facebook_Ads_-_last_chance_1080x1080px.jpg",
+        "description": "",
+        "full_width": false,
+        "color_scheme": "",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "1756697999805701ab": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_35a2907_BNLgFf": {
+          "type": "ai_gen_block_35a2907",
+          "settings": {
+            "layout": "image_first",
+            "max_width": 1000,
+            "image_width": 50,
+            "content_gap": 25,
+            "section_padding": 45,
+            "image": "shopify://shop_images/Engineer-Review.jpg",
+            "image_border_radius": 8,
+            "heading": "วิศวกรระดับสามัญรับรอง",
+            "text": "<p>ป้ายมีมาตรฐานความปลอดภัยและถูกต้องตามกฎหมาย ด้วยการตรวจสอบและลงนามรับรองโดยวิศวกรระดับสามัญ ลูกค้าสามารถนำเอกสารไปใช้ยื่นขออนุญาตก่อสร้างได้อย่างถูกต้อง โปร่งใส และน่าเชื่อถือ</p>",
+            "heading_size": 30,
+            "heading_weight": "400",
+            "heading_margin": 6,
+            "text_size": 13,
+            "background_color": "#ffffff",
+            "heading_color": "#000000",
+            "text_color": "#666666",
+            "border_radius": 0,
+            "corner_offset": 15,
+            "margin_offset": 20,
+            "icon_1_enabled": true,
+            "icon_1_image": "shopify://shop_images/engineering.png",
+            "icon_1_placement": "before_heading",
+            "icon_1_corner_position": "top-right",
+            "icon_1_margin_position": "right",
+            "icon_1_size": "custom",
+            "icon_1_custom_size": 64,
+            "icon_1_color": "",
+            "icon_1_opacity": 100,
+            "icon_1_z_index": 2,
+            "icon_1_animation": "none",
+            "icon_1_hide_mobile": false,
+            "icon_1_decorative": true,
+            "icon_1_alt_text": "",
+            "icon_2_enabled": false,
+            "icon_2_placement": "after_heading",
+            "icon_2_corner_position": "top-left",
+            "icon_2_margin_position": "left",
+            "icon_2_size": "20",
+            "icon_2_custom_size": 24,
+            "icon_2_color": "",
+            "icon_2_opacity": 100,
+            "icon_2_z_index": 2,
+            "icon_2_animation": "none",
+            "icon_2_hide_mobile": false,
+            "icon_2_decorative": true,
+            "icon_2_alt_text": "",
+            "icon_3_enabled": false,
+            "icon_3_placement": "bullet",
+            "icon_3_corner_position": "bottom-left",
+            "icon_3_margin_position": "top",
+            "icon_3_size": "20",
+            "icon_3_custom_size": 24,
+            "icon_3_color": "",
+            "icon_3_opacity": 100,
+            "icon_3_z_index": 2,
+            "icon_3_animation": "none",
+            "icon_3_hide_mobile": false,
+            "icon_3_decorative": true,
+            "icon_3_alt_text": ""
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_35a2907_BNLgFf"
+      ],
+      "custom_css": [
+        ".ai-image-text-container-azkrtvm13ymtzm1f2oaigenblock35a2907bnlgff {display: flex; justify-content: center; align-items: center; min-height: 10vh; padding: 0px; box-sizing: border-box;}"
+      ],
+      "settings": {}
+    },
+    "image_with_text_gBE8Bd": {
+      "type": "image-with-text",
+      "blocks": {
+        "heading_bPHqcD": {
+          "type": "heading",
+          "settings": {
+            "heading": "วิศวกรระดับสามัญรับรอง",
+            "heading_size": "h1"
+          }
+        },
+        "text_mtCfLr": {
+          "type": "text",
+          "settings": {
+            "text": "<p>มั่นใจได้ว่าป้ายมีมาตรฐานความปลอดภัยและถูกต้องตามกฎหมาย เพราะมีวิศวกรระดับสามัญคอยตรวจสอบ ดูแล และลงนามรับรองเอกสารอย่างเป็นทางการ </p><p>ลูกค้าจึงสามารถใช้ยื่นขออนุญาตก่อสร้างได้โดยไม่ติดขัด พร้อมการันตีความโปร่งใสและความน่าเชื่อถือของงาน<br/></p>",
+            "text_style": "body"
+          }
+        }
+      },
+      "block_order": [
+        "heading_bPHqcD",
+        "text_mtCfLr"
+      ],
+      "disabled": true,
+      "name": "t:sections.image-with-text.presets.name",
+      "settings": {
+        "image": "shopify://shop_images/Engineer-Review.jpg",
+        "height": "adapt",
+        "desktop_image_width": "medium",
+        "layout": "image_first",
+        "desktop_content_position": "top",
+        "desktop_content_alignment": "left",
+        "content_layout": "no-overlap",
+        "section_color_scheme": "",
+        "color_scheme": "",
+        "image_behavior": "none",
+        "mobile_content_alignment": "center",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "multicolumn_XUtrg8": {
+      "type": "multicolumn",
+      "blocks": {
+        "column_NMWCaq": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/19.png",
+            "title": "ออกแบบป้าย",
+            "text": "<p>วางคอนเซ็ปต์และออกแบบโครงสร้างให้เหมาะสม พร้อมจัดทำแบบวิศวกรรม (Shop Drawing) ครบถ้วน แสดงรายละเอียดฐานราก ขนาดเสา และจุดติดตั้ง เพื่อใช้ประกอบการขออนุญาต</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_w3e74x": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/20.png",
+            "title": "คำนวนและเซ็นรับรอง",
+            "text": "<p>ตรวจสอบและคำนวณโครงสร้างป้าย ทั้งฐานราก การรับแรงลมและน้ำหนักป้าย รวมถึงการเลือกขนาดเหล็กและสกรูยึด โดยมีวิศวกรเซ็นรับรองเอกสารอย่างเป็นทางการ</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_L9AA4L": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/22.png",
+            "title": "ยื่นขอใบอนุญาต",
+            "text": "<p>จัดเตรียมแบบและเอกสารเซ็นรับรองเพื่อยื่นต่อ <strong>เขต/เทศบาล</strong> ตามกฎหมายป้าย(พรบ.ควบคุมอาคาร) พร้อมประสานงานจนได้รับใบอนุญาต</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_kyrAhL": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/Card_Message_2.png",
+            "title": "ดำเนินการก่อสร้าง",
+            "text": "<p>หลังได้รับใบอนุญาต ทีมงานช่างลงมือก่อสร้างตามแบบ ควบคุมคุณภาพทุกขั้นตอน ตั้งแต่การทำฐานราก เทเสา ประกอบโครงเหล็ก ไปจนถึงติดตั้งแผ่นป้ายและระบบไฟ</p>",
+            "link_label": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "column_NMWCaq",
+        "column_w3e74x",
+        "column_L9AA4L",
+        "column_kyrAhL"
+      ],
+      "custom_css": [
+        "h3 {font-size: 1.8rem; text-align: center;}",
+        ".background-none .multicolumn-list .multicolumn-card__info,.background-none .multicolumn-list:not(.slider) .center .multicolumn-card__info {padding-left: 0rem; padding-right: 0rem;}"
+      ],
+      "name": "t:sections.multicolumn.presets.name",
+      "settings": {
+        "title": "",
+        "heading_size": "h1",
+        "image_width": "third",
+        "image_ratio": "adapt",
+        "columns_desktop": 4,
+        "column_alignment": "center",
+        "background_style": "primary",
+        "button_label": "",
+        "button_link": "",
+        "color_scheme": "background-1",
+        "columns_mobile": "2",
+        "swipe_on_mobile": true,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "17563675469227ec14": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_479193f_zGJ7mL": {
+          "type": "ai_gen_block_479193f",
+          "settings": {
+            "section_title": "ตัวอย่างขั้นตอนงานป้ายเสา",
+            "section_subtitle": "",
+            "card_1_enabled": true,
+            "card_1_image": "shopify://shop_images/76870.jpg",
+            "card_1_title": "เปิดหน้าดิน",
+            "card_1_link": "",
+            "card_1_new_tab": false,
+            "card_2_enabled": true,
+            "card_2_image": "shopify://shop_images/76871.jpg",
+            "card_2_title": "งานขุดเจาะ",
+            "card_2_link": "",
+            "card_2_new_tab": false,
+            "card_3_enabled": true,
+            "card_3_image": "shopify://shop_images/76872.jpg",
+            "card_3_title": "ลงเสาเข็ม",
+            "card_3_link": "",
+            "card_3_new_tab": false,
+            "card_4_enabled": true,
+            "card_4_image": "shopify://shop_images/76873.jpg",
+            "card_4_title": "เทปูนเกราท์ฐานราก",
+            "card_4_link": "",
+            "card_4_new_tab": false,
+            "card_5_enabled": true,
+            "card_5_image": "shopify://shop_images/76874.jpg",
+            "card_5_title": "โครงสร้างเหล็ก",
+            "card_5_link": "",
+            "card_5_new_tab": false,
+            "card_6_enabled": true,
+            "card_6_image": "shopify://shop_images/76875.jpg",
+            "card_6_title": "กรุปิดคอมโพสิต",
+            "card_6_link": "",
+            "card_6_new_tab": false,
+            "card_7_enabled": true,
+            "card_7_image": "shopify://shop_images/76869.jpg",
+            "card_7_title": "ป้ายโลโก้",
+            "card_7_link": "",
+            "card_7_new_tab": false,
+            "card_8_enabled": true,
+            "card_8_image": "shopify://shop_images/S875_200629_0009-805109.jpg",
+            "card_8_title": "รูปทรงพิเศษ",
+            "card_8_link": "",
+            "card_8_new_tab": false,
+            "card_9_enabled": true,
+            "card_9_image": "shopify://shop_images/image_460408ac-62fd-490b-8a5a-09f5e447b1a2-452528.webp",
+            "card_9_title": "แรพสติ๊กเกอร์สีปรับปรุง",
+            "card_9_link": "",
+            "card_9_new_tab": false,
+            "card_10_enabled": true,
+            "card_10_image": "shopify://shop_images/image_5ea37a0f-c656-4cb1-900b-8c50751fb0e7-641109.webp",
+            "card_10_title": "ติดสติ๊กเกอร์ไดคัท",
+            "card_10_link": "",
+            "card_10_new_tab": false,
+            "card_11_enabled": true,
+            "card_11_image": "shopify://shop_images/image_4e91fcc7-90b5-4d6d-910e-6b67e018c39d-440843.jpg",
+            "card_11_title": "ระบบไฟ LED ในป้าย",
+            "card_11_link": "",
+            "card_11_new_tab": false,
+            "card_12_enabled": false,
+            "card_12_title": "",
+            "card_12_link": "",
+            "card_12_new_tab": false,
+            "aspect_ratio": "1:1",
+            "caption_position": "overlay",
+            "caption_alignment": "center",
+            "caption_font_size": 13,
+            "caption_font_weight": "500",
+            "slides_desktop": 4,
+            "slides_laptop": 5,
+            "slides_tablet": 4,
+            "slides_mobile": 2,
+            "autoplay_enabled": true,
+            "autoplay_interval": 2,
+            "transition_speed": 800,
+            "pause_on_hover": true,
+            "show_arrows": true,
+            "show_dots": true,
+            "infinite_loop": true,
+            "corner_radius": 8,
+            "card_spacing": 16,
+            "section_padding_top": 40,
+            "section_padding_bottom": 40,
+            "title_color": "#000000",
+            "subtitle_color": "#666666",
+            "caption_color": "#000000",
+            "caption_overlay_color": "#ffffff",
+            "arrow_background_color": "#ffffffe6",
+            "arrow_color": "#000000",
+            "arrow_hover_background_color": "#ffffff",
+            "arrow_hover_color": "#000000",
+            "dot_active_color": "#000000",
+            "dot_inactive_color": "#0000004d",
+            "focus_color": "#005fcc"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_479193f_zGJ7mL"
+      ],
+      "settings": {}
+    },
+    "multicolumn_NYRgaF": {
+      "type": "multicolumn",
+      "blocks": {
+        "column_UQ3YYQ": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/StarbucksTowerSignPoleSign.png",
+            "title": "ป้ายเสา (Pole Sign)",
+            "text": "<p>ป้าย Drive-Thru ที่ต้องการความสูงและการมองเห็นระยะไกล ติดตั้งด้วยเครนบนเสาเหล็กฐานคอนกรีตเสริมความมั่นคง พร้อมคำนวณแรงลม ออกแบบเพลทยึด เดินระบบไฟและติดตั้งโมดูล LED เพื่อความสว่างยามค่ำคืน รวมถึงเผื่อช่องทางซ่อมบำรุงในอนาคต</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_7KzXmj": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/image_789a2096-602e-4351-9ea5-bc5caa8e7690-245748_1.jpg",
+            "title": "<strong>ป้ายไพลอน (Pylon Sign)</strong>",
+            "text": "<p>ป้ายตั้งเดี่ยวขนาดใหญ่ ออกแบบให้มองเห็นได้ชัดจากระยะไกลหรือบริเวณทางเข้าโครงการ โดดเด่นด้วยพื้นที่แสดงผลขนาดใหญ่ โครงสร้างเหล็กแข็งแรง และฐานรากที่รองรับแรงลมสูง โดยเลือกใช้วัสดุหน้าแผงทนรังสี UV เช่น ACP หรืออะคริลิคเคลือบ และสามารถติดตั้งระบบไฟ LED ที่ออกแบบให้กระจายแสงสม่ำเสมอ</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_kqxQEg": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/image_8b30e78f-9f16-4ee8-a04b-1eb448d829dd-318459.jpg",
+            "title": "<strong>ป้ายหน้าโครงการ (Monolith Sign)</strong>",
+            "text": "<p>เป็นแผงโมดูลาร์สำหรับจัดวางโลโก้ผู้เช่าในรูปแบบกริด ช่วยให้ค้นหาตำแหน่งร้านได้ง่ายและเป็นระเบียบ เหมาะกับมอลล์ อาคารพาณิชย์ และคอมเพล็กซ์หลายร้าน โดยออกแบบขนาดโมดูลให้รองรับสัดส่วนโลโก้ที่หลากหลาย พร้อมระบบไฟภายในที่กระจายแสงสม่ำเสมอทุกช่อง</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_QbJemk": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/Untitled_design_4.jpg",
+            "title": "ป้ายเสาทาวเวอร์ (tower sign)",
+            "text": "<p>ป้ายแนวตั้งสูง เหมาะสำหรับหน้าอาคารหรือทางเข้าที่ต้องการจุดสังเกตในแนวดิ่ง ใช้แสดงชื่ออาคารหรือข้อความเรียงแนวตั้งโดยประหยัดพื้นที่แนวนอน การออกแบบคำนึงถึงสัดส่วนตัวอักษร มุมมองจากถนนและทางเท้า พร้อมคำนวณแรงลมและน้ำหนักโครงสร้าง รวมถึงติดตั้งระบบไฟ LED แนวตั้งที่ให้แสงสม่ำเสมอและรองรับการบำรุงรักษา</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_aPkHe7": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/CA39A604-FB0A-40EB-845B-A0D2E4BFDBDA-213147.jpg",
+            "title": "ป้ายเสาเดี่ยว/เสาคู่",
+            "text": "<p>เป็นป้ายเรียบติดตั้งบนเสา ใช้แสดงข้อความประกาศ ชื่อหน่วยงาน หรือข้อมูลประชาสัมพันธ์ เหมาะกับหน้าสถานที่ราชการและสวนสาธารณะ ควรเลือกวัสดุหน้าแผงที่ทนแดด ออกแบบขนาดตัวอักษรให้อ่านง่ายจากระยะคนเดิน และออกแบบฐานให้รองรับการทรุดและแรงลม พร้อมช่องเข้าถึงสำหรับการบำรุงรักษา</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_VYdAFh": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/image_92731349-bcb2-41e5-a098-598306ea8a47-999411.jpg",
+            "title": "<strong>ป้ายบอกทาง (Traffic Sign)</strong>",
+            "text": "<p>ป้ายจราจรออกแบบเพื่อชี้นำผู้ใช้ถนนให้เข้าใจได้ทันที ต้องเป็นไปตามมาตรฐานสัญลักษณ์และวัสดุสะท้อนแสงที่กำหนด โดยกำหนดขนาดตัวอักษรให้เหมาะกับความเร็วและระยะการมองเห็น การติดตั้งบนเสาหรือแขนเสาต้องคำนึงถึงความปลอดภัย การยึดโครงสร้าง และการประสานงานกับหน่วยงานจราจรก่อนดำเนินการ</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_Q4xF7m": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/S1285_210222_2-439650.jpg",
+            "title": "Totem Sign",
+            "text": "<p>ป้ายตั้งพื้นทรงแท่งหรือเสา ออกแบบให้กลมกลืนกับสภาพแวดล้อมทางสถาปัตยกรรม ใช้เป็นจุดต้อนรับและนำทางในล็อบบี้ หน้าร้าน หรือพื้นที่สาธารณะ รองรับทั้งแบบมีไฟภายใน (Back-lit LED) และแบบไม่มีไฟ โดยเน้นการออกแบบระดับสายตาผู้เดินเท้า วัสดุทนสภาพอากาศ และฐานยึดที่มั่นคงเพื่อความปลอดภัย</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_nfbtTV": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/6_d26963d4-ae90-45b5-89fb-3fe3a57d0baf.jpg",
+            "title": "ป้ายเสาระบบไฟ LED",
+            "text": "<p>เหมาะกับงานที่ต้องการการมองเห็นทั้งกลางวันและกลางคืน ตั้งแต่ป้ายไฟแบบ Back-lit LED ไปจนถึงจอ LED โมดูลาร์ที่แสดงภาพและข้อความเปลี่ยนได้ โดยออกแบบคำนึงถึงค่า Pixel Pitch ความสว่าง (nits) มาตรฐาน IP และระบบระบายความร้อน เพื่อให้ภาพคมชัดและใช้งานกลางแจ้งได้ยาวนาน</p>",
+            "link_label": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "column_UQ3YYQ",
+        "column_7KzXmj",
+        "column_kqxQEg",
+        "column_QbJemk",
+        "column_aPkHe7",
+        "column_VYdAFh",
+        "column_Q4xF7m",
+        "column_nfbtTV"
+      ],
+      "custom_css": [
+        "@media (max-width: 767px) {*[class*=\"video\"], *[class*=\"text\"], *[class*=\"section\"] {display: none !important; }}",
+        "p {font-size: 85%;}",
+        "a {font-size: 85%; color: #17a9bb;}"
+      ],
+      "settings": {
+        "title": "<strong>ตัวอย่างงานป้ายเสาตั้งพื้นแบบต่าง ๆ</strong>",
+        "heading_size": "h1",
+        "image_width": "full",
+        "image_ratio": "portrait",
+        "columns_desktop": 3,
+        "column_alignment": "center",
+        "background_style": "none",
+        "button_label": "Custom Project - โปรดติดต่อสอบถามรายละเอียดและประเมินราคา",
+        "button_link": "https://page.line.me/pwy1559t?openQrModal=true",
+        "color_scheme": "background-1",
+        "columns_mobile": "2",
+        "swipe_on_mobile": true,
+        "padding_top": 28,
+        "padding_bottom": 36
+      }
+    },
+    "multicolumn_fQYcjB": {
+      "type": "multicolumn",
+      "blocks": {
+        "column_gaaXR6": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/StarbucksTowerSignPoleSign.png",
+            "title": "ป้ายเสา (Pole Sign)",
+            "text": "",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_4cYNfw": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/image_789a2096-602e-4351-9ea5-bc5caa8e7690-245748_1.jpg",
+            "title": "<strong>ป้ายไพลอน (Pylon Sign)</strong>",
+            "text": "",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_jrEUwt": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/image_8b30e78f-9f16-4ee8-a04b-1eb448d829dd-318459.jpg",
+            "title": "<strong>ป้ายหน้าโครงการ (Monolith Sign)</strong>",
+            "text": "",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_X4mcfn": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/Untitled_design_4.jpg",
+            "title": "ป้ายเสาทาวเวอร์ (tower sign)",
+            "text": "<h5><a href=\"https://page.line.me/pwy1559t?openQrModal=true\" title=\"https://page.line.me/pwy1559t?openQrModal=true\">Custom Project - โปรดติดต่อสอบถามรายละเอียดและประเมินราคา</a></h5>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_WRJXFa": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/CA39A604-FB0A-40EB-845B-A0D2E4BFDBDA-213147.jpg",
+            "title": "ป้ายเสาเดี่ยว/เสาคู่ (Post & Panel Sign)",
+            "text": "",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_78CXPp": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/image_92731349-bcb2-41e5-a098-598306ea8a47-999411.jpg",
+            "title": "<strong>ป้ายบอกทาง (Traffic Sign)</strong>",
+            "text": "",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_qaEhjT": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/S1285_210222_2-439650.jpg",
+            "title": "Totem Sign",
+            "text": "",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_Rg8gpN": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/6_d26963d4-ae90-45b5-89fb-3fe3a57d0baf.jpg",
+            "title": "ป้ายเสาระบบไฟ LED",
+            "text": "",
+            "link_label": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "column_gaaXR6",
+        "column_4cYNfw",
+        "column_jrEUwt",
+        "column_X4mcfn",
+        "column_WRJXFa",
+        "column_78CXPp",
+        "column_qaEhjT",
+        "column_Rg8gpN"
+      ],
+      "custom_css": [
+        "@media (min-width: 768px) {*[class*=\"video\"], *[class*=\"text\"], *[class*=\"section\"] {display: none !important; }}"
+      ],
+      "settings": {
+        "title": "<strong>ตัวอย่างงานป้ายเสาตั้งพื้นแบบต่าง ๆ</strong>",
+        "heading_size": "h1",
+        "image_width": "full",
+        "image_ratio": "portrait",
+        "columns_desktop": 4,
+        "column_alignment": "center",
+        "background_style": "none",
+        "button_label": "",
+        "button_link": "",
+        "color_scheme": "background-1",
+        "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "padding_top": 28,
+        "padding_bottom": 36
+      }
+    },
+    "multirow_UzRepd": {
+      "type": "multirow",
+      "blocks": {
+        "row_yPVFd3": {
+          "type": "row",
+          "settings": {
+            "image": "shopify://shop_images/Guid_sign_IMG001.webp",
+            "caption": "Street sign",
+            "heading": "<strong>ป้ายชี้ทาง ป้ายบอกทาง</strong>",
+            "text": "<p><strong>ป้ายชี้ทาง </strong>จะมีลักษณะคล้ายป้ายบอกจุดดหมายปลายทาง แต่ฝั่งนึงของป้ายจะมีลักษณะคล้ายกับลูกศรชี้บอกทาง โดยป้ายชี้บอกทางจะติดตั้งเพื่อบอกระยะทางจากทางแยกถึงสถานที่ดังกล่าวเป็นเมตร หรือกิโลเมตร ป้ายชี้ทางของราชการจะเป็นพื้นสีขาวตัวหนังสือสีดำ ส่วนป้ายบอกทางของเอกชนจะเป็นป้ายพื้นสีน้ำตาลตัวหนังสือสีขาว</p>",
+            "button_label": "",
+            "button_link": ""
+          }
+        }
+      },
+      "block_order": [
+        "row_yPVFd3"
+      ],
+      "disabled": true,
+      "settings": {
+        "image_height": "adapt",
+        "desktop_image_width": "medium",
+        "heading_size": "h1",
+        "text_style": "body",
+        "button_style": "secondary",
+        "desktop_content_position": "middle",
+        "desktop_content_alignment": "left",
+        "image_layout": "alternate-left",
+        "section_color_scheme": "background-1",
+        "row_color_scheme": "background-1",
+        "mobile_content_alignment": "left",
+        "padding_top": 40,
+        "padding_bottom": 40
+      }
+    },
+    "multicolumn_8faEbj": {
+      "type": "multicolumn",
+      "blocks": {
+        "column_AC7mXn": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/Popup-Wall-A.jpg",
+            "title": "3M - A",
+            "text": "<p>293*228 ซม.</p><p><strong>26,800 .- / 34,200.-</strong></p>",
+            "link_label": "*ราคาพิมพ์ 1 ด้าน / 2 ด้าน",
+            "link": ""
+          }
+        },
+        "column_DnttLL": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/Popup-Wall-B.jpg",
+            "title": "3M - B",
+            "text": "<p>293*228 ซม.</p><p><strong>26,800 .- / 34,200.-</strong></p>",
+            "link_label": "*ราคาพิมพ์ 1 ด้าน / 2 ด้าน",
+            "link": ""
+          }
+        },
+        "column_4zbVnr": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/Popup-Wall-C.jpg",
+            "title": "6M - A",
+            "text": "<p>596*228 ซม.</p><p><strong>51,200 .- / 64,000.-</strong></p>",
+            "link_label": "*ราคาพิมพ์ 1 ด้าน / 2 ด้าน",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "column_AC7mXn",
+        "column_DnttLL",
+        "column_4zbVnr"
+      ],
+      "disabled": true,
+      "custom_css": [
+        "p {font-size: 85%;}",
+        "a {font-size: 85%; color: #17a9bb;}"
+      ],
+      "settings": {
+        "title": "Layer Backdrop - แบคดรอปซ้อนชั้น",
+        "heading_size": "h1",
+        "image_width": "full",
+        "image_ratio": "adapt",
+        "columns_desktop": 3,
+        "column_alignment": "center",
+        "background_style": "none",
+        "button_label": "",
+        "button_link": "",
+        "color_scheme": "inverse",
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "description_kW9gMn": {
+      "type": "description",
+      "disabled": true,
+      "name": "Description Section",
+      "settings": {
+        "description_header": "Description"
+      }
+    },
+    "related-products": {
+      "type": "related-products",
+      "settings": {
+        "heading": "สินค้าอื่นที่น่าสนใจ",
+        "heading_size": "h1",
+        "products_to_show": 4,
+        "columns_desktop": 4,
+        "color_scheme": "background-1",
+        "image_ratio": "square",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": false,
+        "columns_mobile": "2",
+        "padding_top": 36,
+        "padding_bottom": 8
+      }
+    },
+    "custom_liquid_ULFwfk": {
+      "type": "custom-liquid",
+      "name": "t:sections.custom-liquid.presets.name",
+      "settings": {
+        "custom_liquid": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Product\",\n  \"name\": \"ป้ายเสา (Pylon Sign / Tower Sign)\",\n  \"description\": \"บริการติดตั้งป้ายทาวเวอร์ ป้ายเสา ...\",\n  \"url\": \"https://www.octopus.co.th/products/signage-tower-sign\",\n  \"image\": [\"https://www.octopus.co.th/cdn/.../starbucks-drive-thru.jpg\"],\n  \"brand\": {\n    \"@type\": \"Organization\",\n    \"name\": \"Octopus Media Solutions\"\n  },\n  \"offers\": {\n    \"@type\": \"Offer\",\n    \"priceCurrency\": \"THB\",\n    \"price\": \"8500\",\n    \"availability\": \"https://schema.org/InStock\",\n    \"url\": \"https://www.octopus.co.th/products/signage-tower-sign\"\n  }\n}\n</script>",
+        "color_scheme": "",
+        "padding_top": 40,
+        "padding_bottom": 52
       }
     }
   },
   "order": [
     "main",
-    "product_recommendations_qggXJq"
+    "description_4gaWr3",
+    "rich_text_V8NMEV",
+    "multicolumn_98WBjn",
+    "video_Q4WYJm",
+    "1756697999805701ab",
+    "image_with_text_gBE8Bd",
+    "multicolumn_XUtrg8",
+    "17563675469227ec14",
+    "multicolumn_NYRgaF",
+    "multicolumn_fQYcjB",
+    "multirow_UzRepd",
+    "multicolumn_8faEbj",
+    "description_kW9gMn",
+    "related-products",
+    "custom_liquid_ULFwfk"
   ]
 }
