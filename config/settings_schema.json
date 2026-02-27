@@ -394,6 +394,11 @@
             "alpha": true
           },
           {
+            "type": "color_background",
+            "id": "background_gradient",
+            "label": "t:settings.background_gradient"
+          },
+          {
             "type": "color",
             "id": "foreground_heading",
             "label": "t:settings.headings",
