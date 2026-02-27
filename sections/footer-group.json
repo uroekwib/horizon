@@ -107,8 +107,8 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "<p>เราสร้างสรรค์สิ่งที่ใช้งานได้ดีขึ้นและทนทานยิ่งขึ้น สินค้าของเราแก้ปัญหาที่เกิดขึ้นจริงด้วยดีไซน์ที่สะอาดตาและวัสดุที่เชื่อถือได้</p>",
-                "width": "fit-content",
+                "text": "<h2><a href=\"https://www.octopus.co.th/pages/contact-map\" target=\"_blank\" title=\"Contact Us - ติดต่อเรา\"><strong>ติดต่อเรา</strong></a></h2><p>บริษัท ออคโทพุส มีเดีย โซลูชันส์ จำกัด</p><p>18/1 รามอินทรา 23 อนุสาวรีย์ บางเขน กทม. 10220</p><p>VAT: ‍0-1055-56091-67-5</p><p>Email: info@octopus.co.th</p><p>Line: @octopusdesign</p><p>Tel: <a href=\"tel:+66817768329\" target=\"_blank\" title=\"tel:+66817768329\">081 776 8329</a> | <a href=\"tel:+66613539555\" title=\"tel:+66613539555\">061 353 9555 </a>| <a href=\"tel:+66613539555\" title=\"tel:+66980969294\">098 096 9294</a></p>",
+                "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
                 "type_preset": "rte",
