@@ -373,16 +373,11 @@
         "id": "color_schemes",
         "definition": [
           {
-            "type": "color",
+            "type": "color_background",
             "id": "background",
             "label": "t:settings.background",
-            "default": "#FFFFFF"
-          },
-          {
-            "type": "color_background",
-            "id": "background_gradient",
-            "label": "Background gradient",
-            "info": "Optional. Overrides background color when set."
+            "default": "#FFFFFF",
+            "info": "Supports solid color or CSS gradient (e.g. linear-gradient(...))."
           },
           {
             "type": "color",
