@@ -380,6 +380,34 @@
             "info": "Supports solid color or CSS gradient (e.g. linear-gradient(...))."
           },
           {
+            "type": "select",
+            "id": "background_gradient",
+            "label": "Background gradient (optional)",
+            "options": [
+              {
+                "value": "none",
+                "label": "None"
+              },
+              {
+                "value": "var(--color-gradient-light)",
+                "label": "Light gradient"
+              },
+              {
+                "value": "var(--color-gradient-rainbow)",
+                "label": "Rainbow gradient"
+              },
+              {
+                "value": "var(--octopus-gradient-hero)",
+                "label": "Hero gradient"
+              },
+              {
+                "value": "var(--octopus-gradient-announce)",
+                "label": "Announce gradient"
+              }
+            ],
+            "default": "none"
+          },
+          {
             "type": "color",
             "id": "foreground_heading",
             "label": "t:settings.headings",
