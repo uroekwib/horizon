@@ -1,202 +1,554 @@
-{{ 'section-promotion-bar.css' | asset_url | stylesheet_tag }}
+{% comment %}
+  Ref: ai_gen_block_83860f0.liquid
+  Adapted for Section (block.* -> section.*)
+{% endcomment %}
 
-<style>
-  /* --- RESERVED HEIGHT to kill CLS --- */
-  :root { --promo-h: 44px; }         /* mobile/tablet */
-  @media (min-width: 992px){ :root { --promo-h: 48px; } }  /* desktop */
+{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
 
-  /* Prevent wrapper from stretching unexpectedly */
-  #shopify-section-{{ section.id }}{
-    height:auto !important;
-    min-height:0 !important;
+{% style %}
+  .ai-promotion-bar-{{ ai_gen_id }} {
+    width: 100%;
+    background-color: {{ section.settings.background_color }};
+    padding: {{ section.settings.padding_vertical }}px 0;
+    display: block;
   }
 
-  /* Reserve height: padding(8+8) + content ~28–32px */
-  .promotion-bar{
-    min-height: var(--promo-h);
-    animation: none !important;
-    --bg-promotion-color: {{ section.settings.bg_promotion_color }};
-    --text-promotion-color: {{ section.settings.text_promotion_color }};
+  .ai-promotion-container-{{ ai_gen_id }} {
+    max-width: {% if section.settings.full_width %}100%{% else %}{{ section.settings.container_width }}px{% endif %};
+    margin: 0 auto;
+    padding: 0 20px;
   }
 
-  /* Content height calculation */
-  .promotion-bar .promotion-container,
-  .promotion-bar .block-item-list{
-    min-height: calc(var(--promo-h) - 16px); /* - padding 8px top/bottom */
+  .ai-promotion-list-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: {{ section.settings.gap }}px;
+    align-items: center;
   }
-</style>
- 
-<div class="promotion-bar page-width" data-row="3" data-rowtb="3" data-rowtblg="3" data-rowbm="1">
-  <div class="promotion-container">
-    <div class="block-item-list">
-      <div class="promotion-item-left">
-        <div class="block-item">
-          <h2 class="left_header h4"> 
-            <a href="{{ section.settings.main_text_url }}" title="{{ section.settings.main_text1 | escape }}">
-              {%- if section.settings.main_text1 != blank -%}
-                {{ section.settings.main_text1 }} 
+
+  .ai-promotion-left-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+  }
+
+  .ai-promotion-left-{{ ai_gen_id }} h2 {
+    margin: 0;
+    font-size: {{ section.settings.main_text_size }}px;
+    font-weight: {{ section.settings.main_text_weight }};
+    line-height: 1.2;
+    color: {{ section.settings.main_text_color }};
+  }
+
+  .ai-promotion-left-{{ ai_gen_id }} a {
+    color: {{ section.settings.main_text_color }};
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .ai-promotion-left-{{ ai_gen_id }} a:hover {
+    opacity: 0.8;
+  }
+
+  .ai-promotion-right-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: {{ section.settings.items_gap }}px;
+    flex-wrap: wrap;
+  }
+
+  .ai-promotion-item-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .ai-promotion-item-{{ ai_gen_id }} a,
+  .ai-promotion-item-{{ ai_gen_id }} span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: {{ section.settings.item_text_color }};
+    text-decoration: none;
+    font-size: {{ section.settings.item_text_size }}px;
+    transition: opacity 0.3s ease;
+  }
+
+  .ai-promotion-item-{{ ai_gen_id }} a:hover {
+    opacity: 0.8;
+  }
+
+  .ai-promo-icon-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: {{ section.settings.icon_size }}px;
+    height: {{ section.settings.icon_size }}px;
+    flex-shrink: 0;
+  }
+
+  .ai-promo-icon-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-promotion-list-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: {{ section.settings.gap_mobile }}px;
+    }
+
+    .ai-promotion-left-{{ ai_gen_id }} {
+      justify-content: center;
+    }
+
+    .ai-promotion-left-{{ ai_gen_id }} h2 {
+      font-size: {{ section.settings.main_text_size | times: 0.9 }}px;
+    }
+
+    .ai-promotion-right-{{ ai_gen_id }} {
+      justify-content: center;
+    }
+
+    .ai-promotion-item-{{ ai_gen_id }} a,
+    .ai-promotion-item-{{ ai_gen_id }} span {
+      font-size: {{ section.settings.item_text_size | times: 0.9 }}px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-promotion-left-{{ ai_gen_id }} {
+      display: none;
+    }
+
+    .ai-promotion-list-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+    }
+
+    .ai-promotion-right-{{ ai_gen_id }} {
+      flex-wrap: nowrap;
+      justify-content: center;
+      gap: {{ section.settings.items_gap_mobile }}px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 4px; /* Scrollbar space */
+    }
+
+    .ai-promotion-item-{{ ai_gen_id }} {
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .ai-promotion-item-{{ ai_gen_id }} a,
+    .ai-promotion-item-{{ ai_gen_id }} span {
+      font-size: {{ section.settings.item_text_size | times: 0.85 }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-promotion-bar-{{ ai_gen_id }}" {{ section.shopify_attributes }}>
+  <div class="ai-promotion-container-{{ ai_gen_id }}">
+    <div class="ai-promotion-list-{{ ai_gen_id }}">
+      <div class="ai-promotion-left-{{ ai_gen_id }}">
+        <h2>
+          {%- if section.settings.main_text_url != blank -%}
+            <a href="{{ section.settings.main_text_url }}" title="{{ section.settings.main_text }}">
+              {%- if section.settings.main_text != blank -%}
+                {{ section.settings.main_text }}
+              {%- else -%}
+                ข้อความหลัก
               {%- endif -%}
             </a>
-          </h2>
-        </div>
+          {%- else -%}
+            {%- if section.settings.main_text != blank -%}
+              {{ section.settings.main_text }}
+            {%- else -%}
+              ข้อความหลัก
+            {%- endif -%}
+          {%- endif -%}
+        </h2>
       </div>
-      <div class="promotion-item-right">
-        
-        <!-- Link #01 -->
-        {%- if section.settings.text_1 != blank -%}
-        <div class="block-item-a">
-          <a href="{{ section.settings.link_1 }}" title="{{ section.settings.text_1 | escape }}">
-            {%- if section.settings.anounce_img_1 != blank -%}
-               <span class="promo-icon">
-                  {{ section.settings.anounce_img_1 | image_url: width: 100 | image_tag: 
-                    widths: '50, 100', 
-                    sizes: '24px', 
-                    height: 24, 
-                    width: 24, 
-                    loading: 'lazy', 
-                    alt: section.settings.anounce_img_1.alt | default: section.settings.text_1 
-                  }}
+
+      <div class="ai-promotion-right-{{ ai_gen_id }}">
+        {%- if section.settings.show_item_1 -%}
+          <div class="ai-promotion-item-{{ ai_gen_id }}">
+            {%- if section.settings.link_1 != blank -%}
+              <a href="{{ section.settings.link_1 }}" title="{{ section.settings.text_1 }}">
+                {%- if section.settings.anounce_img_1 != blank -%}
+                  <span class="ai-promo-icon-{{ ai_gen_id }}">
+                    {{ section.settings.anounce_img_1 | image_url: width: 200 | image_tag: 
+                      loading: 'lazy', 
+                      width: section.settings.icon_size, 
+                      height: section.settings.icon_size,
+                      alt: section.settings.anounce_img_1.alt | default: section.settings.text_1
+                    }}
+                  </span>
+                {%- endif -%}
+                {%- if section.settings.text_1 != blank -%}
+                  {{ section.settings.text_1 }}
+                {%- else -%}
+                  รายการที่ 1
+                {%- endif -%}
+              </a>
+            {%- else -%}
+              <span>
+                {%- if section.settings.anounce_img_1 != blank -%}
+                  <span class="ai-promo-icon-{{ ai_gen_id }}">
+                    {{ section.settings.anounce_img_1 | image_url: width: 200 | image_tag: 
+                      loading: 'lazy', 
+                      width: section.settings.icon_size, 
+                      height: section.settings.icon_size,
+                      alt: section.settings.anounce_img_1.alt | default: section.settings.text_1
+                    }}
+                  </span>
+                {%- endif -%}
+                {%- if section.settings.text_1 != blank -%}
+                  {{ section.settings.text_1 }}
+                {%- else -%}
+                  รายการที่ 1
+                {%- endif -%}
               </span>
             {%- endif -%}
-            {{ section.settings.text_1 }} 
-          </a>
-        </div>
+          </div>
         {%- endif -%}
 
-        <!-- Link #02 -->
-        {%- if section.settings.text_2 != blank -%}
-        <div class="block-item-b">
-          <a href="{{ section.settings.link_2 }}" title="{{ section.settings.text_2 | escape }}">
-            {%- if section.settings.anounce_img_2 != blank -%}
-              <span class="promo-icon">
-                {{ section.settings.anounce_img_2 | image_url: width: 100 | image_tag: 
-                  widths: '50, 100', 
-                  sizes: '24px', 
-                  height: 24, 
-                  width: 24, 
-                  loading: 'lazy', 
-                  alt: section.settings.anounce_img_2.alt | default: section.settings.text_2
-                }}
+        {%- if section.settings.show_item_2 -%}
+          <div class="ai-promotion-item-{{ ai_gen_id }}">
+            {%- if section.settings.link_2 != blank -%}
+              <a href="{{ section.settings.link_2 }}" title="{{ section.settings.text_2 }}">
+                {%- if section.settings.anounce_img_2 != blank -%}
+                  <span class="ai-promo-icon-{{ ai_gen_id }}">
+                    {{ section.settings.anounce_img_2 | image_url: width: 200 | image_tag: 
+                      loading: 'lazy', 
+                      width: section.settings.icon_size, 
+                      height: section.settings.icon_size,
+                      alt: section.settings.anounce_img_2.alt | default: section.settings.text_2
+                    }}
+                  </span>
+                {%- endif -%}
+                {%- if section.settings.text_2 != blank -%}
+                  {{ section.settings.text_2 }}
+                {%- else -%}
+                  รายการที่ 2
+                {%- endif -%}
+              </a>
+            {%- else -%}
+              <span>
+                {%- if section.settings.anounce_img_2 != blank -%}
+                  <span class="ai-promo-icon-{{ ai_gen_id }}">
+                    {{ section.settings.anounce_img_2 | image_url: width: 200 | image_tag: 
+                      loading: 'lazy', 
+                      width: section.settings.icon_size, 
+                      height: section.settings.icon_size,
+                      alt: section.settings.anounce_img_2.alt | default: section.settings.text_2
+                    }}
+                  </span>
+                {%- endif -%}
+                {%- if section.settings.text_2 != blank -%}
+                  {{ section.settings.text_2 }}
+                {%- else -%}
+                  รายการที่ 2
+                {%- endif -%}
               </span>
             {%- endif -%}
-            {{ section.settings.text_2 }} 
-          </a>
-        </div>
+          </div>
         {%- endif -%}
 
-        <!-- Link #03 -->
-        {%- if section.settings.text_3 != blank -%}
-        <div class="block-item-c">
-          <a href="{{ section.settings.link_3 }}" title="{{ section.settings.text_3 | escape }}">
-            {%- if section.settings.anounce_img_3 != blank -%}
-              <span class="promo-icon">
-                {{ section.settings.anounce_img_3 | image_url: width: 100 | image_tag: 
-                  widths: '50, 100', 
-                  sizes: '24px', 
-                  height: 24, 
-                  width: 24, 
-                  loading: 'lazy', 
-                  alt: section.settings.anounce_img_3.alt | default: section.settings.text_3
-                }}
+        {%- if section.settings.show_item_3 -%}
+          <div class="ai-promotion-item-{{ ai_gen_id }}">
+            {%- if section.settings.link_3 != blank -%}
+              <a href="{{ section.settings.link_3 }}" title="{{ section.settings.text_3 }}">
+                {%- if section.settings.anounce_img_3 != blank -%}
+                  <span class="ai-promo-icon-{{ ai_gen_id }}">
+                     {{ section.settings.anounce_img_3 | image_url: width: 200 | image_tag: 
+                      loading: 'lazy', 
+                      width: section.settings.icon_size, 
+                      height: section.settings.icon_size,
+                      alt: section.settings.anounce_img_3.alt | default: section.settings.text_3
+                    }}
+                  </span>
+                {%- endif -%}
+                {%- if section.settings.text_3 != blank -%}
+                  {{ section.settings.text_3 }}
+                {%- else -%}
+                  รายการที่ 3
+                {%- endif -%}
+              </a>
+            {%- else -%}
+              <span>
+                {%- if section.settings.anounce_img_3 != blank -%}
+                  <span class="ai-promo-icon-{{ ai_gen_id }}">
+                     {{ section.settings.anounce_img_3 | image_url: width: 200 | image_tag: 
+                      loading: 'lazy', 
+                      width: section.settings.icon_size, 
+                      height: section.settings.icon_size,
+                      alt: section.settings.anounce_img_3.alt | default: section.settings.text_3
+                    }}
+                  </span>
+                {%- endif -%}
+                {%- if section.settings.text_3 != blank -%}
+                  {{ section.settings.text_3 }}
+                {%- else -%}
+                  รายการที่ 3
+                {%- endif -%}
               </span>
             {%- endif -%}
-            {{ section.settings.text_3 }} 
-          </a>
-        </div>
+          </div>
         {%- endif -%}
-
       </div>
     </div>
   </div>
 </div>
 
-
 {% schema %}
-  {
-    "name": "Promotion Bar",
-    "tag": "section",
-    "class": "section",
-    "settings": [
+{
+  "name": "Promotion bar",
+  "tag": "section",
+  "settings": [
     {
-      "type": "color",
-      "id": "bg_promotion_color",
-      "label": "Background Color",
-      "default": "#ffffff"
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "min": 800,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "label": "Container width",
+      "default": 1300
     },
     {
       "type": "color",
-      "id": "text_promotion_color",
-      "label": "Text Color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#f3f7fa"
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Vertical padding",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "min": 5,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Gap between sections",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "gap_mobile",
+      "min": 0,
+      "max": 30,
+      "step": 5,
+      "unit": "px",
+      "label": "Gap on mobile",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "items_gap",
+      "min": 5,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Gap between items",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "items_gap_mobile",
+      "min": 5,
+      "max": 20,
+      "step": 5,
+      "unit": "px",
+      "label": "Items gap on mobile",
+      "default": 10
+    },
+    {
+      "type": "header",
+      "content": "Main text"
+    },
+    {
+      "type": "text",
+      "id": "main_text",
+      "label": "Text",
+      "default": "โปรโมชั่นพิเศษ"
+    },
+    {
+      "type": "url",
+      "id": "main_text_url",
+      "label": "Link"
+    },
+    {
+      "type": "color",
+      "id": "main_text_color",
+      "label": "Text color",
       "default": "#000000"
     },
-       {
-      "type" : "url",
-      "id" : "main_text_url",
-      "label" : "Main Text Link",
-      "info" : "======================"
-    },
-   
-     {
-      "type" : "text",
-      "id" : "main_text1",
-      "label" : "Main Text",
-      "default" : "Main Text"
-    },
-      {
-              "type" : "image_picker",
-              "id" : "anounce_img_1",
-              "label" : "Anounment Image"
-            },
     {
-      "type" : "text",
-      "id" : "text_1",
-      "label" : "Text #01",
-      "default" : "Free Delivery Worldwide"
+      "type": "range",
+      "id": "main_text_size",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 16
     },
     {
-      "type" : "url",
-      "id" : "link_1",
-      "label" : "Link #01",
-      "info" : "======================"
-    },
-       {
-              "type" : "image_picker",
-              "id" : "anounce_img_2",
-              "label" : "Anounment Image"
-            },
-    {
-      "type" : "text",
-      "id" : "text_2",
-      "label" : "Text #02",
-      "default" : "Free Returns InStore"
-    },
-    {
-      "type" : "url",
-      "id" : "link_2",
-      "label" : "Link #02",
-      "info" : "======================"
-    },
-       {
-              "type" : "image_picker",
-              "id" : "anounce_img_3",
-              "label" : "Anounment Image"
-            },
-    {
-      "type" : "text",
-      "id" : "text_3",
-      "label" : "Text #03",
-      "default" : "Rewards Program"
+      "type": "select",
+      "id": "main_text_weight",
+      "label": "Font weight",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ],
+      "default": "600"
     },
     {
-      "type" : "url",
-      "id" : "link_3",
-      "label" : "Link #03",
-      "info" : "======================"
+      "type": "header",
+      "content": "Item 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_item_1",
+      "label": "Show item 1",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "anounce_img_1",
+      "label": "Icon"
+    },
+    {
+      "type": "text",
+      "id": "text_1",
+      "label": "Text",
+      "default": "จัดส่งฟรี"
+    },
+    {
+      "type": "url",
+      "id": "link_1",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Item 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_item_2",
+      "label": "Show item 2",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "anounce_img_2",
+      "label": "Icon"
+    },
+    {
+      "type": "text",
+      "id": "text_2",
+      "label": "Text",
+      "default": "รับประกัน 1 ปี"
+    },
+    {
+      "type": "url",
+      "id": "link_2",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Item 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_item_3",
+      "label": "Show item 3",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "anounce_img_3",
+      "label": "Icon"
+    },
+    {
+      "type": "text",
+      "id": "text_3",
+      "label": "Text",
+      "default": "ส่วนลด 20%"
+    },
+    {
+      "type": "url",
+      "id": "link_3",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Item style"
+    },
+    {
+      "type": "color",
+      "id": "item_text_color",
+      "label": "Text color",
+      "default": "#181818"
+    },
+    {
+      "type": "range",
+      "id": "item_text_size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "min": 16,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Icon size",
+      "default": 20
     }
   ],
   "presets": [
     {
-      "name": "Promotion Bar"
+      "name": "Promotion bar"
     }
   ]
 }

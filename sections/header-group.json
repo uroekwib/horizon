@@ -1,12 +1,3 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "type": "header",
   "name": "Header",
@@ -109,10 +100,44 @@
         "enable_transparent_header_collection": false,
         "collection_color_scheme": "default"
       }
+    },
+    "promotion-bar": {
+      "type": "promotion-bar",
+      "settings": {
+        "full_width": false,
+        "container_width": 1200,
+        "background_color": "#f9fafc",
+        "padding_vertical": 8,
+        "gap": 20,
+        "gap_mobile": 10,
+        "items_gap": 15,
+        "items_gap_mobile": 10,
+        "main_text": "ป้ายโฆษณาครบวงจร ป้ายอิงค์เจ็ท อักษรโลหะ ป้ายโลโก้ สติ๊กเกอร์ ฉลากสินค้า อุปกรณ์จัดบูธ",
+        "main_text_url": "https://octopus.co.th",
+        "main_text_color": "#000000",
+        "main_text_size": 16,
+        "main_text_weight": "600",
+        "show_item_1": true,
+        "anounce_img_1": "shopify://shop_images/Icon_ShakeHand.svg",
+        "text_1": "ราคาดี ยุติธรรม",
+        "link_1": "https://octopusmedia.myshopify.com/pages/how-to-order",
+        "show_item_2": true,
+        "anounce_img_2": "shopify://shop_images/Icon_A_Material.svg",
+        "text_2": "วัสดุคุณภาพสูง",
+        "link_2": "https://octopusmedia.myshopify.com/blogs/how-to/signage-materials",
+        "show_item_3": true,
+        "anounce_img_3": "shopify://shop_images/Icon_Delivery.svg",
+        "text_3": "จัดส่งติดตั้งทั่วประเทศ",
+        "link_3": "https://octopusmedia.myshopify.com/pages/contact-map",
+        "item_text_color": "#000000",
+        "item_text_size": 14,
+        "icon_size": 24
+      }
     }
   },
   "order": [
     "header_announcements_9jGBFp",
-    "header_section"
+    "header_section",
+    "promotion-bar"
   ]
 }
