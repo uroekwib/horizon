@@ -396,7 +396,8 @@
           {
             "type": "color_background",
             "id": "background_gradient",
-            "label": "t:settings.background_gradient"
+            "label": "Background gradient",
+            "info": "Optional. Overrides background color when set."
           },
           {
             "type": "color",
