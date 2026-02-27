@@ -15,6 +15,8 @@
   .promotion-bar{
     min-height: var(--promo-h);
     animation: none !important;
+    --bg-promotion-color: {{ section.settings.bg_promotion_color }};
+    --text-promotion-color: {{ section.settings.text_promotion_color }};
   }
 
   /* Content height calculation */
@@ -22,24 +24,15 @@
   .promotion-bar .block-item-list{
     min-height: calc(var(--promo-h) - 16px); /* - padding 8px top/bottom */
   }
-
-  /* Dynamic Colors */
-  {% assign bg_promotion_color =  section.settings.bg_promotion_color %}
-  {% assign text_promotion_color =  section.settings.text_promotion_color %}
-  .promotion-bar { background: {{ bg_promotion_color }}; }
-  .promotion-bar .block-item a,
-  .promotion-bar .block-item-a a,
-  .promotion-bar .block-item-b a,
-  .promotion-bar .block-item-c a { color: {{ text_promotion_color }}; }
 </style>
  
-<div class="promotion-bar" data-row="3" data-rowtb="3" data-rowtblg="3" data-rowbm="1">
+<div class="promotion-bar page-width" data-row="3" data-rowtb="3" data-rowtblg="3" data-rowbm="1">
   <div class="promotion-container">
     <div class="block-item-list">
       <div class="promotion-item-left">
         <div class="block-item">
-          <h2 class="left_header"> 
-            <a href="{{ section.settings.main_text_url }}" title="">
+          <h2 class="left_header h4"> 
+            <a href="{{ section.settings.main_text_url }}" title="{{ section.settings.main_text1 | escape }}">
               {%- if section.settings.main_text1 != blank -%}
                 {{ section.settings.main_text1 }} 
               {%- endif -%}
@@ -48,61 +41,70 @@
         </div>
       </div>
       <div class="promotion-item-right">
+        
+        <!-- Link #01 -->
+        {%- if section.settings.text_1 != blank -%}
         <div class="block-item-a">
-          <a href="{{ section.settings.link_1 }}" title="">
+          <a href="{{ section.settings.link_1 }}" title="{{ section.settings.text_1 | escape }}">
             {%- if section.settings.anounce_img_1 != blank -%}
                <span class="promo-icon">
-                  <img src="{{ section.settings.anounce_img_1 | img_url: '100x100' }}"
-                   srcset="{{ section.settings.anounce_img_1 | img_url: '100x100' }} 1x, 
-                           {{ section.settings.anounce_img_1 | img_url: '200x200' }} 2x"
-                   sizes="(max-width: 600px) 25px, 25px"
-                    height="24"
-                   width="24"
-                   loading="lazy"
-                   alt="{{ section.settings.anounce_img_1.alt }}"
-                   title="{{ section.settings.anounce_img_1.alt }}">
+                  {{ section.settings.anounce_img_1 | image_url: width: 100 | image_tag: 
+                    widths: '50, 100', 
+                    sizes: '24px', 
+                    height: 24, 
+                    width: 24, 
+                    loading: 'lazy', 
+                    alt: section.settings.anounce_img_1.alt | default: section.settings.text_1 
+                  }}
               </span>
             {%- endif -%}
             {{ section.settings.text_1 }} 
           </a>
         </div>
+        {%- endif -%}
+
+        <!-- Link #02 -->
+        {%- if section.settings.text_2 != blank -%}
         <div class="block-item-b">
-          <a href="{{ section.settings.link_2 }}" title="">
+          <a href="{{ section.settings.link_2 }}" title="{{ section.settings.text_2 | escape }}">
             {%- if section.settings.anounce_img_2 != blank -%}
               <span class="promo-icon">
-              <img src="{{ section.settings.anounce_img_2 | img_url: '100x100' }}"
-                   srcset="{{ section.settings.anounce_img_2 | img_url: '100x100' }} 1x, 
-                           {{ section.settings.anounce_img_2 | img_url: '200x200' }} 2x"
-                   sizes="(max-width: 600px) 27px, 27px"
-                 height="24"
-                   width="24"
-                   loading="lazy"
-                   alt="{{ section.settings.anounce_img_2.alt }}"
-                   title="{{ section.settings.anounce_img_2.alt }}">
-
-                    </span>
+                {{ section.settings.anounce_img_2 | image_url: width: 100 | image_tag: 
+                  widths: '50, 100', 
+                  sizes: '24px', 
+                  height: 24, 
+                  width: 24, 
+                  loading: 'lazy', 
+                  alt: section.settings.anounce_img_2.alt | default: section.settings.text_2
+                }}
+              </span>
             {%- endif -%}
             {{ section.settings.text_2 }} 
           </a>
         </div>
+        {%- endif -%}
+
+        <!-- Link #03 -->
+        {%- if section.settings.text_3 != blank -%}
         <div class="block-item-c">
-          <a href="{{ section.settings.link_3 }}" title="">
+          <a href="{{ section.settings.link_3 }}" title="{{ section.settings.text_3 | escape }}">
             {%- if section.settings.anounce_img_3 != blank -%}
               <span class="promo-icon">
-              <img src="{{ section.settings.anounce_img_3 | img_url: '100x100' }}"
-                   srcset="{{ section.settings.anounce_img_3 | img_url: '100x100' }} 1x, 
-                           {{ section.settings.anounce_img_3 | img_url: '200x200' }} 2x"
-                   sizes="(max-width: 600px) 24px, 24px"
-                   height="24"
-                   width="24"
-                   loading="lazy"
-                   alt="{{ section.settings.anounce_img_3.alt }}"
-                   title="{{ section.settings.anounce_img_3.alt }}">
-                    </span>
+                {{ section.settings.anounce_img_3 | image_url: width: 100 | image_tag: 
+                  widths: '50, 100', 
+                  sizes: '24px', 
+                  height: 24, 
+                  width: 24, 
+                  loading: 'lazy', 
+                  alt: section.settings.anounce_img_3.alt | default: section.settings.text_3
+                }}
+              </span>
             {%- endif -%}
             {{ section.settings.text_3 }} 
           </a>
         </div>
+        {%- endif -%}
+
       </div>
     </div>
   </div>
@@ -112,6 +114,8 @@
 {% schema %}
   {
     "name": "Promotion Bar",
+    "tag": "section",
+    "class": "section",
     "settings": [
     {
       "type": "color",

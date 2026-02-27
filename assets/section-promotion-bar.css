@@ -1,14 +1,18 @@
-/* Reconstructed styles for Promotion Bar */
+/* Reconstructed styles for Promotion Bar - Horizon Theme Compatible */
+
 .promotion-bar {
   padding: 8px 0;
   width: 100%;
   display: block;
+  /* Use CSS variable for background if set, otherwise fallback to section settings */
+  background-color: var(--bg-promotion-color); 
 }
 
+/* Align with Horizon's page-width container */
 .promotion-container {
-  max-width: 1200px;
+  max-width: var(--page-width, 1200px); /* Fallback to 1200px if var not defined */
   margin: 0 auto;
-  padding: 0 15px;
+  padding: 0 1.5rem; /* Standard Shopify padding */
 }
 
 .block-item-list {
@@ -16,7 +20,7 @@
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 15px;
+  gap: 1.5rem;
 }
 
 .promotion-item-left {
@@ -26,21 +30,23 @@
 
 .promotion-item-right {
   display: flex;
-  gap: 20px;
+  gap: 2rem;
   align-items: center;
   flex-wrap: wrap;
 }
 
 .block-item h2.left_header {
   margin: 0;
-  font-size: 16px;
+  font-family: var(--font-heading-family);
+  font-size: 1.6rem;
   line-height: 1.2;
+  color: var(--text-promotion-color);
 }
 
 .block-item h2.left_header a {
   text-decoration: none;
   color: inherit;
-  font-weight: bold;
+  font-weight: var(--font-heading-weight);
 }
 
 .block-item-a a,
@@ -48,34 +54,47 @@
 .block-item-c a {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.8rem;
   text-decoration: none;
-  color: inherit;
-  font-size: 14px;
+  color: var(--text-promotion-color);
+  font-family: var(--font-body-family);
+  font-size: 1.4rem;
 }
 
 .promo-icon {
   display: inline-flex;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .promo-icon img {
   display: block;
   object-fit: contain;
+  height: auto;
 }
 
-@media (max-width: 768px) {
+/* Responsive adjustments matching Shopify breakpoints */
+@media screen and (max-width: 749px) {
   .block-item-list {
     flex-direction: column;
     text-align: center;
+    gap: 1rem;
   }
 
   .promotion-item-right {
     justify-content: center;
     width: 100%;
+    gap: 1rem;
   }
   
   .block-item-a, .block-item-b, .block-item-c {
-      margin-bottom: 5px;
+      margin-bottom: 0.5rem;
+      justify-content: center;
+  }
+  
+  .block-item-a a,
+  .block-item-b a,
+  .block-item-c a {
+      justify-content: center;
   }
 }
