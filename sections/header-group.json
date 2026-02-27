@@ -74,6 +74,7 @@
         "logo_position": "left",
         "menu_position": "left",
         "menu_row": "top",
+        "customer_account_menu": "customer-account-main-menu",
         "show_search": true,
         "search_position": "right",
         "search_row": "top",
@@ -90,6 +91,10 @@
         "divider_width": 0,
         "divider_size": "page-width",
         "border_width": 0,
+        "actions_display_style": "icon",
+        "actions_font_size": "0.875rem",
+        "actions_font": "body",
+        "actions_text_case": "none",
         "color_scheme_top": "scheme-1",
         "color_scheme_bottom": "",
         "color_scheme_transparent": "scheme-6",
@@ -101,6 +106,7 @@
         "collection_color_scheme": "default"
       }
     },
+<<<<<<< HEAD
     "promotion-bar": {
       "type": "promotion-bar",
       "settings": {
@@ -132,12 +138,35 @@
         "item_text_color": "#000000",
         "item_text_size": 14,
         "icon_size": 24
+=======
+    "promotion_bar_hAQjCe": {
+      "type": "promotion-bar",
+      "name": "Promotion Bar",
+      "settings": {
+           "bg_promotion_color": "#f9fafc",
+        "text_promotion_color": "#000000",
+        "main_text_url": "https://octopus.co.th",
+        "main_text1": "ป้ายโฆษณาครบวงจร ป้ายอิงค์เจ็ท อักษรโลหะ ป้ายโลโก้ สติ๊กเกอร์ ฉลากสินค้า อุปกรณ์จัดบูธ",
+        "anounce_img_1": "shopify://shop_images/Icon_ShakeHand.svg",
+        "text_1": "ราคาดี ยุติธรรม",
+        "link_1": "https://octopusmedia.myshopify.com/pages/how-to-order",
+        "anounce_img_2": "shopify://shop_images/Icon_A_Material.svg",
+        "text_2": "วัสดุคุณภาพสูง",
+        "link_2": "https://octopusmedia.myshopify.com/blogs/how-to/signage-materials",
+        "anounce_img_3": "shopify://shop_images/Icon_Delivery.svg",
+        "text_3": "จัดส่งติดตั้งทั่วประเทศ",
+        "link_3": "https://octopusmedia.myshopify.com/pages/contact-map"
+>>>>>>> a073e3547e54f91af8f4a5534a1b18648e46cb13
       }
     }
   },
   "order": [
     "header_announcements_9jGBFp",
     "header_section",
+<<<<<<< HEAD
     "promotion-bar"
+=======
+    "promotion_bar_hAQjCe"
+>>>>>>> a073e3547e54f91af8f4a5534a1b18648e46cb13
   ]
 }
