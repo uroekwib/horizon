@@ -379,6 +379,12 @@
             "default": "#FFFFFF"
           },
           {
+            "type": "color_background",
+            "id": "background_gradient",
+            "label": "Background gradient",
+            "info": "Optional. Overrides background color when set."
+          },
+          {
             "type": "color",
             "id": "foreground_heading",
             "label": "t:settings.headings",
@@ -429,7 +435,7 @@
             "id": "primary_button_background",
             "label": "t:settings.background",
             "default": "#000F9F",
-            "alpha": true, 
+            "alpha": true,
             "info": "Example: linear-gradient(145deg, #c3f9ff 0%, #c78ff2 100%);"
           },
           {
@@ -662,6 +668,22 @@
           "on_secondary_button": "secondary_button_text",
           "secondary_button_border": "secondary_button_border"
         }
+      },
+      {
+        "type": "header",
+        "content": "Octopus gradients"
+      },
+      {
+        "type": "color_background",
+        "id": "octopus_gradient_hero",
+        "label": "Hero / Page background gradient",
+        "default": "linear-gradient(140deg, rgba(241,236,255,1) 22%, rgba(235,252,255,0.85) 45%, rgba(236,255,254,0.81) 74%, rgba(242,255,250,1) 100%)"
+      },
+      {
+        "type": "color_background",
+        "id": "octopus_gradient_announce",
+        "label": "Announce bar gradient",
+        "default": "linear-gradient(90deg, #0ea5b8 0%, #17a9bb 25%, #818CF8 60%, #9b6fd4 100%)"
       }
     ]
   },

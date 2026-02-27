@@ -473,7 +473,9 @@
         "disabled": true,
         "settings": {}
       }
-    }
+    },
+    "octopus_gradient_hero": "linear-gradient(140deg, rgba(241,236,255,1) 22%, rgba(235,252,255,0.85) 45%, rgba(236,255,254,0.81) 74%, rgba(242,255,250,1) 100%)",
+    "octopus_gradient_announce": "linear-gradient(90deg, #0ea5b8 0%, #17a9bb 25%, #818CF8 60%, #9b6fd4 100%)"
   },
   "presets": {
     "Horizon": {
