@@ -1,0 +1,310 @@
+/*----------description - PRODUCT TEMPLATES ----------  */
+.desc_header {
+  color: rgb(23, 169, 187);
+  font-size: 18px;
+  width: 100%;
+  margin-bottom:30px; 
+}
+
+.desc_header::after{
+    content: "";
+    display: block;
+    height: 3px;
+    background-image: linear-gradient(177deg, #c3f9ff 0, #c78ff2);
+    border-radius: 20px;
+    width: 100%;
+    margin-top: 5px;
+}
+.product_desc {
+  margin-top: unset !important;
+}
+/*  */
+.product__media-icon .icon {
+  width: 16px !important;
+  height: 14px !important;
+margin-left: 10px;
+}
+.product__media-icon{
+  height: unset !important;
+  width: unset !important;
+  gap: 4px;
+}
+.search_text {
+margin: 0px 10px 0px 0px;
+    color: rgb(23, 169, 187);
+}
+.product__media-icon.motion-reduce.quick-add-hidden.product__media-icon--lightbox {
+  border-radius: 25px;
+}
+@media only screen and (max-width: 750px) {
+  .product-media-modal__content > * {
+    padding: 8px;
+  }
+}
+
+.product h1 {
+  font-size: 3.2rem;
+}
+@media only screen and (max-width: 600px) {
+  .product h1 {
+    font-size: 2.8rem;
+    line-height: 3.4rem;
+  }
+ .product .accordion {
+    margin-top: 0rem;
+  }
+  .product .product-media-container {
+    --ratio-percent: 75%;
+  }
+}
+@media only screen and (max-width: 750px) {
+.c-menu img {
+  max-width: 85%;
+}
+}
+.product__media-item:first-child .product__modal-opener .product__media-icon {
+  opacity: 1 !important;
+}
+.bi.bi-whatsapp {
+  color: #fff;
+  background: #17a9bb;
+  width: 18px;
+  height: 18px;
+  position: absolute;
+  top: 4px;
+  left: 4px;
+}
+.svg_logo {
+  background: #17a9bb;
+  width: 26px;
+  height: 26px;
+  position: relative;
+  border-radius: 3px;
+  margin: 0px 15px 0px 0px;
+}
+
+/* PEAR OMIT 11/19/2024
+.product .left_header{
+margin: -4px 0px 0px 0px;
+}
+*/
+
+/*----------------faq - PRODUCT TEMPLATES ----------  */
+.accordion {
+  margin-top: .5rem;
+  margin-bottom: 0;
+  border-top: .1rem solid rgba(var(--color-foreground),.08);
+  border-bottom: .1rem solid rgba(var(--color-foreground),.08);
+}
+.accordion summary {
+  display: flex;
+  position: relative;
+  line-height: 1;
+  padding: 1rem 0;
+}
+summary {
+  cursor: pointer;
+  list-style: none;
+}
+details > * {
+  box-sizing: border-box;
+}
+.accordion .summary__title {
+  display: flex;
+  flex: 1;
+}
+.accordion summary {
+  line-height: 1;
+}
+
+summary {
+  cursor: pointer;
+  list-style: none;
+}
+.accordion .icon-accordion {
+  align-self: center;
+  fill: rgb(var(--color-foreground));
+  height: calc(var(--font-heading-scale) * 2rem);
+  margin-right: calc(var(--font-heading-scale) * 1rem);
+  width: calc(var(--font-heading-scale) * 2rem);
+}
+.accordion__title {
+  display: inline-block;
+  max-width: calc(100% - 6rem);
+  min-height: 1.6rem;
+  margin: 0;
+  word-break: break-word;
+}
+
+/* PEAR OMIT
+@media only screen and (min-width: 750px) {
+  h4, .h4 {
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 36px;
+    color: #343a40;
+  }
+}
+*/
+
+.accordion .summary__title + .icon-caret {
+  height: calc(var(--font-heading-scale) * .6rem);
+}
+.content_tab--active {
+  background-image: linear-gradient(140deg,rgba(223,213,254,.7) 0%,rgba(215,252,240,.7) 100%);
+  color: #212b36;
+  box-shadow: #6363631a 0 2px 2px;
+}
+.content_tab_heading {
+  padding: 5px 10px;
+  border-radius: 25px;
+  background-color: #f9fafc;
+  cursor: pointer;
+  box-shadow: #6363631a 0 2px 2px;
+  
+}
+.content_tab_block {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-bottom: 10px;
+}
+.tab_container--active {
+  display: block;
+}
+.tab_container {
+  display: none;
+}
+.tab_container--active {
+  display: block;
+}
+
+.product_desc_label {
+  color: #17a9bb !important;
+  padding-top: 10px;
+}
+
+.product_desc_label:after {
+    content: "";
+    display: block;
+    height: 3px;
+    background-image: linear-gradient(177deg, #c3f9ff 0, #c78ff2);
+    border-radius: 20px;
+    width: 100%;
+    margin-top: 5px;
+}
+
+/*-------------- enquiry block - PRODUCT TEMPLATES ----------  */
+.product_enquiry {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/** PEAR OMIT 23/12/23 
+body, p, input, textarea, select {
+  font-size: 13px;
+  line-height: 26px;
+}
+**/
+
+.product_enquiry_block, .product_enquiry_block a {
+  display: flex;
+  align-items: center;
+  color: #17a9bb;
+  text-decoration: none;= 
+}
+.fa-square-whatsapp {
+  font-size: 28px;
+  padding: 0 15px 0 0;
+}
+.fa-brands, .fab {
+  font-weight: 400;
+}
+
+/** PEAR OMIT 12/7/24
+.fa-brands, .fab {
+  font-family: "Font Awesome 6 Brands";
+}
+**/
+
+.fa, .fa-brands, .fa-classic, .fa-regular, .fa-sharp, .fa-solid, .fab, .far, .fas {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  display: var(--fa-display,inline-block);
+  font-style: normal;
+  font-variant: normal;
+  line-height: 1;
+  text-rendering: auto;
+}
+.product_enquiry_block .social-icon.social-line-icon {
+  margin: unset;
+}
+.text_holder{
+  padding: 0 15px 0 0;
+}
+.social-line-icon {
+  background-image: url('data:image/svg+xml;utf8, <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="47" height="47" viewBox="0 0 47 47"><defs><style>.a{fill:%23fff;}.b{fill:none;}.c{fill:url(%23a);}.d{opacity:0;}<\/style><linearGradient id="a" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="%232bc1d1"/><stop offset="1" stop-color="%2313a5b7"/></linearGradient></defs><circle class="a" cx="23.5" cy="23.5" r="23.5" transform="translate(0 0)"/><g transform="translate(8.213 10.406)"><path class="b" d="M127.087,133.744a18.376,18.376,0,0,0-.367-2.6,11.414,11.414,0,0,0-4.106-5.98,16.693,16.693,0,0,0-13.486-3.193A14.821,14.821,0,0,0,100.916,126c-3.437,3.39-4.417,7.346-2.684,11.547,1.7,4.106,5.066,6.329,9.182,7.563.838.254,1.714.377,2.562.556,1.017.217,1.271.5,1.224,1.507-.028.565-.188,1.111-.217,1.676-.019.33-.009.819.188.97a1.2,1.2,0,0,0,.979-.056,19.676,19.676,0,0,0,2.185-1.2,43.565,43.565,0,0,0,9.6-7.544A11.047,11.047,0,0,0,127.087,133.744Z" transform="translate(-97.393 -121.681)"/><path class="c" d="M127.118,133.653a10.971,10.971,0,0,1-3.145,7.261,43.33,43.33,0,0,1-9.6,7.553,19.686,19.686,0,0,1-2.185,1.2c-.292.132-.782.217-.979.057s-.207-.641-.188-.97c.028-.565.188-1.111.217-1.676.047-1.017-.207-1.3-1.224-1.507-.857-.179-1.733-.3-2.562-.556-4.115-1.234-7.487-3.456-9.182-7.562-1.742-4.2-.763-8.156,2.684-11.546a14.885,14.885,0,0,1,8.212-4.031,16.7,16.7,0,0,1,13.486,3.193,11.361,11.361,0,0,1,4.106,5.98A22,22,0,0,1,127.118,133.653Zm-15.172-.537.151-.028c.913,1.205,1.836,2.4,2.731,3.616.283.386.659.669,1.083.414a1.251,1.251,0,0,0,.471-.923c.047-1.714.019-3.437.019-5.161,0-.706-.254-1.045-.782-1.017-.622.038-.753.452-.744,1,.019,1.045.009,2.1.009,3.353-1.064-1.413-2-2.656-2.919-3.9-.273-.367-.64-.631-1.027-.377a1.278,1.278,0,0,0-.5.913c-.047,1.742-.019,3.485-.028,5.227,0,.546.16.961.782.961s.763-.433.753-.97C111.937,135.179,111.947,134.143,111.947,133.116Zm6.95-1.554h2.025c.527,0,.914-.207.914-.763s-.358-.791-.885-.791h-2.712c-.612,0-.9.311-.9.932.009,1.789.009,3.579,0,5.359,0,.622.311.9.923.9.885-.009,1.761-.009,2.646,0,.518,0,.895-.169.942-.744.038-.49-.33-.791-.951-.8-.65-.009-1.3,0-1.978,0v-1.337c.659,0,1.29-.009,1.921,0,.537.009.961-.113,1.017-.725.047-.5-.348-.81-1.017-.81-.65-.01-1.29,0-1.931,0C118.9,132.334,118.9,132,118.9,131.562Zm-14.663,4.1v-4.728c0-.527-.188-.9-.763-.913s-.782.367-.782.895c0,1.78-.009,3.569,0,5.349,0,.678.264.913.961.923.857.009,1.714,0,2.571,0,.546,0,.951-.151.932-.791-.019-.584-.4-.753-.923-.744C105.59,135.668,104.94,135.659,104.234,135.659Zm5.189-2.11v-2.58c0-.556-.2-.961-.8-.951-.556.009-.763.4-.763.923v5.3c0,.546.188.961.8.942s.763-.452.763-.979C109.413,135.32,109.423,134.435,109.423,133.549Z" transform="translate(-97.425 -121.588)"/><g class="d" transform="translate(7.884 9.185)"><path class="b" d="M236.416,213.021c0,.753-.007,1.5,0,2.252.007.39-.089.7-.547.7s-.568-.3-.568-.7c.007-1.266-.014-2.532.021-3.8a.929.929,0,0,1,.363-.664c.287-.185.554.014.746.274.671.9,1.348,1.807,2.122,2.833,0-.91.007-1.677-.007-2.436-.007-.39.082-.7.541-.725.376-.02.568.226.568.739,0,1.252.02,2.5-.014,3.75a.933.933,0,0,1-.342.671c-.3.185-.575-.02-.787-.3-.657-.883-1.321-1.752-1.985-2.628A.85.85,0,0,1,236.416,213.021Z" transform="translate(-229.69 -210.745)"/><path class="b" d="M309.843,212.088v.89h1.4c.479.007.766.226.739.589-.041.452-.349.541-.739.527-.458-.014-.91,0-1.4,0v.972c.493,0,.965-.007,1.437,0,.452.007.718.226.691.582-.034.411-.308.541-.684.541-.643-.007-1.28-.007-1.923,0-.445,0-.671-.2-.671-.657,0-1.3.007-2.6,0-3.894a.59.59,0,0,1,.657-.678c.657-.007,1.314,0,1.971,0,.39,0,.65.178.643.575s-.287.561-.664.554Z" transform="translate(-298.067 -210.941)"/><path class="b" d="M154.446,215.292c.52,0,.986.007,1.458,0,.376-.007.657.116.671.541.014.459-.281.575-.678.575-.623-.007-1.245.007-1.868,0-.506-.007-.7-.178-.7-.671-.007-1.293-.007-2.594,0-3.887,0-.376.157-.65.568-.65s.554.281.554.664C154.439,212.986,154.446,214.115,154.446,215.292Z" transform="translate(-153.325 -211.169)"/><path class="b" d="M209.336,213.572v1.923c0,.39-.1.7-.554.712s-.582-.287-.582-.684v-3.853c0-.383.151-.664.554-.671.438-.007.582.287.582.691C209.329,212.319,209.336,212.949,209.336,213.572Z" transform="translate(-204.445 -210.981)"/></g></g></svg>');
+}
+
+/** PEAR OMIT 12/7/24
+.social-icon {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  margin: 0 8px;
+    margin-left: 8px;
+  width: 40px;
+  height: 45px;
+}
+*/
+
+.social-icon {
+  display: block !important;
+}
+
+/*---------- breadcrumbs - PRODUCT TEMPLATES --------------  */
+
+.breadcrumb {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  padding: 0rem 0rem; /**PEAR from 0.5 0*/
+  margin-bottom: 0rem;
+  list-style: none;
+  background-color: #e9ecef;
+  border-radius: 0.25rem;
+}
+.breadcrumb  {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+}
+
+.breadcrumb a {
+  color: #17A9BB !important;
+  filter: saturate(1.3);
+}
+
+.breadcrumb span a {
+  color: #17A9BB !important;
+  filter: saturate(1.3);
+}
+.breadcrumb a, .breadcrumb span a {
+  color: #17a9bb !important;
+  filter: saturate(1.3);
+}
+
+.breadcrumb span.g_thingy {
+  font-size: 20px;
+  margin: 0 6px 2px;
+  color: #17a9bb;
+}
+.breadcrumb {
+  background: none;
+} 
+
+
+
+
