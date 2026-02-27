@@ -119,16 +119,19 @@
       "type": "promotion-bar",
       "name": "Promotion Bar",
       "settings": {
-        "bg_promotion_color": "#ffffff",
+           "bg_promotion_color": "#f9fafc",
         "text_promotion_color": "#000000",
-        "main_text_url": "",
-        "main_text1": "Main Text",
-        "text_1": "Free Delivery Worldwide",
-        "link_1": "",
-        "text_2": "Free Returns InStore",
-        "link_2": "",
-        "text_3": "Rewards Program",
-        "link_3": ""
+        "main_text_url": "https://octopus.co.th",
+        "main_text1": "ป้ายโฆษณาครบวงจร ป้ายอิงค์เจ็ท อักษรโลหะ ป้ายโลโก้ สติ๊กเกอร์ ฉลากสินค้า อุปกรณ์จัดบูธ",
+        "anounce_img_1": "shopify://shop_images/Icon_ShakeHand.svg",
+        "text_1": "ราคาดี ยุติธรรม",
+        "link_1": "https://octopusmedia.myshopify.com/pages/how-to-order",
+        "anounce_img_2": "shopify://shop_images/Icon_A_Material.svg",
+        "text_2": "วัสดุคุณภาพสูง",
+        "link_2": "https://octopusmedia.myshopify.com/blogs/how-to/signage-materials",
+        "anounce_img_3": "shopify://shop_images/Icon_Delivery.svg",
+        "text_3": "จัดส่งติดตั้งทั่วประเทศ",
+        "link_3": "https://octopusmedia.myshopify.com/pages/contact-map"
       }
     }
   },
