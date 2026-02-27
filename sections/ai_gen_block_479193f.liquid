@@ -1,0 +1,1463 @@
+{% doc %}
+  @prompt
+    Create an auto-scrolling cards carousel section for Online Store 2.0 with the following features:
+    
+    CONTENT MODEL:
+    - Each card has: image upload, title text, optional link (same/new tab)
+    - Optional section title/subtitle above carousel
+    - Fully manageable from Theme Editor (add/remove/reorder cards)
+    
+    LAYOUT & STYLING:
+    - Card aspect ratio: 4:3 (configurable: 1:1, 3:2, auto)
+    - Rounded corners and soft shadow using theme design tokens
+    - Title overlay or caption below (toggle option)
+    - Uniform spacing between cards
+    
+    CAROUSEL BEHAVIOR:
+    - Auto-play with infinite loop (seamless, no jump/flash)
+    - Auto-play only when section is in viewport
+    - Pause on hover (desktop) and pause while touching (mobile)
+    - Swipe/drag support for touch devices and optional mouse drag
+    - Navigation arrows and dots (both toggleable)
+    - Speed controls: slide duration (300-600ms) and autoplay interval (2-5s)
+    - Optional center mode with peek of first/last cards
+    
+    RESPONSIVE BREAKPOINTS:
+    - Desktop ≥1200px: 5 cards visible
+    - Laptop 992–1199px: 4 cards
+    - Tablet 768–991px: 3 cards
+    - Mobile <768px: 2 cards (option for 1)
+    - All breakpoints and counts configurable in Theme Editor
+    
+    THEME EDITOR SETTINGS:
+    - Card management (add/remove/reorder with image upload, alt text, title, link)
+    - Section title/subtitle options
+    - Caption position (overlay/below) and alignment (center/left)
+    - Slides per view for each breakpoint
+    - Autoplay controls (on/off, interval, transition speed, pause on hover)
+    - Navigation options (arrows, dots, loop, center mode toggles)
+    - Styling options (aspect ratio, corner radius, shadow/border using theme tokens)
+    - Section padding and carousel gutter spacing controls
+    
+    ACCESSIBILITY REQUIREMENTS:
+    - Required alt text for all images
+    - Keyboard-focusable cards with visible focus states
+    - Proper aria-labels for arrow buttons ("Next slide", "Previous slide")
+    - Dots as buttons with aria-controls and aria-current
+    - WCAG AA color contrast for titles/captions
+    
+    PERFORMANCE FEATURES:
+    - Lazy-load off-screen images with responsive srcset
+    - Initialize autoplay only when section enters viewport
+    - Destroy when not visible to save resources
+    - Lightweight implementation without heavy external libraries
+    
+    The carousel should auto-play smoothly, loop infinitely, be fully swipeable on mobile, and provide complete Theme Editor control over content, behavior, and styling., เพิ่มให้ใส่รูปได้ทั้งหมด 12 รูป,  ขอให้เป็นBlaze Slider ได้มั้ย, ตัวอักษรสามารถเปลี่ยนสีได้
+
+{% enddoc %}
+{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-blaze-carousel-{{ ai_gen_id }} {
+    width: 100%;
+    padding: {{ section.settings.section_padding_top }}px 0 {{ section.settings.section_padding_bottom }}px;
+  }
+
+  .ai-blaze-container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-blaze-header-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .ai-blaze-title-{{ ai_gen_id }} {
+    font-size: 32px;
+    font-weight:600;
+    margin: 0 0 16px;
+    color: {{ section.settings.title_color }};
+  }
+
+  .ai-blaze-subtitle-{{ ai_gen_id }} {
+    font-size: 18px;
+    margin: 0;
+    color: {{ section.settings.subtitle_color }};
+  }
+
+  .blaze-slider-{{ ai_gen_id }} {
+    position: relative;
+    overflow: hidden;
+    border-radius: {{ section.settings.corner_radius }}px;
+  }
+
+  .blaze-container-{{ ai_gen_id }} {
+    display: flex;
+    transition: transform {{ section.settings.transition_speed }}ms cubic-bezier(0.4, 0, 0.2, 1);
+    gap: {{ section.settings.card_spacing }}px;
+  }
+
+  .blaze-slide-{{ ai_gen_id }} {
+    flex: 0 0 auto;
+    position: relative;
+    border-radius: {{ section.settings.corner_radius }}px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: #ffffff;
+  }
+
+  .blaze-slide-{{ ai_gen_id }}:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .blaze-slide-{{ ai_gen_id }}:focus-within {
+    outline: 2px solid {{ section.settings.focus_color | default: '#005fcc' }};
+    outline-offset: 2px;
+  }
+
+  .blaze-image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    {% case section.settings.aspect_ratio %}
+      {% when '1:1' %}
+        aspect-ratio: 1 / 1;
+      {% when '3:2' %}
+        aspect-ratio: 3 / 2;
+      {% when '4:3' %}
+        aspect-ratio: 4 / 3;
+      {% else %}
+        aspect-ratio: auto;
+    {% endcase %}overflow: hidden;
+  }
+
+  .blaze-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .blaze-slide-{{ ai_gen_id }}:hover .blaze-image-{{ ai_gen_id }} {
+    transform: scale(1.05);
+  }
+
+  .blaze-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .blaze-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .blaze-content-{{ ai_gen_id }} {
+    {% if section.settings.caption_position == 'overlay' %}
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+      color: {{ section.settings.caption_overlay_color }};
+      padding: 20px;
+    {% else %}
+      padding: 16px;
+      color: {{ section.settings.caption_color }};
+    {% endif %}
+    text-align: {{ section.settings.caption_alignment }};
+  }
+
+  .blaze-card-title-{{ ai_gen_id }} {
+    font-size: {{ section.settings.caption_font_size }}px;
+    font-weight: {{ section.settings.caption_font_weight }};
+    margin: 0;
+    line-height: 1.4;
+    {% if section.settings.caption_position == 'overlay' %}
+      color: {{ section.settings.caption_overlay_color }};
+    {% else %}
+      color: {{ section.settings.caption_color }};
+    {% endif %}
+  }
+
+  .blaze-link-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+    z-index: 1;
+  }
+
+  .blaze-nav-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: {{ section.settings.arrow_background_color }};
+    border: none;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    color: {{ section.settings.arrow_color }};
+  }
+
+  .blaze-nav-{{ ai_gen_id }}:hover {
+    background: {{ section.settings.arrow_hover_background_color }};
+    color: {{ section.settings.arrow_hover_color }};
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  .blaze-nav-{{ ai_gen_id }}:focus {
+    outline: 2px solid {{ section.settings.focus_color | default: '#005fcc' }};
+    outline-offset: 2px;
+  }
+
+  .blaze-nav-prev-{{ ai_gen_id }} {
+    left: 16px;
+  }
+
+  .blaze-nav-next-{{ ai_gen_id }} {
+    right: 16px;
+  }
+
+  .blaze-pagination-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 24px;
+  }
+
+  .blaze-dot-{{ ai_gen_id }} {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: none;
+    background: {{ section.settings.dot_inactive_color }};
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .blaze-dot-{{ ai_gen_id }}:hover,
+  .blaze-dot-{{ ai_gen_id }}.blaze-active-{{ ai_gen_id }} {
+    background: {{ section.settings.dot_active_color }};
+  }
+
+  .blaze-dot-{{ ai_gen_id }}:focus {
+    outline: 2px solid {{ section.settings.focus_color | default: '#005fcc' }};
+    outline-offset: 2px;
+  }
+
+  @media (min-width: 1200px) {
+    .blaze-slide-{{ ai_gen_id }} {
+      width: calc((100% - ({{ section.settings.slides_desktop | minus: 1 }} * {{ section.settings.card_spacing }}px)) / {{ section.settings.slides_desktop }});
+    }
+  }
+
+  @media (min-width: 992px) and (max-width: 1199px) {
+    .blaze-slide-{{ ai_gen_id }} {
+      width: calc((100% - ({{ section.settings.slides_laptop | minus: 1 }} * {{ section.settings.card_spacing }}px)) / {{ section.settings.slides_laptop }});
+    }
+  }
+
+  @media (min-width: 768px) and (max-width: 991px) {
+    .blaze-slide-{{ ai_gen_id }} {
+      width: calc((100% - ({{ section.settings.slides_tablet | minus: 1 }} * {{ section.settings.card_spacing }}px)) / {{ section.settings.slides_tablet }});
+    }
+  }
+
+  @media (max-width: 767px) {
+    .blaze-slide-{{ ai_gen_id }} {
+      width: calc((100% - ({{ section.settings.slides_mobile | minus: 1 }} * {{ section.settings.card_spacing }}px)) / {{ section.settings.slides_mobile }});
+    }
+
+    .blaze-nav-{{ ai_gen_id }} {
+      width: 40px;
+      height: 40px;
+    }
+
+    .blaze-nav-prev-{{ ai_gen_id }} {
+      left: 8px;
+    }
+
+    .blaze-nav-next-{{ ai_gen_id }} {
+      right: 8px;
+    }
+
+    .blaze-card-title-{{ ai_gen_id }} {
+      font-size: {{ section.settings.caption_font_size | times: 0.9 }}px;
+    }
+  }
+
+  .blaze-track-{{ ai_gen_id }} {
+    overflow: hidden;
+    position: relative;
+  }
+
+  .blaze-dragging-{{ ai_gen_id }} {
+    cursor: grabbing;
+    user-select: none;
+  }
+
+  .blaze-dragging-{{ ai_gen_id }} .blaze-slide-{{ ai_gen_id }} {
+    pointer-events: none;
+  }
+{% endstyle %}
+
+<blaze-slider-{{ ai_gen_id }}
+  class="ai-blaze-carousel-{{ ai_gen_id }}"
+  data-autoplay="{{ section.settings.autoplay_enabled }}"
+  data-autoplay-interval="{{ section.settings.autoplay_interval }}"
+  data-pause-on-hover="{{ section.settings.pause_on_hover }}"
+  data-loop="{{ section.settings.infinite_loop }}"
+  data-transition-speed="{{ section.settings.transition_speed }}"
+  {{ section.shopify_attributes }}
+>
+  <div class="ai-blaze-container-{{ ai_gen_id }}">
+    {% if section.settings.section_title != blank or section.settings.section_subtitle != blank %}
+      <div class="ai-blaze-header-{{ ai_gen_id }}">
+        {% if section.settings.section_title != blank %}
+          <h2 class="ai-blaze-title-{{ ai_gen_id }}">{{ section.settings.section_title }}</h2>
+        {% endif %}
+        {% if section.settings.section_subtitle != blank %}
+          <p class="ai-blaze-subtitle-{{ ai_gen_id }}">{{ section.settings.section_subtitle }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="blaze-slider-{{ ai_gen_id }}">
+      <div class="blaze-track-{{ ai_gen_id }}">
+        <div class="blaze-container-{{ ai_gen_id }}">
+          {% for i in (1..12) %}
+            {% liquid
+              assign image_key = 'card_' | append: i | append: '_image'
+              assign title_key = 'card_' | append: i | append: '_title'
+              assign link_key = 'card_' | append: i | append: '_link'
+              assign new_tab_key = 'card_' | append: i | append: '_new_tab'
+              assign enabled_key = 'card_' | append: i | append: '_enabled'
+
+              assign card_image = section.settings[image_key]
+              assign card_title = section.settings[title_key]
+              assign card_link = section.settings[link_key]
+              assign card_new_tab = section.settings[new_tab_key]
+              assign card_enabled = section.settings[enabled_key]
+            %}
+
+            {% if card_enabled %}
+              <div class="blaze-slide-{{ ai_gen_id }}" data-slide-index="{{ forloop.index0 }}">
+                {% if card_link != blank %}
+                  <a
+                    href="{{ card_link }}"
+                    class="blaze-link-{{ ai_gen_id }}"
+                    {% if card_new_tab %}target="_blank" rel="noopener"{% endif %}
+                    aria-label="{% if card_title != blank %}{{ card_title }}{% else %}View details{% endif %}"
+                  ></a>
+                {% endif %}
+
+                <div class="blaze-image-wrapper-{{ ai_gen_id }}">
+                  {% if card_image %}
+                    <img
+                      src="{{ card_image | image_url: width: 600 }}"
+                      srcset="{{ card_image | image_url: width: 300 }} 300w,
+                              {{ card_image | image_url: width: 600 }} 600w,
+                              {{ card_image | image_url: width: 900 }} 900w"
+                      sizes="(max-width: 767px) 50vw, (max-width: 991px) 33vw, (max-width: 1199px) 25vw, 20vw"
+                      alt="{{ card_image.alt | escape }}"
+                      class="blaze-image-{{ ai_gen_id }}"
+                      loading="lazy"
+                      width="{{ card_image.width }}"
+                      height="{{ card_image.height }}"
+                    >
+                  {% else %}
+                    <div class="blaze-placeholder-{{ ai_gen_id }}">
+                      {{ 'image' | placeholder_svg_tag }}
+                    </div>
+                  {% endif %}
+                </div>
+
+                {% if card_title != blank %}
+                  <div class="blaze-content-{{ ai_gen_id }}">
+                    <h3 class="blaze-card-title-{{ ai_gen_id }}">{{ card_title }}</h3>
+                  </div>
+                {% endif %}
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+
+      {% if section.settings.show_arrows %}
+        <button
+          class="blaze-nav-{{ ai_gen_id }} blaze-nav-prev-{{ ai_gen_id }}"
+          aria-label="Previous slide"
+          type="button"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15,18 9,12 15,6"></polyline>
+          </svg>
+        </button>
+        <button
+          class="blaze-nav-{{ ai_gen_id }} blaze-nav-next-{{ ai_gen_id }}"
+          aria-label="Next slide"
+          type="button"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9,18 15,12 9,6"></polyline>
+          </svg>
+        </button>
+      {% endif %}
+    </div>
+
+    {% if section.settings.show_dots %}
+      <div class="blaze-pagination-{{ ai_gen_id }}"></div>
+    {% endif %}
+  </div>
+</blaze-slider-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class BlazeSlider{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.currentIndex = 0;
+        this.autoplayTimer = null;
+        this.isPlaying = false;
+        this.isDragging = false;
+        this.startX = 0;
+        this.currentX = 0;
+        this.translateX = 0;
+        this.threshold = 50;
+        this.observer = null;
+        this.slides = [];
+        this.slidesToShow = 1;
+      }
+
+      connectedCallback() {
+        this.container = this.querySelector('.blaze-container-{{ ai_gen_id }}');
+        this.track = this.querySelector('.blaze-track-{{ ai_gen_id }}');
+        this.slides = Array.from(this.querySelectorAll('.blaze-slide-{{ ai_gen_id }}'));
+        this.prevBtn = this.querySelector('.blaze-nav-prev-{{ ai_gen_id }}');
+        this.nextBtn = this.querySelector('.blaze-nav-next-{{ ai_gen_id }}');
+        this.pagination = this.querySelector('.blaze-pagination-{{ ai_gen_id }}');
+
+        this.autoplayEnabled = this.dataset.autoplay === 'true';
+        this.autoplayInterval = parseInt(this.dataset.autoplayInterval) * 1000;
+        this.pauseOnHover = this.dataset.pauseOnHover === 'true';
+        this.loop = this.dataset.loop === 'true';
+        this.transitionSpeed = parseInt(this.dataset.transitionSpeed);
+
+        if (this.slides.length === 0) return;
+
+        this.init();
+      }
+
+      disconnectedCallback() {
+        this.destroy();
+      }
+
+      init() {
+        this.updateSlidesToShow();
+        this.setupEventListeners();
+        this.createPagination();
+        this.updateSlider();
+        this.setupIntersectionObserver();
+        this.setupTouchEvents();
+        this.setupKeyboardNavigation();
+      }
+
+      destroy() {
+        this.stopAutoplay();
+        if (this.observer) {
+          this.observer.disconnect();
+        }
+        window.removeEventListener('resize', this.handleResize);
+      }
+
+      setupEventListeners() {
+        this.handleResize = this.debounce(() => {
+          this.updateSlidesToShow();
+          this.updateSlider();
+          this.createPagination();
+        }, 250);
+
+        if (this.prevBtn) {
+          this.prevBtn.addEventListener('click', () => this.prev());
+        }
+        if (this.nextBtn) {
+          this.nextBtn.addEventListener('click', () => this.next());
+        }
+
+        if (this.pauseOnHover) {
+          this.addEventListener('mouseenter', () => this.stopAutoplay());
+          this.addEventListener('mouseleave', () => this.startAutoplay());
+        }
+
+        window.addEventListener('resize', this.handleResize);
+      }
+
+      setupKeyboardNavigation() {
+        this.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            this.prev();
+          } else if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            this.next();
+          }
+        });
+      }
+
+      setupTouchEvents() {
+        this.track.addEventListener('touchstart', (e) => this.handleTouchStart(e), { passive: true });
+        this.track.addEventListener('touchmove', (e) => this.handleTouchMove(e), { passive: false });
+        this.track.addEventListener('touchend', (e) => this.handleTouchEnd(e), { passive: true });
+
+        this.track.addEventListener('mousedown', (e) => this.handleMouseStart(e));
+        this.track.addEventListener('mousemove', (e) => this.handleMouseMove(e));
+        this.track.addEventListener('mouseup', (e) => this.handleMouseEnd(e));
+        this.track.addEventListener('mouseleave', (e) => this.handleMouseEnd(e));
+      }
+
+      handleTouchStart(e) {
+        this.startX = e.touches[0].clientX;
+        this.isDragging = true;
+        this.stopAutoplay();
+        this.container.style.transition = 'none';
+      }
+
+      handleTouchMove(e) {
+        if (!this.isDragging) return;
+        e.preventDefault();
+        
+        this.currentX = e.touches[0].clientX;
+        const diffX = this.currentX - this.startX;
+        const newTranslateX = this.translateX + diffX;
+        
+        this.container.style.transform = `translateX(${newTranslateX}px)`;
+      }
+
+      handleTouchEnd(e) {
+        if (!this.isDragging) return;
+        this.isDragging = false;
+        this.track.classList.remove('blaze-dragging-{{ ai_gen_id }}');
+
+        const diffX = this.startX - this.currentX;
+        this.container.style.transition = `transform ${this.transitionSpeed}ms cubic-bezier(0.4, 0, 0.2, 1)`;
+
+        if (Math.abs(diffX) > this.threshold) {
+          if (diffX > 0) {
+            this.next();
+          } else {
+            this.prev();
+          }
+        } else {
+          this.updateSlider();
+        }
+
+        if (this.autoplayEnabled) {
+          this.startAutoplay();
+        }
+      }
+
+      handleMouseStart(e) {
+        e.preventDefault();
+        this.startX = e.clientX;
+        this.isDragging = true;
+        this.track.classList.add('blaze-dragging-{{ ai_gen_id }}');
+        this.stopAutoplay();
+        this.container.style.transition = 'none';
+      }
+
+      handleMouseMove(e) {
+        if (!this.isDragging) return;
+        e.preventDefault();
+        
+        this.currentX = e.clientX;
+        const diffX = this.currentX - this.startX;
+        const newTranslateX = this.translateX + diffX;
+        
+        this.container.style.transform = `translateX(${newTranslateX}px)`;
+      }
+
+      handleMouseEnd(e) {
+        if (!this.isDragging) return;
+        this.isDragging = false;
+        this.track.classList.remove('blaze-dragging-{{ ai_gen_id }}');
+
+        const diffX = this.startX - this.currentX;
+        
+        this.container.style.transition = `transform ${this.transitionSpeed}ms cubic-bezier(0.4, 0, 0.2, 1)`;
+
+        if (Math.abs(diffX) > this.threshold) {
+          if (diffX > 0) {
+            this.next();
+          } else {
+            this.prev();
+          }
+        } else {
+          this.updateSlider();
+        }
+
+        if (this.autoplayEnabled) {
+          this.startAutoplay();
+        }
+      }
+
+      updateSlidesToShow() {
+        const width = window.innerWidth;
+        if (width >= 1200) {
+          this.slidesToShow = {{ section.settings.slides_desktop }};
+        } else if (width >= 992) {
+          this.slidesToShow = {{ section.settings.slides_laptop }};
+        } else if (width >= 768) {
+          this.slidesToShow = {{ section.settings.slides_tablet }};
+        } else {
+          this.slidesToShow = {{ section.settings.slides_mobile }};
+        }
+      }
+
+      getMaxIndex() {
+        return Math.max(0, this.slides.length - this.slidesToShow);
+      }
+
+      updateSlider() {
+        const maxIndex = this.getMaxIndex();
+        this.currentIndex = Math.max(0, Math.min(this.currentIndex, maxIndex));
+        const slideWidth = this.slides[0] ? this.slides[0].offsetWidth : 0;
+        const gap = {{ section.settings.card_spacing }};
+        this.translateX = -(this.currentIndex * (slideWidth + gap));
+        
+        this.container.style.transform = `translateX(${this.translateX}px)`;
+        this.updatePagination();
+        this.updateNavigation();
+      }
+
+      createPagination() {
+        if (!this.pagination) return;
+
+        this.pagination.innerHTML = '';
+        const maxIndex = this.getMaxIndex();
+        const totalPages = maxIndex + 1;
+
+        for (let i = 0; i < totalPages; i++) {
+          const dot = document.createElement('button');
+          dot.className = 'blaze-dot-{{ ai_gen_id }}';
+          dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+          dot.addEventListener('click', () => this.goToSlide(i));
+          this.pagination.appendChild(dot);
+        }
+      }
+
+      updatePagination() {
+        if (!this.pagination) return;
+
+        const dots = this.pagination.querySelectorAll('.blaze-dot-{{ ai_gen_id }}');
+        dots.forEach((dot, index) => {
+          const isActive = index === this.currentIndex;
+          dot.classList.toggle('blaze-active-{{ ai_gen_id }}', isActive);
+          dot.setAttribute('aria-current', isActive ? 'true' : 'false');
+        });
+      }
+
+      updateNavigation() {
+        if (this.prevBtn) {
+          this.prevBtn.disabled = !this.loop && this.currentIndex === 0;
+        }
+        if (this.nextBtn) {
+          this.nextBtn.disabled = !this.loop && this.currentIndex >= this.getMaxIndex();
+        }
+      }
+
+      goToSlide(index) {
+        const maxIndex = this.getMaxIndex();
+        this.currentIndex = Math.max(0, Math.min(index, maxIndex));
+        this.updateSlider();
+      }
+
+      next() {
+        const maxIndex = this.getMaxIndex();
+        if (this.currentIndex < maxIndex) {
+          this.currentIndex++;
+        } else if (this.loop) {
+          this.currentIndex = 0;
+        }
+        this.updateSlider();
+      }
+
+      prev() {
+        if (this.currentIndex > 0) {
+          this.currentIndex--;
+        } else if (this.loop) {
+          this.currentIndex = this.getMaxIndex();
+        }
+        this.updateSlider();
+      }
+
+      startAutoplay() {
+        if (!this.autoplayEnabled || this.isPlaying || this.slides.length <= this.slidesToShow) return;
+        
+        this.isPlaying = true;
+        this.autoplayTimer = setInterval(() => {
+          this.next();
+        }, this.autoplayInterval);
+      }
+
+      stopAutoplay() {
+        if (this.autoplayTimer) {
+          clearInterval(this.autoplayTimer);
+          this.autoplayTimer = null;
+        }
+        this.isPlaying = false;
+      }
+
+      setupIntersectionObserver() {
+        this.observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              this.startAutoplay();
+            } else {
+              this.stopAutoplay();
+            }
+          });
+        }, { threshold: 0.1 });
+
+        this.observer.observe(this);
+      }
+
+      debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+          const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+          };
+          clearTimeout(timeout);
+          timeout = setTimeout(later, wait);
+        };
+      }
+    }
+
+    customElements.define('blaze-slider-{{ ai_gen_id }}', BlazeSlider{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Blaze slider carousel",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section content"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Section title"
+    },
+    {
+      "type": "text",
+      "id": "section_subtitle",
+      "label": "Section subtitle"
+    },
+    {
+      "type": "header",
+      "content": "Card 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_1_enabled",
+      "label": "Enable card 1",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "card_1_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_1_title",
+      "label": "Title"
+    },
+    {
+      "type": "url",
+      "id": "card_1_link",
+      "label": "Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_1_new_tab",
+      "label": "Open in new tab",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Card 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_2_enabled",
+      "label": "Enable card 2",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "card_2_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_2_title",
+      "label": "Title"
+    },
+    {
+      "type": "url",
+      "id": "card_2_link",
+      "label": "Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_2_new_tab",
+      "label": "Open in new tab",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Card 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_3_enabled",
+      "label": "Enable card 3",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "card_3_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_3_title",
+      "label": "Title"
+    },
+    {
+      "type": "url",
+      "id": "card_3_link",
+      "label": "Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_3_new_tab",
+      "label": "Open in new tab",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Card 4"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_4_enabled",
+      "label": "Enable card 4",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "card_4_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_4_title",
+      "label": "Title"
+    },
+    {
+      "type": "url",
+      "id": "card_4_link",
+      "label": "Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_4_new_tab",
+      "label": "Open in new tab",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Card 5"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_5_enabled",
+      "label": "Enable card 5",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "card_5_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_5_title",
+      "label": "Title"
+    },
+    {
+      "type": "url",
+      "id": "card_5_link",
+      "label": "Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_5_new_tab",
+      "label": "Open in new tab",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Card 6"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_6_enabled",
+      "label": "Enable card 6",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "card_6_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_6_title",
+      "label": "Title"
+    },
+    {
+      "type": "url",
+      "id": "card_6_link",
+      "label": "Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_6_new_tab",
+      "label": "Open in new tab",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Card 7"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_7_enabled",
+      "label": "Enable card 7",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "card_7_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_7_title",
+      "label": "Title"
+    },
+    {
+      "type": "url",
+      "id": "card_7_link",
+      "label": "Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_7_new_tab",
+      "label": "Open in new tab",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Card 8"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_8_enabled",
+      "label": "Enable card 8",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "card_8_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_8_title",
+      "label": "Title"
+    },
+    {
+      "type": "url",
+      "id": "card_8_link",
+      "label": "Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_8_new_tab",
+      "label": "Open in new tab",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Card 9"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_9_enabled",
+      "label": "Enable card 9",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "card_9_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_9_title",
+      "label": "Title"
+    },
+    {
+      "type": "url",
+      "id": "card_9_link",
+      "label": "Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_9_new_tab",
+      "label": "Open in new tab",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Card 10"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_10_enabled",
+      "label": "Enable card 10",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "card_10_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_10_title",
+      "label": "Title"
+    },
+    {
+      "type": "url",
+      "id": "card_10_link",
+      "label": "Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_10_new_tab",
+      "label": "Open in new tab",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Card 11"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_11_enabled",
+      "label": "Enable card 11",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "card_11_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_11_title",
+      "label": "Title"
+    },
+    {
+      "type": "url",
+      "id": "card_11_link",
+      "label": "Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_11_new_tab",
+      "label": "Open in new tab",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Card 12"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_12_enabled",
+      "label": "Enable card 12",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "card_12_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_12_title",
+      "label": "Title"
+    },
+    {
+      "type": "url",
+      "id": "card_12_link",
+      "label": "Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_12_new_tab",
+      "label": "Open in new tab",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Settings"
+    },
+    {
+      "type": "select",
+      "id": "aspect_ratio",
+      "label": "Card aspect ratio",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Auto"
+        },
+        {
+          "value": "1:1",
+          "label": "Square (1:1)"
+        },
+        {
+          "value": "3:2",
+          "label": "Standard (3:2)"
+        },
+        {
+          "value": "4:3",
+          "label": "Classic (4:3)"
+        }
+      ],
+      "default": "4:3"
+    },
+    {
+      "type": "range",
+      "id": "card_spacing",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Space between cards",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "corner_radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Corner radius",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Caption Settings"
+    },
+    {
+      "type": "select",
+      "id": "caption_position",
+      "label": "Caption position",
+      "options": [
+        {
+          "value": "below",
+          "label": "Below image"
+        },
+        {
+          "value": "overlay",
+          "label": "Overlay on image"
+        }
+      ],
+      "default": "overlay"
+    },
+    {
+      "type": "select",
+      "id": "caption_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "caption_font_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Caption font size",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "caption_font_weight",
+      "label": "Caption font weight",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi-bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Section title color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Section subtitle color",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "caption_color",
+      "label": "Caption text color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "caption_overlay_color",
+      "label": "Overlay text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "arrow_background_color",
+      "label": "Arrow background",
+      "default": "#ffffffe6"
+    },
+    {
+      "type": "color",
+      "id": "arrow_color",
+      "label": "Arrow icon color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "arrow_hover_background_color",
+      "label": "Arrow hover background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "arrow_hover_color",
+      "label": "Arrow hover icon color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "dot_active_color",
+      "label": "Active dot color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "dot_inactive_color",
+      "label": "Inactive dot color",
+      "default": "#0000004d"
+    },
+    {
+      "type": "color",
+      "id": "focus_color",
+      "label": "Focus outline color",
+      "default": "#005fcc"
+    },
+    {
+      "type": "header",
+      "content": "Slides per view"
+    },
+    {
+      "type": "range",
+      "id": "slides_desktop",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "label": "Desktop (≥1200px)",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "slides_laptop",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Laptop (992-1199px)",
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "slides_tablet",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "label": "Tablet (768-991px)",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "slides_mobile",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "label": "Mobile (<768px)",
+      "default": 2
+    },
+    {
+      "type": "header",
+      "content": "Behavior"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay_enabled",
+      "label": "Enable autoplay",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_interval",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "label": "Autoplay interval",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "transition_speed",
+      "min": 200,
+      "max": 1000,
+      "step": 50,
+      "unit": "ms",
+      "label": "Transition speed",
+      "default": 800
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_on_hover",
+      "label": "Pause on hover",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show arrows",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dots",
+      "label": "Show dots",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "infinite_loop",
+      "label": "Infinite loop",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "Blaze slider carousel"
+    }
+  ]
+}
+{% endschema %}
