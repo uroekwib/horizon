@@ -453,6 +453,12 @@
             "alpha": true
           },
           {
+            "type": "color_background",
+            "id": "primary_button_gradient",
+            "label": "Background gradient",
+            "info": "Optional. Overrides background color when set."
+          },
+          {
             "type": "color",
             "id": "primary_button_text",
             "label": "t:settings.text",
@@ -497,6 +503,12 @@
             "label": "t:settings.background",
             "default": "#FFFFFF",
             "alpha": true
+          },
+          {
+            "type": "color_background",
+            "id": "secondary_button_gradient",
+            "label": "Background gradient",
+            "info": "Optional. Overrides background color when set."
           },
           {
             "type": "color",
