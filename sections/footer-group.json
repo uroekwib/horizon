@@ -140,11 +140,12 @@
       "block_order": [
         "group_H6VpwJ"
       ],
+      "custom_css": [],
       "name": "t:names.footer",
       "settings": {
         "section_width": "page-width",
         "gap": 20,
-        "color_scheme": "scheme-gradient-pastel",
+        "color_scheme": "scheme-1",
         "padding-block-start": 30,
         "padding-block-end": 30
       }
