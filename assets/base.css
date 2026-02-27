@@ -19,6 +19,19 @@ body {
 }
 
 :root {
+  /* ── Brand Tokens (Octopus CI) ── */
+  --brand-cyan:        #17a9bb;
+  --brand-cyan-vv:     #14c9df;
+  --brand-bg:          #f3f7fa;
+  --brand-grad-1:      linear-gradient(140deg, rgba(241,236,255,1) 22%, rgba(235,252,255,0.85) 45%, rgba(236,255,254,0.81) 74%, rgba(242,255,250,1) 100%);
+  --brand-grad-2:      linear-gradient(177deg, #c3f9ff 0%, #c78ff2 100%);
+  --oc-purple:         #A78BFA;
+  --oc-purple-d:       #7C3AED;
+  --oc-purple-l:       #F3F0FF;
+  --oc-purple-rgb:     124, 58, 237;
+  --oc-grad-btn:       linear-gradient(90deg, #14c9df, #17a9bb, #818CF8, #A78BFA);
+  --oc-grad-btn-rev:   linear-gradient(90deg, #A78BFA, #818CF8, #17a9bb, #14c9df);
+
   --hover-lift-amount: 4px;
   --hover-scale-amount: 1.03;
   --hover-subtle-zoom-amount: 1.015;
@@ -1430,7 +1443,7 @@ input:not(:placeholder-shown)::placeholder {
 .button,
 button.shopify-payment-button__button--unbranded {
   --button-color: var(--color-primary-button-text);
-  --button-background-color: var(--gradient-primary-button-background);
+  --button-background-color: var(--oc-grad-btn);
   --button-border-color: var(--color-primary-button-border);
   --button-border-width: var(--style-border-width-primary);
 }
@@ -1444,7 +1457,7 @@ button.shopify-payment-button__button--unbranded:hover:not([disabled]) {
 
 .button-secondary {
   --button-color: var(--color-secondary-button-text);
-  --button-background-color: var(--gradient-secondary-button-background);
+  --button-background-color: var(--brand-grad-2);
   --button-border-color: var(--color-secondary-button-border);
   --button-border-width: var(--style-border-width-secondary);
 }
