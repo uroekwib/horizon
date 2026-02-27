@@ -458,8 +458,8 @@
             "id": "primary_button_background",
             "label": "t:settings.background",
             "default": "#000F9F",
-            "alpha": true,
-            "info": "Example: linear-gradient(145deg, #c3f9ff 0%, #c78ff2 100%);"
+            "alpha": true
+            
           },
           {
             "type": "color_background",
