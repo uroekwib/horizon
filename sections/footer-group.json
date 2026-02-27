@@ -17,12 +17,12 @@
         "group_H6VpwJ": {
           "type": "group",
           "settings": {
-            "content_direction": "row",
+            "content_direction": "column",
             "vertical_on_mobile": true,
             "horizontal_alignment": "space-between",
             "vertical_alignment": "flex-start",
             "align_baseline": false,
-            "horizontal_alignment_flex_direction_column": "flex-start",
+            "horizontal_alignment_flex_direction_column": "center",
             "vertical_alignment_flex_direction_column": "center",
             "gap": 20,
             "width": "custom",
@@ -107,7 +107,7 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "<h3><a href=\"https://www.octopus.co.th/pages/contact-map\" target=\"_blank\" title=\"Contact Us - ติดต่อเรา\"><strong>ติดต่อเรา</strong></a></h3><p>บริษัท ออคโทพุส มีเดีย โซลูชันส์ จำกัด</p><p>18/1 รามอินทรา 23 อนุสาวรีย์ บางเขน กทม. 10220</p><p>VAT: ‍0-1055-56091-67-5</p><p>Email: info@octopus.co.th</p><p>Line: @octopusdesign</p><p>Tel: <a href=\"tel:+66817768329\" target=\"_blank\" title=\"tel:+66817768329\">081 776 8329</a> | <a href=\"tel:+66613539555\" title=\"tel:+66613539555\">061 353 9555 </a>| <a href=\"tel:+66613539555\" title=\"tel:+66980969294\">098 096 9294</a></p>",
+                "text": "<h3><a href=\"https://www.octopus.co.th/pages/contact-map\" target=\"_blank\" title=\"Contact Us - ติดต่อเรา\"><strong>ติดต่อเรา</strong></a></h3><p>บริษัท ออคโทพุส มีเดีย โซลูชันส์ จำกัด</p><p>18/1 รามอินทรา 23 อนุสาวรีย์ บางเขน กทม. 10220</p><p>VAT: ‍0-1055-56091-67-5</p><p>Email: info@octopus.co.th</p><p>Line: @octopusdesign</p><p>Tel: <a href=\"tel:+66817768329\" target=\"_blank\" title=\"tel:+66817768329\">081 776 8329</a> | <a href=\"tel:+66613539555\" title=\"tel:+66613539555\">061 353 9555 </a>| <a href=\"tel:+66613539555\" title=\"tel:+66980969294\">098 096 9294</a></p>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
@@ -144,7 +144,7 @@
       "settings": {
         "section_width": "page-width",
         "gap": 20,
-        "color_scheme": "scheme-purple-blue-gradient",
+        "color_scheme": "scheme-gradient-pastel",
         "padding-block-start": 30,
         "padding-block-end": 30
       }
