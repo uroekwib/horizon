@@ -56,7 +56,7 @@
             "text_LWt8Pz": {
               "type": "text",
               "settings": {
-                "text": "<h3>กลุ่มสินค้าและโมบราการในเครือ</h3><p>ABCme<br/>Barrier Bulletin<br/>Alpha Digital signage<br/>Imagine Creation<br/>Octopus Media Solutions</p>",
+                "text": "<h2>กลุ่มสินค้าและในบริการในเครือ</h2><p><a href=\"https://abcmixsign.shop/\"><strong>ABCmix อักษรไฟสำเร็จรูป</strong></a></p><p><a href=\"https://barrisol-thailand.com/\"><strong>Barrisol ฝ้าขึงผ้า กล่องไฟผ้า</strong></a></p><p><a href=\"https://alphadigital.co/\"><strong>Alpha Digital signage จอ LED</strong></a></p><p><a href=\"https://www.facebook.com/lmagine.creation/?locale=th_TH\"><strong>Imagine Creation ออกแบบ ตกแต่ง ก่อสร้าง</strong></a></p><p><a href=\"https://www.octopus.co.th/\"><strong>Octopus Media Solutions ป้ายและสื่อสิ่งพิมพ์</strong></a></p>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
@@ -81,7 +81,7 @@
             "text_f9CFLH": {
               "type": "text",
               "settings": {
-                "text": "<h3>การให้บริการ</h3><p>บริการออกแบบ<br/>บริการผลิต<br/>บริการติดตั้ง<br/>บริการบำรุงรักษา<br/>บริการให้คำปรึกษา</p>",
+                "text": "<h2>การให้บริการ</h2><p><a href=\"https://www.octopus.co.th/pages/how-to-order\">วิธีการสั่งซื้อ</a></p><p><a href=\"https://www.octopus.co.th/\">วิธีเตรียมไฟล์ artwork</a></p><p><a href=\"https://www.octopus.co.th/blogs/support/policies\">นโยบายการให้บริการ</a></p><p><a href=\"https://drive.google.com/file/d/1aTDN2yQ_vlC-xUxWJjzUKuPrPlvCCe_9/view?usp=sharing\">ใบภพ.20 หนังสือรับรองบริษัท</a></p><p><a href=\"https://www.octopus.co.th/blogs/product/apply-job\">ร่วมงานกับเรา</a></p>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
