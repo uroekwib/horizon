@@ -17,7 +17,7 @@
         "group_H6VpwJ": {
           "type": "group",
           "settings": {
-            "content_direction": "column",
+            "content_direction": "row",
             "vertical_on_mobile": true,
             "horizontal_alignment": "space-between",
             "vertical_alignment": "flex-start",
@@ -161,14 +161,6 @@
           },
           "blocks": {}
         },
-        "footer_policy_list_VCdnpa": {
-          "type": "footer-policy-list",
-          "settings": {
-            "font_size": "0.75rem",
-            "case": "none"
-          },
-          "blocks": {}
-        },
         "social_links_Ew63Kq": {
           "type": "social-links",
           "settings": {
@@ -191,7 +183,6 @@
       },
       "block_order": [
         "footer_copyright_jweRK8",
-        "footer_policy_list_VCdnpa",
         "social_links_Ew63Kq"
       ],
       "name": "t:names.utilities",
@@ -199,7 +190,7 @@
         "section_width": "page-width",
         "gap": 24,
         "divider_thickness": 0,
-        "color_scheme": "",
+        "color_scheme": "scheme-5",
         "padding-block-start": 20,
         "padding-block-end": 48
       }
