@@ -394,8 +394,8 @@
             "alpha": true
           },
           {
-            "type": "color_background",
-            "id": "background_gradient",
+            "type": "color",
+            "id": "background-gradient",
             "label": "Background gradient",
             "info": "Optional. Overrides background color when set."
           },
