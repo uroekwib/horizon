@@ -14,13 +14,92 @@
     "footer_m9NzUG": {
       "type": "footer",
       "blocks": {
+        "text_fN77jp": {
+          "type": "text",
+          "name": "t:names.text",
+          "settings": {
+            "text": "<h3>กลุ่มสินค้าและในบริการในเครือ</h3><p><a href=\"https://abcmixsign.shop/\"><span style=\"text-decoration:underline\">ABCmix อักษรไฟสำเร็จรูป</span></a></p><p><a href=\"https://barrisol-thailand.com/\"><span style=\"text-decoration:underline\">Barrisol ฝ้าขึงผ้า กล่องไฟผ้า</span></a></p><p><a href=\"https://alphadigital.co/\"><span style=\"text-decoration:underline\">Alpha Digital signage จอ LED</span></a></p><p><a href=\"https://www.facebook.com/lmagine.creation/?locale=th_TH\"><span style=\"text-decoration:underline\">Imagine Creation ออกแบบ ตกแต่ง ก่อสร้าง</span></a></p><p><a href=\"https://www.octopus.co.th/\">Octopus Media Solutions ป้ายและสื่อสิ่งพิมพ์</a></p>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "rte",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "text_zGDKhV": {
+          "type": "text",
+          "name": "t:names.text",
+          "settings": {
+            "text": "<h3>การให้บริการ</h3><p><a href=\"https://www.octopus.co.th/pages/how-to-order\">วิธีการสั่งซื้อ</a></p><p><a href=\"https://www.octopus.co.th/\">วิธีเตรียมไฟล์ artwork</a></p><p><a href=\"https://www.octopus.co.th/blogs/support/policies\">นโยบายการให้บริการ</a></p><p><a href=\"https://drive.google.com/file/d/1aTDN2yQ_vlC-xUxWJjzUKuPrPlvCCe_9/view?usp=sharing\">ใบภพ.20 หนังสือรับรองบริษัท</a></p><p><a href=\"https://www.octopus.co.th/blogs/product/apply-job\">ร่วมงานกับเรา</a></p>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "rte",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "text_C9knYC": {
+          "type": "text",
+          "name": "t:names.text",
+          "settings": {
+            "text": "<h3><a href=\"https://www.octopus.co.th/pages/contact-map\" target=\"_blank\" title=\"Contact Us - ติดต่อเรา\"><strong>ติดต่อเรา</strong></a></h3><p>บริษัท ออคโทพุส มีเดีย โซลูชันส์ จำกัด</p><p>18/1 รามอินทรา 23 อนุสาวรีย์ บางเขน กทม. 10220</p><p>VAT: ‍0-1055-56091-67-5</p><p>Email: info@octopus.co.th</p><p>Line: @octopusdesign</p><p>Tel: <a href=\"tel:+66817768329\" target=\"_blank\" title=\"tel:+66817768329\">081 776 8329</a> | <a href=\"tel:+66613539555\" title=\"tel:+66613539555\">061 353 9555 </a>| <a href=\"tel:+66613539555\" title=\"tel:+66980969294\">098 096 9294</a></p>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "rte",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
         "group_H6VpwJ": {
           "type": "group",
+          "disabled": true,
           "settings": {
-            "content_direction": "column",
+            "content_direction": "row",
             "vertical_on_mobile": true,
-            "horizontal_alignment": "flex-start",
-            "vertical_alignment": "center",
+            "horizontal_alignment": "space-between",
+            "vertical_alignment": "flex-start",
             "align_baseline": false,
             "horizontal_alignment_flex_direction_column": "flex-start",
             "vertical_alignment_flex_direction_column": "center",
@@ -111,13 +190,14 @@
         },
         "email_signup_crihX7": {
           "type": "email-signup",
+          "disabled": true,
           "settings": {
             "width": "fill",
             "custom_width": 100,
             "inherit_color_scheme": true,
+            "color_scheme": "",
             "heading": "",
             "heading_preset": "h3",
-            "color_scheme": "",
             "border_style": "all",
             "border_width": 1,
             "border_radius": 100,
@@ -136,13 +216,19 @@
         }
       },
       "block_order": [
+        "text_fN77jp",
+        "text_zGDKhV",
+        "text_C9knYC",
         "group_H6VpwJ",
         "email_signup_crihX7"
+      ],
+      "custom_css": [
+        "a {text-decoration: none; color: var(--color-foreground);}"
       ],
       "name": "t:names.footer",
       "settings": {
         "section_width": "page-width",
-        "gap": 20,
+        "gap": 10,
         "color_scheme": "scheme-1",
         "padding-block-start": 30,
         "padding-block-end": 30
@@ -162,6 +248,7 @@
         },
         "footer_policy_list_VCdnpa": {
           "type": "footer-policy-list",
+          "disabled": true,
           "settings": {
             "font_size": "0.75rem",
             "case": "none"
@@ -198,9 +285,9 @@
         "section_width": "page-width",
         "gap": 24,
         "divider_thickness": 0,
-        "color_scheme": "",
-        "padding-block-start": 20,
-        "padding-block-end": 48
+        "color_scheme": "scheme-5",
+        "padding-block-start": 8,
+        "padding-block-end": 8
       }
     }
   },
