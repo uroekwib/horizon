@@ -18,7 +18,7 @@
           "type": "text",
           "name": "t:names.text",
           "settings": {
-            "text": "<h3>กลุ่มสินค้าและในบริการในเครือ</h3><p><a href=\"https://abcmixsign.shop/\"><span style=\"text-decoration:underline\">ABCmix อักษรไฟสำเร็จรูป</span></a></p><p><a href=\"https://barrisol-thailand.com/\"><span style=\"text-decoration:underline\">Barrisol ฝ้าขึงผ้า กล่องไฟผ้า</span></a></p><p><a href=\"https://alphadigital.co/\"><span style=\"text-decoration:underline\">Alpha Digital signage จอ LED</span></a></p><p><a href=\"https://www.facebook.com/lmagine.creation/?locale=th_TH\"><span style=\"text-decoration:underline\">Imagine Creation ออกแบบ ตกแต่ง ก่อสร้าง</span></a></p><p><a href=\"https://www.octopus.co.th/\">Octopus Media Solutions ป้ายและสื่อสิ่งพิมพ์</a></p>",
+            "text": "<h3>กลุ่มสินค้าและในบริการในเครือ</h3><p><a href=\"https://abcmixsign.shop/\">ABCmix อักษรไฟสำเร็จรูป</a></p><p><a href=\"https://barrisol-thailand.com/\">Barrisol ฝ้าขึงผ้า กล่องไฟผ้า</a></p><p><a href=\"https://alphadigital.co/\">Alpha Digital signage จอ LED</a></p><p><a href=\"https://www.facebook.com/lmagine.creation/?locale=th_TH\">Imagine Creation ออกแบบ ตกแต่ง ก่อสร้าง</a></p><p><a href=\"https://www.octopus.co.th/\">Octopus Media Solutions ป้ายและสื่อสิ่งพิมพ์</a></p>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
@@ -223,7 +223,8 @@
         "email_signup_crihX7"
       ],
       "custom_css": [
-        "a {text-decoration: none; color: var(--color-foreground);}"
+        "a {text-decoration: none; color: var(--color-foreground);}",
+        "h3 {padding-bottom: 5px; padding-top: 20px;}"
       ],
       "name": "t:names.footer",
       "settings": {
