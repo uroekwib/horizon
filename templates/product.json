@@ -34,7 +34,7 @@
             "zoom": true,
             "video_loop": true,
             "hide_variants": true,
-            "padding-block-start": 28,
+            "padding-block-start": 0,
             "padding-block-end": 0,
             "padding-inline-start": 0,
             "padding-inline-end": 0
@@ -68,40 +68,6 @@
             "padding-inline-end": 0
           },
           "blocks": {
-            "ai_gen_block_b500d17_JUFU7w": {
-              "type": "ai_gen_block_b500d17",
-              "settings": {
-                "show_home_icon": true,
-                "home_text": "All products",
-                "separator": "/",
-                "padding_top": 0,
-                "padding_bottom": 0,
-                "padding_left": 0,
-                "padding_right": 0,
-                "margin_top": 0,
-                "margin_bottom": 0,
-                "margin_left": 0,
-                "margin_right": 0,
-                "padding_top_mobile": 0,
-                "padding_bottom_mobile": 0,
-                "padding_left_mobile": 0,
-                "padding_right_mobile": 0,
-                "margin_top_mobile": 0,
-                "margin_bottom_mobile": 0,
-                "margin_left_mobile": 0,
-                "margin_right_mobile": 0,
-                "font_size": 14,
-                "spacing": 8,
-                "desktop_width_percent": 100,
-                "text_color": "#000000",
-                "link_color": "#000000cf",
-                "link_hover_color": "#000000",
-                "current_color": "#00000087",
-                "separator_color": "#00000087",
-                "underline_on_hover": false
-              },
-              "blocks": {}
-            },
             "group_icgrde": {
               "type": "group",
               "name": "Header",
@@ -173,7 +139,7 @@
                   "settings": {
                     "show_sale_price_first": true,
                     "show_installments": false,
-                    "show_tax_info": true,
+                    "show_tax_info": false,
                     "type_preset": "paragraph",
                     "width": "100%",
                     "alignment": "left",
@@ -190,8 +156,9 @@
                   },
                   "blocks": {}
                 },
-                "ai_gen_block_d819489_CMKJXK": {
+                "ai_gen_block_d819489_9JNN96": {
                   "type": "ai_gen_block_d819489",
+                  "name": "Contact link",
                   "settings": {
                     "line_icon": "shopify://shop_images/LINE_Brand_icon_c4c9b72a-a3eb-4670-bf1d-dcfeb1940ea2.png",
                     "line_text": "ติดต่อไลน์สะดวก",
@@ -210,7 +177,7 @@
               "block_order": [
                 "text_xrnftG",
                 "price_tVjtKg",
-                "ai_gen_block_d819489_CMKJXK"
+                "ai_gen_block_d819489_9JNN96"
               ]
             },
             "divider_VJhene": {
@@ -240,6 +207,7 @@
             },
             "buy_buttons_eYQEYi": {
               "type": "buy-buttons",
+              "disabled": true,
               "settings": {
                 "stacking": true,
                 "show_pickup_availability": false,
@@ -273,6 +241,149 @@
               },
               "block_order": []
             },
+            "accordion_XTDkDQ": {
+              "type": "accordion",
+              "name": "t:names.accordion",
+              "settings": {
+                "icon": "caret",
+                "dividers": true,
+                "type_preset": "h6",
+                "inherit_color_scheme": true,
+                "color_scheme": "",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "accordion_row_iktznL": {
+                  "type": "_accordion-row",
+                  "settings": {
+                    "heading": "นโยบายการคืนสินค้า",
+                    "open_by_default": true,
+                    "icon": "none",
+                    "width": 20
+                  },
+                  "blocks": {
+                    "text_pcHabN": {
+                      "type": "text",
+                      "settings": {
+                        "text": "<p>เป้าหมายของเราคือเพื่อให้ลูกค้าทุกคนพึงพอใจกับการซื้อสินค้าอย่างเต็มที่ หากไม่เป็นเช่นนั้น โปรดแจ้งให้เราทราบ แล้วเราจะพยายามอย่างเต็มที่เพื่อร่วมมือกับคุณในการแก้ไขปัญหา</p>",
+                        "width": "100%",
+                        "max_width": "normal",
+                        "alignment": "left",
+                        "type_preset": "rte",
+                        "font": "var(--font-body--family)",
+                        "font_size": "1rem",
+                        "line_height": "normal",
+                        "letter_spacing": "normal",
+                        "case": "none",
+                        "wrap": "pretty",
+                        "color": "var(--color-foreground)",
+                        "background": false,
+                        "background_color": "#00000026",
+                        "corner_radius": 0,
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0
+                      },
+                      "blocks": {}
+                    }
+                  },
+                  "block_order": [
+                    "text_pcHabN"
+                  ]
+                },
+                "accordion_row_64YnxG": {
+                  "type": "_accordion-row",
+                  "settings": {
+                    "heading": "การจัดส่ง",
+                    "open_by_default": false,
+                    "icon": "none",
+                    "width": 20
+                  },
+                  "blocks": {
+                    "text_njJcBt": {
+                      "type": "text",
+                      "settings": {
+                        "text": "<p>เราจะดำเนินการจัดส่งคำสั่งซื้อของคุณโดยเร็วที่สุด เมื่อคำสั่งซื้อของคุณถูกจัดส่งแล้ว คุณจะได้รับอีเมลพร้อมข้อมูลเพิ่มเติม ระยะเวลาในการจัดส่งจะแตกต่างกันไปขึ้นอยู่กับตำแหน่งที่ตั้งของคุณ</p>",
+                        "width": "100%",
+                        "max_width": "normal",
+                        "alignment": "left",
+                        "type_preset": "rte",
+                        "font": "var(--font-body--family)",
+                        "font_size": "1rem",
+                        "line_height": "normal",
+                        "letter_spacing": "normal",
+                        "case": "none",
+                        "wrap": "pretty",
+                        "color": "var(--color-foreground)",
+                        "background": false,
+                        "background_color": "#00000026",
+                        "corner_radius": 0,
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0
+                      },
+                      "blocks": {}
+                    }
+                  },
+                  "block_order": [
+                    "text_njJcBt"
+                  ]
+                },
+                "accordion_row_ACxkmx": {
+                  "type": "_accordion-row",
+                  "settings": {
+                    "heading": "การผลิต",
+                    "open_by_default": false,
+                    "icon": "none",
+                    "width": 20
+                  },
+                  "blocks": {
+                    "text_KxHmg4": {
+                      "type": "text",
+                      "settings": {
+                        "text": "<p>สินค้าของเราผลิตทั้งในประเทศและทั่วโลก เราคัดเลือกพาร์ทเนอร์การผลิตของเราอย่างพิถีพิถันเพื่อให้แน่ใจว่าสินค้าของเรามีคุณภาพสูงและราคายุติธรรม</p>",
+                        "width": "100%",
+                        "max_width": "normal",
+                        "alignment": "left",
+                        "type_preset": "rte",
+                        "font": "var(--font-body--family)",
+                        "font_size": "1rem",
+                        "line_height": "normal",
+                        "letter_spacing": "normal",
+                        "case": "none",
+                        "wrap": "pretty",
+                        "color": "var(--color-foreground)",
+                        "background": false,
+                        "background_color": "#00000026",
+                        "corner_radius": 0,
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0
+                      },
+                      "blocks": {}
+                    }
+                  },
+                  "block_order": [
+                    "text_KxHmg4"
+                  ]
+                }
+              },
+              "block_order": [
+                "accordion_row_iktznL",
+                "accordion_row_64YnxG",
+                "accordion_row_ACxkmx"
+              ]
+            },
             "text_aEtTtq": {
               "type": "text",
               "name": "Product description",
@@ -301,11 +412,11 @@
             }
           },
           "block_order": [
-            "ai_gen_block_b500d17_JUFU7w",
             "group_icgrde",
             "divider_VJhene",
             "variant_picker_R3rGDr",
             "buy_buttons_eYQEYi",
+            "accordion_XTDkDQ",
             "text_aEtTtq"
           ]
         }
