@@ -140,7 +140,9 @@
       "block_order": [
         "group_H6VpwJ"
       ],
-      "custom_css": [],
+      "custom_css": [
+        ".footer {background: linear-gradient(140deg, rgba(241, 236, 255, 1) 22%, rgba(235, 252, 255, 0.85) 45%, rgba(236, 255, 254, 0.81) 74%, rgba(242, 255, 250, 1) 100%) !important;}"
+      ],
       "name": "t:names.footer",
       "settings": {
         "section_width": "page-width",
