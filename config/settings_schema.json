@@ -5,10 +5,7 @@
     "theme_version": "3.4.0",
     "theme_author": "Shopify",
     "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
-    "theme_support_url": "https://support.shopify.com/"
-  },
-  {
-    "name": "Dawn Legacy & Custom",
+    "theme_support_url": "https://support.shopify.com/",
     "settings": [
       {
         "type": "header",
@@ -85,10 +82,6 @@
         "default": 0
       },
       {
-        "type": "header",
-        "content": "Media"
-      },
-      {
         "type": "range",
         "id": "media_border_thickness",
         "min": 0,
@@ -157,10 +150,6 @@
         "unit": "px",
         "label": "t:settings_schema.global.settings.blur.label",
         "default": 0
-      },
-      {
-        "type": "header",
-        "content": "Popup"
       },
       {
         "type": "range",
@@ -233,10 +222,6 @@
         "default": 0
       },
       {
-        "type": "header",
-        "content": "Drawer"
-      },
-      {
         "type": "range",
         "id": "drawer_border_thickness",
         "min": 0,
@@ -287,10 +272,6 @@
         "default": 0
       },
       {
-        "type": "header",
-        "content": "Badges"
-      },
-      {
         "type": "color_scheme",
         "id": "sale_badge_color_scheme",
         "label": "t:settings_schema.badges.settings.sale_badge_color_scheme.label",
@@ -301,10 +282,6 @@
         "id": "sold_out_badge_color_scheme",
         "label": "t:settings_schema.badges.settings.sold_out_badge_color_scheme.label",
         "default": "scheme-3"
-      },
-      {
-        "type": "header",
-        "content": "Brand information"
       },
       {
         "type": "inline_richtext",
@@ -396,11 +373,11 @@
         "id": "color_schemes",
         "definition": [
           {
-            "type": "color",
+            "type": "color_background",
             "id": "background",
             "label": "t:settings.background",
             "default": "#FFFFFF",
-            "alpha": true
+            "info": "Supports solid color or CSS gradient (e.g. linear-gradient(...))."
           },
           {
             "type": "color",
@@ -457,6 +434,12 @@
             "info": "Example: linear-gradient(145deg, #c3f9ff 0%, #c78ff2 100%);"
           },
           {
+            "type": "color_background",
+            "id": "primary_button_gradient",
+            "label": "Background gradient",
+            "info": "Optional. Overrides background color when set."
+          },
+          {
             "type": "color",
             "id": "primary_button_text",
             "label": "t:settings.text",
@@ -501,6 +484,12 @@
             "label": "t:settings.background",
             "default": "#FFFFFF",
             "alpha": true
+          },
+          {
+            "type": "color_background",
+            "id": "secondary_button_gradient",
+            "label": "Background gradient",
+            "info": "Optional. Overrides background color when set."
           },
           {
             "type": "color",
@@ -674,6 +663,22 @@
           "on_secondary_button": "secondary_button_text",
           "secondary_button_border": "secondary_button_border"
         }
+      },
+      {
+        "type": "header",
+        "content": "Octopus gradients"
+      },
+      {
+        "type": "color_background",
+        "id": "octopus_gradient_hero",
+        "label": "Hero / Page background gradient",
+        "default": "linear-gradient(140deg, rgba(241,236,255,1) 22%, rgba(235,252,255,0.85) 45%, rgba(236,255,254,0.81) 74%, rgba(242,255,250,1) 100%)"
+      },
+      {
+        "type": "color_background",
+        "id": "octopus_gradient_announce",
+        "label": "Announce bar gradient",
+        "default": "linear-gradient(90deg, #0ea5b8 0%, #17a9bb 25%, #818CF8 60%, #9b6fd4 100%)"
       }
     ]
   },

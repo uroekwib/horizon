@@ -22,7 +22,6 @@
         --color-background: rgb({{ scheme.settings.background.rgba }});
         /* RGB values only to apply different opacities - Relative color values are not supported in iOS < 16.4 */
         --color-background-rgb: {{ scheme.settings.background.rgb }};
-        --gradient-background: {% if scheme.settings.background_gradient != blank %}{{ scheme.settings.background_gradient }}{% else %}{{ scheme.settings.background }}{% endif %};
         --opacity-5-15: {{ opacity_5_15 }};
         --opacity-10-25: {{ opacity_10_25 }};
         --opacity-35-55: {{ opacity_35_55 }};
@@ -42,14 +41,12 @@
         --color-shadow-rgb: {{ scheme.settings.shadow.rgb }};
         --color-primary-button-text: rgb({{ scheme.settings.primary_button_text.rgba }});
         --color-primary-button-background: rgb({{ scheme.settings.primary_button_background.rgba }});
-        --gradient-primary-button-background: {% if scheme.settings.primary_button_gradient != empty %}{{ scheme.settings.primary_button_gradient }}{% else %}{{ scheme.settings.primary_button_background }}{% endif %};
         --color-primary-button-border: rgb({{ scheme.settings.primary_button_border.rgba }});
         --color-primary-button-hover-text: rgb({{ scheme.settings.primary_button_hover_text.rgba }});
         --color-primary-button-hover-background: rgb({{ scheme.settings.primary_button_hover_background.rgba }});
         --color-primary-button-hover-border: rgb({{ scheme.settings.primary_button_hover_border.rgba }});
         --color-secondary-button-text: rgb({{ scheme.settings.secondary_button_text.rgba }});
         --color-secondary-button-background: rgb({{ scheme.settings.secondary_button_background.rgba }});
-        --gradient-secondary-button-background: {% if scheme.settings.secondary_button_gradient != blank %}{{ scheme.settings.secondary_button_gradient }}{% else %}{{ scheme.settings.secondary_button_background }}{% endif %};
         --color-secondary-button-border: rgb({{ scheme.settings.secondary_button_border.rgba }});
         --color-secondary-button-hover-text: rgb({{ scheme.settings.secondary_button_hover_text.rgba }});
         --color-secondary-button-hover-background: rgb({{ scheme.settings.secondary_button_hover_background.rgba }});
