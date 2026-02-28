@@ -1,61 +1,1714 @@
-/* ── Brand Tokens (Octopus CI) ── */
+/* ============================================================
+   OCTOPUS MEDIA SOLUTIONS — HORIZON THEME
+   custom.css.liquid  |  Dawn → Horizon Migration
+   
+   §1  Font Loading (unicode-range dual-font)
+   §2  Horizon Variable Overrides
+   §3  Brand Tokens
+   §4  Typography
+   §5  Keyframe Animations
+   §6  Section Background Color Schemes
+   §7  Button System
+   §8  Utility Classes
+   §9  Components (language toggle, announce bar, cards, FAQ…)
+   §10 Dawn Legacy (GrandMenu, social icons, blog icons, ribbon…)
+   §11 Horizon Native Overrides (header, inputs, facets)
+   §12 Page-Specific (product, collection, header)
+   §13 Tables
+   §14 Scrollbar
+   §15 Media / Image Fixes
+   ============================================================ */
+
+
+/* ============================================================
+   §1  FONT LOADING — unicode-range dual-font
+   ทั้ง 2 font-face ใช้ชื่อ family เดียวกัน "Brand Font"
+   browser เลือกฟอนต์ตาม character เองอัตโนมัติ
+   ============================================================ */
+
+/* Google Sans — Latin & symbols */
 @font-face {
-  font-family: 'Google Sans';
+  font-family: 'Brand Font';
   src: url('{{ "GoogleSans-Regular.woff2" | asset_url }}') format('woff2');
-  font-weight: normal;
+  font-weight: 400;
   font-style: normal;
   font-display: swap;
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC,
+                 U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074,
+                 U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+                 U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Brand Font';
+  src: url('{{ "GoogleSans-Bold.woff2" | asset_url }}') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC,
+                 U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074,
+                 U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+                 U+FEFF, U+FFFD;
 }
 
+/* Noto Sans Thai — Thai script only */
 @font-face {
-  font-family: 'Noto Sans Thai';
-  src: url('{{ "NotoSansThai-Regular.woff" | asset_url }}') format('woff');
-  font-weight: normal;
+  font-family: 'Brand Font';
+  src: url('{{ "NotoSansThai-Regular.woff2" | asset_url }}') format('woff2'),
+       url('{{ "NotoSansThai-Regular.woff"  | asset_url }}') format('woff');
+  font-weight: 400;
   font-style: normal;
   font-display: swap;
+  text-rendering: optimizeSpeed;
+  unicode-range: U+0E00-U+0E7F;
+}
+@font-face {
+  font-family: 'Brand Font';
+  src: url('{{ "NotoSansThai-Bold.woff2" | asset_url }}') format('woff2'),
+       url('{{ "NotoSansThai-Bold.woff"  | asset_url }}') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0E00-U+0E7F;
 }
 
-@font-face {
-  font-family: 'Noto Sans Thai';
-  src: url('{{ "NotoSansThai-Bold.woff" | asset_url }}') format('woff');
-  font-weight: bold;
-  font-style: normal;
-  font-display: swap;
-}
+
+/* ============================================================
+   §2  HORIZON VARIABLE OVERRIDES
+   Map ตรงกับ settings_schema — อย่าย้ายไปที่อื่น
+   ============================================================ */
 
 :root {
-  --font-body-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
-  --font-heading-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
+  /* Primary color (Horizon maps นี้เป็น button / link color) */
+  --color-background:              255, 255, 255;
+  --color-foreground:              26, 32, 44;
+  --color-shadow:                  100, 100, 160;
+  --color-button:                  23, 169, 187;      /* CI anchor #17a9bb */
+  --color-button-text:             255, 255, 255;
+  --color-secondary-button:        243, 240, 255;     /* purple-l */
+  --color-secondary-button-text:   124, 58, 237;     /* purple-d */
+  --color-link:                    23, 169, 187;
 
-  --brand-cyan:        #17a9bb;
-  --brand-cyan-vv:     #14c9df;
-  --brand-bg:          #f3f7fa;
-  --brand-grad-1:      linear-gradient(140deg, rgba(241,236,255,1) 22%, rgba(235,252,255,0.85) 45%, rgba(236,255,254,0.81) 74%, rgba(242,255,250,1) 100%);
-  --brand-grad-2:      linear-gradient(177deg, #c3f9ff 0%, #c78ff2 100%);
-  --oc-purple:         #A78BFA;
-  --oc-purple-d:       #7C3AED;
-  --oc-purple-l:       #F3F0FF;
-  --oc-purple-rgb:     124, 58, 237;
-  --oc-grad-btn:       linear-gradient(90deg, #14c9df, #17a9bb, #818CF8, #A78BFA);
-  --oc-grad-btn-rev:   linear-gradient(90deg, #A78BFA, #818CF8, #17a9bb, #14c9df);
+  /* Border & Radius */
+  --media-radius:                  14px;
+  --product-card-corner-radius:    1.4rem;
+  --buttons-radius:                99px;
+  --inputs-radius:                 8px;
+
+  /* Layout */
+  --page-width:                    116rem;
+  --spacing-sections-desktop:      72px;
+  --spacing-sections-mobile:       48px;
+  --grid-desktop-vertical-spacing: 20px;
+  --grid-desktop-horizontal-spacing: 20px;
 }
 
-/* Button Overrides */
-.button,
-button.shopify-payment-button__button--unbranded {
-  --button-background-color: var(--oc-grad-btn) !important;
+
+/* ============================================================
+   §3  BRAND TOKENS (Octopus CI)
+   ============================================================ */
+
+:root {
+  /* ── Cyan Duo ──
+     #17a9bb = CI anchor  → text, badge, border, dark end of gradient
+     #14c9df = CI vivid   → glow, highlight, bright start of gradient
+     ห้ามใช้สีเข้มกว่า #17a9bb สำหรับ text                         */
+  --oc-cyan:             #17a9bb;
+  --oc-cyan-d:           #17a9bb;    /* text / badge — no darker */
+  --oc-cyan-vv:          #14c9df;    /* vivid — gradient / glow only */
+  --oc-cyan-l:           #e3f8fb;
+  --oc-cyan-rgb:         23, 169, 187;
+  --oc-cyan-vv-rgb:      20, 201, 223;
+
+  /* Aliases */
+  --brand-cyan:          #17a9bb;
+  --brand-cyan-vv:       #14c9df;
+  --brand-bg:            #f3f7fa;
+
+  /* ── Gradients ── */
+  --brand-grad-1:        linear-gradient(140deg, rgba(241,236,255,1) 22%, rgba(235,252,255,0.85) 45%, rgba(236,255,254,0.81) 74%, rgba(242,255,250,1) 100%);
+  --brand-grad-2:        linear-gradient(177deg, #c3f9ff 0%, #c78ff2 100%);
+  --oc-grad:             linear-gradient(120deg, #CCFBF1 0%, #E0E7FF 50%, #EDE9FE 100%);
+  --oc-grad-btn:         linear-gradient(90deg, #14c9df, #17a9bb, #818CF8, #A78BFA);
+  --oc-grad-btn-rev:     linear-gradient(90deg, #A78BFA, #818CF8, #17a9bb, #14c9df);
+  --oc-rainbow:          linear-gradient(90deg, #14c9df 0%, #17a9bb 28%, #818CF8 58%, #A78BFA 82%, #14c9df 100%);
+  --oc-rainbow-size:     300% 100%;
+
+  /* ── Purple ── */
+  --oc-purple:           #A78BFA;
+  --oc-purple-d:         #7C3AED;
+  --oc-purple-l:         #F3F0FF;
+  --oc-purple-rgb:       124, 58, 237;
+
+  /* ── Ink Scale ── */
+  --oc-ink:              #1A202C;
+  --oc-ink-70:           #374151;
+  --oc-ink-40:           #6B7280;
+  --oc-ink-15:           #E5E7EB;
+  --oc-ink-05:           #F9FAFB;
+
+  /* ── Glass / Blur ── */
+  --oc-glass:            rgba(255, 255, 255, 0.72);
+  --oc-glass-strong:     rgba(255, 255, 255, 0.90);
+  --oc-glass-subtle:     rgba(255, 255, 255, 0.45);
+  --oc-glass-border:     rgba(255, 255, 255, 0.55);
+  --oc-glass-border-subtle: rgba(200, 200, 240, 0.35);
+  --oc-blur:             blur(20px) saturate(160%);
+  --oc-blur-strong:      blur(28px) saturate(180%);
+
+  /* ── Shadow ── */
+  --oc-shadow-sm:        0 2px 16px rgba(100, 100, 160, 0.08);
+  --oc-shadow-md:        0 8px 32px rgba(100, 100, 160, 0.14);
+  --oc-shadow-lg:        0 20px 60px rgba(100, 100, 160, 0.18);
+  --oc-shadow-glow-cyan:   0 4px 20px rgba(20, 201, 223, 0.30), 0 1px 6px rgba(23, 169, 187, 0.20);
+  --oc-shadow-glow-purple: 0 4px 24px rgba(124, 58, 237, 0.3);
+
+  /* ── Radius ── */
+  --oc-radius-sm:        8px;
+  --oc-radius:           14px;
+  --oc-radius-lg:        22px;
+  --oc-radius-xl:        32px;
+  --oc-radius-pill:      999px;
+
+  /* ── Motion ── */
+  --oc-ease-expo:        cubic-bezier(0.16, 1, 0.3, 1);
+  --oc-ease-back:        cubic-bezier(0.34, 1.56, 0.64, 1);
+  --oc-ease-smooth:      cubic-bezier(0.4, 0, 0.2, 1);
+  --oc-dur-fast:         0.15s;
+  --oc-dur-base:         0.25s;
+  --oc-dur-slow:         0.45s;
+  --oc-dur-xslow:        0.75s;
+
+  /* ── Header ── */
+  --oc-header-h-hero:    220px;
+  --oc-header-h-slim:    64px;
+  --oc-announce-h:       40px;
 }
 
-.button-secondary {
-  --button-background-color: var(--brand-grad-2) !important;
+
+/* ============================================================
+   §4  TYPOGRAPHY
+   ============================================================ */
+
+/* ── Type Scale ── */
+:root {
+  --oc-text-xs:    0.75rem;
+  --oc-text-sm:    0.8125rem;   /* 13px */
+  --oc-text-base:  0.9375rem;   /* 15px */
+  --oc-text-md:    1rem;
+  --oc-text-lg:    1.125rem;
+  --oc-text-h4:    clamp(1rem,    1.8vw, 1.25rem);
+  --oc-text-h3:    clamp(1.125rem, 2vw,  1.5rem);
+  --oc-text-h2:    clamp(1.25rem,  2.5vw, 2rem);
+  --oc-text-h1:    clamp(1.75rem,  4vw,  3.125rem);
+  --oc-text-hero:  clamp(2rem,     5vw,  4rem);
 }
+
+/* ── Global Body ── */
+body, button, input, select, textarea {
+  font-family: 'Brand Font', sans-serif;
+}
+
+/* ── Mobile: Tahoma fallback สำหรับ performance ── */
+@media (max-width: 767px) {
+  html, body,
+  .c-menu-wrapper, .categories .c-menu-wrapper a,
+  .blog .c-menu-wrapper, .collection_link,
+  .sub_col_h3, .layout_block, .categories {
+    font-family: 'Brand Font', 'Tahoma', sans-serif;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+}
+
+/* ── Desktop: @supports ── */
+@media (min-width: 990px) {
+  @supports not (-webkit-touch-callout: none) {
+    body { font-family: 'Brand Font', sans-serif; }
+  }
+}
+
+/* ── Headings ── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Brand Font', sans-serif;
+  color: var(--oc-ink);
+  line-height: 1.25;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+h1 { font-size: var(--oc-text-h1); }
+h2 { font-size: var(--oc-text-h2); }
+h3 { font-size: var(--oc-text-h3); }
+h4 { font-size: var(--oc-text-h4); }
+
+/* ── Links ── */
+a {
+  text-decoration: none;
+  color: var(--oc-cyan-d);
+}
+
+/* ── Legacy font helpers ── */
+.tiny    { font-size: 1.2rem; line-height: 1.6rem; font-weight: 600; }
+.prod_h2 { font-size: 2.0rem; line-height: 3.2rem; }
+.prod_h4 { font-size: 2.0rem; line-height: 3.2rem; }
+.field__label {
+  font-size: 11px;
+  letter-spacing: 0;
+  font-weight: 550;
+  top: 13px;
+}
+
+
+/* ============================================================
+   §5  KEYFRAME ANIMATIONS
+   ============================================================ */
+
+@keyframes oc-rainbow-move {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes oc-rainbow-text {
+  0%   { background-position: 0% center; }
+  100% { background-position: 300% center; }
+}
+
+@keyframes oc-announce-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes oc-fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes oc-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes oc-scale-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes oc-float-in {
+  from { opacity: 0; transform: translateY(20px) scale(0.9); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes oc-orb-drift {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(30px, 20px) scale(1.06); }
+}
+
+/* Staggered card grid */
+.oc-card-grid > * {
+  animation: oc-fade-up 0.4s var(--oc-ease-expo) both;
+}
+.oc-card-grid > *:nth-child(1) { animation-delay: 0.04s; }
+.oc-card-grid > *:nth-child(2) { animation-delay: 0.08s; }
+.oc-card-grid > *:nth-child(3) { animation-delay: 0.12s; }
+.oc-card-grid > *:nth-child(4) { animation-delay: 0.16s; }
+.oc-card-grid > *:nth-child(5) { animation-delay: 0.20s; }
+.oc-card-grid > *:nth-child(6) { animation-delay: 0.24s; }
+.oc-card-grid > *:nth-child(7) { animation-delay: 0.28s; }
+.oc-card-grid > *:nth-child(8) { animation-delay: 0.32s; }
+.oc-card-grid > *:nth-child(9) { animation-delay: 0.36s; }
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+
+/* ============================================================
+   §6  SECTION BACKGROUND COLOR SCHEMES
+   ใช้ใน Horizon: section > .section-background.color-scheme-X
+   
+   1 = Pastel Glass    (default ส่วนใหญ่)
+   2 = White Clean     (product card, content)
+   3 = Cyan Soft       (highlight, featured)
+   4 = Rainbow Button  (CTA, promo banner)
+   ============================================================ */
 
 .section-background.color-scheme-1 {
-  background: linear-gradient(140deg, rgba(241, 236, 255, 1) 22%, rgba(235, 252, 255, 0.85) 45%, rgba(236, 255, 254, 0.81) 74%, rgba(242, 255, 250, 1) 100%) !important;
+  background: linear-gradient(
+    140deg,
+    rgba(241, 236, 255, 1)    22%,
+    rgba(235, 252, 255, 0.85) 45%,
+    rgba(236, 255, 254, 0.81) 74%,
+    rgba(242, 255, 250, 1)   100%
+  ) !important;
+}
+
+.section-background.color-scheme-2 {
+  background: #ffffff !important;
+}
+
+.section-background.color-scheme-3 {
+  background: linear-gradient(177deg, #c3f9ff 0%, #c78ff2 100%) !important;
 }
 
 .section-background.color-scheme-4 {
   background: var(--oc-grad-btn-rev) !important;
+  background-size: 200% 100% !important;
+  animation: oc-rainbow-move 8s ease infinite;
+}
+
+/* Color scheme text contrast fixes */
+.section-background.color-scheme-3,
+.section-background.color-scheme-4 {
+  color: var(--oc-ink) !important;
+}
+.section-background.color-scheme-4 a,
+.section-background.color-scheme-4 .button {
+  color: #fff !important;
+}
+
+
+/* ============================================================
+   §7  BUTTON SYSTEM
+   ============================================================ */
+
+/* ── Primary Button — CI gradient ── */
+.button,
+.button--primary,
+button.shopify-payment-button__button--unbranded {
+  border-radius: var(--oc-radius-pill) !important;
+  font-family: 'Brand Font', sans-serif;
+  font-weight: 600;
+  transition: transform var(--oc-dur-fast),
+              box-shadow var(--oc-dur-base),
+              background-position var(--oc-dur-base);
+}
+
+.button--primary,
+button.shopify-payment-button__button--unbranded {
+  background: var(--oc-grad-btn) !important;
+  background-size: 200% 100% !important;
+  color: #fff !important;
+  border: none !important;
+}
+.button--primary:hover,
+button.shopify-payment-button__button--unbranded:hover {
+  background-position: 100% 0 !important;
+  transform: translateY(-1px);
+  box-shadow: var(--oc-shadow-glow-cyan);
+}
+
+/* ── Secondary Button — pastel purple/cyan ── */
+.button--secondary,
+.button-secondary {
+  background: var(--brand-grad-2) !important;
+  color: var(--oc-ink) !important;
+  border-radius: var(--oc-radius-pill) !important;
+  border: none !important;
+}
+.button--secondary:hover,
+.button-secondary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--oc-shadow-glow-purple);
+}
+
+/* ── Utility gradient button class ── */
+.oc-btn-grad {
+  color: #fff;
+  background: var(--oc-grad-btn);
+  background-size: 200% 100%;
+  border: none;
+  border-radius: var(--oc-radius-pill);
+  padding: 10px 24px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-position var(--oc-dur-base) ease,
+              transform var(--oc-dur-fast) ease,
+              box-shadow var(--oc-dur-base) ease;
+}
+.oc-btn-grad:hover {
+  background-position: 100% 0;
+  transform: translateY(-1px);
+  box-shadow: var(--oc-shadow-glow-cyan);
+}
+
+/* ── Outline button ── */
+.oc-btn-outline {
+  background: #fff;
+  color: var(--oc-ink-70);
+  border: 1.5px solid var(--oc-ink-15);
+  border-radius: var(--oc-radius-pill);
+  padding: 10px 24px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color var(--oc-dur-base), color var(--oc-dur-base);
+}
+.oc-btn-outline:hover {
+  border-color: var(--oc-purple);
+  color: var(--oc-purple-d);
+}
+
+/* ── LINE CTA button ── */
+.oc-btn-line {
+  background: #06C755;
+  color: #fff;
+  border: none;
+  border-radius: var(--oc-radius-pill);
+  padding: 10px 24px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter var(--oc-dur-fast), transform var(--oc-dur-fast);
+}
+.oc-btn-line:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+/* ── Legacy gradient class ── */
+.buttongradient {
+  color: #252525;
+  background: linear-gradient(156deg, rgba(205,188,255,0.7) 0%, rgba(208,255,240,0.85) 100%);
+  font-weight: 600;
+  padding: 8px 15px;
+  border-radius: var(--oc-radius-pill);
+}
+
+
+/* ============================================================
+   §8  UTILITY CLASSES
+   ============================================================ */
+
+/* ── Display Helpers ── */
+@media (max-width: 749px) {
+  .oc-desktop-only, .only-desktop { display: none !important; }
+}
+@media (min-width: 750px) {
+  .oc-mobile-only, .only-mobile { display: none !important; }
+}
+@media (max-width: 989px) {
+  .oc-lg-only { display: none !important; }
+}
+
+/* ── Rainbow Text ── */
+.oc-rainbow-text {
+  background: var(--oc-rainbow);
+  background-size: var(--oc-rainbow-size);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: oc-rainbow-text 5s linear infinite;
+  display: inline-block;
+}
+
+/* ── Background helpers ── */
+.oc-bg-grad   { background: var(--oc-grad); }
+.oc-bg-grad-v { background: var(--brand-grad-1); }
+.oc-bg-glass {
+  background: var(--oc-glass);
+  backdrop-filter: var(--oc-blur);
+  -webkit-backdrop-filter: var(--oc-blur);
+  border: 1px solid var(--oc-glass-border-subtle);
+}
+
+/* ── Rainbow Highlight (replaces .rainbowBG) ── */
+.oc-highlight,
+.rainbowBG {
+  background: linear-gradient(108deg, rgba(223,213,254,0.7) 0%, rgba(215,252,240,0.7) 100%);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.rainbow-highlight-bg {
+  background: linear-gradient(108deg, rgba(223,213,254,0.7) 0%, rgba(215,252,240,0.7) 100%);
+  padding: 5px 8px;
+  margin: 0 5px;
+}
+
+/* ── Gray Box (replaces .grayBG) ── */
+.oc-box-gray,
+.grayBG {
+  color: var(--oc-ink);
+  background: #EAEDF2;
+  margin: 10px 0;
+  padding: 15px;
+  border-radius: var(--oc-radius-sm);
+}
+.grayBG p { margin: 8px 0; }
+
+/* ── White box ── */
+.whiteBG {
+  background: #fff;
+  margin: 0 10px 10px 10px;
+  padding: 0 15px 15px 15px;
+}
+
+/* ── Home paragraph box ── */
+.home-paragraph {
+  color: #262b30;
+  background-color: #EAEDF2;
+  font-size: 13px;
+  line-height: 26px;
+  margin: 10px;
+  padding: 15px;
+}
+
+/* ── Badges ── */
+.oc-badge-cyan {
+  background: var(--oc-cyan-l);
+  color: var(--oc-cyan-d);
+  border: 1px solid rgba(23, 169, 187, 0.3);
+  border-radius: var(--oc-radius-pill);
+  padding: 2px 10px;
+  font-size: var(--oc-text-xs);
+  font-weight: 600;
+  display: inline-block;
+}
+.oc-badge-purple {
+  background: var(--oc-purple-l);
+  color: var(--oc-purple-d);
+  border: 1px solid rgba(124, 58, 237, 0.25);
+  border-radius: var(--oc-radius-pill);
+  padding: 2px 10px;
+  font-size: var(--oc-text-xs);
+  font-weight: 600;
+  display: inline-block;
+}
+
+/* ── Dividers ── */
+.divline {
+  border-top: 0.5px none #EAEDF2;
+  border-bottom: 1px solid #EAEDF2;
+  display: block !important;
+}
+.head-line {
+  border-top: 0.5px none #EAEDF2;
+  border-bottom: 1px solid #EAEDF2;
+}
+
+/* ── RTE list ── */
+.rte li { list-style: initial; }
+
+/* ── Product card image ratio ── */
+.ratio { --ratio-percent: 75.241% !important; }
+
+/* ── Screen-reader only (GEO helper) ── */
+.oc-sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+
+/* ============================================================
+   §9  COMPONENTS
+   ============================================================ */
+
+/* ── §9a Language Toggle ── */
+.switch_language {
+  display: inline-flex;
+  align-items: center;
+}
+.switch_language .switch {
+  position: relative;
+  font-size: 13px;
+}
+.switch_language .check-toggle {
+  position: absolute;
+  visibility: hidden;
+}
+input[type="checkbox"] {
+  display: inline-block;
+  width: auto;
+  margin-right: .5rem;
+}
+.switch_language input.check-toggle-round-flat + label {
+  padding: 2px;
+  width: 75px;
+  height: 30px;
+  background-color: #f9fafc;
+  border-radius: 60px;
+  box-shadow: inset 0 0 4px rgba(0,0,0,0.15);
+}
+.switch_language .check-toggle + label {
+  display: block;
+  position: relative;
+  cursor: pointer;
+  outline: none;
+}
+.switch_language input.check-toggle-round-flat + label::before {
+  top: 2px; left: 2px; bottom: 2px; right: 2px;
+  border-radius: 60px;
+}
+.switch_language input.check-toggle-round-flat + label::before,
+.switch_language input.check-toggle-round-flat + label::after {
+  display: block;
+  position: absolute;
+  content: "";
+}
+.switch_language input.check-toggle-round-flat:checked + label::after {
+  margin-left: 36px;
+}
+.switch_language input.check-toggle-round-flat + label::after {
+  top: 3px; left: 3px; bottom: 3px;
+  width: 34px;
+  background-color: var(--oc-cyan-d);
+  border-radius: 52px;
+  transition: margin .2s;
+}
+.switch_language input.check-toggle-round-flat:checked ~ .on {
+  color: #707070;
+}
+.switch_language .switch > span.on {
+  padding-left: 5px;
+  color: #fff;
+}
+.switch_language .switch > span {
+  position: absolute;
+  top: 3px;
+  pointer-events: none;
+  text-transform: uppercase;
+  text-shadow: 0 1px 0 rgba(0,0,0,.06);
+  width: 45%;
+  text-align: center;
+}
+.switch_language input.check-toggle-round-flat:checked ~ .off {
+  color: #fff;
+}
+.switch_language .switch > span.off {
+  right: 0;
+  padding-right: 4px;
+  color: #707070;
+}
+
+
+/* ── §9b Announce Bar ── */
+.shopify-section-group-header-group .announcement-bar,
+.oc-announce-bar {
+  background: var(--brand-grad-2) !important;
+  background-size: 100% 200% !important;
+  animation: oc-announce-shift 8s ease-in-out infinite;
+  color: var(--oc-ink-70) !important;
+  border-bottom: 1px solid rgba(20, 201, 223, 0.15);
+  min-height: var(--oc-announce-h);
+}
+
+
+/* ── §9c Product Cards ── */
+.card-wrapper .card {
+  border-radius: var(--oc-radius-lg) !important;
+  border: 1px solid rgba(200, 200, 240, 0.3) !important;
+  box-shadow: var(--oc-shadow-sm);
+  transition: transform var(--oc-dur-slow) var(--oc-ease-expo),
+              box-shadow var(--oc-dur-slow) var(--oc-ease-expo),
+              border-color var(--oc-dur-slow) ease;
+  overflow: hidden;
+}
+.card-wrapper:hover .card {
+  transform: translateY(-6px);
+  box-shadow: var(--oc-shadow-md);
+  border-color: rgba(167, 139, 250, 0.4) !important;
+}
+
+
+/* ── §9d Breadcrumb (structured) ── */
+.oc-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--oc-text-xs);
+  color: var(--oc-ink-40);
+  flex-wrap: wrap;
+}
+.oc-breadcrumb a { color: var(--oc-ink-40); text-decoration: none; }
+.oc-breadcrumb a:hover { color: var(--oc-cyan-d); }
+.oc-breadcrumb-sep { color: var(--oc-ink-15); }
+
+
+/* ── §9e FAQ (GEO / rich snippet) ── */
+.oc-faq-item { border-bottom: 1px solid var(--oc-ink-15); }
+.oc-faq-question {
+  font-weight: 600;
+  color: var(--oc-ink);
+  padding: 16px 0;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.oc-faq-answer {
+  color: var(--oc-ink-70);
+  font-size: var(--oc-text-base);
+  line-height: 1.75;
+  padding-bottom: 16px;
+}
+
+
+/* ── §9f Sticky Contact Bar ── */
+.oc-sticky-contacts {
+  position: fixed;
+  right: 0;
+  bottom: 120px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 0;
+  width: 50px;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+  background: linear-gradient(108deg, rgba(223,213,254,0.7) 0%, rgba(215,252,240,0.7) 100%);
+  backdrop-filter: var(--oc-blur);
+  -webkit-backdrop-filter: var(--oc-blur);
+  align-items: center;
+}
+.oc-sticky-btn {
+  width: 40px; height: 45px;
+  border-radius: 50%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: block;
+  cursor: pointer;
+  position: relative;
+}
+.oc-sticky-divider {
+  width: 28px; height: 1px;
+  background: var(--oc-glass-border);
+}
+@media (max-width: 749px) {
+  .oc-sticky-contacts {
+    bottom: 0;
+    right: 0; left: 0;
+    flex-direction: row;
+    justify-content: center;
+    border-radius: 0;
+    border-top: 1px solid var(--oc-ink-15);
+    padding: 6px 16px;
+    width: 100%;
+    height: 60px;
+  }
+  .oc-sticky-divider { width: 1px; height: 28px; margin: 0 4px; }
+}
+
+/* Legacy social wrapper (Dawn) */
+.position-fixed.social-wrapper.bottom_social {
+  padding: 10px 0;
+  bottom: 125px !important;
+  width: 50px;
+  height: 195px;
+  position: fixed;
+  right: 0;
+  z-index: 999;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+  justify-content: center;
+  align-items: stretch;
+  margin-right: 0;
+  background: linear-gradient(108deg, rgba(223,213,254,0.7) 0%, rgba(215,252,240,0.7) 100%);
+  backdrop-filter: blur(2rem);
+  -webkit-backdrop-filter: blur(2rem);
+}
+@media (max-width: 749px) {
+  .position-fixed.social-wrapper.bottom_social {
+    padding-top: 8px;
+    bottom: 0 !important;
+    width: 100%;
+    height: 60px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    display: flex;
+  }
+}
+@media (max-width: 600px) {
+  .position-fixed.social-wrapper.bottom_social {
+    display: flex;
+    height: 70px;
+  }
+}
+
+/* ── §9g Background Blobs (decorative) ── */
+.oc-bg-blob {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(70px);
+  pointer-events: none;
+  z-index: 0;
+  animation: oc-orb-drift 14s ease-in-out infinite alternate;
+}
+.oc-bg-blob-1 {
+  width: 700px; height: 700px;
+  top: -150px; left: -120px;
+  background: radial-gradient(circle, rgba(195,249,255,0.5), transparent 70%);
+}
+.oc-bg-blob-2 {
+  width: 600px; height: 600px;
+  top: 25%; right: -180px;
+  background: radial-gradient(circle, rgba(199,143,242,0.2), transparent 70%);
+  animation-delay: -6s;
+}
+.oc-bg-blob-3 {
+  width: 500px; height: 500px;
+  bottom: 15%; left: 25%;
+  background: radial-gradient(circle, rgba(20,201,223,0.16), transparent 70%);
+  animation-delay: -10s;
+}
+
+
+/* ============================================================
+   §10 DAWN LEGACY — carry-over from custom.css
+   ============================================================ */
+
+/* ── §10a Header (Dawn) ── */
+.header__heading-link { padding: 0; }
+
+@media only screen and (max-width: 989px) {
+  .header__icon .icon { height: 18px; width: 18px; }
+  .search-modal__form  { display: none; }
+}
+.icon.icon-account        { height: 17px; width: 17px; }
+.header__icon--cart .icon { height: 36px; width: 36px; }
+
+@media screen and (min-width: 990px) {
+  .header {
+    grid-template-columns: 3fr 11fr 10fr !important;
+  }
+}
+
+
+/* ── §10b GrandMenu Overrides ── */
+.gm-submenu.gm-mega {
+  width: 810px !important;
+}
+.gm-submenu.gm-mega.gm-submenu-bordered {
+  max-height: 595px !important;
+}
+body.gm-menu-installed .gm-menu.gm-menu-37243 .gm-item.gm-level-0 > .gm-target {
+  padding: 8px 10px !important;
+}
+body.gm-menu-installed .gm-menu .gm-grid-item {
+  padding: 0 5px;
+}
+body.gm-menu-installed .gm-menu ul {
+  list-style: none;
+  padding: 5px;
+  margin: 0;
+}
+.gm-menu-installed .gm-menu.gm-menu-37243 .gm-submenu.gm-submenu-bordered:not(.gm-aliexpress) {
+  border: 1px solid rgba(241,241,241,1) !important;
+  top: 51px;
+}
+.gm-product-price .gm-price { display: none; }
+
+
+/* ── §10c Social Icons ── */
+@media screen and (max-width: 767px) {
+  .social { margin-top: 60px; }
+}
+.social-tab-en-icon {
+  background-image: url(https://cdn.shopify.com/s/files/1/0098/2653/3433/files/Eng.3-01.svg?v=1621325322);
+}
+.social-icon {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  margin: 0 5px -1px 7px;
+  width: 40px;
+  height: 45px;
+  display: block !important;
+}
+@media screen and (max-width: 600px) {
+  .social-icon { width: 45px !important; }
+}
+@media screen and (min-width: 375px) and (max-width: 767px) {
+  .social .social-wrapper a { margin: 0 8px; }
+}
+
+.social-fb-icon {
+  background-image: url('data:image/svg+xml;utf8, <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="47" height="47" viewBox="0 0 47 47"><defs><style>.a{fill:%23fff;}.b{fill:url(%23a);}<\/style><linearGradient id="a" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="%232bc1d1"/><stop offset="1" stop-color="%2313a5b7"/></linearGradient></defs><circle class="a" cx="23.5" cy="23.5" r="23.5"/><path class="b" d="M168.726,72.726v-2.6c0-1.173.259-1.766,2.079-1.766h2.284V64h-3.811c-4.67,0-6.211,2.141-6.211,5.815v2.911H160v4.363h3.068V90.178h5.658V77.089h3.845l.518-4.363Z" transform="translate(-143.413 -53.76)"/></svg>');
+}
+.social-map-icon {
+  background-image: url('data:image/svg+xml;utf8, <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="47" height="47" viewBox="0 0 47 47"><defs><style>.a{fill:%23fff;}.b{fill:url(%23a);}<\/style><linearGradient id="a" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="%232bc1d1"/><stop offset="1" stop-color="%2313a5b7"/></linearGradient></defs><circle class="a" cx="23.5" cy="23.5" r="23.5"/><g transform="translate(13.517 8.755)"><g transform="translate(7.456 7.048)"><path class="b" d="M198.148,120a2.148,2.148,0,1,0,2.148,2.148A2.15,2.15,0,0,0,198.148,120Z" transform="translate(-196 -120)"/></g><path class="b" d="M85.6,0a9.607,9.607,0,0,0-8.171,14.654L85.057,26.94a.8.8,0,0,0,1.368-.011l7.43-12.4A9.607,9.607,0,0,0,85.6,0Zm0,14.417A4.813,4.813,0,1,1,90.417,9.6,4.815,4.815,0,0,1,85.6,14.417Z" transform="translate(-76 0)"/></g></svg>');
+}
+.social-line-icon {
+  background-image: url('data:image/svg+xml;utf8, <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="47" height="47" viewBox="0 0 47 47"><defs><style>.a{fill:%23fff;}.b{fill:none;}.c{fill:url(%23a);}<\/style><linearGradient id="a" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="%232bc1d1"/><stop offset="1" stop-color="%2313a5b7"/></linearGradient></defs><circle class="a" cx="23.5" cy="23.5" r="23.5"/><g transform="translate(8.213 10.406)"><path class="c" d="M127.118,133.653a10.971,10.971,0,0,1-3.145,7.261,43.33,43.33,0,0,1-9.6,7.553,19.686,19.686,0,0,1-2.185,1.2c-.292.132-.782.217-.979.057s-.207-.641-.188-.97c.028-.565.188-1.111.217-1.676.047-1.017-.207-1.3-1.224-1.507-.857-.179-1.733-.3-2.562-.556-4.115-1.234-7.487-3.456-9.182-7.562-1.742-4.2-.763-8.156,2.684-11.546a14.885,14.885,0,0,1,8.212-4.031,16.7,16.7,0,0,1,13.486,3.193,11.361,11.361,0,0,1,4.106,5.98A22,22,0,0,1,127.118,133.653Z" transform="translate(-97.425 -121.588)"/></g></svg>');
+}
+
+
+/* ── §10d Blog Tab Icons ── */
+.blog-tab-icon {
+  background-size: contain;
+  background-repeat: no-repeat;
+  padding: 0 10px;
+  margin-right: 5px;
+}
+.blog-tab-icon.active { padding: 4px 13px; }
+
+.blog-how-to-icon {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32.684" height="39.155" viewBox="0 0 32.684 39.155"><defs><style>.a{fill:%23707070;}</style></defs><path class="a" d="M305.547-341.171h2.316c.009.023.018.046.028.068l-1.639,1.639a.813.813,0,0,0,0,1.148L309-335.569a.84.84,0,0,0,1.148,0l1.64-1.64.068.027v2.317a.813.813,0,0,0,.812.812h3.883a.813.813,0,0,0,.809-.814v-2.315l.069-.028,1.642,1.642a.832.832,0,0,0,1.145,0l2.746-2.746a.814.814,0,0,0,0-1.149l-1.637-1.635.027-.067h2.315a.813.813,0,0,0,.812-.812v-3.882a.813.813,0,0,0-.812-.812h-2.315l-.028-.069,1.638-1.638a.813.813,0,0,0,0-1.148l-2.746-2.747a.839.839,0,0,0-1.148,0l-1.638,1.638-.068-.027v-2.318a.813.813,0,0,0-.812-.812h-3.882a.813.813,0,0,0-.812.812v2.315l-.069.028-1.641-1.642a.831.831,0,0,0-1.145,0l-2.746,2.746a.813.813,0,0,0,0,1.148l1.64,1.64-.027.067h-2.318a.813.813,0,0,0-.812.812v3.883A.813.813,0,0,0,305.547-341.171Z" transform="translate(-298.264 358.325)"/></svg>');
+}
+.blog-how-to-icon.active {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="45.28" height="48.566" viewBox="0 0 45.28 48.566"><defs><style>.a{fill:url(%23a);}.b{fill:%2317a9bb;opacity:0.3;}</style><linearGradient id="a" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="%2329c2d2"/><stop offset="1" stop-color="%23ac57a0"/></linearGradient></defs><circle class="b" cx="15" cy="15" r="15" transform="translate(15.28)"/></svg>');
+}
+.blog-knowledge-icon {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="35.108" height="35.108" viewBox="0 0 35.108 35.108"><defs><style>.a{fill:%23707070;}</style></defs><path class="a" d="M29.988,35.108H5.486A5.491,5.491,0,0,1,0,29.623V4.023A4.026,4.026,0,0,1,4.023,0H22.308a4.026,4.026,0,0,1,4.023,4.023v.366h4.754a4.026,4.026,0,0,1,4.023,4.023V29.623a5.494,5.494,0,0,1-4.829,5.446Z"/></svg>');
+}
+.blog-knowledge-icon.active {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="47.792" height="44.697" viewBox="0 0 47.792 44.697"><defs><style>.a{fill:url(%23a);}.b{fill:%2317a9bb;opacity:0.3;}</style><linearGradient id="a" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="%232bc1d1"/><stop offset="1" stop-color="%23ac57a0"/></linearGradient></defs><circle class="b" cx="15" cy="15" r="15" transform="translate(17.792)"/></svg>');
+}
+.blog-news-icon {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="35.519" height="35.517" viewBox="0 0 35.519 35.517"><defs><style>.a{fill:%23707070;}</style></defs><g transform="translate(5.273)"><path class="a" d="M85.814.291a12.48,12.48,0,0,0-6.653,20.492,8.107,8.107,0,0,1,2.051,5.312v2.081a3.127,3.127,0,0,0,2.157,2.968,5.19,5.19,0,0,0,10.254,0,3.127,3.127,0,0,0,2.157-2.969V26.094a8.215,8.215,0,0,1,2.112-5.381A12.489,12.489,0,0,0,85.814.291Z" transform="translate(-76.01 -0.012)"/></g></svg>');
+}
+.blog-news-icon.active {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="42.871" height="44.697" viewBox="0 0 42.871 44.697"><defs><style>.a{fill:url(%23a);}.b{fill:%2317a9bb;opacity:0.3;}</style><linearGradient id="a" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="%232bc1d1"/><stop offset="1" stop-color="%23ac57a0"/></linearGradient></defs><circle class="b" cx="15" cy="15" r="15" transform="translate(12.871)"/></svg>');
+}
+
+/* ── §10e Icon blocks (article icons) ── */
+.how-to-icon,
+.new-active-icon,
+.pin-active-icon,
+.cart-icon,
+.news-active-icon,
+.write-icon,
+.idea-icon {
+  background-color: #EAEDF2;
+  background-size: 35px;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: block !important;
+  padding: 8px;
+  width: 55px;
+  height: 55px;
+}
+
+
+/* ── §10f Footer Payment List ── */
+.list-payment {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: -0.5rem 0;
+  padding-top: 1rem;
+  padding-left: 0;
+}
+@media screen and (min-width: 750px) {
+  .list-payment {
+    justify-content: flex-end;
+    margin: -0.5rem;
+    padding-top: 0;
+  }
+}
+.list-payment__item {
+  align-items: center;
+  display: flex;
+  padding: 0.5rem;
+}
+@media screen and (max-width: 767px) {
+  .footer__copyright { margin-bottom: 6rem; }
+}
+.img1 { width: 40px; }
+
+
+/* ── §10g Octo Black Ribbon (fixed logo) ── */
+.octo-black-ribbon {
+  position: fixed;
+  left: calc(env(safe-area-inset-left, 0));
+  bottom: calc(env(safe-area-inset-bottom, 0));
+  z-index: 99999;
+  width: 90px;
+  display: block;
+  pointer-events: auto;
+}
+.octo-black-ribbon img {
+  width: 100%;
+  height: auto;
+  display: block;
+  pointer-events: none;
+}
+@media (max-width: 480px) {
+  .octo-black-ribbon {
+    width: 64px;
+    left: calc(env(safe-area-inset-left, 0));
+    bottom: 0 !important;
+  }
+}
+
+
+/* ============================================================
+   §11 HORIZON NATIVE OVERRIDES
+   ============================================================ */
+
+/* ── Header Glassmorphism ── */
+.shopify-section-group-header-group .header {
+  backdrop-filter: var(--oc-blur);
+  -webkit-backdrop-filter: var(--oc-blur);
+  background: var(--oc-glass) !important;
+  border-bottom: 1px solid var(--oc-glass-border-subtle);
+  box-shadow: 0 2px 20px rgba(100, 120, 200, 0.08),
+              inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* ── Inputs ── */
+.field__input,
+.select__select {
+  border-radius: var(--oc-radius-sm) !important;
+  border-color: var(--oc-ink-15) !important;
+  font-family: 'Brand Font', sans-serif;
+}
+.field__input:focus {
+  border-color: var(--oc-cyan) !important;
+  box-shadow: 0 0 0 3px rgba(20, 201, 223, 0.14) !important;
+}
+
+/* ── Facets ── */
+.facets__heading { font-family: 'Brand Font', sans-serif; }
+
+/* ── Hide desktop header icons (GrandMenu handles nav) ── */
+@media screen and (min-width: 990px) {
+  .header__icon { display: none; }
+}
+
+/* ── z-index fix for animate-arrow links ── */
+.link.animate-arrow { z-index: 9999; }
+
+/* ── Predictive search (off by default, GrandMenu handles) ── */
+.predictive-search.predictive-search--header { display: none !important; }
+
+/* ── Container mobile spacing ── */
+@media screen and (max-width: 1015px) {
+  .c-container { margin: 5px; }
+}
+
+
+/* ============================================================
+   §12 PAGE-SPECIFIC
+   ============================================================ */
+
+/* ── Product Page ── */
+@media screen and (max-width: 767px) {
+  .product .breadcrumb { display: none; }
+  .product .product__title { margin-top: 0; }
+  .collection .collection-hero__title { margin-bottom: 0; }
+  .collection .layout_block { margin: 0 6px; }
+}
+
+
+/* ============================================================
+   §13 TABLES
+   ============================================================ */
+
+/* ── Standard Table ── */
+.divtable {
+  overflow-x: auto;
+  width: 100%;
+  display: block;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  white-space: nowrap;
+  table-layout: auto;
+  min-width: 120px;
+  box-shadow: unset;
+}
+@media (max-width: 768px) {
+  table { min-width: 550px; }
+}
+
+thead tr > th {
+  background: #bef3f3;
+  color: black;
+  font-weight: 600;
+  position: sticky;
+  padding: 0.75rem;
+  z-index: 1;
+  top: 0;
+}
+
+thead tr > :first-child,
+tbody tr > :first-child {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  min-width: 45px;
+  background-color: white;
+}
+thead tr > :first-child { background: #bef3f3; }
+
+tbody tr:nth-child(even) > td:first-child,
+tbody tr:nth-child(even) > th:first-child { background-color: #eff2f3; }
+tbody tr:nth-child(even) { background-color: #eff2f3; }
+tbody tr:nth-child(odd)  { background-color: #ffffff; }
+
+td, th {
+  text-align: center;
+  padding: 0.5rem 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  min-width: 40px;
+}
+table:not([class]) td,
+table:not([class]) th { padding: 0.3em; border: 0; }
+
+.p-table { margin: 0.1em 0 0 0; font-weight: 600; }
+
+
+/* ── Spec Table ── */
+.divtable-spec {
+  overflow-x: auto;
+  width: 100%;
+  display: block;
+}
+
+.spec-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  table-layout: auto;
+  background: #fff;
+}
+
+.spec-table th,
+.spec-table td {
+  white-space: nowrap;
+  text-align: left;
+  padding: 0.6rem 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.spec-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: #bef3f3 !important;
+  text-align: center;
+  font-weight: 600;
+}
+.spec-table thead th:first-child { background: #bef3f3 !important; }
+
+.spec-table th:first-child,
+.spec-table td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: #fff !important;
+  min-width: 120px;
+}
+
+.spec-table .subhead th {
+  padding: 0.6rem;
+  background-color: #f5f5f5 !important;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.spec-table tbody tr { background: #fff !important; }
+
+@media (max-width: 768px) {
+  .spec-table { min-width: 560px; }
+}
+
+
+/* ============================================================
+   §14 SCROLLBAR
+   ============================================================ */
+
+::-webkit-scrollbar          { width: 12px; height: 8px; }
+::-webkit-scrollbar-track    { background: rgba(241,241,241,1); }
+::-webkit-scrollbar-thumb    { background: #bbb; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #aaa; }
+
+
+/* ============================================================
+   §15 MEDIA / IMAGE FIXES
+   ============================================================ */
+
+/* Fix Dawn's height:100% bug — images must never stretch */
+img {
+  max-width: 100%;
+  height: auto;         /* ← แก้ bug สำคัญจาก Dawn legacy */
+  overflow: hidden;
+}
+
+video {
+  max-width: 100%;
+  height: auto;
+  overflow: hidden;
+}
+
+canvas {
+  max-width: 100%;
+  height: auto;
+  overflow: hidden;
+}
+
+
+/* ============================================================
+   §16  INTERACTIONS & MICRO-ANIMATIONS
+   
+   ข้อมูลจาก settings_schema.json:
+   - card_hover_effect: none | lift | scale | subtle-zoom (default: lift)
+   - color_scheme CSS vars: --color-primary, --color-primary-hover,
+     --color-primary-button-background, --color-primary-button-hover-background
+   - Horizon class hooks: .card-wrapper, .card, .button, .badge,
+     .variant-input, .swatch, .quick-add, .media
+   
+   เราเพิ่ม layer animations ของเราทับบน Horizon's default เพื่อให้
+   สอดคล้องกับ CI Cyan Duo System
+   ============================================================ */
+
+
+/* ── §16a Card Hover System ──────────────────────────────── */
+/*
+   Horizon native card_hover_effect ทำ transform เบื้องต้น
+   เราเพิ่ม: border shimmer, box-shadow glow, image zoom
+   transition ทำงานร่วมกันไม่ conflict กัน
+*/
+
+/* Base transition — ทุก card ได้ transition นี้ */
+.card-wrapper .card,
+.card--product {
+  transition:
+    transform    var(--oc-dur-slow) var(--oc-ease-expo),
+    box-shadow   var(--oc-dur-slow) var(--oc-ease-expo),
+    border-color var(--oc-dur-base) ease,
+    outline-color var(--oc-dur-base) ease;
+  will-change: transform, box-shadow;
+}
+
+/* Lift (Horizon default) — enhance with cyan glow */
+.card-wrapper:hover .card,
+.card-wrapper:focus-within .card {
+  transform: translateY(-8px) !important;
+  box-shadow:
+    0 12px 40px rgba(20, 201, 223, 0.18),
+    0 4px 16px rgba(100, 100, 160, 0.12) !important;
+  border-color: rgba(20, 201, 223, 0.35) !important;
+}
+
+/* Active / press state */
+.card-wrapper:active .card {
+  transform: translateY(-3px) scale(0.99) !important;
+  box-shadow:
+    0 4px 16px rgba(20, 201, 223, 0.14),
+    0 2px 6px rgba(100, 100, 160, 0.10) !important;
+  transition-duration: 0.08s !important;
+}
+
+/* Product image zoom on card hover */
+.card-wrapper:hover .card__media .media img,
+.card-wrapper:hover .card__media .media video {
+  transform: scale(1.06);
+  transition: transform 0.65s var(--oc-ease-expo);
+}
+.card-wrapper .card__media .media img,
+.card-wrapper .card__media .media video {
+  transition: transform 0.45s var(--oc-ease-smooth);
+}
+
+/* Quick-add button — slide up on card hover */
+.card-wrapper .quick-add {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity  var(--oc-dur-base) var(--oc-ease-expo),
+    transform var(--oc-dur-base) var(--oc-ease-expo);
+}
+.card-wrapper:hover .quick-add,
+.card-wrapper:focus-within .quick-add {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Card badge micro-pulse on hover */
+.card-wrapper:hover .badge {
+  animation: oc-badge-pulse 0.5s var(--oc-ease-back) forwards;
+}
+@keyframes oc-badge-pulse {
+  0%   { transform: scale(1); }
+  55%  { transform: scale(1.15); }
+  100% { transform: scale(1.06); }
+}
+
+
+/* ── §16b Button Animations ──────────────────────────────── */
+/*
+   Horizon native .button ใช้ --color-primary-button-background
+   เราเพิ่ม animated gradient + lift + ripple effect
+*/
+
+/* Base — ทุก button */
+.button {
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform     var(--oc-dur-fast)   var(--oc-ease-back),
+    box-shadow    var(--oc-dur-base)   ease,
+    filter        var(--oc-dur-base)   ease,
+    background-position var(--oc-dur-base) ease !important;
+}
+
+/* Ripple layer */
+.button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--ripple-x, 50%) var(--ripple-y, 50%), rgba(255,255,255,0.25) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity var(--oc-dur-base) ease;
+  pointer-events: none;
+}
+.button:hover::after { opacity: 1; }
+.button:active::after { opacity: 0.6; }
+
+/* Hover — lift + glow */
+.button:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: var(--oc-shadow-glow-cyan) !important;
+}
+
+/* Primary hover — gradient slide */
+.button--primary:hover,
+button.shopify-payment-button__button--unbranded:hover {
+  background-position: 100% 0 !important;
+  filter: brightness(1.05) !important;
+}
+
+/* Active / press — push down */
+.button:active {
+  transform: translateY(0) scale(0.97) !important;
+  box-shadow: none !important;
+  transition-duration: 0.06s !important;
+}
+
+/* Secondary hover — purple glow */
+.button--secondary:hover,
+.button-secondary:hover {
+  box-shadow: var(--oc-shadow-glow-purple) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* ── Animated rainbow border on focus (accessibility) ── */
+.button:focus-visible {
+  outline: 3px solid transparent;
+  outline-offset: 3px;
+  box-shadow:
+    0 0 0 3px var(--oc-cyan-vv),
+    var(--oc-shadow-glow-cyan) !important;
+}
+
+
+/* ── §16c Link & Nav Animations ──────────────────────────── */
+
+/* Underline slide — ใช้ได้กับ nav links, text links */
+.oc-link-slide {
+  position: relative;
+  display: inline-block;
+  text-decoration: none;
+}
+.oc-link-slide::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: -2px;
+  width: 0; height: 2px;
+  background: var(--oc-grad-btn);
+  border-radius: 2px;
+  transition: width var(--oc-dur-base) var(--oc-ease-expo);
+}
+.oc-link-slide:hover::after { width: 100%; }
+
+/* Nav items in header */
+.header__menu-item,
+.menu__link {
+  position: relative;
+  transition: color var(--oc-dur-fast) ease;
+}
+.header__menu-item::after,
+.menu__link::after {
+  content: '';
+  position: absolute;
+  left: 50%; bottom: -2px;
+  width: 0; height: 2px;
+  background: var(--oc-cyan-vv);
+  border-radius: 2px;
+  transform: translateX(-50%);
+  transition: width var(--oc-dur-base) var(--oc-ease-expo);
+}
+.header__menu-item:hover::after,
+.header__menu-item[aria-current="page"]::after,
+.menu__link:hover::after {
+  width: 80%;
+}
+.header__menu-item:hover,
+.menu__link:hover {
+  color: var(--oc-cyan-d) !important;
+}
+
+
+/* ── §16d Input & Form Animations ───────────────────────── */
+
+/* Input focus expand glow */
+.field__input,
+.select__select,
+.customer input,
+.customer select {
+  transition:
+    border-color  var(--oc-dur-base) ease,
+    box-shadow    var(--oc-dur-base) ease,
+    transform     var(--oc-dur-fast) ease !important;
+}
+.field__input:focus,
+.select__select:focus,
+.customer input:focus {
+  border-color: var(--oc-cyan) !important;
+  box-shadow: 0 0 0 4px rgba(20, 201, 223, 0.14) !important;
+  transform: translateY(-1px);
+  outline: none;
+}
+.field__input:hover:not(:focus),
+.select__select:hover:not(:focus) {
+  border-color: rgba(20, 201, 223, 0.5) !important;
+}
+
+/* Floating label animate */
+.field__label {
+  transition:
+    top      var(--oc-dur-fast) var(--oc-ease-smooth),
+    font-size var(--oc-dur-fast) var(--oc-ease-smooth),
+    color     var(--oc-dur-fast) ease;
+}
+.field__input:focus ~ .field__label,
+.field__input:not(:placeholder-shown) ~ .field__label {
+  color: var(--oc-cyan-d) !important;
+}
+
+
+/* ── §16e Variant Swatches & Buttons ─────────────────────── */
+
+/* Color swatches */
+.swatch-input__input + .swatch-input__label,
+[class*="variant-input"],
+.color-swatch {
+  transition:
+    transform     var(--oc-dur-fast) var(--oc-ease-back),
+    box-shadow    var(--oc-dur-base) ease,
+    border-color  var(--oc-dur-fast) ease;
+  cursor: pointer;
+}
+.swatch-input__input + .swatch-input__label:hover,
+[class*="variant-input"]:hover {
+  transform: scale(1.12);
+  box-shadow: 0 0 0 3px rgba(20, 201, 223, 0.35);
+}
+.swatch-input__input:checked + .swatch-input__label,
+[class*="variant-input--selected"] {
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 4px var(--oc-cyan-d) !important;
+  transform: scale(1.08);
+}
+
+/* Variant text/size buttons */
+.variant-input-wrapper .variant-input {
+  transition:
+    background-color var(--oc-dur-fast) ease,
+    border-color     var(--oc-dur-fast) ease,
+    color            var(--oc-dur-fast) ease,
+    transform        var(--oc-dur-fast) var(--oc-ease-back);
+}
+.variant-input-wrapper .variant-input:hover {
+  border-color: var(--oc-cyan) !important;
+  color: var(--oc-cyan-d) !important;
+  transform: translateY(-1px);
+}
+.variant-input-wrapper .variant-input--selected,
+.variant-input-wrapper input:checked + .variant-input {
+  border-color: var(--oc-cyan-d) !important;
+  background: var(--oc-cyan-l) !important;
+  color: var(--oc-cyan-d) !important;
+}
+
+
+/* ── §16f Badges ─────────────────────────────────────────── */
+
+.badge {
+  transition:
+    transform  var(--oc-dur-fast) var(--oc-ease-back),
+    box-shadow var(--oc-dur-base) ease;
+}
+.badge:hover { transform: scale(1.1); }
+
+/* Sale badge — extra glow */
+.badge--sale:hover {
+  box-shadow: 0 2px 12px rgba(239, 68, 68, 0.4);
+}
+
+/* New / custom badges */
+.oc-badge-cyan:hover {
+  box-shadow: var(--oc-shadow-glow-cyan);
+  transform: scale(1.06);
+}
+.oc-badge-purple:hover {
+  box-shadow: var(--oc-shadow-glow-purple);
+  transform: scale(1.06);
+}
+
+
+/* ── §16g Social Icon Bounce ──────────────────────────────── */
+
+.social-icon,
+.oc-sticky-btn {
+  transition:
+    transform  var(--oc-dur-fast)  var(--oc-ease-back),
+    filter     var(--oc-dur-base)  ease;
+}
+.social-icon:hover,
+.oc-sticky-btn:hover {
+  transform: translateY(-3px) scale(1.12);
+  filter: drop-shadow(0 4px 8px rgba(20, 201, 223, 0.4));
+}
+.social-icon:active,
+.oc-sticky-btn:active {
+  transform: scale(0.93);
+  transition-duration: 0.06s;
+}
+
+
+/* ── §16h Blog Tab Icon Interaction ──────────────────────── */
+
+.blog-tab-icon,
+.how-to-icon, .new-active-icon, .pin-active-icon,
+.cart-icon, .news-active-icon, .write-icon, .idea-icon {
+  transition:
+    transform  var(--oc-dur-base)  var(--oc-ease-back),
+    filter     var(--oc-dur-base)  ease,
+    background-color var(--oc-dur-fast) ease;
+}
+.blog-tab-icon:hover,
+.how-to-icon:hover, .new-active-icon:hover,
+.cart-icon:hover, .idea-icon:hover, .write-icon:hover {
+  transform: scale(1.08);
+  filter: drop-shadow(0 3px 6px rgba(23, 169, 187, 0.35));
+  background-color: rgba(23, 169, 187, 0.12) !important;
+}
+.blog-tab-icon:active,
+.how-to-icon:active {
+  transform: scale(0.94);
+}
+
+
+/* ── §16i Announce Bar Shimmer ───────────────────────────── */
+
+@keyframes oc-shimmer-sweep {
+  0%   { transform: translateX(-100%) skewX(-15deg); }
+  100% { transform: translateX(300%) skewX(-15deg); }
+}
+
+.shopify-section-group-header-group .announcement-bar,
+.oc-announce-bar {
+  position: relative;
+  overflow: hidden;
+}
+.shopify-section-group-header-group .announcement-bar::after,
+.oc-announce-bar::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 40%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,0.3) 50%,
+    transparent 100%
+  );
+  animation: oc-shimmer-sweep 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+
+/* ── §16j Page Transition ─────────────────────────────────── */
+/*
+   Horizon has page_transition_enabled (default: true)
+   เราเพิ่ม fade-up สำหรับ main content area
+*/
+
+.shopify-section:not(.shopify-section-group-header-group):not(.shopify-section-group-footer-group) {
+  animation: oc-fade-up 0.5s var(--oc-ease-expo) both;
+}
+
+/* Stagger sections */
+.shopify-section:nth-child(2) { animation-delay: 0.05s; }
+.shopify-section:nth-child(3) { animation-delay: 0.10s; }
+.shopify-section:nth-child(4) { animation-delay: 0.15s; }
+.shopify-section:nth-child(5) { animation-delay: 0.20s; }
+
+
+/* ── §16k Cart Drawer / Popover ──────────────────────────── */
+
+/* Cart line item quantity buttons */
+.cart-item__quantity-wrapper .quantity__button {
+  transition:
+    background-color var(--oc-dur-fast) ease,
+    color            var(--oc-dur-fast) ease,
+    transform        var(--oc-dur-fast) var(--oc-ease-back);
+}
+.cart-item__quantity-wrapper .quantity__button:hover {
+  color: var(--oc-cyan-d) !important;
+  transform: scale(1.15);
+}
+.cart-item__quantity-wrapper .quantity__button:active {
+  transform: scale(0.9);
+}
+
+/* Cart image hover */
+.cart-item__image {
+  transition: transform var(--oc-dur-base) var(--oc-ease-smooth);
+}
+.cart-item:hover .cart-item__image {
+  transform: scale(1.04);
+}
+
+
+/* ── §16l Utility Animation Classes ─────────────────────── */
+/*
+   ใช้ใน Liquid templates ได้เลย:
+   <div class="oc-animate-fade-up">...</div>
+   <div class="oc-animate-scale-in oc-delay-2">...</div>
+*/
+
+.oc-animate-fade-up    { animation: oc-fade-up    0.5s var(--oc-ease-expo) both; }
+.oc-animate-fade-in    { animation: oc-fade-in    0.4s ease both; }
+.oc-animate-scale-in   { animation: oc-scale-in   0.4s var(--oc-ease-back) both; }
+.oc-animate-float-in   { animation: oc-float-in   0.5s var(--oc-ease-expo) both; }
+
+.oc-delay-1 { animation-delay: 0.05s; }
+.oc-delay-2 { animation-delay: 0.10s; }
+.oc-delay-3 { animation-delay: 0.15s; }
+.oc-delay-4 { animation-delay: 0.20s; }
+.oc-delay-5 { animation-delay: 0.30s; }
+.oc-delay-6 { animation-delay: 0.40s; }
+
+/* Hover-triggered reveal (no JS needed) */
+.oc-reveal-on-hover {
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity   var(--oc-dur-base) var(--oc-ease-expo),
+    transform var(--oc-dur-base) var(--oc-ease-expo);
+}
+*:hover > .oc-reveal-on-hover,
+*:focus-within > .oc-reveal-on-hover {
+  opacity: 1;
+  transform: translateY(0);
 }
 
