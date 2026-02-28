@@ -1,12 +1,3 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "current": {
     "logo": "{{ shop.brand.logo }}",
@@ -80,8 +71,8 @@
     "variant_button_border_width": 1,
     "variant_button_radius": 14,
     "variant_button_width": "equal-width-buttons",
-    "octopus_gradient_hero": "linear-gradient(140deg, rgba(241,236,255,1) 22%, rgba(235,252,255,0.85) 45%, rgba(236,255,254,0.81) 74%, rgba(242,255,250,1) 100%)",
-    "octopus_gradient_announce": "linear-gradient(90deg, #0ea5b8 0%, #17a9bb 25%, #818CF8 60%, #9b6fd4 100%)",
+    "octopus_gradient_light": "linear-gradient(140deg, rgba(241,236,255,1) 22%, rgba(235,252,255,0.85) 45%, rgba(236,255,254,0.81) 74%, rgba(242,255,250,1) 100%)",
+    "octopus_gradient_rainbow": "linear-gradient(90deg, #0ea5b8 0%, #17a9bb 25%, #818CF8 60%, #9b6fd4 100%)",
     "content_for_index": [],
     "color_schemes": {
       "scheme-1": {
