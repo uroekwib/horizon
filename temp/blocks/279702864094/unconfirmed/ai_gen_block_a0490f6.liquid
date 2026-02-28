@@ -1,6 +1,356 @@
+{% doc %}
+  @prompt
+    blog filter please there are 3 categories
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-blog-filter-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    padding: {{ block.settings.padding }}px 0;
+  }
+
+  .ai-blog-filter-container-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .ai-blog-filter-heading-{{ ai_gen_id }} {
+    margin: 0;
+    font-size: {{ block.settings.heading_size }}px;
+    color: {{ block.settings.text_color }};
+  }
+
+  .ai-blog-filter-buttons-{{ ai_gen_id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: {{ block.settings.button_gap }}px;
+  }
+
+  .ai-blog-filter-button-{{ ai_gen_id }} {
+    padding: {{ block.settings.button_padding_vertical }}px {{ block.settings.button_padding_horizontal }}px;
+    background-color: {{ block.settings.button_background }};
+    color: {{ block.settings.button_text_color }};
+    border: {{ block.settings.button_border_width }}px solid {{ block.settings.button_border_color }};
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: {{ block.settings.button_font_size }}px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .ai-blog-filter-button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_background }};
+    color: {{ block.settings.button_hover_text_color }};
+    border-color: {{ block.settings.button_hover_border_color }};
+  }
+
+  .ai-blog-filter-button-{{ ai_gen_id }}.active {
+    background-color: {{ block.settings.button_active_background }};
+    color: {{ block.settings.button_active_text_color }};
+    border-color: {{ block.settings.button_active_border_color }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-blog-filter-{{ ai_gen_id }} {
+      width: 100%;
+    }
+
+    .ai-blog-filter-buttons-{{ ai_gen_id }} {
+      gap: {{ block.settings.button_gap | times: 0.8 }}px;
+    }
+
+    .ai-blog-filter-button-{{ ai_gen_id }} {
+      padding: {{ block.settings.button_padding_vertical | times: 0.8 }}px {{ block.settings.button_padding_horizontal | times: 0.8 }}px;
+      font-size: {{ block.settings.button_font_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<blog-filter-{{ ai_gen_id }} class="ai-blog-filter-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-blog-filter-container-{{ ai_gen_id }}">
+    {% if block.settings.heading != blank %}
+      <h3 class="ai-blog-filter-heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h3>
+    {% endif %}
+
+    <div class="ai-blog-filter-buttons-{{ ai_gen_id }}">
+      <a
+        href="{{ blog.url }}"
+        class="ai-blog-filter-button-{{ ai_gen_id }} {% unless current_tags %}active{% endunless %}"
+        data-filter="all"
+      >
+        {{ block.settings.all_label }}
+      </a>
+
+      {% if block.settings.category_1 != blank %}
+        {% assign tag_1 = block.settings.category_1 %}
+        <a
+          href="{{ blog.url }}/tagged/{{ tag_1 | handle }}"
+          class="ai-blog-filter-button-{{ ai_gen_id }} {% if current_tags contains tag_1 %}active{% endif %}"
+          data-filter="{{ tag_1 | handle }}"
+        >
+          {{ tag_1 }}
+        </a>
+      {% endif %}
+
+      {% if block.settings.category_2 != blank %}
+        {% assign tag_2 = block.settings.category_2 %}
+        <a
+          href="{{ blog.url }}/tagged/{{ tag_2 | handle }}"
+          class="ai-blog-filter-button-{{ ai_gen_id }} {% if current_tags contains tag_2 %}active{% endif %}"
+          data-filter="{{ tag_2 | handle }}"
+        >
+          {{ tag_2 }}
+        </a>
+      {% endif %}
+
+      {% if block.settings.category_3 != blank %}
+        {% assign tag_3 = block.settings.category_3 %}
+        <a
+          href="{{ blog.url }}/tagged/{{ tag_3 | handle }}"
+          class="ai-blog-filter-button-{{ ai_gen_id }} {% if current_tags contains tag_3 %}active{% endif %}"
+          data-filter="{{ tag_3 | handle }}"
+        >
+          {{ tag_3 }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</blog-filter-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class BlogFilter{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.buttons = this.querySelectorAll('.ai-blog-filter-button-{{ ai_gen_id }}');
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        this.buttons.forEach((button) => {
+          button.addEventListener('click', (e) => {
+            this.buttons.forEach((btn) => btn.classList.remove('active'));
+            button.classList.add('active');
+          });
+        });
+      }
+    }
+
+    customElements.define('blog-filter-{{ ai_gen_id }}', BlogFilter{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Blog filter",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Filter by category"
+    },
+    {
+      "type": "text",
+      "id": "all_label",
+      "label": "All posts label",
+      "default": "All"
+    },
+    {
+      "type": "text",
+      "id": "category_1",
+      "label": "Category 1"
+    },
+    {
+      "type": "text",
+      "id": "category_2",
+      "label": "Category 2"
+    },
+    {
+      "type": "text",
+      "id": "category_3",
+      "label": "Category 3"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "label": "Padding",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 14,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Button style"
+    },
+    {
+      "type": "range",
+      "id": "button_gap",
+      "label": "Gap between buttons",
+      "min": 5,
+      "max": 30,
+      "step": 5,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "button_padding_vertical",
+      "label": "Vertical padding",
+      "min": 5,
+      "max": 30,
+      "step": 5,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "button_padding_horizontal",
+      "label": "Horizontal padding",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "label": "Font size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "button_border_width",
+      "label": "Border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "Button border",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Hover background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_text_color",
+      "label": "Hover text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_border_color",
+      "label": "Hover border",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "button_active_background",
+      "label": "Active background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_active_text_color",
+      "label": "Active text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_active_border_color",
+      "label": "Active border",
+      "default": "#000000"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Blog filter"
+    }
+  ]
+}
 {% endschema %}
