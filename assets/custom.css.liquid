@@ -1,27 +1,52 @@
-/* ── Brand Tokens (Octopus CI) ── */
+/* ── Google Sans — Latin & symbols only ── */
 @font-face {
-  font-family: 'Google Sans';
+  font-family: 'Brand Font';
   src: url('{{ "GoogleSans-Regular.woff2" | asset_url }}') format('woff2');
-  font-weight: normal;
+  font-weight: 400;
   font-style: normal;
   font-display: swap;
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC,
+                 U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074,
+                 U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+                 U+FEFF, U+FFFD;
 }
 
 @font-face {
-  font-family: 'Noto Sans Thai';
-  src: url('{{ "NotoSansThai-Regular.woff" | asset_url }}') format('woff');
-  font-weight: normal;
+  font-family: 'Brand Font';
+  src: url('{{ "GoogleSans-Bold.woff2" | asset_url }}') format('woff2');
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC,
+                 U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074,
+                 U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+                 U+FEFF, U+FFFD;
+}
+
+/* ── Noto Sans Thai — Thai script only ── */
+@font-face {
+  font-family: 'Brand Font';
+  src: url('{{ "NotoSansThai-Regular.woff2" | asset_url }}') format('woff2'),
+       url('{{ "NotoSansThai-Regular.woff"  | asset_url }}') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0E00-U+0E7F;
 }
 
 @font-face {
-  font-family: 'Noto Sans Thai';
-  src: url('{{ "NotoSansThai-Bold.woff" | asset_url }}') format('woff');
-  font-weight: bold;
+  font-family: 'Brand Font';
+  src: url('{{ "NotoSansThai-Bold.woff2" | asset_url }}') format('woff2'),
+       url('{{ "NotoSansThai-Bold.woff"  | asset_url }}') format('woff');
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
+  unicode-range: U+0E00-U+0E7F;
+}
+
+/* ── Apply everywhere ── */
+body, button, input, select, textarea {
+  font-family: 'Brand Font', sans-serif;
 }
 
 :root {
