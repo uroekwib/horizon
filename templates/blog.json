@@ -17,10 +17,13 @@
           "settings": {
             "blog_1": "how-to",
             "blog_1_button_text": "ความรู้เรื่องป้าย",
+            "blog_1_icon": "shopify://shop_images/BLOG_icon_howto_active.svg",
             "blog_2": "support",
             "blog_2_button_text": "งานบริการลูกค้า",
+            "blog_2_icon": "shopify://shop_images/BLOG_icon_news_active.svg",
             "blog_3": "product",
             "blog_3_button_text": "สินค้าและบริการ",
+            "blog_3_icon": "shopify://shop_images/BLOG_icon_news_active.svg",
             "filter_alignment": "center",
             "button_font_size": 14,
             "desktop_width_percent": 100,
