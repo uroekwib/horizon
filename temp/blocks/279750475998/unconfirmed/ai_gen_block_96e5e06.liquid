@@ -1,6 +1,665 @@
+{% doc %}
+  @prompt
+    A modern SaaS-style hero section UI design for a Thai signage and printing company website. Left side: clean white space with a large bold headline in Thai and English mix, a gradient CTA button (cyan to indigo to lavender), and three small stat counters below a thin divider line (customers, projects, satisfaction score). Right side: a horizontal auto-scrolling collage belt of frosted glass product cards. Cards float on a soft gradient background. Two card sizes — tall single cards (portrait) and stacked half-height card pairs — arranged in alternating columns. Each card has a large centered emoji icon and a small label underneath. Cards have white semi-transparent background with subtle border and soft drop shadow. Left and right edges of the belt fade to transparent using gradient masks. Background: very soft pastel gradient from mint-cyan (
+    #ECFEFF) on the left transitioning through cool periwinkle (
+    #EEF2FF) to soft lavender (
+    #F5F3FF) on the right. Three subtle radial glow overlays — cyan glow at left center, purple glow at top right, sky-blue glow at bottom center. Typography: Google Sans Display for headings. Clean, minimal, lots of white space. UI style: glassmorphism cards, soft shadows, rounded corners (radius ~20px), no harsh borders. Light and airy. Modern B2B e-commerce aesthetic. Desktop layout. 16:9 ratio. Color palette: 
+    #22D3C8 cyan, 
+    #818CF8 indigo, 
+    #A78BFA lavender, white cards, pastel background., ปูพื้นหลัง BG เต็มความกว้างตามหน้าจอเลยนะ, ไม่ต้องใส่ bg color เลย ปล่อยใสไป, .hero-h1 em {
+      font-style: normal; /*打ล้าง italic default ของ <em> */
+    
+      /* 1. ใส่ gradient เป็น background ก่อน */
+      background: linear-gradient(90deg, #22D3C8, #818CF8, #A78BFA);
+      background-size: 300%; /* ให้ใหญ่กว่า element เพื่อให้ animation เลื่อนได้ */
+    
+      /* 2. clip background ให้เหลือแค่รูปทรงของตัวอักษร */
+      -webkit-background-clip: text;
+      background-clip: text;
+    
+      /* 3. ทำสีตัวอักษรให้โปร่งใส → เห็น background ที่ clip ไว้แทน */
+      -webkit-text-fill-color: transparent;
+      color: transparent; /* fallback */
+    
+      /* 4. animate background-position ให้ gradient เลื่อนวนไป */
+      animation: rbMove 4s linear infinite;
+    }
+    
+    @keyframes rbMove {
+      0%   { background-position: 0%; }
+      100% { background-position: 300%; }
+    }
+    ```
+    
+    ---
+    
+    **ทำไมต้องใช้ 3 อันนี้คู่กัน:**
+    ```
+    background gradient  →  วาดสีรุ้งไว้ใต้ตัวอักษร
+    background-clip: text  →  ตัดขอบ gradient ให้เหลือแค่รูปอักษร
+    text-fill-color: transparent  →  ลบสีดำเดิมออก ให้มองเห็น gradient ข้างล่าง
+    
+    อยากมีลูกเล่นนี้ใน heading อะ
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Display:wght@400;500;700&display=swap');
+
+  .ai-saas-hero-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    background: transparent;
+    padding: {{ block.settings.section_padding }}px 0;
+  }
+
+  .ai-saas-hero-container-{{ ai_gen_id }} {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .ai-saas-hero-content-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .ai-saas-hero-heading-{{ ai_gen_id }} {
+    font-family: 'Google Sans Display', sans-serif;
+    font-size: {{ block.settings.heading_size }}px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: {{ block.settings.heading_color }};
+    margin: 0;
+  }
+
+  .ai-saas-hero-heading-{{ ai_gen_id }} em {
+    font-style: normal;
+    background: linear-gradient(90deg, #22D3C8, #818CF8, #A78BFA);
+    background-size: 300%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: ai-saas-gradient-move-{{ ai_gen_id }} 4s linear infinite;
+  }
+
+  @keyframes ai-saas-gradient-move-{{ ai_gen_id }} {
+    0% {
+      background-position: 0%;
+    }
+    100% {
+      background-position: 300%;
+    }
+  }
+
+  .ai-saas-hero-subheading-{{ ai_gen_id }} {
+    font-family: 'Google Sans Display', sans-serif;
+    font-size: {{ block.settings.subheading_size }}px;
+    font-weight: 400;
+    line-height: 1.6;
+    color: {{ block.settings.subheading_color }};
+    margin: 0;
+  }
+
+  .ai-saas-hero-cta-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 40px;
+    background: linear-gradient(135deg, #22D3C8 0%, #818CF8 50%, #A78BFA 100%);
+    color: #FFFFFF;
+    font-family: 'Google Sans Display', sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 20px rgba(34, 211, 200, 0.3);
+    align-self: flex-start;
+  }
+
+  .ai-saas-hero-cta-{{ ai_gen_id }}:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(34, 211, 200, 0.4);
+  }
+
+  .ai-saas-hero-divider-{{ ai_gen_id }} {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, #00000020 50%, transparent 100%);
+    margin: 8px 0;
+  }
+
+  .ai-saas-hero-stats-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+
+  .ai-saas-hero-stat-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .ai-saas-hero-stat-value-{{ ai_gen_id }} {
+    font-family: 'Google Sans Display', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: {{ block.settings.stat_value_color }};
+    margin: 0;
+  }
+
+  .ai-saas-hero-stat-label-{{ ai_gen_id }} {
+    font-family: 'Google Sans Display', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: {{ block.settings.stat_label_color }};
+    margin: 0;
+  }
+
+  .ai-saas-hero-carousel-{{ ai_gen_id }} {
+    position: relative;
+    height: 500px;
+    overflow: hidden;
+    mask-image: linear-gradient(90deg, transparent 0%, black 10%, black 90%, transparent 100%);
+  }
+
+  .ai-saas-hero-carousel-track-{{ ai_gen_id }} {
+    display: flex;
+    gap: 20px;
+    height: 100%;
+    animation: ai-saas-scroll-{{ ai_gen_id }} 30s linear infinite;
+  }
+
+  @keyframes ai-saas-scroll-{{ ai_gen_id }} {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .ai-saas-hero-carousel-column-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex-shrink: 0;
+  }
+
+  .ai-saas-hero-card-{{ ai_gen_id }} {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 24px;
+    width: 180px;
+  }
+
+  .ai-saas-hero-card-tall-{{ ai_gen_id }} {
+    height: 240px;
+  }
+
+  .ai-saas-hero-card-half-{{ ai_gen_id }} {
+    height: 110px;
+  }
+
+  .ai-saas-hero-card-icon-{{ ai_gen_id }} {
+    font-size: 48px;
+    line-height: 1;
+  }
+
+  .ai-saas-hero-card-label-{{ ai_gen_id }} {
+    font-family: 'Google Sans Display', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333333;
+    text-align: center;
+    margin: 0;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-saas-hero-container-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: 40px;
+      padding: 0 24px;
+    }
+
+    .ai-saas-hero-heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_size | times: 0.7 }}px;
+    }
+
+    .ai-saas-hero-subheading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.subheading_size | times: 0.9 }}px;
+    }
+
+    .ai-saas-hero-stats-{{ ai_gen_id }} {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .ai-saas-hero-stat-value-{{ ai_gen_id }} {
+      font-size: 24px;
+    }
+
+    .ai-saas-hero-stat-label-{{ ai_gen_id }} {
+      font-size: 12px;
+    }
+
+    .ai-saas-hero-carousel-{{ ai_gen_id }} {
+      height: 400px;
+    }
+
+    .ai-saas-hero-card-{{ ai_gen_id }} {
+      width: 140px;
+    }
+
+    .ai-saas-hero-card-tall-{{ ai_gen_id }} {
+      height: 200px;
+    }
+
+    .ai-saas-hero-card-half-{{ ai_gen_id }} {
+      height: 90px;
+    }
+
+    .ai-saas-hero-card-icon-{{ ai_gen_id }} {
+      font-size: 36px;
+    }
+
+    .ai-saas-hero-card-label-{{ ai_gen_id }} {
+      font-size: 12px;
+    }
+  }
+{% endstyle %}
+
+<saas-hero-{{ ai_gen_id }} class="ai-saas-hero-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-saas-hero-container-{{ ai_gen_id }}">
+    <div class="ai-saas-hero-content-{{ ai_gen_id }}">
+      {% if block.settings.heading != blank %}
+        <h1 class="ai-saas-hero-heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h1>
+      {% endif %}
+
+      {% if block.settings.subheading != blank %}
+        <p class="ai-saas-hero-subheading-{{ ai_gen_id }}">{{ block.settings.subheading }}</p>
+      {% endif %}
+
+      {% if block.settings.cta_text != blank %}
+        <a href="{{ block.settings.cta_link }}" class="ai-saas-hero-cta-{{ ai_gen_id }}">
+          {{ block.settings.cta_text }}
+        </a>
+      {% endif %}
+
+      <div class="ai-saas-hero-divider-{{ ai_gen_id }}"></div>
+
+      <div class="ai-saas-hero-stats-{{ ai_gen_id }}">
+        <div class="ai-saas-hero-stat-{{ ai_gen_id }}">
+          <div class="ai-saas-hero-stat-value-{{ ai_gen_id }}">{{ block.settings.stat_1_value }}</div>
+          <div class="ai-saas-hero-stat-label-{{ ai_gen_id }}">{{ block.settings.stat_1_label }}</div>
+        </div>
+        <div class="ai-saas-hero-stat-{{ ai_gen_id }}">
+          <div class="ai-saas-hero-stat-value-{{ ai_gen_id }}">{{ block.settings.stat_2_value }}</div>
+          <div class="ai-saas-hero-stat-label-{{ ai_gen_id }}">{{ block.settings.stat_2_label }}</div>
+        </div>
+        <div class="ai-saas-hero-stat-{{ ai_gen_id }}">
+          <div class="ai-saas-hero-stat-value-{{ ai_gen_id }}">{{ block.settings.stat_3_value }}</div>
+          <div class="ai-saas-hero-stat-label-{{ ai_gen_id }}">{{ block.settings.stat_3_label }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ai-saas-hero-carousel-{{ ai_gen_id }}">
+      <div class="ai-saas-hero-carousel-track-{{ ai_gen_id }}">
+        {% for i in (1..2) %}
+          <div class="ai-saas-hero-carousel-column-{{ ai_gen_id }}">
+            <div class="ai-saas-hero-card-{{ ai_gen_id }} ai-saas-hero-card-tall-{{ ai_gen_id }}">
+              <div class="ai-saas-hero-card-icon-{{ ai_gen_id }}">{{ block.settings.card_1_icon }}</div>
+              <p class="ai-saas-hero-card-label-{{ ai_gen_id }}">{{ block.settings.card_1_label }}</p>
+            </div>
+          </div>
+
+          <div class="ai-saas-hero-carousel-column-{{ ai_gen_id }}">
+            <div class="ai-saas-hero-card-{{ ai_gen_id }} ai-saas-hero-card-half-{{ ai_gen_id }}">
+              <div class="ai-saas-hero-card-icon-{{ ai_gen_id }}">{{ block.settings.card_2_icon }}</div>
+              <p class="ai-saas-hero-card-label-{{ ai_gen_id }}">{{ block.settings.card_2_label }}</p>
+            </div>
+            <div class="ai-saas-hero-card-{{ ai_gen_id }} ai-saas-hero-card-half-{{ ai_gen_id }}">
+              <div class="ai-saas-hero-card-icon-{{ ai_gen_id }}">{{ block.settings.card_3_icon }}</div>
+              <p class="ai-saas-hero-card-label-{{ ai_gen_id }}">{{ block.settings.card_3_label }}</p>
+            </div>
+          </div>
+
+          <div class="ai-saas-hero-carousel-column-{{ ai_gen_id }}">
+            <div class="ai-saas-hero-card-{{ ai_gen_id }} ai-saas-hero-card-tall-{{ ai_gen_id }}">
+              <div class="ai-saas-hero-card-icon-{{ ai_gen_id }}">{{ block.settings.card_4_icon }}</div>
+              <p class="ai-saas-hero-card-label-{{ ai_gen_id }}">{{ block.settings.card_4_label }}</p>
+            </div>
+          </div>
+
+          <div class="ai-saas-hero-carousel-column-{{ ai_gen_id }}">
+            <div class="ai-saas-hero-card-{{ ai_gen_id }} ai-saas-hero-card-half-{{ ai_gen_id }}">
+              <div class="ai-saas-hero-card-icon-{{ ai_gen_id }}">{{ block.settings.card_5_icon }}</div>
+              <p class="ai-saas-hero-card-label-{{ ai_gen_id }}">{{ block.settings.card_5_label }}</p>
+            </div>
+            <div class="ai-saas-hero-card-{{ ai_gen_id }} ai-saas-hero-card-half-{{ ai_gen_id }}">
+              <div class="ai-saas-hero-card-icon-{{ ai_gen_id }}">{{ block.settings.card_6_icon }}</div>
+              <p class="ai-saas-hero-card-label-{{ ai_gen_id }}">{{ block.settings.card_6_label }}</p>
+            </div>
+          </div>
+
+          <div class="ai-saas-hero-carousel-column-{{ ai_gen_id }}">
+            <div class="ai-saas-hero-card-{{ ai_gen_id }} ai-saas-hero-card-tall-{{ ai_gen_id }}">
+              <div class="ai-saas-hero-card-icon-{{ ai_gen_id }}">{{ block.settings.card_7_icon }}</div>
+              <p class="ai-saas-hero-card-label-{{ ai_gen_id }}">{{ block.settings.card_7_label }}</p>
+            </div>
+          </div>
+
+          <div class="ai-saas-hero-carousel-column-{{ ai_gen_id }}">
+            <div class="ai-saas-hero-card-{{ ai_gen_id }} ai-saas-hero-card-half-{{ ai_gen_id }}">
+              <div class="ai-saas-hero-card-icon-{{ ai_gen_id }}">{{ block.settings.card_8_icon }}</div>
+              <p class="ai-saas-hero-card-label-{{ ai_gen_id }}">{{ block.settings.card_8_label }}</p>
+            </div>
+            <div class="ai-saas-hero-card-{{ ai_gen_id }} ai-saas-hero-card-half-{{ ai_gen_id }}">
+              <div class="ai-saas-hero-card-icon-{{ ai_gen_id }}">{{ block.settings.card_9_icon }}</div>
+              <p class="ai-saas-hero-card-label-{{ ai_gen_id }}">{{ block.settings.card_9_label }}</p>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</saas-hero-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class SaasHero{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        const track = this.querySelector('.ai-saas-hero-carousel-track-{{ ai_gen_id }}');
+        if (!track) return;
+
+        track.addEventListener('mouseenter', () => {
+          track.style.animationPlayState = 'paused';
+        });
+
+        track.addEventListener('mouseleave', () => {
+          track.style.animationPlayState = 'running';
+        });
+      }
+    }
+
+    customElements.define('saas-hero-{{ ai_gen_id }}', SaasHero{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "SaaS hero",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "Heading",
+      "info": "Wrap text in <em> tags for gradient effect",
+      "default": "<p>สร้างป้ายและงานพิมพ์<em>คุณภาพสูง</em> | Premium Signage & Printing</p>"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "บริการออกแบบและผลิตป้ายโฆษณา วัสดุโปรโมชั่น และงานพิมพ์ทุกประเภท ด้วยเทคโนโลยีทันสมัยและทีมงานมืออาชีพ"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Button text",
+      "default": "ขอใบเสนอราคา"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Statistics"
+    },
+    {
+      "type": "text",
+      "id": "stat_1_value",
+      "label": "Stat 1 value",
+      "default": "500+"
+    },
+    {
+      "type": "text",
+      "id": "stat_1_label",
+      "label": "Stat 1 label",
+      "default": "ลูกค้า"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_value",
+      "label": "Stat 2 value",
+      "default": "2,000+"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_label",
+      "label": "Stat 2 label",
+      "default": "โครงการ"
+    },
+    {
+      "type": "text",
+      "id": "stat_3_value",
+      "label": "Stat 3 value",
+      "default": "98%"
+    },
+    {
+      "type": "text",
+      "id": "stat_3_label",
+      "label": "Stat 3 label",
+      "default": "ความพึงพอใจ"
+    },
+    {
+      "type": "header",
+      "content": "Product cards"
+    },
+    {
+      "type": "text",
+      "id": "card_1_icon",
+      "label": "Card 1 icon",
+      "default": "🪧"
+    },
+    {
+      "type": "text",
+      "id": "card_1_label",
+      "label": "Card 1 label",
+      "default": "ป้ายอะคริลิค"
+    },
+    {
+      "type": "text",
+      "id": "card_2_icon",
+      "label": "Card 2 icon",
+      "default": "📋"
+    },
+    {
+      "type": "text",
+      "id": "card_2_label",
+      "label": "Card 2 label",
+      "default": "โฟมบอร์ด"
+    },
+    {
+      "type": "text",
+      "id": "card_3_icon",
+      "label": "Card 3 icon",
+      "default": "🎨"
+    },
+    {
+      "type": "text",
+      "id": "card_3_label",
+      "label": "Card 3 label",
+      "default": "สติกเกอร์"
+    },
+    {
+      "type": "text",
+      "id": "card_4_icon",
+      "label": "Card 4 icon",
+      "default": "🖼️"
+    },
+    {
+      "type": "text",
+      "id": "card_4_label",
+      "label": "Card 4 label",
+      "default": "แบนเนอร์"
+    },
+    {
+      "type": "text",
+      "id": "card_5_icon",
+      "label": "Card 5 icon",
+      "default": "📦"
+    },
+    {
+      "type": "text",
+      "id": "card_5_label",
+      "label": "Card 5 label",
+      "default": "กล่องบรรจุภัณฑ์"
+    },
+    {
+      "type": "text",
+      "id": "card_6_icon",
+      "label": "Card 6 icon",
+      "default": "🏷️"
+    },
+    {
+      "type": "text",
+      "id": "card_6_label",
+      "label": "Card 6 label",
+      "default": "ป้ายแสตนดี้"
+    },
+    {
+      "type": "text",
+      "id": "card_7_icon",
+      "label": "Card 7 icon",
+      "default": "🎯"
+    },
+    {
+      "type": "text",
+      "id": "card_7_label",
+      "label": "Card 7 label",
+      "default": "ป้ายไวนิล"
+    },
+    {
+      "type": "text",
+      "id": "card_8_icon",
+      "label": "Card 8 icon",
+      "default": "📄"
+    },
+    {
+      "type": "text",
+      "id": "card_8_label",
+      "label": "Card 8 label",
+      "default": "โบรชัวร์"
+    },
+    {
+      "type": "text",
+      "id": "card_9_icon",
+      "label": "Card 9 icon",
+      "default": "💼"
+    },
+    {
+      "type": "text",
+      "id": "card_9_label",
+      "label": "Card 9 label",
+      "default": "นามบัตร"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Section padding",
+      "min": 40,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 24,
+      "max": 72,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "subheading_size",
+      "label": "Subheading size",
+      "min": 14,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "stat_value_color",
+      "label": "Stat value color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "stat_label_color",
+      "label": "Stat label color",
+      "default": "#666666"
+    }
+  ],
+  "presets": [
+    {
+      "name": "SaaS hero"
+    }
+  ]
+}
 {% endschema %}
