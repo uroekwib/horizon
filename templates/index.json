@@ -283,10 +283,64 @@
         "padding-block-start": 48,
         "padding-block-end": 48
       }
+    },
+    "1772340576b1154f8e": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_ef7ba01_EMJJCe": {
+          "type": "ai_gen_block_ef7ba01",
+          "settings": {
+            "blog": "how-to",
+            "heading": "บทความล่าสุด",
+            "heading_size": 32,
+            "view_all_label": "ดูทั้งหมด",
+            "view_all_url": "",
+            "container_width": 1200,
+            "card_background": "#f3f7fa",
+            "card_border_radius": 8,
+            "heading_color": "#000000",
+            "title_color": "#000000",
+            "excerpt_color": "#666666",
+            "link_color": "#000000"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_ef7ba01_EMJJCe"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "full-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "scheme-2",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
     }
   },
   "order": [
     "hero_jVaWmY",
-    "product_list_fa6P9H"
+    "product_list_fa6P9H",
+    "1772340576b1154f8e"
   ]
 }
