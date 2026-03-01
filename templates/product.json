@@ -157,7 +157,7 @@
                   "blocks": {}
                 },
                 "ai_gen_block_d819489_9JNN96": {
-                  "type": "ai_gen_block_d819489",
+                  "type": "ai_convertblock_linewhatsapp",
                   "name": "Contact link",
                   "settings": {
                     "line_icon": "shopify://shop_images/LINE_Brand_icon_c4c9b72a-a3eb-4670-bf1d-dcfeb1940ea2.png",
