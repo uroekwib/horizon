@@ -1,478 +1,590 @@
 {% doc %}
-  @prompt
-    blog filter please there are 3 categories, เนี่ย แบ่งไงได้, filter blog posts as per blog (3 blogs avaiable)
-    กำหนด text ของปุ่ม filter ได้ แล้วแสดงรายการ blog post โดยมี pagination กดดูเพิ่มเติมได้ทั้งหมด, ตอนนี้ยังไม่รวมค่าจัดส่งมีอะไรแสดงผลออกมาเลย ไม่มีลิสต์ blog posts ออกมาเลย
+  Blog filter — 3 blogs, CI Cyan Duo design system
+  - ไม่มีปุ่ม "ทั้งหมด"
+  - กดปุ่ม active อีกครั้ง = ยกเลิก filter (แสดงทั้งหมด)
+  - ปุ่ม default = glassmorphism / active = CI gradient
 {% enddoc %}
 {% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
 
 {% style %}
-  .ai-blog-filter-{{ ai_gen_id }} {
+  .blog-filter-{{ ai_gen_id }} {
     display: block;
     width: {{ block.settings.desktop_width_percent }}%;
     max-width: 100%;
     margin: 0 auto;
   }
 
-  .ai-blog-filter__container-{{ ai_gen_id }} {
+  .blog-filter__container-{{ ai_gen_id }} {
     display: flex;
     flex-direction: column;
     gap: 32px;
   }
 
-  .ai-blog-filter__buttons-{{ ai_gen_id }} {
+  /* ── Filter Buttons ── */
+  .blog-filter__buttons-{{ ai_gen_id }} {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 10px;
     justify-content: {{ block.settings.filter_alignment }};
   }
 
-  .ai-blog-filter__button-{{ ai_gen_id }} {
-    padding: 12px 24px;
-    background-color: {{ block.settings.button_background }};
-    color: {{ block.settings.button_text_color }};
-    border: {{ block.settings.button_border_width }}px solid {{ block.settings.button_border_color }};
-    border-radius: {{ block.settings.button_border_radius }}px;
-    cursor: pointer;
+  .blog-filter__btn-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    font-family: 'Brand Font', sans-serif;
     font-size: {{ block.settings.button_font_size }}px;
-    transition: all 0.3s ease;
+    font-weight: 600;
+    border-radius: 999px;
+    border: 1.5px solid rgba(23, 169, 187, 0.35);
+    background: rgba(255, 255, 255, 0.72);
+    color: #374151;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition:
+      transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1),
+      box-shadow 0.25s ease,
+      border-color 0.2s ease,
+      background 0.2s ease,
+      color 0.2s ease;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
   }
 
-  .ai-blog-filter__button-{{ ai_gen_id }}:hover {
-    background-color: {{ block.settings.button_hover_background }};
-    color: {{ block.settings.button_hover_text_color }};
-    border-color: {{ block.settings.button_hover_border_color }};
+  .blog-filter__btn-{{ ai_gen_id }}:hover {
+    transform: translateY(-2px);
+    border-color: rgba(20, 201, 223, 0.7);
+    box-shadow: 0 4px 16px rgba(20, 201, 223, 0.20);
+    color: #17a9bb;
+    background: rgba(227, 248, 251, 0.85);
   }
 
-  .ai-blog-filter__button-{{ ai_gen_id }}.active {
-    background-color: {{ block.settings.button_active_background }};
-    color: {{ block.settings.button_active_text_color }};
-    border-color: {{ block.settings.button_active_border_color }};
+  .blog-filter__btn-{{ ai_gen_id }}:active {
+    transform: translateY(0) scale(0.97);
+    transition-duration: 0.06s;
   }
 
-  .ai-blog-filter__posts-{{ ai_gen_id }} {
+  /* Active = CI gradient */
+  .blog-filter__btn-{{ ai_gen_id }}.is-active {
+    background: linear-gradient(90deg, #14c9df 0%, #17a9bb 35%, #818CF8 65%, #A78BFA 100%);
+    background-size: 200% 100%;
+    border-color: transparent;
+    color: #fff;
+    box-shadow:
+      0 4px 20px rgba(20, 201, 223, 0.30),
+      0 1px 6px rgba(23, 169, 187, 0.20);
+    animation: blog-btn-shimmer-{{ ai_gen_id }} 4s ease infinite;
+  }
+
+  @keyframes blog-btn-shimmer-{{ ai_gen_id }} {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .blog-filter__btn-{{ ai_gen_id }}.is-active:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.06);
+    color: #fff;
+    box-shadow:
+      0 6px 24px rgba(20, 201, 223, 0.40),
+      0 2px 8px rgba(23, 169, 187, 0.25);
+  }
+
+  /* Dot indicator */
+  .blog-filter__btn-dot-{{ ai_gen_id }} {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.5;
+    flex-shrink: 0;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .blog-filter__btn-{{ ai_gen_id }}.is-active .blog-filter__btn-dot-{{ ai_gen_id }} {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+
+  /* ── Post Grid ── */
+  .blog-filter__posts-{{ ai_gen_id }} {
     display: grid;
     grid-template-columns: repeat({{ block.settings.posts_per_row }}, 1fr);
     gap: {{ block.settings.grid_gap }}px;
+    transition: opacity 0.15s ease;
   }
 
   @media screen and (max-width: 749px) {
-    .ai-blog-filter__posts-{{ ai_gen_id }} {
+    .blog-filter__posts-{{ ai_gen_id }} {
       grid-template-columns: repeat({{ block.settings.posts_per_row_mobile }}, 1fr);
     }
   }
 
-  .ai-blog-filter__post-{{ ai_gen_id }} {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
+  .blog-filter__posts-{{ ai_gen_id }}.is-filtering {
+    opacity: 0.4;
+    pointer-events: none;
   }
 
-  .ai-blog-filter__post-{{ ai_gen_id }}.visible {
+  .blog-filter__post-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    border-radius: 16px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid rgba(200, 200, 240, 0.3);
+    box-shadow: 0 2px 16px rgba(100, 100, 160, 0.06);
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 0.35s ease,
+      transform 0.35s ease,
+      box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 0.25s ease;
+  }
+
+  .blog-filter__post-{{ ai_gen_id }}.is-visible {
     opacity: 1;
     transform: translateY(0);
   }
 
-  .ai-blog-filter__post-{{ ai_gen_id }}.hidden {
+  .blog-filter__post-{{ ai_gen_id }}.is-hidden {
     display: none;
   }
 
-  .ai-blog-filter__post-image-{{ ai_gen_id }} {
+  .blog-filter__post-{{ ai_gen_id }}:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 36px rgba(20, 201, 223, 0.15);
+    border-color: rgba(20, 201, 223, 0.3);
+  }
+
+  .blog-filter__post-image-{{ ai_gen_id }} {
     width: 100%;
     aspect-ratio: {{ block.settings.image_aspect_ratio }};
     overflow: hidden;
-    border-radius: {{ block.settings.image_border_radius }}px;
   }
 
-  .ai-blog-filter__post-image-{{ ai_gen_id }} img {
+  .blog-filter__post-image-{{ ai_gen_id }} img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .ai-blog-filter__post-image-placeholder-{{ ai_gen_id }} {
+  .blog-filter__post-{{ ai_gen_id }}:hover .blog-filter__post-image-{{ ai_gen_id }} img {
+    transform: scale(1.06);
+  }
+
+  .blog-filter__post-placeholder-{{ ai_gen_id }} {
     width: 100%;
     height: 100%;
-    background-color: #f4f4f4;
+    background: linear-gradient(140deg, rgba(235,252,255,0.85) 0%, rgba(241,236,255,0.85) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
-  .ai-blog-filter__post-image-placeholder-{{ ai_gen_id }} svg {
-    width: 100%;
-    height: 100%;
-    max-width: 200px;
-    max-height: 200px;
-  }
-
-  .ai-blog-filter__post-content-{{ ai_gen_id }} {
+  .blog-filter__post-content-{{ ai_gen_id }} {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
+    padding: 14px 16px 18px;
+    flex: 1;
   }
 
-  .ai-blog-filter__post-date-{{ ai_gen_id }} {
+  .blog-filter__post-meta-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .blog-filter__post-blog-label-{{ ai_gen_id }} {
+    font-size: {{ block.settings.blog_label_font_size }}px;
+    color: #17a9bb;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .blog-filter__post-sep-{{ ai_gen_id }} {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #D1D5DB;
+  }
+
+  .blog-filter__post-date-{{ ai_gen_id }} {
     font-size: {{ block.settings.date_font_size }}px;
     color: {{ block.settings.date_color }};
   }
 
-  .ai-blog-filter__post-title-{{ ai_gen_id }} {
+  .blog-filter__post-title-{{ ai_gen_id }} {
     font-size: {{ block.settings.title_font_size }}px;
     color: {{ block.settings.title_color }};
-    margin: 0;
-    line-height: 1.3;
+    margin: 4px 0 0;
+    line-height: 1.35;
+    font-weight: 700;
   }
 
-  .ai-blog-filter__post-title-{{ ai_gen_id }} a {
+  .blog-filter__post-title-{{ ai_gen_id }} a {
     color: inherit;
     text-decoration: none;
+    transition: color 0.2s ease;
   }
 
-  .ai-blog-filter__post-title-{{ ai_gen_id }} a:hover {
-    color: {{ block.settings.title_hover_color }};
+  .blog-filter__post-title-{{ ai_gen_id }} a:hover {
+    color: #17a9bb;
   }
 
-  .ai-blog-filter__post-excerpt-{{ ai_gen_id }} {
+  .blog-filter__post-excerpt-{{ ai_gen_id }} {
     font-size: {{ block.settings.excerpt_font_size }}px;
     color: {{ block.settings.excerpt_color }};
-    line-height: 1.6;
+    line-height: 1.65;
+    margin-top: 4px;
   }
 
-  .ai-blog-filter__post-blog-{{ ai_gen_id }} {
-    font-size: {{ block.settings.blog_label_font_size }}px;
-    color: {{ block.settings.blog_label_color }};
-    font-weight: 500;
-  }
-
-  .ai-blog-filter__load-more-{{ ai_gen_id }} {
+  /* ── Load More ── */
+  .blog-filter__load-more-{{ ai_gen_id }} {
     display: flex;
     justify-content: center;
-    margin-top: 32px;
+    margin-top: 8px;
   }
 
-  .ai-blog-filter__load-more-button-{{ ai_gen_id }} {
-    padding: 14px 32px;
-    background-color: {{ block.settings.load_more_background }};
-    color: {{ block.settings.load_more_text_color }};
-    border: {{ block.settings.load_more_border_width }}px solid {{ block.settings.load_more_border_color }};
-    border-radius: {{ block.settings.load_more_border_radius }}px;
-    cursor: pointer;
+  .blog-filter__load-more-btn-{{ ai_gen_id }} {
+    padding: 12px 40px;
+    font-family: 'Brand Font', sans-serif;
     font-size: {{ block.settings.load_more_font_size }}px;
-    transition: all 0.3s ease;
+    font-weight: 600;
+    border-radius: 999px;
+    border: 1.5px solid rgba(23, 169, 187, 0.45);
+    background: transparent;
+    color: #17a9bb;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition:
+      background 0.25s ease,
+      color 0.25s ease,
+      border-color 0.25s ease,
+      transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1),
+      box-shadow 0.25s ease;
   }
 
-  .ai-blog-filter__load-more-button-{{ ai_gen_id }}:hover {
-    background-color: {{ block.settings.load_more_hover_background }};
-    color: {{ block.settings.load_more_hover_text_color }};
-    border-color: {{ block.settings.load_more_hover_border_color }};
+  .blog-filter__load-more-btn-{{ ai_gen_id }}:hover {
+    background: linear-gradient(90deg, #14c9df, #17a9bb);
+    color: #fff;
+    border-color: transparent;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(20, 201, 223, 0.30);
   }
 
-  .ai-blog-filter__load-more-button-{{ ai_gen_id }}.hidden {
+  .blog-filter__load-more-btn-{{ ai_gen_id }}.is-hidden {
     display: none;
   }
 
-  .ai-blog-filter__empty-{{ ai_gen_id }} {
+  .blog-filter__empty-{{ ai_gen_id }} {
     text-align: center;
-    padding: 40px 20px;
-    color: {{ block.settings.excerpt_color }};
-    font-size: {{ block.settings.excerpt_font_size }}px;
+    padding: 48px 20px;
+    color: #9CA3AF;
+    font-size: 15px;
     grid-column: 1 / -1;
   }
 {% endstyle %}
 
-<blog-filter-{{ ai_gen_id }} class="ai-blog-filter-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
-  <div class="ai-blog-filter__container-{{ ai_gen_id }}">
-    <div class="ai-blog-filter__buttons-{{ ai_gen_id }}">
-      <button
-        class="ai-blog-filter__button-{{ ai_gen_id }} active"
-        data-filter="all"
-      >
-        {{ block.settings.all_button_text }}
-      </button>
+<blog-filter-{{ ai_gen_id }}
+  class="blog-filter-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="blog-filter__container-{{ ai_gen_id }}">
+
+    {%- comment -%} Filter Buttons — 3 blogs only {%- endcomment -%}
+    <div class="blog-filter__buttons-{{ ai_gen_id }}" role="group" aria-label="Filter by blog">
       {% if block.settings.blog_1 != blank %}
         <button
-          class="ai-blog-filter__button-{{ ai_gen_id }}"
+          class="blog-filter__btn-{{ ai_gen_id }}"
           data-filter="{{ block.settings.blog_1.handle }}"
+          aria-pressed="false"
+          type="button"
         >
-          {{ block.settings.blog_1_button_text }}
+          <span class="blog-filter__btn-dot-{{ ai_gen_id }}" aria-hidden="true"></span>
+          {{ block.settings.blog_1_button_text | default: block.settings.blog_1.title }}
         </button>
       {% endif %}
       {% if block.settings.blog_2 != blank %}
         <button
-          class="ai-blog-filter__button-{{ ai_gen_id }}"
+          class="blog-filter__btn-{{ ai_gen_id }}"
           data-filter="{{ block.settings.blog_2.handle }}"
+          aria-pressed="false"
+          type="button"
         >
-          {{ block.settings.blog_2_button_text }}
+          <span class="blog-filter__btn-dot-{{ ai_gen_id }}" aria-hidden="true"></span>
+          {{ block.settings.blog_2_button_text | default: block.settings.blog_2.title }}
         </button>
       {% endif %}
       {% if block.settings.blog_3 != blank %}
         <button
-          class="ai-blog-filter__button-{{ ai_gen_id }}"
+          class="blog-filter__btn-{{ ai_gen_id }}"
           data-filter="{{ block.settings.blog_3.handle }}"
+          aria-pressed="false"
+          type="button"
         >
-          {{ block.settings.blog_3_button_text }}
+          <span class="blog-filter__btn-dot-{{ ai_gen_id }}" aria-hidden="true"></span>
+          {{ block.settings.blog_3_button_text | default: block.settings.blog_3.title }}
         </button>
       {% endif %}
     </div>
 
-    <div class="ai-blog-filter__posts-{{ ai_gen_id }}">
+    {%- comment -%} Post Grid {%- endcomment -%}
+    <div class="blog-filter__posts-{{ ai_gen_id }}">
+
       {% assign has_posts = false %}
-      
+
       {% if block.settings.blog_1 != blank %}
         {% for article in block.settings.blog_1.articles %}
           {% assign has_posts = true %}
-          <div
-            class="ai-blog-filter__post-{{ ai_gen_id }}"
-            data-blog="{{ block.settings.blog_1.handle }}"
-            data-index="{{ forloop.index0 }}"
-          >
-            <div class="ai-blog-filter__post-image-{{ ai_gen_id }}">
+          <article class="blog-filter__post-{{ ai_gen_id }}" data-blog="{{ block.settings.blog_1.handle }}">
+            <a href="{{ article.url }}" class="blog-filter__post-image-{{ ai_gen_id }}" tabindex="-1" aria-hidden="true">
               {% if article.image %}
                 <img
                   src="{{ article.image | image_url: width: 800 }}"
                   alt="{{ article.image.alt | escape }}"
                   loading="lazy"
                   width="800"
-                  height="{{ 800 | divided_by: block.settings.image_aspect_ratio }}"
+                  height="533"
                 >
               {% else %}
-                <div class="ai-blog-filter__post-image-placeholder-{{ ai_gen_id }}">
+                <div class="blog-filter__post-placeholder-{{ ai_gen_id }}">
                   {{ 'image' | placeholder_svg_tag }}
                 </div>
               {% endif %}
-            </div>
-
-            <div class="ai-blog-filter__post-content-{{ ai_gen_id }}">
-              {% if block.settings.show_blog_label %}
-                <div class="ai-blog-filter__post-blog-{{ ai_gen_id }}">
-                  {{ article.blog.title }}
-                </div>
-              {% endif %}
-
-              {% if block.settings.show_date %}
-                <div class="ai-blog-filter__post-date-{{ ai_gen_id }}">
-                  {{ article.published_at | date: block.settings.date_format }}
-                </div>
-              {% endif %}
-
-              <h3 class="ai-blog-filter__post-title-{{ ai_gen_id }}">
+            </a>
+            <div class="blog-filter__post-content-{{ ai_gen_id }}">
+              <div class="blog-filter__post-meta-{{ ai_gen_id }}">
+                {% if block.settings.show_blog_label %}
+                  <span class="blog-filter__post-blog-label-{{ ai_gen_id }}">{{ article.blog.title }}</span>
+                {% endif %}
+                {% if block.settings.show_blog_label and block.settings.show_date %}
+                  <span class="blog-filter__post-sep-{{ ai_gen_id }}"></span>
+                {% endif %}
+                {% if block.settings.show_date %}
+                  <span class="blog-filter__post-date-{{ ai_gen_id }}">{{ article.published_at | date: block.settings.date_format }}</span>
+                {% endif %}
+              </div>
+              <h3 class="blog-filter__post-title-{{ ai_gen_id }}">
                 <a href="{{ article.url }}">{{ article.title }}</a>
               </h3>
-
               {% if block.settings.show_excerpt %}
-                <div class="ai-blog-filter__post-excerpt-{{ ai_gen_id }}">
+                <div class="blog-filter__post-excerpt-{{ ai_gen_id }}">
                   {{ article.excerpt_or_content | strip_html | truncate: block.settings.excerpt_length }}
                 </div>
               {% endif %}
             </div>
-          </div>
+          </article>
         {% endfor %}
       {% endif %}
-      
+
       {% if block.settings.blog_2 != blank %}
         {% for article in block.settings.blog_2.articles %}
           {% assign has_posts = true %}
-          <div
-            class="ai-blog-filter__post-{{ ai_gen_id }}"
-            data-blog="{{ block.settings.blog_2.handle }}"
-            data-index="{{ forloop.index0 }}"
-          >
-            <div class="ai-blog-filter__post-image-{{ ai_gen_id }}">
+          <article class="blog-filter__post-{{ ai_gen_id }}" data-blog="{{ block.settings.blog_2.handle }}">
+            <a href="{{ article.url }}" class="blog-filter__post-image-{{ ai_gen_id }}" tabindex="-1" aria-hidden="true">
               {% if article.image %}
                 <img
                   src="{{ article.image | image_url: width: 800 }}"
                   alt="{{ article.image.alt | escape }}"
                   loading="lazy"
                   width="800"
-                  height="{{ 800 | divided_by: block.settings.image_aspect_ratio }}"
+                  height="533"
                 >
               {% else %}
-                <div class="ai-blog-filter__post-image-placeholder-{{ ai_gen_id }}">
+                <div class="blog-filter__post-placeholder-{{ ai_gen_id }}">
                   {{ 'image' | placeholder_svg_tag }}
                 </div>
               {% endif %}
-            </div>
-
-            <div class="ai-blog-filter__post-content-{{ ai_gen_id }}">
-              {% if block.settings.show_blog_label %}
-                <div class="ai-blog-filter__post-blog-{{ ai_gen_id }}">
-                  {{ article.blog.title }}
-                </div>
-              {% endif %}
-
-              {% if block.settings.show_date %}
-                <div class="ai-blog-filter__post-date-{{ ai_gen_id }}">
-                  {{ article.published_at | date: block.settings.date_format }}
-                </div>
-              {% endif %}
-
-              <h3 class="ai-blog-filter__post-title-{{ ai_gen_id }}">
+            </a>
+            <div class="blog-filter__post-content-{{ ai_gen_id }}">
+              <div class="blog-filter__post-meta-{{ ai_gen_id }}">
+                {% if block.settings.show_blog_label %}
+                  <span class="blog-filter__post-blog-label-{{ ai_gen_id }}">{{ article.blog.title }}</span>
+                {% endif %}
+                {% if block.settings.show_blog_label and block.settings.show_date %}
+                  <span class="blog-filter__post-sep-{{ ai_gen_id }}"></span>
+                {% endif %}
+                {% if block.settings.show_date %}
+                  <span class="blog-filter__post-date-{{ ai_gen_id }}">{{ article.published_at | date: block.settings.date_format }}</span>
+                {% endif %}
+              </div>
+              <h3 class="blog-filter__post-title-{{ ai_gen_id }}">
                 <a href="{{ article.url }}">{{ article.title }}</a>
               </h3>
-
               {% if block.settings.show_excerpt %}
-                <div class="ai-blog-filter__post-excerpt-{{ ai_gen_id }}">
+                <div class="blog-filter__post-excerpt-{{ ai_gen_id }}">
                   {{ article.excerpt_or_content | strip_html | truncate: block.settings.excerpt_length }}
                 </div>
               {% endif %}
             </div>
-          </div>
+          </article>
         {% endfor %}
       {% endif %}
-      
+
       {% if block.settings.blog_3 != blank %}
         {% for article in block.settings.blog_3.articles %}
           {% assign has_posts = true %}
-          <div
-            class="ai-blog-filter__post-{{ ai_gen_id }}"
-            data-blog="{{ block.settings.blog_3.handle }}"
-            data-index="{{ forloop.index0 }}"
-          >
-            <div class="ai-blog-filter__post-image-{{ ai_gen_id }}">
+          <article class="blog-filter__post-{{ ai_gen_id }}" data-blog="{{ block.settings.blog_3.handle }}">
+            <a href="{{ article.url }}" class="blog-filter__post-image-{{ ai_gen_id }}" tabindex="-1" aria-hidden="true">
               {% if article.image %}
                 <img
                   src="{{ article.image | image_url: width: 800 }}"
                   alt="{{ article.image.alt | escape }}"
                   loading="lazy"
                   width="800"
-                  height="{{ 800 | divided_by: block.settings.image_aspect_ratio }}"
+                  height="533"
                 >
               {% else %}
-                <div class="ai-blog-filter__post-image-placeholder-{{ ai_gen_id }}">
+                <div class="blog-filter__post-placeholder-{{ ai_gen_id }}">
                   {{ 'image' | placeholder_svg_tag }}
                 </div>
               {% endif %}
-            </div>
-
-            <div class="ai-blog-filter__post-content-{{ ai_gen_id }}">
-              {% if block.settings.show_blog_label %}
-                <div class="ai-blog-filter__post-blog-{{ ai_gen_id }}">
-                  {{ article.blog.title }}
-                </div>
-              {% endif %}
-
-              {% if block.settings.show_date %}
-                <div class="ai-blog-filter__post-date-{{ ai_gen_id }}">
-                  {{ article.published_at | date: block.settings.date_format }}
-                </div>
-              {% endif %}
-
-              <h3 class="ai-blog-filter__post-title-{{ ai_gen_id }}">
+            </a>
+            <div class="blog-filter__post-content-{{ ai_gen_id }}">
+              <div class="blog-filter__post-meta-{{ ai_gen_id }}">
+                {% if block.settings.show_blog_label %}
+                  <span class="blog-filter__post-blog-label-{{ ai_gen_id }}">{{ article.blog.title }}</span>
+                {% endif %}
+                {% if block.settings.show_blog_label and block.settings.show_date %}
+                  <span class="blog-filter__post-sep-{{ ai_gen_id }}"></span>
+                {% endif %}
+                {% if block.settings.show_date %}
+                  <span class="blog-filter__post-date-{{ ai_gen_id }}">{{ article.published_at | date: block.settings.date_format }}</span>
+                {% endif %}
+              </div>
+              <h3 class="blog-filter__post-title-{{ ai_gen_id }}">
                 <a href="{{ article.url }}">{{ article.title }}</a>
               </h3>
-
               {% if block.settings.show_excerpt %}
-                <div class="ai-blog-filter__post-excerpt-{{ ai_gen_id }}">
+                <div class="blog-filter__post-excerpt-{{ ai_gen_id }}">
                   {{ article.excerpt_or_content | strip_html | truncate: block.settings.excerpt_length }}
                 </div>
               {% endif %}
             </div>
-          </div>
+          </article>
         {% endfor %}
       {% endif %}
 
       {% unless has_posts %}
-        <div class="ai-blog-filter__empty-{{ ai_gen_id }}">
-          เพิ่มบล็อกเพื่อแสดงโพสต์
+        <div class="blog-filter__empty-{{ ai_gen_id }}">
+          เลือก Blog ใน theme editor เพื่อแสดงบทความ
         </div>
       {% endunless %}
+
     </div>
 
-    <div class="ai-blog-filter__load-more-{{ ai_gen_id }}">
-      <button class="ai-blog-filter__load-more-button-{{ ai_gen_id }}">
+    <div class="blog-filter__load-more-{{ ai_gen_id }}">
+      <button class="blog-filter__load-more-btn-{{ ai_gen_id }} is-hidden" type="button">
         {{ block.settings.load_more_text }}
       </button>
     </div>
+
   </div>
 </blog-filter-{{ ai_gen_id }}>
 
 <script>
-  (function() {
-    class BlogFilter{{ ai_gen_id }} extends HTMLElement {
-      constructor() {
-        super();
-        this.postsPerPage = {{ block.settings.posts_per_page }};
-        this.currentPage = 1;
-        this.currentFilter = 'all';
-      }
+(function () {
+  const SUFFIX = '{{ ai_gen_id }}';
 
-      connectedCallback() {
-        this.filterButtons = this.querySelectorAll('.ai-blog-filter__button-{{ ai_gen_id }}');
-        this.posts = this.querySelectorAll('.ai-blog-filter__post-{{ ai_gen_id }}');
-        this.loadMoreButton = this.querySelector('.ai-blog-filter__load-more-button-{{ ai_gen_id }}');
-        
-        this.setupEventListeners();
-        this.showInitialPosts();
-      }
-
-      setupEventListeners() {
-        this.filterButtons.forEach(button => {
-          button.addEventListener('click', () => {
-            this.handleFilterClick(button);
-          });
-        });
-
-        if (this.loadMoreButton) {
-          this.loadMoreButton.addEventListener('click', () => {
-            this.loadMorePosts();
-          });
-        }
-      }
-
-      handleFilterClick(button) {
-        this.filterButtons.forEach(btn => btn.classList.remove('active'));
-        button.classList.add('active');
-        
-        this.currentFilter = button.dataset.filter;
-        this.currentPage = 1;
-        
-        this.filterPosts();
-      }
-
-      filterPosts() {
-        const filteredPosts = Array.from(this.posts).filter(post => {
-          if (this.currentFilter === 'all') return true;
-          return post.dataset.blog === this.currentFilter;
-        });
-
-        this.posts.forEach(post => {
-          post.classList.remove('visible');
-          post.classList.add('hidden');
-        });
-
-        const postsToShow = filteredPosts.slice(0, this.postsPerPage * this.currentPage);
-        
-        postsToShow.forEach((post, index) => {
-          setTimeout(() => {
-            post.classList.remove('hidden');
-            post.classList.add('visible');
-          }, index * 50);
-        });
-
-        if (this.loadMoreButton) {
-          if (filteredPosts.length > postsToShow.length) {
-            this.loadMoreButton.classList.remove('hidden');
-          } else {
-            this.loadMoreButton.classList.add('hidden');
-          }
-        }
-      }
-
-      loadMorePosts() {
-        this.currentPage++;
-        this.filterPosts();
-      }
-
-      showInitialPosts() {
-        this.filterPosts();
-      }
+  class BlogFilter extends HTMLElement {
+    constructor() {
+      super();
+      this.postsPerPage = parseInt('{{ block.settings.posts_per_page }}');
+      this.currentPage  = 1;
+      this.activeFilter = null; // null = แสดงทั้งหมด
     }
 
-    customElements.define('blog-filter-{{ ai_gen_id }}', BlogFilter{{ ai_gen_id }});
-  })();
+    connectedCallback() {
+      this.buttons     = Array.from(this.querySelectorAll(`.blog-filter__btn-${SUFFIX}`));
+      this.posts       = Array.from(this.querySelectorAll(`.blog-filter__post-${SUFFIX}`));
+      this.grid        = this.querySelector(`.blog-filter__posts-${SUFFIX}`);
+      this.loadMoreBtn = this.querySelector(`.blog-filter__load-more-btn-${SUFFIX}`);
+
+      this.buttons.forEach(btn =>
+        btn.addEventListener('click', () => this.handleFilter(btn))
+      );
+
+      if (this.loadMoreBtn) {
+        this.loadMoreBtn.addEventListener('click', () => {
+          this.currentPage++;
+          this.render();
+        });
+      }
+
+      // แสดงทั้งหมดตอน init
+      this.render();
+    }
+
+    handleFilter(btn) {
+      const handle = btn.dataset.filter;
+
+      if (this.activeFilter === handle) {
+        // กดซ้ำ → ยกเลิก filter
+        this.activeFilter = null;
+        this.buttons.forEach(b => {
+          b.classList.remove('is-active');
+          b.setAttribute('aria-pressed', 'false');
+        });
+      } else {
+        this.activeFilter = handle;
+        this.buttons.forEach(b => {
+          const match = b.dataset.filter === handle;
+          b.classList.toggle('is-active', match);
+          b.setAttribute('aria-pressed', String(match));
+        });
+      }
+
+      this.currentPage = 1;
+
+      // brief flash เพื่อให้รู้ว่า filter เปลี่ยน
+      this.grid.classList.add('is-filtering');
+      requestAnimationFrame(() => {
+        this.render();
+        this.grid.classList.remove('is-filtering');
+      });
+    }
+
+    getFiltered() {
+      if (!this.activeFilter) return this.posts;
+      return this.posts.filter(p => p.dataset.blog === this.activeFilter);
+    }
+
+    render() {
+      const filtered  = this.getFiltered();
+      const showCount = this.postsPerPage * this.currentPage;
+      const toShow    = filtered.slice(0, showCount);
+      const toHide    = this.posts.filter(p => !toShow.includes(p));
+
+      toHide.forEach(p => {
+        p.classList.remove('is-visible');
+        p.classList.add('is-hidden');
+      });
+
+      toShow.forEach((p, i) => {
+        p.classList.remove('is-hidden');
+        setTimeout(() => p.classList.add('is-visible'), i * 40);
+      });
+
+      if (this.loadMoreBtn) {
+        this.loadMoreBtn.classList.toggle('is-hidden', filtered.length <= showCount);
+      }
+    }
+  }
+
+  const tagName = `blog-filter-${SUFFIX}`;
+  if (!customElements.get(tagName)) {
+    customElements.define(tagName, BlogFilter);
+  }
+})();
 </script>
 
 {% schema %}
@@ -493,7 +605,7 @@
       "type": "text",
       "id": "blog_1_button_text",
       "label": "Blog 1 button text",
-      "default": "Blog 1"
+      "info": "ปล่อยว่าง = ใช้ชื่อ Blog"
     },
     {
       "type": "blog",
@@ -504,7 +616,7 @@
       "type": "text",
       "id": "blog_2_button_text",
       "label": "Blog 2 button text",
-      "default": "Blog 2"
+      "info": "ปล่อยว่าง = ใช้ชื่อ Blog"
     },
     {
       "type": "blog",
@@ -515,121 +627,29 @@
       "type": "text",
       "id": "blog_3_button_text",
       "label": "Blog 3 button text",
-      "default": "Blog 3"
+      "info": "ปล่อยว่าง = ใช้ชื่อ Blog"
     },
     {
       "type": "header",
-      "content": "Filter buttons"
-    },
-    {
-      "type": "text",
-      "id": "all_button_text",
-      "label": "All button text",
-      "default": "ทั้งหมด"
+      "content": "Filter Buttons"
     },
     {
       "type": "select",
       "id": "filter_alignment",
       "label": "Alignment",
       "options": [
-        {
-          "value": "flex-start",
-          "label": "Left"
-        },
-        {
-          "value": "center",
-          "label": "Center"
-        },
-        {
-          "value": "flex-end",
-          "label": "Right"
-        }
+        { "value": "flex-start", "label": "Left"   },
+        { "value": "center",     "label": "Center" },
+        { "value": "flex-end",   "label": "Right"  }
       ],
       "default": "center"
     },
     {
       "type": "range",
       "id": "button_font_size",
-      "label": "Font size",
-      "min": 12,
-      "max": 24,
-      "step": 1,
-      "unit": "px",
+      "label": "Button font size",
+      "min": 12, "max": 20, "step": 1, "unit": "px",
       "default": 14
-    },
-    {
-      "type": "range",
-      "id": "button_border_radius",
-      "label": "Border radius",
-      "min": 0,
-      "max": 40,
-      "step": 2,
-      "unit": "px",
-      "default": 14
-    },
-    {
-      "type": "range",
-      "id": "button_border_width",
-      "label": "Border width",
-      "min": 0,
-      "max": 4,
-      "step": 1,
-      "unit": "px",
-      "default": 1
-    },
-    {
-      "type": "color",
-      "id": "button_background",
-      "label": "Background",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "button_text_color",
-      "label": "Text",
-      "default": "#000000"
-    },
-    {
-      "type": "color",
-      "id": "button_border_color",
-      "label": "Border",
-      "default": "#000000"
-    },
-    {
-      "type": "color",
-      "id": "button_hover_background",
-      "label": "Hover background",
-      "default": "#f5f5f5"
-    },
-    {
-      "type": "color",
-      "id": "button_hover_text_color",
-      "label": "Hover text",
-      "default": "#000000"
-    },
-    {
-      "type": "color",
-      "id": "button_hover_border_color",
-      "label": "Hover border",
-      "default": "#333333"
-    },
-    {
-      "type": "color",
-      "id": "button_active_background",
-      "label": "Active background",
-      "default": "#000000"
-    },
-    {
-      "type": "color",
-      "id": "button_active_text_color",
-      "label": "Active text",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "button_active_border_color",
-      "label": "Active border",
-      "default": "#000000"
     },
     {
       "type": "header",
@@ -639,19 +659,14 @@
       "type": "range",
       "id": "desktop_width_percent",
       "label": "Desktop width",
-      "min": 50,
-      "max": 100,
-      "step": 5,
-      "unit": "%",
+      "min": 50, "max": 100, "step": 5, "unit": "%",
       "default": 100
     },
     {
       "type": "range",
       "id": "posts_per_row",
       "label": "Posts per row (desktop)",
-      "min": 1,
-      "max": 4,
-      "step": 1,
+      "min": 1, "max": 4, "step": 1,
       "default": 3
     },
     {
@@ -659,14 +674,8 @@
       "id": "posts_per_row_mobile",
       "label": "Posts per row (mobile)",
       "options": [
-        {
-          "value": "1",
-          "label": "1"
-        },
-        {
-          "value": "2",
-          "label": "2"
-        }
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" }
       ],
       "default": "1"
     },
@@ -674,38 +683,24 @@
       "type": "range",
       "id": "grid_gap",
       "label": "Grid gap",
-      "min": 10,
-      "max": 60,
-      "step": 5,
-      "unit": "px",
-      "default": 30
+      "min": 10, "max": 60, "step": 5, "unit": "px",
+      "default": 25
     },
     {
       "type": "header",
-      "content": "Post image"
+      "content": "Post Image"
     },
     {
       "type": "range",
       "id": "image_aspect_ratio",
-      "label": "Aspect ratio",
-      "min": 0.5,
-      "max": 2,
-      "step": 0.1,
-      "default": 1.5
-    },
-    {
-      "type": "range",
-      "id": "image_border_radius",
-      "label": "Border radius",
-      "min": 0,
-      "max": 40,
-      "step": 2,
-      "unit": "px",
-      "default": 8
+      "label": "Aspect ratio (width/height)",
+      "min": 0.5, "max": 2, "step": 0.1,
+      "default": 1.5,
+      "info": "1.5 = 3:2, 1.0 = square, 0.75 = portrait"
     },
     {
       "type": "header",
-      "content": "Post content"
+      "content": "Post Content"
     },
     {
       "type": "checkbox",
@@ -723,7 +718,7 @@
       "type": "text",
       "id": "date_format",
       "label": "Date format",
-      "default": "%d %B %Y"
+      "default": "%d %b %Y"
     },
     {
       "type": "checkbox",
@@ -734,81 +729,55 @@
     {
       "type": "range",
       "id": "excerpt_length",
-      "label": "Excerpt length",
-      "min": 50,
-      "max": 300,
-      "step": 10,
-      "default": 150
+      "label": "Excerpt length (chars)",
+      "min": 50, "max": 300, "step": 10,
+      "default": 130
     },
     {
       "type": "range",
       "id": "blog_label_font_size",
       "label": "Blog label size",
-      "min": 10,
-      "max": 20,
-      "step": 1,
-      "unit": "px",
-      "default": 12
+      "min": 10, "max": 16, "step": 1, "unit": "px",
+      "default": 11
     },
     {
       "type": "range",
       "id": "date_font_size",
       "label": "Date size",
-      "min": 10,
-      "max": 20,
-      "step": 1,
-      "unit": "px",
+      "min": 10, "max": 16, "step": 1, "unit": "px",
       "default": 12
     },
     {
       "type": "range",
       "id": "title_font_size",
       "label": "Title size",
-      "min": 14,
-      "max": 32,
-      "step": 1,
-      "unit": "px",
-      "default": 20
+      "min": 14, "max": 28, "step": 1, "unit": "px",
+      "default": 18
     },
     {
       "type": "range",
       "id": "excerpt_font_size",
       "label": "Excerpt size",
-      "min": 12,
-      "max": 20,
-      "step": 1,
-      "unit": "px",
+      "min": 12, "max": 18, "step": 1, "unit": "px",
       "default": 14
     },
     {
       "type": "color",
-      "id": "blog_label_color",
-      "label": "Blog label",
-      "default": "#666666"
-    },
-    {
-      "type": "color",
       "id": "date_color",
-      "label": "Date",
-      "default": "#666666"
+      "label": "Date color",
+      "default": "#9CA3AF"
     },
     {
       "type": "color",
       "id": "title_color",
-      "label": "Title",
-      "default": "#000000"
-    },
-    {
-      "type": "color",
-      "id": "title_hover_color",
-      "label": "Title hover",
-      "default": "#333333"
+      "label": "Title color",
+      "default": "#1A202C"
     },
     {
       "type": "color",
       "id": "excerpt_color",
-      "label": "Excerpt",
-      "default": "#666666"
+      "label": "Excerpt color",
+      "default": "#6B7280"
     },
     {
       "type": "header",
@@ -818,9 +787,7 @@
       "type": "range",
       "id": "posts_per_page",
       "label": "Posts per page",
-      "min": 3,
-      "max": 24,
-      "step": 3,
+      "min": 3, "max": 24, "step": 3,
       "default": 9
     },
     {
@@ -832,68 +799,9 @@
     {
       "type": "range",
       "id": "load_more_font_size",
-      "label": "Font size",
-      "min": 12,
-      "max": 24,
-      "step": 1,
-      "unit": "px",
+      "label": "Load more font size",
+      "min": 12, "max": 20, "step": 1, "unit": "px",
       "default": 14
-    },
-    {
-      "type": "range",
-      "id": "load_more_border_radius",
-      "label": "Border radius",
-      "min": 0,
-      "max": 40,
-      "step": 2,
-      "unit": "px",
-      "default": 14
-    },
-    {
-      "type": "range",
-      "id": "load_more_border_width",
-      "label": "Border width",
-      "min": 0,
-      "max": 4,
-      "step": 1,
-      "unit": "px",
-      "default": 1
-    },
-    {
-      "type": "color",
-      "id": "load_more_background",
-      "label": "Background",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "load_more_text_color",
-      "label": "Text",
-      "default": "#000000"
-    },
-    {
-      "type": "color",
-      "id": "load_more_border_color",
-      "label": "Border",
-      "default": "#000000"
-    },
-    {
-      "type": "color",
-      "id": "load_more_hover_background",
-      "label": "Hover background",
-      "default": "#000000"
-    },
-    {
-      "type": "color",
-      "id": "load_more_hover_text_color",
-      "label": "Hover text",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "load_more_hover_border_color",
-      "label": "Hover border",
-      "default": "#000000"
     }
   ],
   "presets": [
