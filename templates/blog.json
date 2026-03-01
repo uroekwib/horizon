@@ -16,11 +16,11 @@
           "type": "ai_gen_block_c52a72a",
           "settings": {
             "blog_1": "how-to",
-            "blog_1_button_text": "Blog 1",
+            "blog_1_button_text": "ความรู้เรื่องป้าย",
             "blog_2": "support",
-            "blog_2_button_text": "Blog 2",
+            "blog_2_button_text": "งานบริการลูกค้า",
             "blog_3": "product",
-            "blog_3_button_text": "Blog 3",
+            "blog_3_button_text": "สินค้าและบริการ",
             "all_button_text": "ทั้งหมด",
             "filter_alignment": "center",
             "button_font_size": 14,
@@ -37,7 +37,7 @@
             "button_active_border_color": "#000000",
             "desktop_width_percent": 100,
             "posts_per_row": 2,
-            "posts_per_row_mobile": "2",
+            "posts_per_row_mobile": "1",
             "grid_gap": 20,
             "image_aspect_ratio": 1.5,
             "image_border_radius": 12,
@@ -68,85 +68,6 @@
             "load_more_hover_border_color": "#000000"
           },
           "blocks": {}
-        },
-        "static-blog-post-card": {
-          "type": "_blog-post-card",
-          "disabled": true,
-          "static": true,
-          "settings": {
-            "alignment": "left"
-          },
-          "blocks": {
-            "image": {
-              "type": "_blog-post-image",
-              "static": true,
-              "settings": {
-                "height": "large",
-                "border": "none",
-                "border_width": 1,
-                "border_opacity": 100,
-                "border_radius": 4
-              },
-              "blocks": {}
-            },
-            "heading": {
-              "type": "_heading",
-              "name": "t:names.title",
-              "static": true,
-              "settings": {
-                "type_preset": "h4",
-                "font": "var(--font-primary--family)",
-                "font_size": "",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "color": "",
-                "text": "",
-                "read_only": true,
-                "alignment": "left",
-                "show_alignment": false,
-                "padding-block-start": 0,
-                "padding-block-end": 10,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "blog-post-details": {
-              "type": "_blog-post-info-text",
-              "name": "t:names.details",
-              "static": true,
-              "settings": {
-                "show_date": true,
-                "show_author": false,
-                "type_preset": "",
-                "alignment": "left",
-                "show_alignment": false,
-                "padding-block-start": 0,
-                "padding-block-end": 0
-              },
-              "blocks": {}
-            },
-            "content": {
-              "type": "_blog-post-description",
-              "static": true,
-              "settings": {
-                "type_preset": "rte",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "color": "var(--color-foreground)",
-                "padding-block-start": 16,
-                "padding-block-end": 0
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": []
         }
       },
       "block_order": [
