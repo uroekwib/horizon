@@ -1,6 +1,305 @@
+{% doc %}
+  @prompt
+    Create a dynamic payment icons block for the footer that allows merchants to manually select and display up to 9 payment method icons. The block should include:
+    - Option to add/remove individual payment icons (support common methods like Visa, Mastercard, PayPal, Apple Pay, Google Pay, etc.)
+    - Customizable alignment (left, center, right)
+    - Adjustable gap/spacing between icons
+    - Responsive design that works well on mobile and desktop
+    - Clean, modern styling that matches typical footer aesthetics
+    
+    icon/svg เดี๋ยวฉันใส่เองนะ, โลโก้ให้ fill หน่อย, logo ขอให้เต็ม ไม่ต้องมี padding แล้วก็มุมมนนิดน, fix width 46 hieght 34 เลย แล้วรูปก็ fill ในพื้นที่นี้ไป
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-payment-icons-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+  }
+
+  .ai-payment-icons-container-{{ ai_gen_id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: {{ block.settings.icon_gap }}px;
+    justify-content: {{ block.settings.alignment }};
+    align-items: center;
+  }
+
+  .ai-payment-icon-{{ ai_gen_id }} {
+    width: 46px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: {{ block.settings.icon_background }};
+    border-radius: {{ block.settings.icon_border_radius }}px;
+    overflow: hidden;
+  }
+
+  .ai-payment-icon-{{ ai_gen_id }} svg,
+  .ai-payment-icon-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-payment-icons-container-{{ ai_gen_id }} {
+      gap: {{ block.settings.icon_gap_mobile }}px;
+    }
+  }
+{% endstyle %}
+
+<payment-icons-{{ ai_gen_id }} class="ai-payment-icons-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-payment-icons-container-{{ ai_gen_id }}">
+    {% for i in (1..9) %}
+      {% liquid
+        assign icon_enabled_key = 'icon_' | append: i | append: '_enabled'
+        assign icon_image_key = 'icon_' | append: i | append: '_image'
+        
+        assign icon_enabled = block.settings[icon_enabled_key]
+        assign icon_image = block.settings[icon_image_key]
+      %}
+
+      {% if icon_enabled and icon_image != blank %}
+        <div class="ai-payment-icon-{{ ai_gen_id }}">
+          <img
+            src="{{ icon_image | image_url: width: 200 }}"
+            alt="{{ icon_image.alt | default: 'Payment method' | escape }}"
+            loading="lazy"
+            width="200"
+            height="200"
+          >
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</payment-icons-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class PaymentIcons{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+      }
+    }
+
+    customElements.define('payment-icons-{{ ai_gen_id }}', PaymentIcons{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Payment icons",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "flex-end",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "icon_gap",
+      "label": "Gap between icons (desktop)",
+      "min": 4,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "icon_gap_mobile",
+      "label": "Gap between icons (mobile)",
+      "min": 4,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Icon style"
+    },
+    {
+      "type": "color",
+      "id": "icon_background",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "icon_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Payment icon 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "icon_1_enabled",
+      "label": "Show icon 1",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_1_image",
+      "label": "Icon 1 image"
+    },
+    {
+      "type": "header",
+      "content": "Payment icon 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "icon_2_enabled",
+      "label": "Show icon 2",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_2_image",
+      "label": "Icon 2 image"
+    },
+    {
+      "type": "header",
+      "content": "Payment icon 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "icon_3_enabled",
+      "label": "Show icon 3",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_3_image",
+      "label": "Icon 3 image"
+    },
+    {
+      "type": "header",
+      "content": "Payment icon 4"
+    },
+    {
+      "type": "checkbox",
+      "id": "icon_4_enabled",
+      "label": "Show icon 4",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_4_image",
+      "label": "Icon 4 image"
+    },
+    {
+      "type": "header",
+      "content": "Payment icon 5"
+    },
+    {
+      "type": "checkbox",
+      "id": "icon_5_enabled",
+      "label": "Show icon 5",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_5_image",
+      "label": "Icon 5 image"
+    },
+    {
+      "type": "header",
+      "content": "Payment icon 6"
+    },
+    {
+      "type": "checkbox",
+      "id": "icon_6_enabled",
+      "label": "Show icon 6",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_6_image",
+      "label": "Icon 6 image"
+    },
+    {
+      "type": "header",
+      "content": "Payment icon 7"
+    },
+    {
+      "type": "checkbox",
+      "id": "icon_7_enabled",
+      "label": "Show icon 7",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_7_image",
+      "label": "Icon 7 image"
+    },
+    {
+      "type": "header",
+      "content": "Payment icon 8"
+    },
+    {
+      "type": "checkbox",
+      "id": "icon_8_enabled",
+      "label": "Show icon 8",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_8_image",
+      "label": "Icon 8 image"
+    },
+    {
+      "type": "header",
+      "content": "Payment icon 9"
+    },
+    {
+      "type": "checkbox",
+      "id": "icon_9_enabled",
+      "label": "Show icon 9",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_9_image",
+      "label": "Icon 9 image"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Payment icons"
+    }
+  ]
+}
 {% endschema %}
