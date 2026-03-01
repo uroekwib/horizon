@@ -369,46 +369,6 @@
     },
     "1772353422e042820c": {
       "type": "_blocks",
-      "blocks": {
-        "ai_gen_block_0367c28_bEELnD": {
-          "type": "ai_gen_block_0367c28",
-          "settings": {
-            "alignment": "center",
-            "desktop_width_percent": 100,
-            "icon_gap": 12,
-            "icon_gap_mobile": 8,
-            "icon_width": 45,
-            "icon_height": 30,
-            "icon_width_mobile": 45,
-            "icon_height_mobile": 30,
-            "icon_border_radius": 4,
-            "icon_border_width": 1,
-            "icon_background": "#ffffff",
-            "icon_border_color": "#e6e6e6",
-            "icon_opacity": 100,
-            "show_icon_1": true,
-            "icon_1": "shopify://shop_images/americann-logo.svg",
-            "show_icon_2": true,
-            "icon_2": "shopify://shop_images/BANK_icon_visa.svg",
-            "show_icon_3": true,
-            "icon_3": "shopify://shop_images/BANK_icon_mastercard_8f0b6cdb-b2ff-40c7-84e9-de345fa4d490.svg",
-            "show_icon_4": true,
-            "icon_4": "shopify://shop_images/scbbank-logo.svg",
-            "show_icon_5": true,
-            "icon_5": "shopify://shop_images/kasikornbank-logo.svg",
-            "show_icon_6": true,
-            "icon_6": "shopify://shop_images/bangkokbank-logo.svg",
-            "show_icon_7": true,
-            "icon_7": "shopify://shop_images/promptpay-logo.svg",
-            "show_icon_8": false,
-            "show_icon_9": false
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "ai_gen_block_0367c28_bEELnD"
-      ],
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,
