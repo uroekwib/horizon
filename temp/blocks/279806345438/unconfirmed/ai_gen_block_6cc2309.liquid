@@ -1,6 +1,462 @@
+{% doc %}
+  @prompt
+    Update the existing “Collapsible row” section to add a FAQ topic chip navigation above the accordion.
+    
+    Requirements:
+    - At the top of the section, render a row of rounded “chips” (buttons).
+    - Each chip label comes from each FAQ item heading (the accordion title).
+    - Clicking a chip should smoothly scroll to the matching accordion item below and automatically open (expand) that item.
+    - The accordion structure and content editing must remain the same (Heading + Content fields per item).
+    - Keep existing styling/layout, only add the chip navigation UI.
+    - Chips must wrap to multiple lines on mobile.
+    - Add an “active” chip state for the currently opened accordion item.
+    - No external libraries. Use lightweight vanilla JS only, scoped to this section.
+    
+    Return the updated Liquid + schema + scoped CSS + minimal JS.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-faq-chips-{{ ai_gen_id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .ai-faq-chip-{{ ai_gen_id }} {
+    padding: 8px 16px;
+    background-color: {{ block.settings.chip_background_color }};
+    color: {{ block.settings.chip_text_color }};
+    border: 1px solid {{ block.settings.chip_border_color }};
+    border-radius: {{ block.settings.chip_border_radius }}px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .ai-faq-chip-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.chip_hover_background_color }};
+    color: {{ block.settings.chip_hover_text_color }};
+    border-color: {{ block.settings.chip_hover_border_color }};
+  }
+
+  .ai-faq-chip-{{ ai_gen_id }}.active {
+    background-color: {{ block.settings.chip_active_background_color }};
+    color: {{ block.settings.chip_active_text_color }};
+    border-color: {{ block.settings.chip_active_border_color }};
+  }
+
+  .ai-collapsible-row-{{ ai_gen_id }} {
+    border-bottom: 1px solid {{ block.settings.row_border_color }};
+  }
+
+  .ai-collapsible-row-{{ ai_gen_id }}:first-of-type {
+    border-top: 1px solid {{ block.settings.row_border_color }};
+  }
+
+  .ai-collapsible-header-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: {{ block.settings.row_padding }}px 0;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .ai-collapsible-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.heading_size }}px;
+    font-weight: 600;
+    margin: 0;
+    color: {{ block.settings.heading_color }};
+  }
+
+  .ai-collapsible-icon-{{ ai_gen_id }} {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+    margin-left: 16px;
+  }
+
+  .ai-collapsible-icon-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    stroke: {{ block.settings.icon_color }};
+  }
+
+  .ai-collapsible-row-{{ ai_gen_id }}.open .ai-collapsible-icon-{{ ai_gen_id }} {
+    transform: rotate(180deg);
+  }
+
+  .ai-collapsible-content-{{ ai_gen_id }} {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .ai-collapsible-content-inner-{{ ai_gen_id }} {
+    padding-bottom: {{ block.settings.row_padding }}px;
+    color: {{ block.settings.content_color }};
+    font-size: {{ block.settings.content_size }}px;
+    line-height: 1.6;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-faq-chips-{{ ai_gen_id }} {
+      gap: 6px;
+      margin-bottom: 20px;
+    }
+
+    .ai-faq-chip-{{ ai_gen_id }} {
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+
+    .ai-collapsible-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_size | times: 0.9 }}px;
+    }
+
+    .ai-collapsible-content-inner-{{ ai_gen_id }} {
+      font-size: {{ block.settings.content_size | times: 0.95 }}px;
+    }
+  }
+{% endstyle %}
+
+<faq-collapsible-{{ ai_gen_id }} class="ai-faq-section-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  {% if block.settings.show_chips %}
+    <div class="ai-faq-chips-{{ ai_gen_id }}">
+      {% for block_item in block.settings.faq_items %}
+        <button
+          class="ai-faq-chip-{{ ai_gen_id }}"
+          data-faq-index="{{ forloop.index0 }}"
+          aria-label="Jump to {{ block_item.heading }}"
+        >
+          {{ block_item.heading }}
+        </button>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <div class="ai-collapsible-rows-{{ ai_gen_id }}">
+    {% for block_item in block.settings.faq_items %}
+      <div
+        class="ai-collapsible-row-{{ ai_gen_id }}"
+        data-faq-index="{{ forloop.index0 }}"
+      >
+        <div class="ai-collapsible-header-{{ ai_gen_id }}">
+          <h3 class="ai-collapsible-title-{{ ai_gen_id }}">{{ block_item.heading }}</h3>
+          <div class="ai-collapsible-icon-{{ ai_gen_id }}">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+        </div>
+        <div class="ai-collapsible-content-{{ ai_gen_id }}">
+          <div class="ai-collapsible-content-inner-{{ ai_gen_id }}">
+            {{ block_item.content }}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</faq-collapsible-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class FaqCollapsible{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.rows = [];
+        this.chips = [];
+        this.activeIndex = null;
+      }
+
+      connectedCallback() {
+        this.rows = Array.from(this.querySelectorAll('.ai-collapsible-row-{{ ai_gen_id }}'));
+        this.chips = Array.from(this.querySelectorAll('.ai-faq-chip-{{ ai_gen_id }}'));
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        this.rows.forEach((row, index) => {
+          const header = row.querySelector('.ai-collapsible-header-{{ ai_gen_id }}');
+          header.addEventListener('click', () => this.toggleRow(index));
+        });
+
+        this.chips.forEach((chip, index) => {
+          chip.addEventListener('click', () => this.handleChipClick(index));
+        });
+      }
+
+      toggleRow(index) {
+        const row = this.rows[index];
+        const content = row.querySelector('.ai-collapsible-content-{{ ai_gen_id }}');
+        const isOpen = row.classList.contains('open');
+
+        if (isOpen) {
+          row.classList.remove('open');
+          content.style.maxHeight = '0';
+          this.activeIndex = null;
+          this.updateChipStates();
+        } else {
+          this.closeAllRows();
+          row.classList.add('open');
+          content.style.maxHeight = content.scrollHeight + 'px';
+          this.activeIndex = index;
+          this.updateChipStates();
+        }
+      }
+
+      closeAllRows() {
+        this.rows.forEach(row => {
+          row.classList.remove('open');
+          const content = row.querySelector('.ai-collapsible-content-{{ ai_gen_id }}');
+          content.style.maxHeight = '0';
+        });
+      }
+
+      handleChipClick(index) {
+        const row = this.rows[index];
+        const isOpen = row.classList.contains('open');
+
+        if (!isOpen) {
+          this.toggleRow(index);
+        }
+
+        const rowTop = row.getBoundingClientRect().top + window.pageYOffset;
+        const offset = 100;
+
+        window.scrollTo({
+          top: rowTop - offset,
+          behavior: 'smooth'
+        });
+      }
+
+      updateChipStates() {
+        this.chips.forEach((chip, index) => {
+          if (index === this.activeIndex) {
+            chip.classList.add('active');
+          } else {
+            chip.classList.remove('active');
+          }
+        });
+      }
+    }
+
+    customElements.define('faq-collapsible-{{ ai_gen_id }}', FaqCollapsible{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "FAQ collapsible rows",
+  "tag": null,
+  "class": "faq-collapsible-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Chip navigation"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_chips",
+      "label": "Show topic chips",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "chip_background_color",
+      "label": "Chip background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "chip_text_color",
+      "label": "Chip text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "chip_border_color",
+      "label": "Chip border",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "color",
+      "id": "chip_hover_background_color",
+      "label": "Chip hover background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "chip_hover_text_color",
+      "label": "Chip hover text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "chip_hover_border_color",
+      "label": "Chip hover border",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "chip_active_background_color",
+      "label": "Active chip background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "chip_active_text_color",
+      "label": "Active chip text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "chip_active_border_color",
+      "label": "Active chip border",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "chip_border_radius",
+      "label": "Chip border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Accordion rows"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "content_color",
+      "label": "Content color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "row_border_color",
+      "label": "Row border color",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "content_size",
+      "label": "Content size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "row_padding",
+      "label": "Row padding",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "FAQ items"
+    },
+    {
+      "type": "paragraph",
+      "content": "Add your FAQ questions and answers below"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "faq_1_heading",
+      "label": "Question 1"
+    },
+    {
+      "type": "richtext",
+      "id": "faq_1_content",
+      "label": "Answer 1"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "faq_2_heading",
+      "label": "Question 2"
+    },
+    {
+      "type": "richtext",
+      "id": "faq_2_content",
+      "label": "Answer 2"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "faq_3_heading",
+      "label": "Question 3"
+    },
+    {
+      "type": "richtext",
+      "id": "faq_3_content",
+      "label": "Answer 3"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "faq_4_heading",
+      "label": "Question 4"
+    },
+    {
+      "type": "richtext",
+      "id": "faq_4_content",
+      "label": "Answer 4"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "faq_5_heading",
+      "label": "Question 5"
+    },
+    {
+      "type": "richtext",
+      "id": "faq_5_content",
+      "label": "Answer 5"
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ collapsible rows"
+    }
+  ]
+}
 {% endschema %}
