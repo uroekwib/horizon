@@ -1,6 +1,743 @@
+{% doc %}
+  @prompt
+    Use Shopify Collage section: heading + 3 blocks (large image left, video top-right, text bottom-right). Desktop layout = Left large block, mobile layout = Collage., Add a cover image option to the Video block.
+    
+    If a cover image is selected:
+    - Show the cover image first.
+    - Display a play button overlay.
+    - Only load and play the video when clicked.
+    
+    Keep existing video functionality., Update the Video block in this section to include:
+    
+    - Cover image (image_picker)
+    - Video URL (youtube/vimeo URL input)
+    - Video alt text (text input)
+    
+    Behavior:
+    - If a cover image is set, show it as the video thumbnail with a play button overlay.
+    - When clicked, open/play the video (popup/modal behavior is fine).
+    - If no cover image is set, fall back to the default video thumbnail.
+    - Use the “Video alt text” for accessibility (alt/aria-label).
+    
+    Keep all other existing settings and layout unchanged.
+    Return the updated Liquid + schema.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-collage-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+  }
+
+  .ai-collage-container-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ block.settings.spacing }}px;
+  }
+
+  .ai-collage-heading-{{ ai_gen_id }} {
+    margin: 0;
+    font-size: {{ block.settings.heading_size }}px;
+    color: {{ block.settings.heading_color }};
+    text-align: {{ block.settings.heading_alignment }};
+  }
+
+  .ai-collage-grid-{{ ai_gen_id }} {
+    display: grid;
+    gap: {{ block.settings.spacing }}px;
+    width: 100%;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-collage-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+    }
+
+    .ai-collage-item-large-{{ ai_gen_id }} {
+      grid-row: 1 / 3;
+      grid-column: 1;
+    }
+
+    .ai-collage-item-video-{{ ai_gen_id }} {
+      grid-row: 1;
+      grid-column: 2;
+    }
+
+    .ai-collage-item-text-{{ ai_gen_id }} {
+      grid-row: 2;
+      grid-column: 2;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-collage-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+    }
+
+    .ai-collage-item-large-{{ ai_gen_id }} {
+      grid-column: 1 / 3;
+      grid-row: 1;
+    }
+
+    .ai-collage-item-video-{{ ai_gen_id }} {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    .ai-collage-item-text-{{ ai_gen_id }} {
+      grid-column: 2;
+      grid-row: 2;
+    }
+  }
+
+  .ai-collage-image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 200px;
+    overflow: hidden;
+    border-radius: {{ block.settings.border_radius }}px;
+  }
+
+  .ai-collage-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-collage-image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .ai-collage-image-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 200px;
+    max-height: 200px;
+  }
+
+  .ai-collage-video-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 200px;
+    overflow: hidden;
+    border-radius: {{ block.settings.border_radius }}px;
+    background-color: #000000;
+    cursor: pointer;
+  }
+
+  .ai-collage-video-thumbnail-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+  }
+
+  .ai-collage-play-button-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: {{ block.settings.play_button_size }}px;
+    height: {{ block.settings.play_button_size }}px;
+    background-color: {{ block.settings.play_button_background }};
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .ai-collage-play-button-{{ ai_gen_id }}:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+    background-color: {{ block.settings.play_button_hover_background }};
+  }
+
+  .ai-collage-play-icon-{{ ai_gen_id }} {
+    width: calc({{ block.settings.play_button_size }}px * 0.4);
+    height: calc({{ block.settings.play_button_size }}px * 0.4);
+    color: {{ block.settings.play_button_icon_color }};
+    margin-left: 4px;
+  }
+
+  .ai-collage-video-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .ai-collage-video-placeholder-{{ ai_gen_id }} svg {
+    width: 60px;
+    height: 60px;
+    color: #ffffff;
+  }
+
+  .ai-collage-text-wrapper-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: {{ block.settings.text_alignment }};
+    padding: {{ block.settings.text_padding }}px;
+    background-color: {{ block.settings.text_background_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+    min-height: 200px;
+    height: 100%;
+  }
+
+  .ai-collage-text-content-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.text_size }}px;
+    line-height: 1.5;
+    text-align: {{ block.settings.text_alignment }};
+  }
+
+  .ai-collage-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+    pointer-events: none;
+    padding: 8px 12px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 4px;
+  }
+
+  .ai-collage-modal-{{ ai_gen_id }} {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .ai-collage-modal-{{ ai_gen_id }}.active {
+    display: flex;
+  }
+
+  .ai-collage-modal-content-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    aspect-ratio: 16 / 9;
+    background-color: #000000;
+  }
+
+  .ai-collage-modal-close-{{ ai_gen_id }} {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 32px;
+    cursor: pointer;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s ease;
+  }
+
+  .ai-collage-modal-close-{{ ai_gen_id }}:hover {
+    opacity: 0.7;
+  }
+
+  .ai-collage-modal-iframe-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+{% endstyle %}
+
+<collage-block-{{ ai_gen_id }}
+  class="ai-collage-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-collage-container-{{ ai_gen_id }}">
+    {% if block.settings.heading != blank %}
+      <h2 class="ai-collage-heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+    {% endif %}
+
+    <div class="ai-collage-grid-{{ ai_gen_id }}">
+      <div class="ai-collage-item-large-{{ ai_gen_id }}">
+        <div class="ai-collage-image-wrapper-{{ ai_gen_id }}">
+          {% if block.settings.large_image %}
+            <img
+              src="{{ block.settings.large_image | image_url: width: 1200 }}"
+              alt="{{ block.settings.large_image.alt | escape }}"
+              loading="lazy"
+              width="{{ block.settings.large_image.width }}"
+              height="{{ block.settings.large_image.height }}"
+              class="ai-collage-image-{{ ai_gen_id }}"
+            >
+          {% else %}
+            <div class="ai-collage-image-placeholder-{{ ai_gen_id }}">
+              {{ 'image' | placeholder_svg_tag }}
+              <div class="ai-collage-empty-state-{{ ai_gen_id }}">
+                เพิ่มรูปภาพใหญ่
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="ai-collage-item-video-{{ ai_gen_id }}">
+        {% if block.settings.video_url != blank %}
+          <div 
+            class="ai-collage-video-wrapper-{{ ai_gen_id }}" 
+            data-video-wrapper
+            role="button"
+            tabindex="0"
+            aria-label="{{ block.settings.video_alt_text | default: 'Play video' | escape }}"
+          >
+            {% if block.settings.video_cover_image %}
+              <img
+                src="{{ block.settings.video_cover_image | image_url: width: 800 }}"
+                alt="{{ block.settings.video_alt_text | default: block.settings.video_cover_image.alt | escape }}"
+                loading="lazy"
+                width="{{ block.settings.video_cover_image.width }}"
+                height="{{ block.settings.video_cover_image.height }}"
+                class="ai-collage-video-thumbnail-{{ ai_gen_id }}"
+              >
+            {% else %}
+              {% liquid
+                assign video_id = ''
+                assign video_type = ''
+                
+                if block.settings.video_url contains 'youtube.com' or block.settings.video_url contains 'youtu.be'
+                  assign video_type = 'youtube'
+                  if block.settings.video_url contains 'youtu.be/'
+                    assign video_id = block.settings.video_url | split: 'youtu.be/' | last | split: '?' | first
+                  elsif block.settings.video_url contains 'watch?v='
+                    assign video_id = block.settings.video_url | split: 'watch?v=' | last | split: '&' | first
+                  elsif block.settings.video_url contains 'embed/'
+                    assign video_id = block.settings.video_url | split: 'embed/' | last | split: '?' | first
+                  endif
+                elsif block.settings.video_url contains 'vimeo.com'
+                  assign video_type = 'vimeo'
+                  assign video_id = block.settings.video_url | split: 'vimeo.com/' | last | split: '/' | first
+                endif
+              %}
+              
+              {% if video_type == 'youtube' and video_id != blank %}
+                <img
+                  src="https://img.youtube.com/vi/{{ video_id }}/maxresdefault.jpg"
+                  alt="{{ block.settings.video_alt_text | default: 'Video thumbnail' | escape }}"
+                  loading="lazy"
+                  class="ai-collage-video-thumbnail-{{ ai_gen_id }}"
+                >
+              {% elsif video_type == 'vimeo' %}
+                <div class="ai-collage-video-placeholder-{{ ai_gen_id }}">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                </div>
+              {% endif %}
+            {% endif %}
+
+            <button
+              class="ai-collage-play-button-{{ ai_gen_id }}"
+              data-play-button
+              aria-label="{{ block.settings.video_alt_text | default: 'Play video' | escape }}"
+            >
+              <svg
+                class="ai-collage-play-icon-{{ ai_gen_id }}"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </button>
+          </div>
+
+          <div class="ai-collage-modal-{{ ai_gen_id }}" data-modal>
+            <div class="ai-collage-modal-content-{{ ai_gen_id }}">
+              <button
+                class="ai-collage-modal-close-{{ ai_gen_id }}"
+                data-modal-close
+                aria-label="Close video"
+              >
+                ×
+              </button>
+              <div data-video-container></div>
+            </div>
+          </div>
+        {% else %}
+          <div class="ai-collage-video-wrapper-{{ ai_gen_id }}">
+            <div class="ai-collage-video-placeholder-{{ ai_gen_id }}">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+              <div class="ai-collage-empty-state-{{ ai_gen_id }}">
+                เพิ่ม URL วิดีโอ (YouTube/Vimeo)
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="ai-collage-item-text-{{ ai_gen_id }}">
+        <div class="ai-collage-text-wrapper-{{ ai_gen_id }}">
+          {% if block.settings.text_content != blank %}
+            <div class="ai-collage-text-content-{{ ai_gen_id }}">
+              {{ block.settings.text_content }}
+            </div>
+          {% else %}
+            <div class="ai-collage-text-content-{{ ai_gen_id }}" style="color: #999; font-style: italic;">
+              เพิ่มข้อความที่นี่
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</collage-block-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class CollageBlock{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.videoWrapper = this.querySelector('[data-video-wrapper]');
+        this.playButton = this.querySelector('[data-play-button]');
+        this.modal = this.querySelector('[data-modal]');
+        this.modalClose = this.querySelector('[data-modal-close]');
+        this.videoContainer = this.querySelector('[data-video-container]');
+        this.videoUrl = '{{ block.settings.video_url }}';
+
+        if (this.playButton && this.modal) {
+          this.playButton.addEventListener('click', this.openModal.bind(this));
+          this.videoWrapper.addEventListener('click', this.openModal.bind(this));
+          this.videoWrapper.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              this.openModal();
+            }
+          }.bind(this));
+        }
+
+        if (this.modalClose) {
+          this.modalClose.addEventListener('click', this.closeModal.bind(this));
+        }
+
+        if (this.modal) {
+          this.modal.addEventListener('click', function(e) {
+            if (e.target === this.modal) {
+              this.closeModal();
+            }
+          }.bind(this));
+
+          document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && this.modal.classList.contains('active')) {
+              this.closeModal();
+            }
+          }.bind(this));
+        }
+      }
+
+      openModal() {
+        if (!this.modal || !this.videoUrl) return;
+
+        var embedUrl = this.getEmbedUrl(this.videoUrl);
+        if (!embedUrl) return;
+
+        var iframe = document.createElement('iframe');
+        iframe.className = 'ai-collage-modal-iframe-{{ ai_gen_id }}';
+        iframe.src = embedUrl;
+        iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+        iframe.allowFullscreen = true;
+        iframe.setAttribute('aria-label', '{{ block.settings.video_alt_text | default: "Video player" | escape }}');
+
+        this.videoContainer.innerHTML = '';
+        this.videoContainer.appendChild(iframe);
+
+        this.modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+
+      closeModal() {
+        if (!this.modal) return;
+
+        this.modal.classList.remove('active');
+        this.videoContainer.innerHTML = '';
+        document.body.style.overflow = '';
+      }
+
+      getEmbedUrl(url) {
+        var videoId = '';
+        var embedUrl = '';
+
+        if (url.includes('youtube.com') || url.includes('youtu.be')) {
+          if (url.includes('youtu.be/')) {
+            videoId = url.split('youtu.be/')[1].split('?')[0];
+          } else if (url.includes('watch?v=')) {
+            videoId = url.split('watch?v=')[1].split('&')[0];
+          } else if (url.includes('embed/')) {
+            videoId = url.split('embed/')[1].split('?')[0];
+          }
+          if (videoId) {
+            embedUrl = 'https://www.youtube.com/embed/' + videoId + '?autoplay=1&rel=0';
+          }
+        } else if (url.includes('vimeo.com')) {
+          videoId = url.split('vimeo.com/')[1].split('/')[0];
+          if (videoId) {
+            embedUrl = 'https://player.vimeo.com/video/' + videoId + '?autoplay=1';
+          }
+        }
+
+        return embedUrl;
+      }
+    }
+
+    customElements.define('collage-block-{{ ai_gen_id }}', CollageBlock{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Collage",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Our collection"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 16,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Large image"
+    },
+    {
+      "type": "image_picker",
+      "id": "large_image",
+      "label": "Image"
+    },
+    {
+      "type": "header",
+      "content": "Video"
+    },
+    {
+      "type": "url",
+      "id": "video_url",
+      "label": "Video URL (YouTube or Vimeo)"
+    },
+    {
+      "type": "image_picker",
+      "id": "video_cover_image",
+      "label": "Cover image"
+    },
+    {
+      "type": "text",
+      "id": "video_alt_text",
+      "label": "Video alt text",
+      "default": "Play video"
+    },
+    {
+      "type": "range",
+      "id": "play_button_size",
+      "label": "Play button size",
+      "min": 40,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "color",
+      "id": "play_button_background",
+      "label": "Play button background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "play_button_hover_background",
+      "label": "Play button hover background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "play_button_icon_color",
+      "label": "Play button icon color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Text block"
+    },
+    {
+      "type": "richtext",
+      "id": "text_content",
+      "label": "Text",
+      "default": "<p>Discover our latest collection featuring premium materials and expert craftsmanship.</p>"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Text size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_background_color",
+      "label": "Background color",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "text_padding",
+      "label": "Padding",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "spacing",
+      "label": "Spacing",
+      "min": 4,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collage"
+    }
+  ]
+}
 {% endschema %}
