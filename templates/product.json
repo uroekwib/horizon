@@ -291,7 +291,7 @@
                         "chips_spacing": 20,
                         "chip_padding_vertical": 8,
                         "chip_padding_horizontal": 16,
-                        "chip_font_size": 14,
+                        "chip_font_size": 13,
                         "chip_border_radius": 20,
                         "chip_border_width": 1,
                         "chip_background": "#ffffff",
