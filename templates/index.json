@@ -12,6 +12,39 @@
     "177235722811693327": {
       "type": "_blocks",
       "blocks": {
+        "ai_gen_block_b66bf4b_VtBTpc": {
+          "type": "ai_gen_block_b66bf4b",
+          "settings": {
+            "min_height": 600,
+            "padding_top": 60,
+            "padding_bottom": 60,
+            "padding_horizontal": 40,
+            "heading": "<p>สร้างสรรค์ <em>ป้ายสวยๆ</em> ที่ใช่สำหรับธุรกิจคุณ</p>",
+            "heading_size": 48,
+            "heading_color": "#000000",
+            "subheading": "<p>บริการพิมพ์ป้าย ตัดสติ๊กเกอร์ และผลิตสื่อโฆษณาคุณภาพสูง ด้วยเทคโนโลยีทันสมัย</p>",
+            "subheading_size": 16,
+            "subheading_color": "#666666",
+            "button_primary_text": "เริ่มต้นใช้งาน",
+            "button_primary_link": "",
+            "button_secondary_text": "ดูผลงาน",
+            "button_secondary_link": "",
+            "button_text_size": 14,
+            "stat_1_number": "500+",
+            "stat_1_label": "ลูกค้า",
+            "stat_2_number": "2,000+",
+            "stat_2_label": "โปรเจกต์",
+            "stat_3_number": "98%",
+            "stat_3_label": "ความพึงพอใจ",
+            "stat_number_size": 28,
+            "stat_label_size": 13,
+            "bento_min_height": 600,
+            "card_width": 200,
+            "card_tall_height": 560,
+            "scroll_speed": 30
+          },
+          "blocks": {}
+        },
         "ai_gen_block_1d076a5_YyDjRx": {
           "type": "ai_gen_block_1d076a5",
           "settings": {
@@ -48,6 +81,7 @@
         }
       },
       "block_order": [
+        "ai_gen_block_b66bf4b_VtBTpc",
         "ai_gen_block_1d076a5_YyDjRx"
       ],
       "settings": {
@@ -251,6 +285,21 @@
     "product_list_fa6P9H": {
       "type": "product-list",
       "blocks": {
+        "button_KxA3Kf": {
+          "type": "button",
+          "name": "t:names.button",
+          "settings": {
+            "label": "ดูสินค้าและบริการทั้งหมด",
+            "link": "shopify://collections/all",
+            "open_in_new_tab": false,
+            "style_class": "button",
+            "width": "fit-content",
+            "custom_width": 100,
+            "width_mobile": "fit-content",
+            "custom_width_mobile": 100
+          },
+          "blocks": {}
+        },
         "static-header": {
           "type": "_product-list-content",
           "name": "t:names.header",
@@ -289,7 +338,7 @@
               "type": "_product-list-text",
               "name": "t:names.collection_title",
               "settings": {
-                "text": "<h2>{{ closest.collection.title }}</h2>",
+                "text": "<h2>สินค้าและบริการยอดนิยม</h2>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -315,7 +364,7 @@
               "type": "_product-list-button",
               "name": "t:names.product_list_button",
               "settings": {
-                "label": "View all",
+                "label": "",
                 "open_in_new_tab": false,
                 "style_class": "link",
                 "width": "fit-content",
@@ -421,13 +470,16 @@
           ]
         }
       },
+      "block_order": [
+        "button_KxA3Kf"
+      ],
       "name": "Featured collection",
       "settings": {
         "collection": "all",
         "layout_type": "grid",
         "carousel_on_mobile": false,
-        "max_products": 15,
-        "columns": 5,
+        "max_products": 12,
+        "columns": 6,
         "mobile_columns": "2",
         "mobile_card_size": "60cqw",
         "columns_gap": 25,
@@ -437,7 +489,7 @@
         "section_width": "page-width",
         "horizontal_alignment": "flex-start",
         "gap": 28,
-        "color_scheme": "scheme-2",
+        "color_scheme": "scheme-1",
         "padding-block-start": 48,
         "padding-block-end": 48
       }
