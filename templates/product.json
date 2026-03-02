@@ -283,7 +283,7 @@
                         "chip_text_color": "#000000",
                         "chip_border_color": "#dfdfdf",
                         "chip_hover_background": "#f5f5f5",
-                        "chip_hover_text_color": "#000000",
+                        "chip_hover_text_color": "#dfdfdf",
                         "chip_hover_border_color": "#000000",
                         "chip_active_background": "#000000",
                         "chip_active_text_color": "#ffffff",
