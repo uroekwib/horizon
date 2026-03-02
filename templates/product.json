@@ -323,36 +323,10 @@
                         "item_12_content": "<ul><li>ทีมงานมีความพร้อมในการเข้าติดตั้งป้ายหน้างานได้หลากหลายลักษณะ ทั้งพื้นที่ธรรมดา ที่สูงบนตึกอาคาร Facade หรือเสาป้าย Pylon Sign Billboard ต่าง ๆ</li><li>เวลาเข้างานติดตั้งป้ายยืดหยุ่นได้ทั้งช่วงเวลาทำการหรือตามกฏห้างอาคาร ช่วงเช้าหรือกลางคืน </li><li>ทีมงานช่างพร้อมติดตั้งป้ายหรือติดสติ๊กเกอร์หน้างานโดยเราจะมีเจ้าหน้าที่ประสานงานติดตั้งที่สามารถโทรติดต่อสอบถามข้อมูลได้เสมอ </li><li>ก่อนเข้าหน้างาน ทางบริษัทจะติดต่อเพื่อทำการนัดหมายไปยังข้อมูลติดต่อของลูกค้าที่ได้ให้ข้อมูลไว้ก่อนหน้า </li><li>ในการส่งมอบงานติดตั้งป้ายหรือติดสติ๊กเกอร์ ทุกครั้งลูกค้าจะได้รับเอกสารใบส่งมอบงาน ท่านสามารถตรวจสอบรับมอบงานหรือแจ้งให้มีการเข้าเก็บงานเพิ่มเติมได้</li></ul>"
                       },
                       "blocks": {}
-                    },
-                    "text_pcHabN": {
-                      "type": "text",
-                      "settings": {
-                        "text": "<p>เป้าหมายของเราคือเพื่อให้ลูกค้าทุกคนพึงพอใจกับการซื้อสินค้าอย่างเต็มที่ หากไม่เป็นเช่นนั้น โปรดแจ้งให้เราทราบ แล้วเราจะพยายามอย่างเต็มที่เพื่อร่วมมือกับคุณในการแก้ไขปัญหา</p>",
-                        "width": "100%",
-                        "max_width": "normal",
-                        "alignment": "left",
-                        "type_preset": "rte",
-                        "font": "var(--font-body--family)",
-                        "font_size": "1rem",
-                        "line_height": "normal",
-                        "letter_spacing": "normal",
-                        "case": "none",
-                        "wrap": "pretty",
-                        "color": "var(--color-foreground)",
-                        "background": false,
-                        "background_color": "#00000026",
-                        "corner_radius": 0,
-                        "padding-block-start": 0,
-                        "padding-block-end": 0,
-                        "padding-inline-start": 0,
-                        "padding-inline-end": 0
-                      },
-                      "blocks": {}
                     }
                   },
                   "block_order": [
-                    "ai_gen_block_fcf74dc_RgNMj8",
-                    "text_pcHabN"
+                    "ai_gen_block_fcf74dc_RgNMj8"
                   ]
                 },
                 "accordion_row_64YnxG": {
@@ -360,7 +334,7 @@
                   "settings": {
                     "heading": "ติดต่อเรา",
                     "open_by_default": false,
-                    "icon": "none",
+                    "icon": "chat_bubble",
                     "width": 20
                   },
                   "blocks": {
@@ -399,7 +373,7 @@
                   "settings": {
                     "heading": "การผลิต",
                     "open_by_default": false,
-                    "icon": "none",
+                    "icon": "clipboard",
                     "width": 20
                   },
                   "blocks": {
