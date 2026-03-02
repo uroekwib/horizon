@@ -995,7 +995,7 @@
             "video_loop": true,
             "cover_image": "shopify://shop_images/Banner_CustomSignage_59cd2e0f-4922-41cd-b81b-79fd7d1f9163.jpg",
             "alt": "",
-            "custom_width": 100,
+            "custom_width": 70,
             "custom_width_mobile": 100,
             "aspect_ratio": "16/9",
             "border": "none",
@@ -1104,6 +1104,72 @@
         "padding-block-start": 48,
         "padding-block-end": 48
       }
+    },
+    "1772445751c1ba66c9": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_219b1af_DaRNhY": {
+          "type": "ai_gen_block_219b1af",
+          "settings": {
+            "background_color": "#ffffff",
+            "padding_top": 40,
+            "padding_bottom": 40,
+            "column_gap": 30,
+            "text_alignment": "center",
+            "image_max_width": 40,
+            "heading_color": "#000000",
+            "text_color": "#000000",
+            "link_color": "#000000",
+            "link_hover_color": "#333333",
+            "column_1_image": "shopify://shop_images/Black_Material_QC_Passed_c1d36cc9-63d6-4cf8-b8e3-ed99dc239ff6.svg",
+            "column_1_heading": "",
+            "column_1_description": "",
+            "column_1_link": "",
+            "column_1_link_label": "Learn more",
+            "column_2_image": "shopify://shop_images/Green_Resolution_QC_Passed_e5aa1444-845b-4c44-bca0-a71426866d05.svg",
+            "column_2_heading": "",
+            "column_2_description": "",
+            "column_2_link": "",
+            "column_2_link_label": "Learn more",
+            "column_3_image": "shopify://shop_images/Pink_Colour_QC_Passed_644eda33-5abe-484d-8b97-68c137b06a74.svg",
+            "column_3_heading": "",
+            "column_3_description": "",
+            "column_3_link": "",
+            "column_3_link_label": "Learn more"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_219b1af_DaRNhY"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "scheme-2",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
     }
   },
   "order": [
@@ -1113,6 +1179,7 @@
     "section_48VRzd",
     "section_iKPHeq",
     "section_dpEc66",
-    "section_zPV3kR"
+    "section_zPV3kR",
+    "1772445751c1ba66c9"
   ]
 }
