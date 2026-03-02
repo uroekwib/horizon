@@ -1,6 +1,1295 @@
+{% doc %}
+  @prompt
+    A modern SaaS-style hero section UI design for a Thai signage and printing company website. แบ่งพื้นที่ครึ่ง ๆ ตามความกล้างจอให้ที ซีกซ้ายที่เป็นกลุ่มข้อความ กับฝั่ง gallery. Left side: clean white space with a large bold headline in Thai and English mix, a gradient CTA button (cyan to indigo to lavender), and three small stat counters below a thin divider line (customers, projects, satisfaction score). Right side: a horizontal auto-scrolling ิbento collage belt of frosted glass product cards. Cards float on a soft gradient background. Two card sizes — tall single cards (portrait) and stacked half-height card pairs — arranged in alternating columns. Each card has a large centered emoji icon and a small label underneath. Cards have white semi-transparent background with subtle border and soft drop shadow. Left and right edges of the belt fade to transparent using gradient masks. Background: transparent but very soft pastel gradient from mint-cyan (
+    #ECFEFF) on the left transitioning through cool periwinkle (
+    #EEF2FF) to soft lavender (
+    #F5F3FF) on the right glow overlay. Three subtle radial glow overlays — cyan glow at left center, purple glow at top right, sky-blue glow at bottom center. Typography: Google Sans Display for headings. Clean, minimal, lots of white space. UI style: glassmorphism cards, soft shadows, rounded corners (radius ~20px), no harsh borders. Light and airy. Modern B2B e-commerce aesthetic. Desktop layout. 16:9 ratio. Color palette: 
+    #22D3C8 cyan, 
+    #818CF8 indigo, 
+    #A78BFA lavender, white cards, pastel background., ปูพื้นหลัง BG เต็มความกว้างตามหน้าจอเลยนะ, ไม่ต้องใส่ bg color เลย ปล่อยใสไป, .hero-h1 em {
+      font-style: normal; /*打ล้าง italic default ของ <em> */
+    
+      /* 1. ใส่ gradient เป็น background ก่อน */
+      background: linear-gradient(90deg, #22D3C8, #818CF8, #A78BFA);
+      background-size: 300%; /* ให้ใหญ่กว่า element เพื่อให้ animation เลื่อนได้ */
+    
+      /* 2. clip background ให้เหลือแค่รูปทรงของตัวอักษร */
+      -webkit-background-clip: text;
+      background-clip: text;
+    
+      /* 3. ทำสีตัวอักษรให้โปร่งใส → เห็น background ที่ clip ไว้แทน */
+      -webkit-text-fill-color: transparent;
+      color: transparent; /* fallback */
+    
+      /* 4. animate background-position ให้ gradient เลื่อนวนไป */
+      animation: rbMove 4s linear infinite;
+    }
+    
+    @keyframes rbMove {
+      0%   { background-position: 0%; }
+      100% { background-position: 300%; }
+    }
+    ```
+    
+    ---
+    
+    **ทำไมต้องใช้ 3 อันนี้คู่กัน:**
+    ```
+    background gradient  →  วาดสีรุ้งไว้ใต้ตัวอักษร
+    background-clip: text  →  ตัดขอบ gradient ให้เหลือแค่รูปอักษร
+    text-fill-color: transparent  →  ลบสีดำเดิมออก ให้มองเห็น gradient ข้างล่าง
+    
+    อยากมีลูกเล่นนี้ใน heading อะ, font noto sans thai เฉพาะอักษร unicode thai นะ, มีปุ่ม button 2 ปุ่ม เพิ่มอีกอันเป็นโทนขาว, card icon เปลี่ยนเป็นดึงรูปภาพมาใส่แทน, เอารูปแบบเต็มพื้นที่แต่ละการ์ดเลย มีแต่รูปไม่ต้องมีข้อความ, พื้นที่แสดงรูป bento ขยายความสูงเพิ่มเติมให้มันเท่า ๆ กับฝั่งซ้ายอย่างไรให้สมดุลได้ดี, ขั้นต่ำ 320 px ดีมั้ย, ตัว card ใน bento เลย ให้มันขยายสูงขึ้นอีกเยอะเลย, buttons เล็กลงหน่อยก็ได้, button round เป็นทรง pill, ,, กำหนดให้ animation collage รูป เลือนเร็วช้าไงได้มั้ย ขอมากกว่า 6 card ได้มั้ย, Statistics number ตัวเลขใหญ่ขึ้นหน่อยได้มั้ย เป็น google sans thai ได้มั้ย, กำหนดความสูงของรูปเพิ่มเติมได้มั้ย แล้วก็ hover ก็จะขึ้น overlay ให้เห็นข้อความกำกับช่วงล่างของ card และหยุด animation เผื่อคนกด link เปิดดู new window ได้
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+{% style %}
+  .ai-hero-container-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    min-height: 320px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ai-hero-wrapper-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: {{ block.settings.padding_top }}px 40px {{ block.settings.padding_bottom }}px;
+    align-items: center;
+  }
+
+  .ai-hero-left-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    z-index: 2;
+  }
+
+  .ai-hero-heading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.heading_size }}px;
+    line-height: 1.1;
+    font-weight: 700;
+    color: {{ block.settings.heading_color }};
+    margin: 0;
+  }
+
+  .ai-hero-heading-{{ ai_gen_id }} em {
+    font-style: normal;
+    background: linear-gradient(90deg, #22D3C8, #818CF8, #A78BFA);
+    background-size: 300%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: ai-rainbow-move-{{ ai_gen_id }} 4s linear infinite;
+  }
+
+  .ai-hero-heading-{{ ai_gen_id }} .thai-text {
+    font-family: 'Noto Sans Thai', sans-serif;
+  }
+
+  @keyframes ai-rainbow-move-{{ ai_gen_id }} {
+    0% { background-position: 0%; }
+    100% { background-position: 300%; }
+  }
+
+  .ai-hero-buttons-{{ ai_gen_id }} {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ai-hero-button-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 28px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 100px;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .ai-hero-button-primary-{{ ai_gen_id }} {
+    background: linear-gradient(135deg, #22D3C8, #818CF8, #A78BFA);
+    color: #ffffff;
+  }
+
+  .ai-hero-button-primary-{{ ai_gen_id }}:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(34, 211, 200, 0.3);
+  }
+
+  .ai-hero-button-secondary-{{ ai_gen_id }} {
+    background: #ffffff;
+    color: #333333;
+    border: 1px solid #e6e6e6;
+  }
+
+  .ai-hero-button-secondary-{{ ai_gen_id }}:hover {
+    background: #f5f5f5;
+    border-color: #cccccc;
+  }
+
+  .ai-hero-divider-{{ ai_gen_id }} {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #e6e6e6, transparent);
+  }
+
+  .ai-hero-stats-{{ ai_gen_id }} {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .ai-hero-stat-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .ai-hero-stat-number-{{ ai_gen_id }} {
+    font-family: 'Noto Sans Thai', sans-serif;
+    font-size: {{ block.settings.stat_number_size }}px;
+    font-weight: 700;
+    color: {{ block.settings.stat_number_color }};
+  }
+
+  .ai-hero-stat-label-{{ ai_gen_id }} {
+    font-family: 'Noto Sans Thai', sans-serif;
+    font-size: 13px;
+    color: {{ block.settings.stat_label_color }};
+  }
+
+  .ai-hero-right-{{ ai_gen_id }} {
+    position: relative;
+    height: 100%;
+    min-height: 320px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .ai-hero-bento-container-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 10%,
+      black 90%,
+      transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 10%,
+      black 90%,
+      transparent 100%
+    );
+  }
+
+  .ai-hero-bento-scroll-{{ ai_gen_id }} {
+    display: flex;
+    gap: 16px;
+    animation: ai-scroll-{{ ai_gen_id }} {{ block.settings.scroll_speed }}s linear infinite;
+  }
+
+  .ai-hero-bento-container-{{ ai_gen_id }}:hover .ai-hero-bento-scroll-{{ ai_gen_id }} {
+    animation-play-state: paused;
+  }
+
+  @keyframes ai-scroll-{{ ai_gen_id }} {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .ai-hero-bento-column-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+
+  .ai-hero-bento-card-{{ ai_gen_id }} {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.3s ease;
+  }
+
+  .ai-hero-bento-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-4px);
+  }
+
+  .ai-hero-bento-card-tall-{{ ai_gen_id }} {
+    width: 180px;
+    height: {{ block.settings.card_tall_height }}px;
+  }
+
+  .ai-hero-bento-card-half-{{ ai_gen_id }} {
+    width: 180px;
+    height: {{ block.settings.card_half_height }}px;
+  }
+
+  .ai-hero-bento-card-link-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .ai-hero-bento-card-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-hero-bento-card-overlay-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    padding: 16px 12px 12px;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+  }
+
+  .ai-hero-bento-card-{{ ai_gen_id }}:hover .ai-hero-bento-card-overlay-{{ ai_gen_id }} {
+    transform: translateY(0);
+  }
+
+  .ai-hero-bento-card-title-{{ ai_gen_id }} {
+    font-family: 'Noto Sans Thai', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .ai-hero-bento-card-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #f5f5f5, #e6e6e6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-hero-bento-card-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-hero-wrapper-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: 40px;
+      padding: {{ block.settings.padding_top_mobile }}px 24px {{ block.settings.padding_bottom_mobile }}px;
+    }
+
+    .ai-hero-heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_size_mobile }}px;
+    }
+
+    .ai-hero-right-{{ ai_gen_id }} {
+      min-height: 280px;
+    }
+
+    .ai-hero-bento-card-tall-{{ ai_gen_id }} {
+      width: 140px;
+      height: {{ block.settings.card_tall_height | times: 0.8 }}px;
+    }
+
+    .ai-hero-bento-card-half-{{ ai_gen_id }} {
+      width: 140px;
+      height: {{ block.settings.card_half_height | times: 0.8 }}px;
+    }
+
+    .ai-hero-stat-number-{{ ai_gen_id }} {
+      font-size: {{ block.settings.stat_number_size_mobile }}px;
+    }
+
+    .ai-hero-button-{{ ai_gen_id }} {
+      padding: 10px 24px;
+      font-size: 14px;
+    }
+
+    .ai-hero-bento-card-title-{{ ai_gen_id }} {
+      font-size: 12px;
+    }
+  }
+{% endstyle %}
+
+<ai-hero-{{ ai_gen_id }} class="ai-hero-container-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-hero-wrapper-{{ ai_gen_id }}">
+    <div class="ai-hero-left-{{ ai_gen_id }}">
+      {% if block.settings.heading != blank %}
+        <h1 class="ai-hero-heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h1>
+      {% endif %}
+
+      <div class="ai-hero-buttons-{{ ai_gen_id }}">
+        {% if block.settings.button_primary_text != blank %}
+          <a
+            href="{{ block.settings.button_primary_link }}"
+            class="ai-hero-button-{{ ai_gen_id }} ai-hero-button-primary-{{ ai_gen_id }}"
+          >
+            {{ block.settings.button_primary_text }}
+          </a>
+        {% endif %}
+
+        {% if block.settings.button_secondary_text != blank %}
+          <a
+            href="{{ block.settings.button_secondary_link }}"
+            class="ai-hero-button-{{ ai_gen_id }} ai-hero-button-secondary-{{ ai_gen_id }}"
+          >
+            {{ block.settings.button_secondary_text }}
+          </a>
+        {% endif %}
+      </div>
+
+      <div class="ai-hero-divider-{{ ai_gen_id }}"></div>
+
+      <div class="ai-hero-stats-{{ ai_gen_id }}">
+        {% if block.settings.stat_1_number != blank %}
+          <div class="ai-hero-stat-{{ ai_gen_id }}">
+            <div class="ai-hero-stat-number-{{ ai_gen_id }}">{{ block.settings.stat_1_number }}</div>
+            <div class="ai-hero-stat-label-{{ ai_gen_id }}">{{ block.settings.stat_1_label }}</div>
+          </div>
+        {% endif %}
+
+        {% if block.settings.stat_2_number != blank %}
+          <div class="ai-hero-stat-{{ ai_gen_id }}">
+            <div class="ai-hero-stat-number-{{ ai_gen_id }}">{{ block.settings.stat_2_number }}</div>
+            <div class="ai-hero-stat-label-{{ ai_gen_id }}">{{ block.settings.stat_2_label }}</div>
+          </div>
+        {% endif %}
+
+        {% if block.settings.stat_3_number != blank %}
+          <div class="ai-hero-stat-{{ ai_gen_id }}">
+            <div class="ai-hero-stat-number-{{ ai_gen_id }}">{{ block.settings.stat_3_number }}</div>
+            <div class="ai-hero-stat-label-{{ ai_gen_id }}">{{ block.settings.stat_3_label }}</div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="ai-hero-right-{{ ai_gen_id }}">
+      <div class="ai-hero-bento-container-{{ ai_gen_id }}">
+        <div class="ai-hero-bento-scroll-{{ ai_gen_id }}">
+          {% for i in (1..2) %}
+            <div class="ai-hero-bento-column-{{ ai_gen_id }}">
+              <div class="ai-hero-bento-card-{{ ai_gen_id }} ai-hero-bento-card-tall-{{ ai_gen_id }}">
+                {% if block.settings.card_1_link != blank %}
+                  <a
+                    href="{{ block.settings.card_1_link }}"
+                    class="ai-hero-bento-card-link-{{ ai_gen_id }}"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                {% endif %}
+                  {% if block.settings.card_1_image %}
+                    <img
+                      src="{{ block.settings.card_1_image | image_url: width: 360 }}"
+                      alt="{{ block.settings.card_1_image.alt | escape }}"
+                      loading="lazy"
+                      width="180"
+                      height="{{ block.settings.card_tall_height }}"
+                    >
+                  {% else %}
+                    <div class="ai-hero-bento-card-placeholder-{{ ai_gen_id }}">
+                      {{ 'product-1' | placeholder_svg_tag }}
+                    </div>
+                  {% endif %}
+                  {% if block.settings.card_1_title != blank %}
+                    <div class="ai-hero-bento-card-overlay-{{ ai_gen_id }}">
+                      <h3 class="ai-hero-bento-card-title-{{ ai_gen_id }}">{{ block.settings.card_1_title }}</h3>
+                    </div>
+                  {% endif %}
+                {% if block.settings.card_1_link != blank %}
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="ai-hero-bento-column-{{ ai_gen_id }}">
+              <div class="ai-hero-bento-card-{{ ai_gen_id }} ai-hero-bento-card-half-{{ ai_gen_id }}">
+                {% if block.settings.card_2_link != blank %}
+                  <a
+                    href="{{ block.settings.card_2_link }}"
+                    class="ai-hero-bento-card-link-{{ ai_gen_id }}"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                {% endif %}
+                  {% if block.settings.card_2_image %}
+                    <img
+                      src="{{ block.settings.card_2_image | image_url: width: 360 }}"
+                      alt="{{ block.settings.card_2_image.alt | escape }}"
+                      loading="lazy"
+                      width="180"
+                      height="{{ block.settings.card_half_height }}"
+                    >
+                  {% else %}
+                    <div class="ai-hero-bento-card-placeholder-{{ ai_gen_id }}">
+                      {{ 'product-2' | placeholder_svg_tag }}
+                    </div>
+                  {% endif %}
+                  {% if block.settings.card_2_title != blank %}
+                    <div class="ai-hero-bento-card-overlay-{{ ai_gen_id }}">
+                      <h3 class="ai-hero-bento-card-title-{{ ai_gen_id }}">{{ block.settings.card_2_title }}</h3>
+                    </div>
+                  {% endif %}
+                {% if block.settings.card_2_link != blank %}
+                  </a>
+                {% endif %}
+              </div>
+              <div class="ai-hero-bento-card-{{ ai_gen_id }} ai-hero-bento-card-half-{{ ai_gen_id }}">
+                {% if block.settings.card_3_link != blank %}
+                  <a
+                    href="{{ block.settings.card_3_link }}"
+                    class="ai-hero-bento-card-link-{{ ai_gen_id }}"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                {% endif %}
+                  {% if block.settings.card_3_image %}
+                    <img
+                      src="{{ block.settings.card_3_image | image_url: width: 360 }}"
+                      alt="{{ block.settings.card_3_image.alt | escape }}"
+                      loading="lazy"
+                      width="180"
+                      height="{{ block.settings.card_half_height }}"
+                    >
+                  {% else %}
+                    <div class="ai-hero-bento-card-placeholder-{{ ai_gen_id }}">
+                      {{ 'product-3' | placeholder_svg_tag }}
+                    </div>
+                  {% endif %}
+                  {% if block.settings.card_3_title != blank %}
+                    <div class="ai-hero-bento-card-overlay-{{ ai_gen_id }}">
+                      <h3 class="ai-hero-bento-card-title-{{ ai_gen_id }}">{{ block.settings.card_3_title }}</h3>
+                    </div>
+                  {% endif %}
+                {% if block.settings.card_3_link != blank %}
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="ai-hero-bento-column-{{ ai_gen_id }}">
+              <div class="ai-hero-bento-card-{{ ai_gen_id }} ai-hero-bento-card-tall-{{ ai_gen_id }}">
+                {% if block.settings.card_4_link != blank %}
+                  <a
+                    href="{{ block.settings.card_4_link }}"
+                    class="ai-hero-bento-card-link-{{ ai_gen_id }}"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                {% endif %}
+                  {% if block.settings.card_4_image %}
+                    <img
+                      src="{{ block.settings.card_4_image | image_url: width: 360 }}"
+                      alt="{{ block.settings.card_4_image.alt | escape }}"
+                      loading="lazy"
+                      width="180"
+                      height="{{ block.settings.card_tall_height }}"
+                    >
+                  {% else %}
+                    <div class="ai-hero-bento-card-placeholder-{{ ai_gen_id }}">
+                      {{ 'product-4' | placeholder_svg_tag }}
+                    </div>
+                  {% endif %}
+                  {% if block.settings.card_4_title != blank %}
+                    <div class="ai-hero-bento-card-overlay-{{ ai_gen_id }}">
+                      <h3 class="ai-hero-bento-card-title-{{ ai_gen_id }}">{{ block.settings.card_4_title }}</h3>
+                    </div>
+                  {% endif %}
+                {% if block.settings.card_4_link != blank %}
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="ai-hero-bento-column-{{ ai_gen_id }}">
+              <div class="ai-hero-bento-card-{{ ai_gen_id }} ai-hero-bento-card-half-{{ ai_gen_id }}">
+                {% if block.settings.card_5_link != blank %}
+                  <a
+                    href="{{ block.settings.card_5_link }}"
+                    class="ai-hero-bento-card-link-{{ ai_gen_id }}"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                {% endif %}
+                  {% if block.settings.card_5_image %}
+                    <img
+                      src="{{ block.settings.card_5_image | image_url: width: 360 }}"
+                      alt="{{ block.settings.card_5_image.alt | escape }}"
+                      loading="lazy"
+                      width="180"
+                      height="{{ block.settings.card_half_height }}"
+                    >
+                  {% else %}
+                    <div class="ai-hero-bento-card-placeholder-{{ ai_gen_id }}">
+                      {{ 'product-5' | placeholder_svg_tag }}
+                    </div>
+                  {% endif %}
+                  {% if block.settings.card_5_title != blank %}
+                    <div class="ai-hero-bento-card-overlay-{{ ai_gen_id }}">
+                      <h3 class="ai-hero-bento-card-title-{{ ai_gen_id }}">{{ block.settings.card_5_title }}</h3>
+                    </div>
+                  {% endif %}
+                {% if block.settings.card_5_link != blank %}
+                  </a>
+                {% endif %}
+              </div>
+              <div class="ai-hero-bento-card-{{ ai_gen_id }} ai-hero-bento-card-half-{{ ai_gen_id }}">
+                {% if block.settings.card_6_link != blank %}
+                  <a
+                    href="{{ block.settings.card_6_link }}"
+                    class="ai-hero-bento-card-link-{{ ai_gen_id }}"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                {% endif %}
+                  {% if block.settings.card_6_image %}
+                    <img
+                      src="{{ block.settings.card_6_image | image_url: width: 360 }}"
+                      alt="{{ block.settings.card_6_image.alt | escape }}"
+                      loading="lazy"
+                      width="180"
+                      height="{{ block.settings.card_half_height }}"
+                    >
+                  {% else %}
+                    <div class="ai-hero-bento-card-placeholder-{{ ai_gen_id }}">
+                      {{ 'product-6' | placeholder_svg_tag }}
+                    </div>
+                  {% endif %}
+                  {% if block.settings.card_6_title != blank %}
+                    <div class="ai-hero-bento-card-overlay-{{ ai_gen_id }}">
+                      <h3 class="ai-hero-bento-card-title-{{ ai_gen_id }}">{{ block.settings.card_6_title }}</h3>
+                    </div>
+                  {% endif %}
+                {% if block.settings.card_6_link != blank %}
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="ai-hero-bento-column-{{ ai_gen_id }}">
+              <div class="ai-hero-bento-card-{{ ai_gen_id }} ai-hero-bento-card-tall-{{ ai_gen_id }}">
+                {% if block.settings.card_7_link != blank %}
+                  <a
+                    href="{{ block.settings.card_7_link }}"
+                    class="ai-hero-bento-card-link-{{ ai_gen_id }}"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                {% endif %}
+                  {% if block.settings.card_7_image %}
+                    <img
+                      src="{{ block.settings.card_7_image | image_url: width: 360 }}"
+                      alt="{{ block.settings.card_7_image.alt | escape }}"
+                      loading="lazy"
+                      width="180"
+                      height="{{ block.settings.card_tall_height }}"
+                    >
+                  {% else %}
+                    <div class="ai-hero-bento-card-placeholder-{{ ai_gen_id }}">
+                      {{ 'product-1' | placeholder_svg_tag }}
+                    </div>
+                  {% endif %}
+                  {% if block.settings.card_7_title != blank %}
+                    <div class="ai-hero-bento-card-overlay-{{ ai_gen_id }}">
+                      <h3 class="ai-hero-bento-card-title-{{ ai_gen_id }}">{{ block.settings.card_7_title }}</h3>
+                    </div>
+                  {% endif %}
+                {% if block.settings.card_7_link != blank %}
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="ai-hero-bento-column-{{ ai_gen_id }}">
+              <div class="ai-hero-bento-card-{{ ai_gen_id }} ai-hero-bento-card-half-{{ ai_gen_id }}">
+                {% if block.settings.card_8_link != blank %}
+                  <a
+                    href="{{ block.settings.card_8_link }}"
+                    class="ai-hero-bento-card-link-{{ ai_gen_id }}"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                {% endif %}
+                  {% if block.settings.card_8_image %}
+                    <img
+                      src="{{ block.settings.card_8_image | image_url: width: 360 }}"
+                      alt="{{ block.settings.card_8_image.alt | escape }}"
+                      loading="lazy"
+                      width="180"
+                      height="{{ block.settings.card_half_height }}"
+                    >
+                  {% else %}
+                    <div class="ai-hero-bento-card-placeholder-{{ ai_gen_id }}">
+                      {{ 'product-2' | placeholder_svg_tag }}
+                    </div>
+                  {% endif %}
+                  {% if block.settings.card_8_title != blank %}
+                    <div class="ai-hero-bento-card-overlay-{{ ai_gen_id }}">
+                      <h3 class="ai-hero-bento-card-title-{{ ai_gen_id }}">{{ block.settings.card_8_title }}</h3>
+                    </div>
+                  {% endif %}
+                {% if block.settings.card_8_link != blank %}
+                  </a>
+                {% endif %}
+              </div>
+              <div class="ai-hero-bento-card-{{ ai_gen_id }} ai-hero-bento-card-half-{{ ai_gen_id }}">
+                {% if block.settings.card_9_link != blank %}
+                  <a
+                    href="{{ block.settings.card_9_link }}"
+                    class="ai-hero-bento-card-link-{{ ai_gen_id }}"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                {% endif %}
+                  {% if block.settings.card_9_image %}
+                    <img
+                      src="{{ block.settings.card_9_image | image_url: width: 360 }}"
+                      alt="{{ block.settings.card_9_image.alt | escape }}"
+                      loading="lazy"
+                      width="180"
+                      height="{{ block.settings.card_half_height }}"
+                    >
+                  {% else %}
+                    <div class="ai-hero-bento-card-placeholder-{{ ai_gen_id }}">
+                      {{ 'product-3' | placeholder_svg_tag }}
+                    </div>
+                  {% endif %}
+                  {% if block.settings.card_9_title != blank %}
+                    <div class="ai-hero-bento-card-overlay-{{ ai_gen_id }}">
+                      <h3 class="ai-hero-bento-card-title-{{ ai_gen_id }}">{{ block.settings.card_9_title }}</h3>
+                    </div>
+                  {% endif %}
+                {% if block.settings.card_9_link != blank %}
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="ai-hero-bento-column-{{ ai_gen_id }}">
+              <div class="ai-hero-bento-card-{{ ai_gen_id }} ai-hero-bento-card-tall-{{ ai_gen_id }}">
+                {% if block.settings.card_10_link != blank %}
+                  <a
+                    href="{{ block.settings.card_10_link }}"
+                    class="ai-hero-bento-card-link-{{ ai_gen_id }}"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                {% endif %}
+                  {% if block.settings.card_10_image %}
+                    <img
+                      src="{{ block.settings.card_10_image | image_url: width: 360 }}"
+                      alt="{{ block.settings.card_10_image.alt | escape }}"
+                      loading="lazy"
+                      width="180"
+                      height="{{ block.settings.card_tall_height }}"
+                    >
+                  {% else %}
+                    <div class="ai-hero-bento-card-placeholder-{{ ai_gen_id }}">
+                      {{ 'product-4' | placeholder_svg_tag }}
+                    </div>
+                  {% endif %}
+                  {% if block.settings.card_10_title != blank %}
+                    <div class="ai-hero-bento-card-overlay-{{ ai_gen_id }}">
+                      <h3 class="ai-hero-bento-card-title-{{ ai_gen_id }}">{{ block.settings.card_10_title }}</h3>
+                    </div>
+                  {% endif %}
+                {% if block.settings.card_10_link != blank %}
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="ai-hero-bento-column-{{ ai_gen_id }}">
+              <div class="ai-hero-bento-card-{{ ai_gen_id }} ai-hero-bento-card-half-{{ ai_gen_id }}">
+                {% if block.settings.card_11_link != blank %}
+                  <a
+                    href="{{ block.settings.card_11_link }}"
+                    class="ai-hero-bento-card-link-{{ ai_gen_id }}"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                {% endif %}
+                  {% if block.settings.card_11_image %}
+                    <img
+                      src="{{ block.settings.card_11_image | image_url: width: 360 }}"
+                      alt="{{ block.settings.card_11_image.alt | escape }}"
+                      loading="lazy"
+                      width="180"
+                      height="{{ block.settings.card_half_height }}"
+                    >
+                  {% else %}
+                    <div class="ai-hero-bento-card-placeholder-{{ ai_gen_id }}">
+                      {{ 'product-5' | placeholder_svg_tag }}
+                    </div>
+                  {% endif %}
+                  {% if block.settings.card_11_title != blank %}
+                    <div class="ai-hero-bento-card-overlay-{{ ai_gen_id }}">
+                      <h3 class="ai-hero-bento-card-title-{{ ai_gen_id }}">{{ block.settings.card_11_title }}</h3>
+                    </div>
+                  {% endif %}
+                {% if block.settings.card_11_link != blank %}
+                  </a>
+                {% endif %}
+              </div>
+              <div class="ai-hero-bento-card-{{ ai_gen_id }} ai-hero-bento-card-half-{{ ai_gen_id }}">
+                {% if block.settings.card_12_link != blank %}
+                  <a
+                    href="{{ block.settings.card_12_link }}"
+                    class="ai-hero-bento-card-link-{{ ai_gen_id }}"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                {% endif %}
+                  {% if block.settings.card_12_image %}
+                    <img
+                      src="{{ block.settings.card_12_image | image_url: width: 360 }}"
+                      alt="{{ block.settings.card_12_image.alt | escape }}"
+                      loading="lazy"
+                      width="180"
+                      height="{{ block.settings.card_half_height }}"
+                    >
+                  {% else %}
+                    <div class="ai-hero-bento-card-placeholder-{{ ai_gen_id }}">
+                      {{ 'product-6' | placeholder_svg_tag }}
+                    </div>
+                  {% endif %}
+                  {% if block.settings.card_12_title != blank %}
+                    <div class="ai-hero-bento-card-overlay-{{ ai_gen_id }}">
+                      <h3 class="ai-hero-bento-card-title-{{ ai_gen_id }}">{{ block.settings.card_12_title }}</h3>
+                    </div>
+                  {% endif %}
+                {% if block.settings.card_12_link != blank %}
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</ai-hero-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class AiHero{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.wrapThaiText();
+      }
+
+      wrapThaiText() {
+        const heading = this.querySelector('.ai-hero-heading-{{ ai_gen_id }}');
+        if (!heading) return;
+
+        const thaiRegex = /[\u0E00-\u0E7F]+/g;
+        
+        heading.childNodes.forEach(node => {
+          if (node.nodeType === Node.TEXT_NODE) {
+            const text = node.textContent;
+            const wrappedText = text.replace(thaiRegex, match => {
+              return `<span class="thai-text">${match}</span>`;
+            });
+            
+            if (wrappedText !== text) {
+              const span = document.createElement('span');
+              span.innerHTML = wrappedText;
+              node.replaceWith(span);
+            }
+          }
+        });
+      }
+    }
+
+    customElements.define('ai-hero-{{ ai_gen_id }}', AiHero{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "SaaS hero section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "<p>สร้างสรรค์ <em>ป้ายสวยงาม</em> ด้วยเทคโนโลยี <em>ระดับโลก</em></p>"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Desktop heading size",
+      "min": 24,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Mobile heading size",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "text",
+      "id": "button_primary_text",
+      "label": "Primary button text",
+      "default": "เริ่มต้นใช้งาน"
+    },
+    {
+      "type": "url",
+      "id": "button_primary_link",
+      "label": "Primary button link"
+    },
+    {
+      "type": "text",
+      "id": "button_secondary_text",
+      "label": "Secondary button text",
+      "default": "ดูผลงาน"
+    },
+    {
+      "type": "url",
+      "id": "button_secondary_link",
+      "label": "Secondary button link"
+    },
+    {
+      "type": "header",
+      "content": "Statistics"
+    },
+    {
+      "type": "range",
+      "id": "stat_number_size",
+      "label": "Desktop number size",
+      "min": 20,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "stat_number_size_mobile",
+      "label": "Mobile number size",
+      "min": 18,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "text",
+      "id": "stat_1_number",
+      "label": "Stat 1 number",
+      "default": "500+"
+    },
+    {
+      "type": "text",
+      "id": "stat_1_label",
+      "label": "Stat 1 label",
+      "default": "ลูกค้าทั่วประเทศ"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_number",
+      "label": "Stat 2 number",
+      "default": "2,000+"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_label",
+      "label": "Stat 2 label",
+      "default": "โปรเจกต์สำเร็จ"
+    },
+    {
+      "type": "text",
+      "id": "stat_3_number",
+      "label": "Stat 3 number",
+      "default": "98%"
+    },
+    {
+      "type": "text",
+      "id": "stat_3_label",
+      "label": "Stat 3 label",
+      "default": "ความพึงพอใจ"
+    },
+    {
+      "type": "color",
+      "id": "stat_number_color",
+      "label": "Number color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "stat_label_color",
+      "label": "Label color",
+      "default": "#666666"
+    },
+    {
+      "type": "header",
+      "content": "Bento gallery"
+    },
+    {
+      "type": "range",
+      "id": "scroll_speed",
+      "label": "Scroll speed",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "s",
+      "default": 30,
+      "info": "Lower = faster, Higher = slower"
+    },
+    {
+      "type": "range",
+      "id": "card_tall_height",
+      "label": "Tall card height",
+      "min": 200,
+      "max": 400,
+      "step": 10,
+      "unit": "px",
+      "default": 280
+    },
+    {
+      "type": "range",
+      "id": "card_half_height",
+      "label": "Half card height",
+      "min": 100,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "default": 130
+    },
+    {
+      "type": "header",
+      "content": "Card 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_1_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_1_title",
+      "label": "Title"
+    },
+    {
+      "type": "url",
+      "id": "card_1_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_2_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_2_title",
+      "label": "Title"
+    },
+    {
+      "type": "url",
+      "id": "card_2_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_3_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_3_title",
+      "label": "Title"
+    },
+    {
+      "type": "url",
+      "id": "card_3_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_4_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_4_title",
+      "label": "Title"
+    },
+    {
+      "type": "url",
+      "id": "card_4_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_5_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_5_title",
+      "label": "Title"
+    },
+    {
+      "type": "url",
+      "id": "card_5_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 6"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_6_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_6_title",
+      "label": "Title"
+    },
+    {
+      "type": "url",
+      "id": "card_6_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 7"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_7_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_7_title",
+      "label": "Title"
+    },
+    {
+      "type": "url",
+      "id": "card_7_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 8"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_8_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_8_title",
+      "label": "Title"
+    },
+    {
+      "type": "url",
+      "id": "card_8_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 9"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_9_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_9_title",
+      "label": "Title"
+    },
+    {
+      "type": "url",
+      "id": "card_9_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 10"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_10_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_10_title",
+      "label": "Title"
+    },
+    {
+      "type": "url",
+      "id": "card_10_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 11"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_11_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_11_title",
+      "label": "Title"
+    },
+    {
+      "type": "url",
+      "id": "card_11_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 12"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_12_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_12_title",
+      "label": "Title"
+    },
+    {
+      "type": "url",
+      "id": "card_12_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Desktop top padding",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Desktop bottom padding",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Mobile top padding",
+      "min": 0,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Mobile bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "SaaS hero section"
+    }
+  ]
+}
 {% endschema %}
