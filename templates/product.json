@@ -263,12 +263,67 @@
                 "accordion_row_iktznL": {
                   "type": "_accordion-row",
                   "settings": {
-                    "heading": "นโยบายการคืนสินค้า",
+                    "heading": "FAQ ขั้นตอนการสั่งซื้อ",
                     "open_by_default": true,
-                    "icon": "none",
+                    "icon": "question_mark",
                     "width": 20
                   },
                   "blocks": {
+                    "ai_gen_block_fcf74dc_RgNMj8": {
+                      "type": "ai_gen_block_fcf74dc",
+                      "settings": {
+                        "chip_gap": 8,
+                        "chips_spacing": 20,
+                        "chip_padding_vertical": 8,
+                        "chip_padding_horizontal": 16,
+                        "chip_font_size": 14,
+                        "chip_border_radius": 20,
+                        "chip_border_width": 1,
+                        "chip_background": "#ffffff",
+                        "chip_text_color": "#000000",
+                        "chip_border_color": "#e6e6e6",
+                        "chip_hover_background": "#f5f5f5",
+                        "chip_hover_text_color": "#000000",
+                        "chip_hover_border_color": "#000000",
+                        "chip_active_background": "#000000",
+                        "chip_active_text_color": "#ffffff",
+                        "chip_active_border_color": "#000000",
+                        "desktop_width_percent": 100,
+                        "content_padding": 20,
+                        "content_min_height": 100,
+                        "content_border_radius": 8,
+                        "content_border_width": 1,
+                        "content_text_size": 14,
+                        "content_background": "#ffffff",
+                        "content_border_color": "#ffffff",
+                        "content_text_color": "#000000",
+                        "item_1_heading": "What are your shipping options?",
+                        "item_1_content": "<p>We offer standard and express shipping options. Standard shipping takes 5-7 business days, while express shipping takes 2-3 business days.</p>",
+                        "item_2_heading": "What is your return policy?",
+                        "item_2_content": "<p>We accept returns within 30 days of purchase. Items must be unused and in original packaging.</p>",
+                        "item_3_heading": "Do you ship internationally?",
+                        "item_3_content": "<p>Yes, we ship to most countries worldwide. Shipping costs and delivery times vary by location.</p>",
+                        "item_4_heading": "",
+                        "item_4_content": "",
+                        "item_5_heading": "",
+                        "item_5_content": "",
+                        "item_6_heading": "",
+                        "item_6_content": "",
+                        "item_7_heading": "",
+                        "item_7_content": "",
+                        "item_8_heading": "",
+                        "item_8_content": "",
+                        "item_9_heading": "",
+                        "item_9_content": "",
+                        "item_10_heading": "",
+                        "item_10_content": "",
+                        "item_11_heading": "",
+                        "item_11_content": "",
+                        "item_12_heading": "",
+                        "item_12_content": ""
+                      },
+                      "blocks": {}
+                    },
                     "text_pcHabN": {
                       "type": "text",
                       "settings": {
@@ -296,6 +351,7 @@
                     }
                   },
                   "block_order": [
+                    "ai_gen_block_fcf74dc_RgNMj8",
                     "text_pcHabN"
                   ]
                 },
