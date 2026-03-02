@@ -264,7 +264,7 @@
                   "type": "_accordion-row",
                   "settings": {
                     "heading": "FAQ ขั้นตอนการสั่งซื้อ",
-                    "open_by_default": true,
+                    "open_by_default": false,
                     "icon": "question_mark",
                     "width": 20
                   },
