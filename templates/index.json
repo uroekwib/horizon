@@ -20,7 +20,7 @@
             "heading_size_mobile": 32,
             "heading_color": "#000000",
             "button_primary_text": "🗨️สอบถาม| สั่งซื้อทาง LINE",
-            "button_primary_link": "",
+            "button_primary_link": "https://page.line.me/pwy1559t?openQrModal=true",
             "button_secondary_text": "ดูผลงานเพิ่มเติม →",
             "button_secondary_link": "",
             "stat_number_size": 40,
