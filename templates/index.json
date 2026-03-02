@@ -15,7 +15,7 @@
         "ai_gen_block_5a8adcb_kGLRRK": {
           "type": "ai_gen_block_5a8adcb",
           "settings": {
-            "heading": "<p><em><strong>ป้ายและงานพิมพ์ </strong></em>คุณภาพ<em> </em>Print & Sign <em>ครบจบที่เดียว</em></p>",
+            "heading": "<p><strong>ป้ายโฆษณา ป้ายอิงค์เจ็ท อักษรโลหะ สติ๊กเกอร์</strong><em><strong>ศูนย์บริการครบวงจร</strong></em></p>",
             "heading_size": 48,
             "heading_size_mobile": 32,
             "heading_color": "#000000",
@@ -31,7 +31,7 @@
             "stat_2_label": "ลูกค้าที่ไว้วางใจ",
             "stat_3_number": "50,000+",
             "stat_3_label": "ชิ้นงานที่ส่งมอบแล้ว",
-            "stat_number_color": "#000000",
+            "stat_number_color": "#7863ff",
             "stat_label_color": "#666666",
             "scroll_speed": 35,
             "card_tall_height": 300,
@@ -306,6 +306,9 @@
       "block_order": [
         "group_GEiQJ3",
         "image_4hNQY4"
+      ],
+      "custom_css": [
+        "h1 {font-family: google sans; font-weight: 600;}"
       ],
       "name": "t:names.image_with_text",
       "settings": {
