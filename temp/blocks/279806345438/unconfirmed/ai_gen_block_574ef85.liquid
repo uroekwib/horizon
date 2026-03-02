@@ -1,6 +1,440 @@
+{% doc %}
+  @prompt
+    Use Shopify Collage section: heading + 3 blocks (large image left, video top-right, text bottom-right). Desktop layout = Left large block, mobile layout = Collage.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-collage-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+  }
+
+  .ai-collage-container-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ block.settings.spacing }}px;
+  }
+
+  .ai-collage-heading-{{ ai_gen_id }} {
+    margin: 0;
+    font-size: {{ block.settings.heading_size }}px;
+    color: {{ block.settings.heading_color }};
+    text-align: {{ block.settings.heading_alignment }};
+  }
+
+  .ai-collage-grid-{{ ai_gen_id }} {
+    display: grid;
+    gap: {{ block.settings.spacing }}px;
+    width: 100%;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-collage-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+    }
+
+    .ai-collage-item-large-{{ ai_gen_id }} {
+      grid-row: 1 / 3;
+      grid-column: 1;
+    }
+
+    .ai-collage-item-video-{{ ai_gen_id }} {
+      grid-row: 1;
+      grid-column: 2;
+    }
+
+    .ai-collage-item-text-{{ ai_gen_id }} {
+      grid-row: 2;
+      grid-column: 2;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-collage-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+    }
+
+    .ai-collage-item-large-{{ ai_gen_id }} {
+      grid-column: 1 / 3;
+      grid-row: 1;
+    }
+
+    .ai-collage-item-video-{{ ai_gen_id }} {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    .ai-collage-item-text-{{ ai_gen_id }} {
+      grid-column: 2;
+      grid-row: 2;
+    }
+  }
+
+  .ai-collage-image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 200px;
+    overflow: hidden;
+    border-radius: {{ block.settings.border_radius }}px;
+  }
+
+  .ai-collage-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-collage-image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .ai-collage-image-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 200px;
+    max-height: 200px;
+  }
+
+  .ai-collage-video-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 200px;
+    overflow: hidden;
+    border-radius: {{ block.settings.border_radius }}px;
+    background-color: #000000;
+  }
+
+  .ai-collage-video-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-collage-video-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .ai-collage-video-placeholder-{{ ai_gen_id }} svg {
+    width: 60px;
+    height: 60px;
+    color: #ffffff;
+  }
+
+  .ai-collage-text-wrapper-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: {{ block.settings.text_alignment }};
+    padding: {{ block.settings.text_padding }}px;
+    background-color: {{ block.settings.text_background_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+    min-height: 200px;
+    height: 100%;
+  }
+
+  .ai-collage-text-content-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.text_size }}px;
+    line-height: 1.5;
+    text-align: {{ block.settings.text_alignment }};
+  }
+
+  .ai-collage-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+    pointer-events: none;
+    padding: 8px 12px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 4px;
+  }
+{% endstyle %}
+
+<collage-block-{{ ai_gen_id }}
+  class="ai-collage-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-collage-container-{{ ai_gen_id }}">
+    {% if block.settings.heading != blank %}
+      <h2 class="ai-collage-heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+    {% endif %}
+
+    <div class="ai-collage-grid-{{ ai_gen_id }}">
+      <div class="ai-collage-item-large-{{ ai_gen_id }}">
+        <div class="ai-collage-image-wrapper-{{ ai_gen_id }}">
+          {% if block.settings.large_image %}
+            <img
+              src="{{ block.settings.large_image | image_url: width: 1200 }}"
+              alt="{{ block.settings.large_image.alt | escape }}"
+              loading="lazy"
+              width="{{ block.settings.large_image.width }}"
+              height="{{ block.settings.large_image.height }}"
+              class="ai-collage-image-{{ ai_gen_id }}"
+            >
+          {% else %}
+            <div class="ai-collage-image-placeholder-{{ ai_gen_id }}">
+              {{ 'image' | placeholder_svg_tag }}
+              <div class="ai-collage-empty-state-{{ ai_gen_id }}">
+                เพิ่มรูปภาพใหญ่
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="ai-collage-item-video-{{ ai_gen_id }}">
+        <div class="ai-collage-video-wrapper-{{ ai_gen_id }}">
+          {% if block.settings.video_url != blank %}
+            <video
+              class="ai-collage-video-{{ ai_gen_id }}"
+              autoplay
+              loop
+              muted
+              playsinline
+            >
+              <source src="{{ block.settings.video_url }}" type="video/mp4">
+            </video>
+          {% else %}
+            <div class="ai-collage-video-placeholder-{{ ai_gen_id }}">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+              <div class="ai-collage-empty-state-{{ ai_gen_id }}">
+                เพิ่ม URL วิดีโอ
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="ai-collage-item-text-{{ ai_gen_id }}">
+        <div class="ai-collage-text-wrapper-{{ ai_gen_id }}">
+          {% if block.settings.text_content != blank %}
+            <div class="ai-collage-text-content-{{ ai_gen_id }}">
+              {{ block.settings.text_content }}
+            </div>
+          {% else %}
+            <div class="ai-collage-text-content-{{ ai_gen_id }}" style="color: #999; font-style: italic;">
+              เพิ่มข้อความที่นี่
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</collage-block-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class CollageBlock{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        const video = this.querySelector('.ai-collage-video-{{ ai_gen_id }}');
+        if (video) {
+          video.play().catch(function() {});
+        }
+      }
+    }
+
+    customElements.define('collage-block-{{ ai_gen_id }}', CollageBlock{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Collage",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Our collection"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 16,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Large image"
+    },
+    {
+      "type": "image_picker",
+      "id": "large_image",
+      "label": "Image"
+    },
+    {
+      "type": "header",
+      "content": "Video"
+    },
+    {
+      "type": "url",
+      "id": "video_url",
+      "label": "Video URL"
+    },
+    {
+      "type": "header",
+      "content": "Text block"
+    },
+    {
+      "type": "richtext",
+      "id": "text_content",
+      "label": "Text",
+      "default": "<p>Discover our latest collection featuring premium materials and expert craftsmanship.</p>"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Text size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_background_color",
+      "label": "Background color",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "text_padding",
+      "label": "Padding",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "spacing",
+      "label": "Spacing",
+      "min": 4,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collage"
+    }
+  ]
+}
 {% endschema %}
