@@ -1,6 +1,390 @@
+{% doc %}
+  @prompt
+    Create a Multicolumn section that supports image upload in each column.
+    
+    Requirements:
+    - Each column must include:
+      - Image (image_picker)
+      - Heading (text)
+      - Description (rich text)
+      - Optional link + link label
+    - Layout:
+      - Desktop: 3 columns in one row
+      - Tablet: 2 columns
+      - Mobile: 1 column
+    - Images must be centered and fully visible (object-fit: contain).
+    - Allow adjustable image size (range slider for max width).
+    - Keep spacing consistent between columns.
+    - Use section settings for:
+      - Background color
+      - Padding (top & bottom)
+      - Text alignment (left / center / right)
+    
+    Return full Liquid + valid schema.
+    Do not modify existing sections.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-multicolumn-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background-color: {{ block.settings.background_color }};
+    padding-top: {{ block.settings.padding_top }}px;
+    padding-bottom: {{ block.settings.padding_bottom }}px;
+  }
+
+  .ai-multicolumn-container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-multicolumn-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: {{ block.settings.column_gap }}px;
+  }
+
+  .ai-multicolumn-column-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: {{ block.settings.text_alignment }};
+  }
+
+  .ai-multicolumn-image-wrapper-{{ ai_gen_id }} {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .ai-multicolumn-image-{{ ai_gen_id }} {
+    max-width: {{ block.settings.image_max_width }}%;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .ai-multicolumn-image-placeholder-{{ ai_gen_id }} {
+    max-width: {{ block.settings.image_max_width }}%;
+    width: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1 / 1;
+  }
+
+  .ai-multicolumn-image-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .ai-multicolumn-heading-{{ ai_gen_id }} {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: {{ block.settings.heading_color }};
+  }
+
+  .ai-multicolumn-description-{{ ai_gen_id }} {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: {{ block.settings.text_color }};
+  }
+
+  .ai-multicolumn-link-{{ ai_gen_id }} {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 14px;
+    color: {{ block.settings.link_color }};
+    text-decoration: underline;
+  }
+
+  .ai-multicolumn-link-{{ ai_gen_id }}:hover {
+    color: {{ block.settings.link_hover_color }};
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-multicolumn-grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-multicolumn-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-multicolumn-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-multicolumn-container-{{ ai_gen_id }}">
+    <div class="ai-multicolumn-grid-{{ ai_gen_id }}">
+      {% for i in (1..3) %}
+        {% liquid
+          assign image_key = 'column_' | append: i | append: '_image'
+          assign heading_key = 'column_' | append: i | append: '_heading'
+          assign description_key = 'column_' | append: i | append: '_description'
+          assign link_key = 'column_' | append: i | append: '_link'
+          assign link_label_key = 'column_' | append: i | append: '_link_label'
+
+          assign column_image = block.settings[image_key]
+          assign column_heading = block.settings[heading_key]
+          assign column_description = block.settings[description_key]
+          assign column_link = block.settings[link_key]
+          assign column_link_label = block.settings[link_label_key]
+        %}
+
+        <div class="ai-multicolumn-column-{{ ai_gen_id }}">
+          <div class="ai-multicolumn-image-wrapper-{{ ai_gen_id }}">
+            {% if column_image %}
+              <img
+                src="{{ column_image | image_url: width: 800 }}"
+                alt="{{ column_image.alt | escape }}"
+                loading="lazy"
+                width="{{ column_image.width }}"
+                height="{{ column_image.height }}"
+                class="ai-multicolumn-image-{{ ai_gen_id }}"
+              >
+            {% else %}
+              <div class="ai-multicolumn-image-placeholder-{{ ai_gen_id }}">
+                {{ 'image' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+          </div>
+
+          {% if column_heading != blank %}
+            <h3 class="ai-multicolumn-heading-{{ ai_gen_id }}">{{ column_heading }}</h3>
+          {% endif %}
+
+          {% if column_description != blank %}
+            <div class="ai-multicolumn-description-{{ ai_gen_id }}">{{ column_description }}</div>
+          {% endif %}
+
+          {% if column_link != blank and column_link_label != blank %}
+            <a href="{{ column_link }}" class="ai-multicolumn-link-{{ ai_gen_id }}">
+              {{ column_link_label }}
+            </a>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Multicolumn",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "label": "Column spacing",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Images"
+    },
+    {
+      "type": "range",
+      "id": "image_max_width",
+      "label": "Image max width",
+      "min": 30,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "link_color",
+      "label": "Link color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "link_hover_color",
+      "label": "Link hover color",
+      "default": "#333333"
+    },
+    {
+      "type": "header",
+      "content": "Column 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "column_1_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "column_1_heading",
+      "label": "Heading",
+      "default": "Column 1"
+    },
+    {
+      "type": "richtext",
+      "id": "column_1_description",
+      "label": "Description",
+      "default": "<p>Add a description for this column</p>"
+    },
+    {
+      "type": "url",
+      "id": "column_1_link",
+      "label": "Link"
+    },
+    {
+      "type": "text",
+      "id": "column_1_link_label",
+      "label": "Link label",
+      "default": "Learn more"
+    },
+    {
+      "type": "header",
+      "content": "Column 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "column_2_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "column_2_heading",
+      "label": "Heading",
+      "default": "Column 2"
+    },
+    {
+      "type": "richtext",
+      "id": "column_2_description",
+      "label": "Description",
+      "default": "<p>Add a description for this column</p>"
+    },
+    {
+      "type": "url",
+      "id": "column_2_link",
+      "label": "Link"
+    },
+    {
+      "type": "text",
+      "id": "column_2_link_label",
+      "label": "Link label",
+      "default": "Learn more"
+    },
+    {
+      "type": "header",
+      "content": "Column 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "column_3_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "column_3_heading",
+      "label": "Heading",
+      "default": "Column 3"
+    },
+    {
+      "type": "richtext",
+      "id": "column_3_description",
+      "label": "Description",
+      "default": "<p>Add a description for this column</p>"
+    },
+    {
+      "type": "url",
+      "id": "column_3_link",
+      "label": "Link"
+    },
+    {
+      "type": "text",
+      "id": "column_3_link_label",
+      "label": "Link label",
+      "default": "Learn more"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Multicolumn"
+    }
+  ]
+}
 {% endschema %}
