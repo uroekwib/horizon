@@ -77,7 +77,7 @@
                 "horizontal_alignment": "flex-start",
                 "vertical_alignment": "center",
                 "align_baseline": false,
-                "horizontal_alignment_flex_direction_column": "center",
+                "horizontal_alignment_flex_direction_column": "flex-start",
                 "vertical_alignment_flex_direction_column": "center",
                 "gap": 12,
                 "width": "fill",
@@ -116,7 +116,7 @@
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",
-                    "type_preset": "h2",
+                    "type_preset": "rte",
                     "font": "var(--font-body--family)",
                     "font_size": "2.5rem",
                     "line_height": "normal",
@@ -140,9 +140,9 @@
                     "show_sale_price_first": true,
                     "show_installments": false,
                     "show_tax_info": false,
-                    "type_preset": "paragraph",
+                    "type_preset": "h4",
                     "width": "100%",
-                    "alignment": "center",
+                    "alignment": "left",
                     "font": "var(--font-body--family)",
                     "font_size": "1rem",
                     "line_height": "normal",
@@ -194,7 +194,7 @@
                     "icon_size": 32,
                     "text_size": 16,
                     "icon_text_gap": 8,
-                    "text_color": "#000000",
+                    "text_color": "#17a9bb",
                     "desktop_width_percent": 100
                   },
                   "blocks": {}
@@ -206,18 +206,6 @@
                 "text_tJAPKi",
                 "ai_gen_block_d819489_9JNN96"
               ]
-            },
-            "divider_VJhene": {
-              "type": "_divider",
-              "name": "t:names.divider",
-              "settings": {
-                "thickness": 1,
-                "corner_radius": "square",
-                "width_percent": 100,
-                "padding-block-start": 0,
-                "padding-block-end": 0
-              },
-              "blocks": {}
             },
             "variant_picker_R3rGDr": {
               "type": "variant-picker",
@@ -479,7 +467,6 @@
           },
           "block_order": [
             "group_icgrde",
-            "divider_VJhene",
             "variant_picker_R3rGDr",
             "buy_buttons_eYQEYi",
             "accordion_XTDkDQ",
@@ -496,7 +483,7 @@
         "gap": 36,
         "enable_sticky_add_to_cart": true,
         "color_scheme": "scheme-2",
-        "padding-block-start": 42,
+        "padding-block-start": 26,
         "padding-block-end": 30
       }
     },
