@@ -22,7 +22,7 @@
             "button_primary_text": "🗨️สอบถาม| สั่งซื้อทาง LINE",
             "button_primary_link": "https://page.line.me/pwy1559t?openQrModal=true",
             "button_secondary_text": "ดูผลงานเพิ่มเติม →",
-            "button_secondary_link": "",
+            "button_secondary_link": "shopify://collections/all",
             "stat_number_size": 40,
             "stat_number_size_mobile": 32,
             "stat_1_number": "500+",
