@@ -261,7 +261,7 @@
             "button_zDkPWm": {
               "type": "button",
               "settings": {
-                "label": "ช้อปเลย",
+                "label": "เลือกหมวดหมู่ที่ต้องการ คลิก!",
                 "link": "shopify://collections/all",
                 "open_in_new_tab": false,
                 "style_class": "button",
