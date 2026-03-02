@@ -1,6 +1,1269 @@
+{% doc %}
+  @prompt
+    A modern SaaS-style hero section UI design for a Thai signage and printing company website. Desktop layout, 16:9 ratio, full-width.
+    Left side: Clean layout with large bold Thai headline using Noto Sans Thai font. Two words in the headline have animated rainbow gradient text effect (cyan → indigo → lavender, text filled with gradient color, transparent background behind the text). Below the headline: a short subtitle paragraph. Two small pill-shaped buttons — one gradient (cyan to indigo to lavender) and one white/outline style, both compact size. Three small stat counters below a thin divider line showing customers, projects, satisfaction score.
+    Right side: Vertical bento grid with 3 columns of auto-scrolling image cards. Each card is a tall rectangle (minimum 320px height, preferably taller) filled entirely with a full-bleed photograph — no text, no icons, no labels on the cards. Photos show signage and printing products: metal letters, light boxes, LED signs, acrylic signs, neon signs, building signs. Cards have soft rounded corners (~18px radius), subtle border, and soft drop shadow. The three columns scroll at different speeds and directions (left column down, middle column up, right column down) creating a counter-scroll parallax effect. Top and bottom edges of the bento area fade to transparent. The bento area height matches the left content height for visual balance.
+    Background: Fully transparent — no background color applied. The section inherits whatever background the parent container has.
+    Typography: dual-font system — Google Sans Display for all Latin characters, numbers, and English text; Noto Sans Thai for Thai characters only. Both fonts stack together so numerals and Latin letters render in Google Sans Display while Thai script renders in Noto Sans Thai automatically. Clean, minimal, lots of white space.
+    UI style: No glassmorphism on cards (full image only). Soft shadows, rounded pill buttons, airy and modern B2B aesthetic. Color palette: #22D3C8 cyan, #818CF8 indigo, #A78BFA lavender.
+    No background color.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+{% style %}
+  @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Display:wght@400;500;600;700&display=swap');
+
+  .ai-hero-section-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    background: transparent;
+    padding: {{ block.settings.section_padding_top }}px {{ block.settings.section_padding_horizontal }}px {{ block.settings.section_padding_bottom }}px;
+  }
+
+  .ai-hero-container-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: {{ block.settings.content_gap }}px;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .ai-hero-left-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ block.settings.left_content_gap }}px;
+  }
+
+  .ai-hero-headline-{{ ai_gen_id }} {
+    font-family: 'Noto Sans Thai', 'Google Sans Display', sans-serif;
+    font-size: {{ block.settings.headline_size }}px;
+    font-weight: {{ block.settings.headline_weight }};
+    line-height: {{ block.settings.headline_line_height }};
+    color: {{ block.settings.headline_color }};
+    margin: 0;
+  }
+
+  .ai-hero-gradient-text-{{ ai_gen_id }} {
+    background: linear-gradient(135deg, {{ block.settings.gradient_color_1 }} 0%, {{ block.settings.gradient_color_2 }} 50%, {{ block.settings.gradient_color_3 }} 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: ai-hero-gradient-shift-{{ ai_gen_id }} {{ block.settings.gradient_animation_speed }}s ease infinite;
+    background-size: 200% 200%;
+  }
+
+  @keyframes ai-hero-gradient-shift-{{ ai_gen_id }} {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  .ai-hero-subtitle-{{ ai_gen_id }} {
+    font-family: 'Noto Sans Thai', 'Google Sans Display', sans-serif;
+    font-size: {{ block.settings.subtitle_size }}px;
+    font-weight: {{ block.settings.subtitle_weight }};
+    line-height: {{ block.settings.subtitle_line_height }};
+    color: {{ block.settings.subtitle_color }};
+    margin: 0;
+  }
+
+  .ai-hero-buttons-{{ ai_gen_id }} {
+    display: flex;
+    gap: {{ block.settings.button_gap }}px;
+    flex-wrap: wrap;
+  }
+
+  .ai-hero-button-{{ ai_gen_id }} {
+    font-family: 'Noto Sans Thai', 'Google Sans Display', sans-serif;
+    font-size: {{ block.settings.button_font_size }}px;
+    font-weight: {{ block.settings.button_font_weight }};
+    padding: {{ block.settings.button_padding_vertical }}px {{ block.settings.button_padding_horizontal }}px;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .ai-hero-button-gradient-{{ ai_gen_id }} {
+    background: linear-gradient(135deg, {{ block.settings.gradient_color_1 }} 0%, {{ block.settings.gradient_color_2 }} 50%, {{ block.settings.gradient_color_3 }} 100%);
+    color: {{ block.settings.button_gradient_text_color }};
+    border: {{ block.settings.button_gradient_border_width }}px solid transparent;
+  }
+
+  .ai-hero-button-gradient-{{ ai_gen_id }}:hover {
+    opacity: {{ block.settings.button_gradient_hover_opacity }};
+    transform: translateY(-2px);
+  }
+
+  .ai-hero-button-outline-{{ ai_gen_id }} {
+    background: {{ block.settings.button_outline_bg }};
+    color: {{ block.settings.button_outline_text_color }};
+    border: {{ block.settings.button_outline_border_width }}px solid {{ block.settings.button_outline_border_color }};
+  }
+
+  .ai-hero-button-outline-{{ ai_gen_id }}:hover {
+    background: {{ block.settings.button_outline_hover_bg }};
+    color: {{ block.settings.button_outline_hover_text_color }};
+    border-color: {{ block.settings.button_outline_hover_border_color }};
+  }
+
+  .ai-hero-divider-{{ ai_gen_id }} {
+    width: 100%;
+    height: {{ block.settings.divider_height }}px;
+    background: {{ block.settings.divider_color }};
+    margin: {{ block.settings.divider_margin_top }}px 0 {{ block.settings.divider_margin_bottom }}px;
+  }
+
+  .ai-hero-stats-{{ ai_gen_id }} {
+    display: flex;
+    gap: {{ block.settings.stats_gap }}px;
+    flex-wrap: wrap;
+  }
+
+  .ai-hero-stat-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ block.settings.stat_gap }}px;
+  }
+
+  .ai-hero-stat-number-{{ ai_gen_id }} {
+    font-family: 'Google Sans Display', sans-serif;
+    font-size: {{ block.settings.stat_number_size }}px;
+    font-weight: {{ block.settings.stat_number_weight }};
+    color: {{ block.settings.stat_number_color }};
+    line-height: 1;
+  }
+
+  .ai-hero-stat-label-{{ ai_gen_id }} {
+    font-family: 'Noto Sans Thai', 'Google Sans Display', sans-serif;
+    font-size: {{ block.settings.stat_label_size }}px;
+    font-weight: {{ block.settings.stat_label_weight }};
+    color: {{ block.settings.stat_label_color }};
+    line-height: 1.2;
+  }
+
+  .ai-hero-right-{{ ai_gen_id }} {
+    position: relative;
+    height: {{ block.settings.bento_height }}px;
+    overflow: hidden;
+  }
+
+  .ai-hero-bento-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: {{ block.settings.bento_gap }}px;
+    height: 100%;
+    position: relative;
+  }
+
+  .ai-hero-bento-column-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ block.settings.bento_gap }}px;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  .ai-hero-bento-column-{{ ai_gen_id }}:nth-child(1) {
+    animation: ai-hero-scroll-down-{{ ai_gen_id }} {{ block.settings.scroll_speed_column_1 }}s linear infinite;
+  }
+
+  .ai-hero-bento-column-{{ ai_gen_id }}:nth-child(2) {
+    animation: ai-hero-scroll-up-{{ ai_gen_id }} {{ block.settings.scroll_speed_column_2 }}s linear infinite;
+  }
+
+  .ai-hero-bento-column-{{ ai_gen_id }}:nth-child(3) {
+    animation: ai-hero-scroll-down-{{ ai_gen_id }} {{ block.settings.scroll_speed_column_3 }}s linear infinite;
+  }
+
+  @keyframes ai-hero-scroll-down-{{ ai_gen_id }} {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-50%);
+    }
+  }
+
+  @keyframes ai-hero-scroll-up-{{ ai_gen_id }} {
+    0% {
+      transform: translateY(-50%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  .ai-hero-bento-card-{{ ai_gen_id }} {
+    min-height: {{ block.settings.card_min_height }}px;
+    border-radius: {{ block.settings.card_border_radius }}px;
+    overflow: hidden;
+    border: {{ block.settings.card_border_width }}px solid {{ block.settings.card_border_color }};
+    box-shadow: {{ block.settings.card_shadow_x }}px {{ block.settings.card_shadow_y }}px {{ block.settings.card_shadow_blur }}px {{ block.settings.card_shadow_color }};
+    position: relative;
+  }
+
+  .ai-hero-bento-card-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .ai-hero-bento-fade-top-{{ ai_gen_id }},
+  .ai-hero-bento-fade-bottom-{{ ai_gen_id }} {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: {{ block.settings.fade_height }}px;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .ai-hero-bento-fade-top-{{ ai_gen_id }} {
+    top: 0;
+    background: linear-gradient(to bottom, {{ block.settings.fade_color }} 0%, transparent 100%);
+  }
+
+  .ai-hero-bento-fade-bottom-{{ ai_gen_id }} {
+    bottom: 0;
+    background: linear-gradient(to top, {{ block.settings.fade_color }} 0%, transparent 100%);
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-hero-container-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: {{ block.settings.mobile_content_gap }}px;
+    }
+
+    .ai-hero-headline-{{ ai_gen_id }} {
+      font-size: {{ block.settings.headline_size | times: 0.7 }}px;
+    }
+
+    .ai-hero-subtitle-{{ ai_gen_id }} {
+      font-size: {{ block.settings.subtitle_size | times: 0.9 }}px;
+    }
+
+    .ai-hero-right-{{ ai_gen_id }} {
+      height: {{ block.settings.bento_height | times: 0.7 }}px;
+    }
+
+    .ai-hero-stats-{{ ai_gen_id }} {
+      gap: {{ block.settings.stats_gap | times: 0.7 }}px;
+    }
+  }
+{% endstyle %}
+
+<hero-section-{{ ai_gen_id }} class="ai-hero-section-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-hero-container-{{ ai_gen_id }}">
+    <div class="ai-hero-left-{{ ai_gen_id }}">
+      {% if block.settings.headline != blank %}
+        <h1 class="ai-hero-headline-{{ ai_gen_id }}">
+          {{ block.settings.headline }}
+        </h1>
+      {% endif %}
+
+      {% if block.settings.subtitle != blank %}
+        <div class="ai-hero-subtitle-{{ ai_gen_id }}">
+          {{ block.settings.subtitle }}
+        </div>
+      {% endif %}
+
+      <div class="ai-hero-buttons-{{ ai_gen_id }}">
+        {% if block.settings.button_1_text != blank %}
+          <a
+            href="{{ block.settings.button_1_link }}"
+            class="ai-hero-button-{{ ai_gen_id }} ai-hero-button-gradient-{{ ai_gen_id }}"
+          >
+            {{ block.settings.button_1_text }}
+          </a>
+        {% endif %}
+
+        {% if block.settings.button_2_text != blank %}
+          <a
+            href="{{ block.settings.button_2_link }}"
+            class="ai-hero-button-{{ ai_gen_id }} ai-hero-button-outline-{{ ai_gen_id }}"
+          >
+            {{ block.settings.button_2_text }}
+          </a>
+        {% endif %}
+      </div>
+
+      {% if block.settings.show_divider %}
+        <div class="ai-hero-divider-{{ ai_gen_id }}"></div>
+      {% endif %}
+
+      <div class="ai-hero-stats-{{ ai_gen_id }}">
+        {% if block.settings.stat_1_number != blank %}
+          <div class="ai-hero-stat-{{ ai_gen_id }}">
+            <div class="ai-hero-stat-number-{{ ai_gen_id }}">{{ block.settings.stat_1_number }}</div>
+            <div class="ai-hero-stat-label-{{ ai_gen_id }}">{{ block.settings.stat_1_label }}</div>
+          </div>
+        {% endif %}
+
+        {% if block.settings.stat_2_number != blank %}
+          <div class="ai-hero-stat-{{ ai_gen_id }}">
+            <div class="ai-hero-stat-number-{{ ai_gen_id }}">{{ block.settings.stat_2_number }}</div>
+            <div class="ai-hero-stat-label-{{ ai_gen_id }}">{{ block.settings.stat_2_label }}</div>
+          </div>
+        {% endif %}
+
+        {% if block.settings.stat_3_number != blank %}
+          <div class="ai-hero-stat-{{ ai_gen_id }}">
+            <div class="ai-hero-stat-number-{{ ai_gen_id }}">{{ block.settings.stat_3_number }}</div>
+            <div class="ai-hero-stat-label-{{ ai_gen_id }}">{{ block.settings.stat_3_label }}</div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="ai-hero-right-{{ ai_gen_id }}">
+      <div class="ai-hero-bento-fade-top-{{ ai_gen_id }}"></div>
+      <div class="ai-hero-bento-grid-{{ ai_gen_id }}">
+        <div class="ai-hero-bento-column-{{ ai_gen_id }}">
+          {% for i in (1..6) %}
+            {% assign image_key = 'image_col1_' | append: i %}
+            {% if block.settings[image_key] %}
+              <div class="ai-hero-bento-card-{{ ai_gen_id }}">
+                <img
+                  src="{{ block.settings[image_key] | image_url: width: 600 }}"
+                  alt="{{ block.settings[image_key].alt | escape }}"
+                  loading="lazy"
+                  width="600"
+                  height="800"
+                >
+              </div>
+            {% endif %}
+          {% endfor %}
+          {% for i in (1..6) %}
+            {% assign image_key = 'image_col1_' | append: i %}
+            {% if block.settings[image_key] %}
+              <div class="ai-hero-bento-card-{{ ai_gen_id }}">
+                <img
+                  src="{{ block.settings[image_key] | image_url: width: 600 }}"
+                  alt="{{ block.settings[image_key].alt | escape }}"
+                  loading="lazy"
+                  width="600"
+                  height="800"
+                >
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        <div class="ai-hero-bento-column-{{ ai_gen_id }}">
+          {% for i in (1..6) %}
+            {% assign image_key = 'image_col2_' | append: i %}
+            {% if block.settings[image_key] %}
+              <div class="ai-hero-bento-card-{{ ai_gen_id }}">
+                <img
+                  src="{{ block.settings[image_key] | image_url: width: 600 }}"
+                  alt="{{ block.settings[image_key].alt | escape }}"
+                  loading="lazy"
+                  width="600"
+                  height="800"
+                >
+              </div>
+            {% endif %}
+          {% endfor %}
+          {% for i in (1..6) %}
+            {% assign image_key = 'image_col2_' | append: i %}
+            {% if block.settings[image_key] %}
+              <div class="ai-hero-bento-card-{{ ai_gen_id }}">
+                <img
+                  src="{{ block.settings[image_key] | image_url: width: 600 }}"
+                  alt="{{ block.settings[image_key].alt | escape }}"
+                  loading="lazy"
+                  width="600"
+                  height="800"
+                >
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        <div class="ai-hero-bento-column-{{ ai_gen_id }}">
+          {% for i in (1..6) %}
+            {% assign image_key = 'image_col3_' | append: i %}
+            {% if block.settings[image_key] %}
+              <div class="ai-hero-bento-card-{{ ai_gen_id }}">
+                <img
+                  src="{{ block.settings[image_key] | image_url: width: 600 }}"
+                  alt="{{ block.settings[image_key].alt | escape }}"
+                  loading="lazy"
+                  width="600"
+                  height="800"
+                >
+              </div>
+            {% endif %}
+          {% endfor %}
+          {% for i in (1..6) %}
+            {% assign image_key = 'image_col3_' | append: i %}
+            {% if block.settings[image_key] %}
+              <div class="ai-hero-bento-card-{{ ai_gen_id }}">
+                <img
+                  src="{{ block.settings[image_key] | image_url: width: 600 }}"
+                  alt="{{ block.settings[image_key].alt | escape }}"
+                  loading="lazy"
+                  width="600"
+                  height="800"
+                >
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      <div class="ai-hero-bento-fade-bottom-{{ ai_gen_id }}"></div>
+    </div>
+  </div>
+</hero-section-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class HeroSection{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.applyGradientToWords();
+      }
+
+      applyGradientToWords() {
+        const headline = this.querySelector('.ai-hero-headline-{{ ai_gen_id }}');
+        if (!headline) return;
+
+        const gradientWord1 = '{{ block.settings.gradient_word_1 }}';
+        const gradientWord2 = '{{ block.settings.gradient_word_2 }}';
+
+        if (!gradientWord1 && !gradientWord2) return;
+
+        let html = headline.innerHTML;
+
+        if (gradientWord1) {
+          const regex1 = new RegExp(`(${gradientWord1})`, 'gi');
+          html = html.replace(regex1, '<span class="ai-hero-gradient-text-{{ ai_gen_id }}">$1</span>');
+        }
+
+        if (gradientWord2) {
+          const regex2 = new RegExp(`(${gradientWord2})`, 'gi');
+          html = html.replace(regex2, '<span class="ai-hero-gradient-text-{{ ai_gen_id }}">$1</span>');
+        }
+
+        headline.innerHTML = html;
+      }
+    }
+
+    customElements.define('hero-section-{{ ai_gen_id }}', HeroSection{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "SaaS hero section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "section_padding_horizontal",
+      "label": "Padding horizontal",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "content_gap",
+      "label": "Content gap",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "mobile_content_gap",
+      "label": "Mobile content gap",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "left_content_gap",
+      "label": "Left content gap",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Headline"
+    },
+    {
+      "type": "richtext",
+      "id": "headline",
+      "label": "Headline",
+      "default": "<p>สร้างสรรค์ป้ายและงานพิมพ์ที่โดดเด่น</p>"
+    },
+    {
+      "type": "text",
+      "id": "gradient_word_1",
+      "label": "Gradient word 1"
+    },
+    {
+      "type": "text",
+      "id": "gradient_word_2",
+      "label": "Gradient word 2"
+    },
+    {
+      "type": "range",
+      "id": "headline_size",
+      "label": "Size",
+      "min": 24,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "select",
+      "id": "headline_weight",
+      "label": "Weight",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semibold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "select",
+      "id": "headline_line_height",
+      "label": "Line height",
+      "options": [
+        { "value": "1", "label": "Tight" },
+        { "value": "1.2", "label": "Normal" },
+        { "value": "1.5", "label": "Loose" }
+      ],
+      "default": "1.2"
+    },
+    {
+      "type": "color",
+      "id": "headline_color",
+      "label": "Color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Gradient"
+    },
+    {
+      "type": "color",
+      "id": "gradient_color_1",
+      "label": "Color 1 (cyan)",
+      "default": "#22D3C8"
+    },
+    {
+      "type": "color",
+      "id": "gradient_color_2",
+      "label": "Color 2 (indigo)",
+      "default": "#818CF8"
+    },
+    {
+      "type": "color",
+      "id": "gradient_color_3",
+      "label": "Color 3 (lavender)",
+      "default": "#A78BFA"
+    },
+    {
+      "type": "range",
+      "id": "gradient_animation_speed",
+      "label": "Animation speed",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "default": 6
+    },
+    {
+      "type": "header",
+      "content": "Subtitle"
+    },
+    {
+      "type": "richtext",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "<p>บริการออกแบบและผลิตป้ายคุณภาพสูง พร้อมส่งมอบงานที่ตรงใจทุกโปรเจกต์</p>"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "label": "Size",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "select",
+      "id": "subtitle_weight",
+      "label": "Weight",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semibold" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "select",
+      "id": "subtitle_line_height",
+      "label": "Line height",
+      "options": [
+        { "value": "1.4", "label": "Normal" },
+        { "value": "1.6", "label": "Relaxed" },
+        { "value": "1.8", "label": "Loose" }
+      ],
+      "default": "1.6"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Color",
+      "default": "#666666"
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "text",
+      "id": "button_1_text",
+      "label": "Button 1 text",
+      "default": "เริ่มต้นใช้งาน"
+    },
+    {
+      "type": "url",
+      "id": "button_1_link",
+      "label": "Button 1 link"
+    },
+    {
+      "type": "text",
+      "id": "button_2_text",
+      "label": "Button 2 text",
+      "default": "ดูผลงาน"
+    },
+    {
+      "type": "url",
+      "id": "button_2_link",
+      "label": "Button 2 link"
+    },
+    {
+      "type": "range",
+      "id": "button_gap",
+      "label": "Gap",
+      "min": 8,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "label": "Font size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "select",
+      "id": "button_font_weight",
+      "label": "Font weight",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semibold" }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "range",
+      "id": "button_padding_vertical",
+      "label": "Padding vertical",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "button_padding_horizontal",
+      "label": "Padding horizontal",
+      "min": 16,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Border radius",
+      "min": 4,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Button gradient style"
+    },
+    {
+      "type": "color",
+      "id": "button_gradient_text_color",
+      "label": "Text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "button_gradient_border_width",
+      "label": "Border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "button_gradient_hover_opacity",
+      "label": "Hover opacity",
+      "min": 0.5,
+      "max": 1,
+      "step": 0.1,
+      "default": 0.9
+    },
+    {
+      "type": "header",
+      "content": "Button outline style"
+    },
+    {
+      "type": "color",
+      "id": "button_outline_bg",
+      "label": "Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "button_outline_text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_outline_border_color",
+      "label": "Border color",
+      "default": "#E0E0E0"
+    },
+    {
+      "type": "range",
+      "id": "button_outline_border_width",
+      "label": "Border width",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "button_outline_hover_bg",
+      "label": "Hover background",
+      "default": "#F5F5F5"
+    },
+    {
+      "type": "color",
+      "id": "button_outline_hover_text_color",
+      "label": "Hover text color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_outline_hover_border_color",
+      "label": "Hover border color",
+      "default": "#CCCCCC"
+    },
+    {
+      "type": "header",
+      "content": "Divider"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_divider",
+      "label": "Show divider",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "divider_height",
+      "label": "Height",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Color",
+      "default": "#E0E0E0"
+    },
+    {
+      "type": "range",
+      "id": "divider_margin_top",
+      "label": "Margin top",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "divider_margin_bottom",
+      "label": "Margin bottom",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Stats"
+    },
+    {
+      "type": "text",
+      "id": "stat_1_number",
+      "label": "Stat 1 number",
+      "default": "500+"
+    },
+    {
+      "type": "text",
+      "id": "stat_1_label",
+      "label": "Stat 1 label",
+      "default": "ลูกค้า"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_number",
+      "label": "Stat 2 number",
+      "default": "2,000+"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_label",
+      "label": "Stat 2 label",
+      "default": "โปรเจกต์"
+    },
+    {
+      "type": "text",
+      "id": "stat_3_number",
+      "label": "Stat 3 number",
+      "default": "98%"
+    },
+    {
+      "type": "text",
+      "id": "stat_3_label",
+      "label": "Stat 3 label",
+      "default": "ความพึงพอใจ"
+    },
+    {
+      "type": "range",
+      "id": "stats_gap",
+      "label": "Gap",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "stat_gap",
+      "label": "Number-label gap",
+      "min": 4,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "stat_number_size",
+      "label": "Number size",
+      "min": 20,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "select",
+      "id": "stat_number_weight",
+      "label": "Number weight",
+      "options": [
+        { "value": "600", "label": "Semibold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "color",
+      "id": "stat_number_color",
+      "label": "Number color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "stat_label_size",
+      "label": "Label size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "stat_label_weight",
+      "label": "Label weight",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "color",
+      "id": "stat_label_color",
+      "label": "Label color",
+      "default": "#666666"
+    },
+    {
+      "type": "header",
+      "content": "Bento grid"
+    },
+    {
+      "type": "range",
+      "id": "bento_height",
+      "label": "Height",
+      "min": 400,
+      "max": 800,
+      "step": 20,
+      "unit": "px",
+      "default": 600
+    },
+    {
+      "type": "range",
+      "id": "bento_gap",
+      "label": "Gap",
+      "min": 8,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "card_min_height",
+      "label": "Card min height",
+      "min": 200,
+      "max": 500,
+      "step": 20,
+      "unit": "px",
+      "default": 320
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Card border radius",
+      "min": 8,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "card_border_width",
+      "label": "Card border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Card border color",
+      "default": "#E0E0E0"
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_x",
+      "label": "Shadow X",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_y",
+      "label": "Shadow Y",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_blur",
+      "label": "Shadow blur",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "color",
+      "id": "card_shadow_color",
+      "label": "Shadow color",
+      "default": "#00000014"
+    },
+    {
+      "type": "range",
+      "id": "scroll_speed_column_1",
+      "label": "Column 1 scroll speed",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "s",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "scroll_speed_column_2",
+      "label": "Column 2 scroll speed",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "s",
+      "default": 25
+    },
+    {
+      "type": "range",
+      "id": "scroll_speed_column_3",
+      "label": "Column 3 scroll speed",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "s",
+      "default": 35
+    },
+    {
+      "type": "range",
+      "id": "fade_height",
+      "label": "Fade height",
+      "min": 40,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "default": 100
+    },
+    {
+      "type": "color",
+      "id": "fade_color",
+      "label": "Fade color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Column 1 images"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_col1_1",
+      "label": "Image 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_col1_2",
+      "label": "Image 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_col1_3",
+      "label": "Image 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_col1_4",
+      "label": "Image 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_col1_5",
+      "label": "Image 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_col1_6",
+      "label": "Image 6"
+    },
+    {
+      "type": "header",
+      "content": "Column 2 images"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_col2_1",
+      "label": "Image 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_col2_2",
+      "label": "Image 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_col2_3",
+      "label": "Image 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_col2_4",
+      "label": "Image 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_col2_5",
+      "label": "Image 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_col2_6",
+      "label": "Image 6"
+    },
+    {
+      "type": "header",
+      "content": "Column 3 images"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_col3_1",
+      "label": "Image 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_col3_2",
+      "label": "Image 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_col3_3",
+      "label": "Image 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_col3_4",
+      "label": "Image 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_col3_5",
+      "label": "Image 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_col3_6",
+      "label": "Image 6"
+    }
+  ],
+  "presets": [
+    {
+      "name": "SaaS hero section"
+    }
+  ]
+}
 {% endschema %}
