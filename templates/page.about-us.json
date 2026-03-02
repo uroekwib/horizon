@@ -991,12 +991,12 @@
           "settings": {
             "source": "url",
             "video_url": "https://www.youtube.com/watch?v=dCo0zT9s_Sw&t=11s",
-            "video_autoplay": false,
+            "video_autoplay": true,
             "video_loop": true,
             "cover_image": "shopify://shop_images/Banner_CustomSignage_59cd2e0f-4922-41cd-b81b-79fd7d1f9163.jpg",
             "alt": "",
-            "custom_width": 80,
-            "custom_width_mobile": 31,
+            "custom_width": 100,
+            "custom_width_mobile": 100,
             "aspect_ratio": "16/9",
             "border": "none",
             "border_width": 1,
@@ -1042,6 +1042,68 @@
         "padding-block-start": 32,
         "padding-block-end": 32
       }
+    },
+    "section_zPV3kR": {
+      "type": "section",
+      "blocks": {
+        "text_xxGgFm": {
+          "type": "text",
+          "name": "t:names.text",
+          "settings": {
+            "text": "<p>องค์กรของเราเน้นการเติมโตอย่างมั่นคง เน้นการปลูกฝังให้เป็นผู้รู้ลึกรู้จริง ผสมผสานบูรณาการความรู้มากกว่าแค่งานสื่อสิ่งพิมพ์ งานป้ายโฆษณาต่างๆ เราปฏิบัติให้เกิดประสบการณ์สะสมอย่างไม่มีที่สิ้นสุดให้พร้อมกับยุคที่เทคโนโลยีกำลังก้าวกระโดด โดยคาดหวังให้ผู้รับบริการได้รับสินค้าและบริการที่ดีคุ้มค่า ยุติธรรม และประทับใจ</p>",
+            "width": "fit-content",
+            "max_width": "none",
+            "alignment": "left",
+            "type_preset": "rte",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "text_xxGgFm"
+      ],
+      "name": "t:names.rich_text_section",
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 25,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "scheme-2",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 48,
+        "padding-block-end": 48
+      }
     }
   },
   "order": [
@@ -1050,6 +1112,7 @@
     "section_C8cGMP",
     "section_48VRzd",
     "section_iKPHeq",
-    "section_dpEc66"
+    "section_dpEc66",
+    "section_zPV3kR"
   ]
 }
