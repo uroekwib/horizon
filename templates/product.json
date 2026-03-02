@@ -77,7 +77,7 @@
                 "horizontal_alignment": "flex-start",
                 "vertical_alignment": "center",
                 "align_baseline": false,
-                "horizontal_alignment_flex_direction_column": "flex-start",
+                "horizontal_alignment_flex_direction_column": "center",
                 "vertical_alignment_flex_direction_column": "center",
                 "gap": 12,
                 "width": "fill",
@@ -142,14 +142,40 @@
                     "show_tax_info": false,
                     "type_preset": "paragraph",
                     "width": "100%",
-                    "alignment": "left",
+                    "alignment": "center",
                     "font": "var(--font-body--family)",
                     "font_size": "1rem",
                     "line_height": "normal",
                     "letter_spacing": "normal",
                     "case": "none",
-                    "color": "var(--color-foreground)",
+                    "color": "var(--color-foreground-heading)",
                     "padding-block-start": 4,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "text_tJAPKi": {
+                  "type": "text",
+                  "name": "t:names.text",
+                  "settings": {
+                    "text": "<p>ราคาที่ตกลงจะคำนวนตามสเปคและจำนวนอีกที</p>",
+                    "width": "fit-content",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "loose",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
                     "padding-block-end": 0,
                     "padding-inline-start": 0,
                     "padding-inline-end": 0
@@ -161,9 +187,9 @@
                   "name": "Contact link",
                   "settings": {
                     "line_icon": "shopify://shop_images/LINE_Brand_icon_c4c9b72a-a3eb-4670-bf1d-dcfeb1940ea2.png",
-                    "line_text": "ติดต่อไลน์สะดวก",
-                    "line_link": "",
-                    "whatsapp_text": "Contact us",
+                    "line_text": "สอบถามสั่งซื้อสะดวกทางไลน์",
+                    "line_link": "https://page.line.me/pwy1559t?openQrModal=true",
+                    "whatsapp_text": "",
                     "whatsapp_link": "",
                     "icon_size": 32,
                     "text_size": 16,
@@ -177,6 +203,7 @@
               "block_order": [
                 "text_xrnftG",
                 "price_tVjtKg",
+                "text_tJAPKi",
                 "ai_gen_block_d819489_9JNN96"
               ]
             },
@@ -460,7 +487,7 @@
         "gap": 36,
         "enable_sticky_add_to_cart": true,
         "color_scheme": "scheme-2",
-        "padding-block-start": 20,
+        "padding-block-start": 42,
         "padding-block-end": 30
       }
     },
