@@ -302,7 +302,7 @@
                 "accordion_row_64YnxG": {
                   "type": "_accordion-row",
                   "settings": {
-                    "heading": "การจัดส่ง",
+                    "heading": "ติดต่อเรา",
                     "open_by_default": false,
                     "icon": "none",
                     "width": 20
@@ -311,7 +311,7 @@
                     "text_njJcBt": {
                       "type": "text",
                       "settings": {
-                        "text": "<p>เราจะดำเนินการจัดส่งคำสั่งซื้อของคุณโดยเร็วที่สุด เมื่อคำสั่งซื้อของคุณถูกจัดส่งแล้ว คุณจะได้รับอีเมลพร้อมข้อมูลเพิ่มเติม ระยะเวลาในการจัดส่งจะแตกต่างกันไปขึ้นอยู่กับตำแหน่งที่ตั้งของคุณ</p>",
+                        "text": "<p><strong>LINE ID</strong> : @octopusdesign<br/><br/><strong>เบอร์ติดต่อ </strong>: 081 776 8329 | 061 353 9555<br/><br/><strong>ลูกค้าธุรกิจ</strong> :</p><p>095 941 6449 (TH) - Inkjet Printing & POP Display</p><p>098 096 9294 (TH/EN) - Inkjet Printing & POP Display</p>",
                         "width": "100%",
                         "max_width": "normal",
                         "alignment": "left",
