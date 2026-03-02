@@ -574,10 +574,80 @@
         "padding-block-start": 48,
         "padding-block-end": 48
       }
+    },
+    "177243582566261078": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_6cc2309_zP6QKb": {
+          "type": "ai_gen_block_6cc2309",
+          "settings": {
+            "show_chips": true,
+            "chip_background_color": "#f5f5f5",
+            "chip_text_color": "#000000",
+            "chip_border_color": "#e6e6e6",
+            "chip_hover_background_color": "#ffffff",
+            "chip_hover_text_color": "#000000",
+            "chip_hover_border_color": "#000000",
+            "chip_active_background_color": "#000000",
+            "chip_active_text_color": "#ffffff",
+            "chip_active_border_color": "#000000",
+            "chip_border_radius": 20,
+            "heading_color": "#000000",
+            "content_color": "#000000",
+            "icon_color": "#000000",
+            "row_border_color": "#e6e6e6",
+            "heading_size": 16,
+            "content_size": 14,
+            "row_padding": 20,
+            "faq_1_heading": "",
+            "faq_1_content": "",
+            "faq_2_heading": "",
+            "faq_2_content": "",
+            "faq_3_heading": "",
+            "faq_3_content": "",
+            "faq_4_heading": "",
+            "faq_4_content": "",
+            "faq_5_heading": "",
+            "faq_5_content": ""
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_6cc2309_zP6QKb"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
     }
   },
   "order": [
     "main",
-    "product_recommendations_qggXJq"
+    "product_recommendations_qggXJq",
+    "177243582566261078"
   ]
 }
