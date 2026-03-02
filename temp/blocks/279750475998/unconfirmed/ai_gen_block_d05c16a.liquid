@@ -1,6 +1,668 @@
+{% doc %}
+  @prompt
+    A modern SaaS-style hero section UI design for a Thai signage and printing company website. Left side: clean white space with a large bold headline in Thai and English mix, a gradient CTA button (cyan to indigo to lavender), and three small stat counters below a thin divider line (customers, projects, satisfaction score). Right side: a horizontal auto-scrolling ิbento collage belt of frosted glass product cards. Cards float on a soft gradient background. Two card sizes — tall single cards (portrait) and stacked half-height card pairs — arranged in alternating columns. Each card has a large centered emoji icon and a small label underneath. Cards have white semi-transparent background with subtle border and soft drop shadow. Left and right edges of the belt fade to transparent using gradient masks. Background: transparent but very soft pastel gradient from mint-cyan (
+    #ECFEFF) on the left transitioning through cool periwinkle (
+    #EEF2FF) to soft lavender (
+    #F5F3FF) on the right glow overlay. Three subtle radial glow overlays — cyan glow at left center, purple glow at top right, sky-blue glow at bottom center. Typography: Google Sans Display for headings. Clean, minimal, lots of white space. UI style: glassmorphism cards, soft shadows, rounded corners (radius ~20px), no harsh borders. Light and airy. Modern B2B e-commerce aesthetic. Desktop layout. 16:9 ratio. Color palette: 
+    #22D3C8 cyan, 
+    #818CF8 indigo, 
+    #A78BFA lavender, white cards, pastel background., ปูพื้นหลัง BG เต็มความกว้างตามหน้าจอเลยนะ, ไม่ต้องใส่ bg color เลย ปล่อยใสไป, .hero-h1 em {
+      font-style: normal; /*打ล้าง italic default ของ <em> */
+    
+      /* 1. ใส่ gradient เป็น background ก่อน */
+      background: linear-gradient(90deg, #22D3C8, #818CF8, #A78BFA);
+      background-size: 300%; /* ให้ใหญ่กว่า element เพื่อให้ animation เลื่อนได้ */
+    
+      /* 2. clip background ให้เหลือแค่รูปทรงของตัวอักษร */
+      -webkit-background-clip: text;
+      background-clip: text;
+    
+      /* 3. ทำสีตัวอักษรให้โปร่งใส → เห็น background ที่ clip ไว้แทน */
+      -webkit-text-fill-color: transparent;
+      color: transparent; /* fallback */
+    
+      /* 4. animate background-position ให้ gradient เลื่อนวนไป */
+      animation: rbMove 4s linear infinite;
+    }
+    
+    @keyframes rbMove {
+      0%   { background-position: 0%; }
+      100% { background-position: 300%; }
+    }
+    ```
+    
+    ---
+    
+    **ทำไมต้องใช้ 3 อันนี้คู่กัน:**
+    ```
+    background gradient  →  วาดสีรุ้งไว้ใต้ตัวอักษร
+    background-clip: text  →  ตัดขอบ gradient ให้เหลือแค่รูปอักษร
+    text-fill-color: transparent  →  ลบสีดำเดิมออก ให้มองเห็น gradient ข้างล่าง
+    
+    อยากมีลูกเล่นนี้ใน heading อะ, font noto sans thai เฉพาะอักษร unicode thai นะ, มีปุ่ม button 2 ปุ่ม เพิ่มอีกอันเป็นโทนขาว, card icon เปลี่ยนเป็นดึงรูปภาพมาใส่แทน, เอารูปแบบเต็มพื้นที่แต่ละการ์ดเลย มีแต่รูปไม่ต้องมีข้อความ, พื้นที่แสดงรูป bento ขยายความสูงเพิ่มเติมให้มันเท่า ๆ กับฝั่งซ้ายอย่างไรให้สมดุลได้ดี, ขั้นต่ำ 320 px ดีมั้ย, ตัว card ใน bento เลย ให้มันขยายสูงขึ้นอีกเยอะเลย, buttons เล็กลงหน่อยก็ได้, button round เป็นทรง pill, , แบ่งพื้นที่ครึ่ง ๆ ให้ที ซีกซ้ายที่เป็นกลุ่มข้อความ กับฝั่ง gallery
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+{% style %}
+  .ai-hero-saas-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ai-hero-saas-container-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: stretch;
+    padding: {{ block.settings.section_padding_top }}px {{ block.settings.section_padding_horizontal }}px {{ block.settings.section_padding_bottom }}px;
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .ai-hero-saas-left-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    justify-content: center;
+  }
+
+  .ai-hero-saas-heading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.heading_size }}px;
+    line-height: 1.1;
+    font-weight: 700;
+    color: {{ block.settings.heading_color }};
+    margin: 0;
+    font-family: 'Noto Sans Thai', sans-serif;
+  }
+
+  .ai-hero-saas-heading-{{ ai_gen_id }} em {
+    font-style: normal;
+    background: linear-gradient(90deg, #22D3C8, #818CF8, #A78BFA);
+    background-size: 300%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: ai-hero-saas-gradient-move-{{ ai_gen_id }} 4s linear infinite;
+  }
+
+  @keyframes ai-hero-saas-gradient-move-{{ ai_gen_id }} {
+    0% { background-position: 0%; }
+    100% { background-position: 300%; }
+  }
+
+  .ai-hero-saas-buttons-{{ ai_gen_id }} {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ai-hero-saas-button-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 28px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 100px;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .ai-hero-saas-button-primary-{{ ai_gen_id }} {
+    background: linear-gradient(135deg, #22D3C8, #818CF8, #A78BFA);
+    color: #ffffff;
+  }
+
+  .ai-hero-saas-button-primary-{{ ai_gen_id }}:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(34, 211, 200, 0.3);
+  }
+
+  .ai-hero-saas-button-secondary-{{ ai_gen_id }} {
+    background: #ffffff;
+    color: #333333;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .ai-hero-saas-button-secondary-{{ ai_gen_id }}:hover {
+    background: #f5f5f5;
+    border-color: rgba(0, 0, 0, 0.2);
+  }
+
+  .ai-hero-saas-divider-{{ ai_gen_id }} {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.1), transparent);
+  }
+
+  .ai-hero-saas-stats-{{ ai_gen_id }} {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .ai-hero-saas-stat-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .ai-hero-saas-stat-number-{{ ai_gen_id }} {
+    font-size: 28px;
+    font-weight: 700;
+    color: {{ block.settings.stat_number_color }};
+    line-height: 1;
+  }
+
+  .ai-hero-saas-stat-label-{{ ai_gen_id }} {
+    font-size: 13px;
+    color: {{ block.settings.stat_label_color }};
+    opacity: 0.7;
+  }
+
+  .ai-hero-saas-right-{{ ai_gen_id }} {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .ai-hero-saas-bento-wrapper-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+  }
+
+  .ai-hero-saas-bento-belt-{{ ai_gen_id }} {
+    display: flex;
+    gap: 16px;
+    animation: ai-hero-saas-scroll-{{ ai_gen_id }} {{ block.settings.scroll_speed }}s linear infinite;
+  }
+
+  @keyframes ai-hero-saas-scroll-{{ ai_gen_id }} {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .ai-hero-saas-bento-column-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+
+  .ai-hero-saas-card-{{ ai_gen_id }} {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .ai-hero-saas-card-tall-{{ ai_gen_id }} {
+    width: {{ block.settings.card_width }}px;
+    height: {{ block.settings.card_tall_height }}px;
+  }
+
+  .ai-hero-saas-card-half-{{ ai_gen_id }} {
+    width: {{ block.settings.card_width }}px;
+    height: calc(({{ block.settings.card_tall_height }}px - 16px) / 2);
+  }
+
+  .ai-hero-saas-card-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-hero-saas-card-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-hero-saas-card-placeholder-{{ ai_gen_id }} svg {
+    width: 40%;
+    height: 40%;
+    opacity: 0.3;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-hero-saas-container-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: 40px;
+      padding: {{ block.settings.section_padding_top | times: 0.7 }}px {{ block.settings.section_padding_horizontal | times: 0.7 }}px {{ block.settings.section_padding_bottom | times: 0.7 }}px;
+    }
+
+    .ai-hero-saas-heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_size | times: 0.7 }}px;
+    }
+
+    .ai-hero-saas-stat-number-{{ ai_gen_id }} {
+      font-size: 24px;
+    }
+
+    .ai-hero-saas-right-{{ ai_gen_id }} {
+      min-height: 400px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-hero-saas-heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_size | times: 0.5 }}px;
+    }
+
+    .ai-hero-saas-buttons-{{ ai_gen_id }} {
+      flex-direction: column;
+    }
+
+    .ai-hero-saas-button-{{ ai_gen_id }} {
+      width: 100%;
+    }
+
+    .ai-hero-saas-stats-{{ ai_gen_id }} {
+      gap: 24px;
+    }
+
+    .ai-hero-saas-right-{{ ai_gen_id }} {
+      min-height: 320px;
+    }
+  }
+{% endstyle %}
+
+<saas-hero-{{ ai_gen_id }} class="ai-hero-saas-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-hero-saas-container-{{ ai_gen_id }}">
+    <div class="ai-hero-saas-left-{{ ai_gen_id }}">
+      {% if block.settings.heading != blank %}
+        <h1 class="ai-hero-saas-heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h1>
+      {% endif %}
+
+      <div class="ai-hero-saas-buttons-{{ ai_gen_id }}">
+        {% if block.settings.button_primary_text != blank %}
+          <a href="{{ block.settings.button_primary_link }}" class="ai-hero-saas-button-{{ ai_gen_id }} ai-hero-saas-button-primary-{{ ai_gen_id }}">
+            {{ block.settings.button_primary_text }}
+          </a>
+        {% endif %}
+
+        {% if block.settings.button_secondary_text != blank %}
+          <a href="{{ block.settings.button_secondary_link }}" class="ai-hero-saas-button-{{ ai_gen_id }} ai-hero-saas-button-secondary-{{ ai_gen_id }}">
+            {{ block.settings.button_secondary_text }}
+          </a>
+        {% endif %}
+      </div>
+
+      <div class="ai-hero-saas-divider-{{ ai_gen_id }}"></div>
+
+      <div class="ai-hero-saas-stats-{{ ai_gen_id }}">
+        {% if block.settings.stat_1_number != blank %}
+          <div class="ai-hero-saas-stat-{{ ai_gen_id }}">
+            <div class="ai-hero-saas-stat-number-{{ ai_gen_id }}">{{ block.settings.stat_1_number }}</div>
+            <div class="ai-hero-saas-stat-label-{{ ai_gen_id }}">{{ block.settings.stat_1_label }}</div>
+          </div>
+        {% endif %}
+
+        {% if block.settings.stat_2_number != blank %}
+          <div class="ai-hero-saas-stat-{{ ai_gen_id }}">
+            <div class="ai-hero-saas-stat-number-{{ ai_gen_id }}">{{ block.settings.stat_2_number }}</div>
+            <div class="ai-hero-saas-stat-label-{{ ai_gen_id }}">{{ block.settings.stat_2_label }}</div>
+          </div>
+        {% endif %}
+
+        {% if block.settings.stat_3_number != blank %}
+          <div class="ai-hero-saas-stat-{{ ai_gen_id }}">
+            <div class="ai-hero-saas-stat-number-{{ ai_gen_id }}">{{ block.settings.stat_3_number }}</div>
+            <div class="ai-hero-saas-stat-label-{{ ai_gen_id }}">{{ block.settings.stat_3_label }}</div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="ai-hero-saas-right-{{ ai_gen_id }}">
+      <div class="ai-hero-saas-bento-wrapper-{{ ai_gen_id }}">
+        <div class="ai-hero-saas-bento-belt-{{ ai_gen_id }}">
+          {% for i in (1..2) %}
+            {% for col in (1..6) %}
+              <div class="ai-hero-saas-bento-column-{{ ai_gen_id }}">
+                {% if col == 1 or col == 3 or col == 5 %}
+                  {% assign card_key = 'card_' | append: col %}
+                  {% assign card_image = block.settings[card_key] %}
+                  <div class="ai-hero-saas-card-{{ ai_gen_id }} ai-hero-saas-card-tall-{{ ai_gen_id }}">
+                    {% if card_image %}
+                      <img src="{{ card_image | image_url: width: 400 }}" alt="{{ card_image.alt | escape }}" class="ai-hero-saas-card-image-{{ ai_gen_id }}" loading="lazy">
+                    {% else %}
+                      <div class="ai-hero-saas-card-placeholder-{{ ai_gen_id }}">
+                        {{ 'product-1' | placeholder_svg_tag }}
+                      </div>
+                    {% endif %}
+                  </div>
+                {% else %}
+                  {% assign card_top_key = 'card_' | append: col | append: '_top' %}
+                  {% assign card_bottom_key = 'card_' | append: col | append: '_bottom' %}
+                  {% assign card_top_image = block.settings[card_top_key] %}
+                  {% assign card_bottom_image = block.settings[card_bottom_key] %}
+                  
+                  <div class="ai-hero-saas-card-{{ ai_gen_id }} ai-hero-saas-card-half-{{ ai_gen_id }}">
+                    {% if card_top_image %}
+                      <img src="{{ card_top_image | image_url: width: 400 }}" alt="{{ card_top_image.alt | escape }}" class="ai-hero-saas-card-image-{{ ai_gen_id }}" loading="lazy">
+                    {% else %}
+                      <div class="ai-hero-saas-card-placeholder-{{ ai_gen_id }}">
+                        {{ 'product-1' | placeholder_svg_tag }}
+                      </div>
+                    {% endif %}
+                  </div>
+                  
+                  <div class="ai-hero-saas-card-{{ ai_gen_id }} ai-hero-saas-card-half-{{ ai_gen_id }}">
+                    {% if card_bottom_image %}
+                      <img src="{{ card_bottom_image | image_url: width: 400 }}" alt="{{ card_bottom_image.alt | escape }}" class="ai-hero-saas-card-image-{{ ai_gen_id }}" loading="lazy">
+                    {% else %}
+                      <div class="ai-hero-saas-card-placeholder-{{ ai_gen_id }}">
+                        {{ 'product-1' | placeholder_svg_tag }}
+                      </div>
+                    {% endif %}
+                  </div>
+                {% endif %}
+              </div>
+            {% endfor %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</saas-hero-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class SaasHero{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        const belt = this.querySelector('.ai-hero-saas-bento-belt-{{ ai_gen_id }}');
+        if (!belt) return;
+
+        belt.addEventListener('mouseenter', () => {
+          belt.style.animationPlayState = 'paused';
+        });
+
+        belt.addEventListener('mouseleave', () => {
+          belt.style.animationPlayState = 'running';
+        });
+      }
+    }
+
+    customElements.define('saas-hero-{{ ai_gen_id }}', SaasHero{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "SaaS hero section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "<p>สร้างสรรค์<em>ป้ายและงานพิมพ์</em>ที่โดดเด่น</p>"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 24,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "text",
+      "id": "button_primary_text",
+      "label": "Primary button text",
+      "default": "เริ่มต้นใช้งาน"
+    },
+    {
+      "type": "url",
+      "id": "button_primary_link",
+      "label": "Primary button link"
+    },
+    {
+      "type": "text",
+      "id": "button_secondary_text",
+      "label": "Secondary button text",
+      "default": "ดูผลงาน"
+    },
+    {
+      "type": "url",
+      "id": "button_secondary_link",
+      "label": "Secondary button link"
+    },
+    {
+      "type": "header",
+      "content": "Statistics"
+    },
+    {
+      "type": "text",
+      "id": "stat_1_number",
+      "label": "Stat 1 number",
+      "default": "500+"
+    },
+    {
+      "type": "text",
+      "id": "stat_1_label",
+      "label": "Stat 1 label",
+      "default": "ลูกค้า"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_number",
+      "label": "Stat 2 number",
+      "default": "2,000+"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_label",
+      "label": "Stat 2 label",
+      "default": "โครงการ"
+    },
+    {
+      "type": "text",
+      "id": "stat_3_number",
+      "label": "Stat 3 number",
+      "default": "98%"
+    },
+    {
+      "type": "text",
+      "id": "stat_3_label",
+      "label": "Stat 3 label",
+      "default": "ความพึงพอใจ"
+    },
+    {
+      "type": "color",
+      "id": "stat_number_color",
+      "label": "Stat number color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "stat_label_color",
+      "label": "Stat label color",
+      "default": "#666666"
+    },
+    {
+      "type": "header",
+      "content": "Bento cards - Column 1 (tall)"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_1",
+      "label": "Card 1 image"
+    },
+    {
+      "type": "header",
+      "content": "Bento cards - Column 2 (stacked)"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_2_top",
+      "label": "Card 2 top image"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_2_bottom",
+      "label": "Card 2 bottom image"
+    },
+    {
+      "type": "header",
+      "content": "Bento cards - Column 3 (tall)"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_3",
+      "label": "Card 3 image"
+    },
+    {
+      "type": "header",
+      "content": "Bento cards - Column 4 (stacked)"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_4_top",
+      "label": "Card 4 top image"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_4_bottom",
+      "label": "Card 4 bottom image"
+    },
+    {
+      "type": "header",
+      "content": "Bento cards - Column 5 (tall)"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_5",
+      "label": "Card 5 image"
+    },
+    {
+      "type": "header",
+      "content": "Bento cards - Column 6 (stacked)"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_6_top",
+      "label": "Card 6 top image"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_6_bottom",
+      "label": "Card 6 bottom image"
+    },
+    {
+      "type": "header",
+      "content": "Card settings"
+    },
+    {
+      "type": "range",
+      "id": "card_width",
+      "label": "Card width",
+      "min": 120,
+      "max": 280,
+      "step": 10,
+      "unit": "px",
+      "default": 180
+    },
+    {
+      "type": "range",
+      "id": "card_tall_height",
+      "label": "Tall card height",
+      "min": 320,
+      "max": 600,
+      "step": 20,
+      "unit": "px",
+      "default": 480
+    },
+    {
+      "type": "range",
+      "id": "scroll_speed",
+      "label": "Scroll speed",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "s",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "section_padding_horizontal",
+      "label": "Padding horizontal",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "SaaS hero section"
+    }
+  ]
+}
 {% endschema %}
