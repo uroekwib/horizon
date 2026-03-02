@@ -12,41 +12,66 @@
     "177235722811693327": {
       "type": "_blocks",
       "blocks": {
-        "ai_gen_block_b66bf4b_VtBTpc": {
-          "type": "ai_gen_block_b66bf4b",
+        "ai_gen_block_5a8adcb_kGLRRK": {
+          "type": "ai_gen_block_5a8adcb",
           "settings": {
-            "min_height": 600,
-            "padding_top": 60,
-            "padding_bottom": 60,
-            "padding_horizontal": 40,
-            "heading": "<p>สร้างสรรค์ <em>ป้ายสวยๆ</em> ที่ใช่สำหรับธุรกิจคุณ</p>",
+            "heading": "<p><em><strong>ป้ายและงานพิมพ์ </strong></em>คุณภาพ<em> </em>Print & Sign <em>ครบจบที่เดียว</em></p>",
             "heading_size": 48,
+            "heading_size_mobile": 32,
             "heading_color": "#000000",
-            "subheading": "<p>บริการพิมพ์ป้าย ตัดสติ๊กเกอร์ และผลิตสื่อโฆษณาคุณภาพสูง ด้วยเทคโนโลยีทันสมัย</p>",
-            "subheading_size": 16,
-            "subheading_color": "#666666",
-            "button_primary_text": "เริ่มต้นใช้งาน",
+            "button_primary_text": "🗨️สอบถาม| สั่งซื้อทาง LINE",
             "button_primary_link": "",
-            "button_secondary_text": "ดูผลงาน",
+            "button_secondary_text": "ดูผลงานเพิ่มเติม →",
             "button_secondary_link": "",
-            "button_text_size": 14,
+            "stat_number_size": 40,
+            "stat_number_size_mobile": 32,
             "stat_1_number": "500+",
-            "stat_1_label": "ลูกค้า",
-            "stat_2_number": "2,000+",
-            "stat_2_label": "โปรเจกต์",
-            "stat_3_number": "98%",
-            "stat_3_label": "ความพึงพอใจ",
-            "stat_number_size": 28,
-            "stat_label_size": 13,
-            "bento_min_height": 600,
-            "card_width": 200,
-            "card_tall_height": 560,
-            "scroll_speed": 30
+            "stat_1_label": "ประเภทสินค้า",
+            "stat_2_number": "4,000+",
+            "stat_2_label": "ลูกค้าที่ไว้วางใจ",
+            "stat_3_number": "50,000+",
+            "stat_3_label": "ชิ้นงานที่ส่งมอบแล้ว",
+            "stat_number_color": "#000000",
+            "stat_label_color": "#666666",
+            "scroll_speed": 35,
+            "card_tall_height": 300,
+            "card_half_height": 160,
+            "card_1_image": "shopify://shop_images/228.jpg",
+            "card_1_title": "พะะพะพะ",
+            "card_1_link": "",
+            "card_2_image": "shopify://shop_images/203.jpg",
+            "card_2_title": "เดเเ้",
+            "card_2_link": "",
+            "card_3_title": "",
+            "card_3_link": "",
+            "card_4_title": "",
+            "card_4_link": "",
+            "card_5_title": "",
+            "card_5_link": "",
+            "card_6_title": "",
+            "card_6_link": "",
+            "card_7_title": "",
+            "card_7_link": "",
+            "card_8_title": "",
+            "card_8_link": "",
+            "card_9_title": "",
+            "card_9_link": "",
+            "card_10_title": "",
+            "card_10_link": "",
+            "card_11_title": "",
+            "card_11_link": "",
+            "card_12_title": "",
+            "card_12_link": "",
+            "padding_top": 80,
+            "padding_bottom": 80,
+            "padding_top_mobile": 40,
+            "padding_bottom_mobile": 40
           },
           "blocks": {}
         },
         "ai_gen_block_1d076a5_YyDjRx": {
           "type": "ai_gen_block_1d076a5",
+          "disabled": true,
           "settings": {
             "heading": "<p>สร้างป้ายและงานพิมพ์<em>คุณภาพสูง</em> | Premium Signage & Printing</p>",
             "subheading": "บริการออกแบบและผลิตป้ายโฆษณา วัสดุโปรโมชั่น และงานพิมพ์ทุกประเภท ด้วยเทคโนโลยีทันสมัยและทีมงานมืออาชีพ",
@@ -81,7 +106,7 @@
         }
       },
       "block_order": [
-        "ai_gen_block_b66bf4b_VtBTpc",
+        "ai_gen_block_5a8adcb_kGLRRK",
         "ai_gen_block_1d076a5_YyDjRx"
       ],
       "settings": {
@@ -180,6 +205,32 @@
               },
               "blocks": {}
             },
+            "text_rRycGJ": {
+              "type": "text",
+              "name": "t:names.heading",
+              "settings": {
+                "text": "<h3><strong>ป้ายโลโก้ ป้ายอิงค์เจ็ท ป้ายโฆษณา อักษรโลหะ ฉลากสินค้า สติ๊กเกอร์ ฟิล์มตกแต่ง</strong></h3>",
+                "width": "fit-content",
+                "max_width": "narrow",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "var(--color-foreground)",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
             "text_8iCnxH": {
               "type": "text",
               "settings": {
@@ -222,6 +273,7 @@
           },
           "block_order": [
             "text_6nPJ7Q",
+            "text_rRycGJ",
             "text_8iCnxH",
             "button_zDkPWm"
           ]
@@ -494,6 +546,92 @@
         "padding-block-end": 48
       }
     },
+    "section_8FUAXG": {
+      "type": "section",
+      "blocks": {
+        "text_iDrc4V": {
+          "type": "text",
+          "name": "t:names.heading",
+          "settings": {
+            "text": "<h2>ศูนย์บริการครบวงจร ป้ายโลโก้ ป้ายโฆษณา อักษรโลหะ</h2>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "rte",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "video_mqUH6X": {
+          "type": "video",
+          "name": "t:names.video",
+          "settings": {
+            "source": "url",
+            "video_url": "https://youtu.be/gKGV96SaeCM?list=TLGGYFr7Fjekk4MwMjAzMjAyNg",
+            "video_autoplay": true,
+            "video_loop": true,
+            "alt": "",
+            "custom_width": 100,
+            "custom_width_mobile": 100,
+            "aspect_ratio": "16/9",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "text_iDrc4V",
+        "video_mqUH6X"
+      ],
+      "name": "t:names.video_section",
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 16,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "scheme-2",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 32,
+        "padding-block-end": 32
+      }
+    },
     "1772340576b1154f8e": {
       "type": "_blocks",
       "blocks": {
@@ -612,6 +750,7 @@
     "177235722811693327",
     "section_N7HmhE",
     "product_list_fa6P9H",
+    "section_8FUAXG",
     "1772340576b1154f8e",
     "17723481437cd4d52d",
     "1772353422e042820c"
