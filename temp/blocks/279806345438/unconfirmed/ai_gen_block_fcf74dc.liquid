@@ -1,6 +1,735 @@
+{% doc %}
+  @prompt
+    Create an enhanced collapsible accordion section with FAQ topic chip navigation. Add a row of rounded clickable chips at the top of the section, where each chip is labeled with the corresponding accordion item's heading. When a chip is clicked, it should smoothly scroll to the matching accordion item and automatically expand it. Include an active state for the currently opened accordion chip. The chips should wrap to multiple lines on mobile devices. Preserve all existing accordion functionality including the heading and content fields for each item. Use vanilla JavaScript scoped to the section only, with scoped CSS for the chip navigation UI. The accordion structure and content editing workflow must remain unchanged., Modify the FAQ section.
+    
+    Remove the collapsible accordion list completely.
+    Do not render the accordion rows.
+    
+    Keep only the FAQ topic chips at the top.
+    
+    When a chip is clicked:
+    - Show the corresponding FAQ content below the chips.
+    - Display only one content at a time.
+    - No accordion UI.
+    - No dropdown arrows.
+    
+    Keep existing content fields (heading + content) editable in Theme Editor.
+    Return updated Liquid + schema + minimal JS., In the chip-based FAQ section, do not render the item heading inside the content panel.
+    
+    The heading is already shown as the chip label, so the content panel should display ONLY the item content (rich text) without repeating the heading.
+    
+    (Optional) Add a section setting: “Show heading in content” default = false., Update the chip navigation to support 12 topics.
+    
+    - Render chips for all 12 FAQ items.
+    - Chips must wrap to multiple lines (flex-wrap) and keep consistent spacing.
+    - On mobile: allow horizontal scrolling OR wrapping (prefer wrapping like the screenshot).
+    - Add active state for the selected chip.
+    - Clicking a chip shows ONLY that item’s content below (do not show the item heading again).
+    - Show the first item by default.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-faq-tabs-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+  }
+
+  .ai-faq-chips-{{ ai_gen_id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: {{ block.settings.chip_gap }}px;
+    margin-bottom: {{ block.settings.chips_spacing }}px;
+  }
+
+  .ai-faq-chip-{{ ai_gen_id }} {
+    padding: {{ block.settings.chip_padding_vertical }}px {{ block.settings.chip_padding_horizontal }}px;
+    background-color: {{ block.settings.chip_background }};
+    color: {{ block.settings.chip_text_color }};
+    border: {{ block.settings.chip_border_width }}px solid {{ block.settings.chip_border_color }};
+    border-radius: {{ block.settings.chip_border_radius }}px;
+    font-size: {{ block.settings.chip_font_size }}px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+
+  .ai-faq-chip-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.chip_hover_background }};
+    color: {{ block.settings.chip_hover_text_color }};
+    border-color: {{ block.settings.chip_hover_border_color }};
+  }
+
+  .ai-faq-chip-{{ ai_gen_id }}.active {
+    background-color: {{ block.settings.chip_active_background }};
+    color: {{ block.settings.chip_active_text_color }};
+    border-color: {{ block.settings.chip_active_border_color }};
+  }
+
+  .ai-faq-content-container-{{ ai_gen_id }} {
+    min-height: {{ block.settings.content_min_height }}px;
+  }
+
+  .ai-faq-content-panel-{{ ai_gen_id }} {
+    display: none;
+    padding: {{ block.settings.content_padding }}px;
+    background-color: {{ block.settings.content_background }};
+    border: {{ block.settings.content_border_width }}px solid {{ block.settings.content_border_color }};
+    border-radius: {{ block.settings.content_border_radius }}px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .ai-faq-content-panel-{{ ai_gen_id }}.active {
+    display: block;
+    opacity: 1;
+  }
+
+  .ai-faq-content-text-{{ ai_gen_id }} {
+    font-size: {{ block.settings.content_text_size }}px;
+    color: {{ block.settings.content_text_color }};
+    line-height: 1.6;
+  }
+
+  .ai-faq-content-text-{{ ai_gen_id }} p {
+    margin: 0 0 12px 0;
+  }
+
+  .ai-faq-content-text-{{ ai_gen_id }} p:last-child {
+    margin-bottom: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-faq-tabs-{{ ai_gen_id }} {
+      width: 100%;
+    }
+
+    .ai-faq-chip-{{ ai_gen_id }} {
+      font-size: {{ block.settings.chip_font_size | times: 0.9 }}px;
+    }
+
+    .ai-faq-content-text-{{ ai_gen_id }} {
+      font-size: {{ block.settings.content_text_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<faq-tabs-{{ ai_gen_id }} class="ai-faq-tabs-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-faq-chips-{{ ai_gen_id }}">
+    {% if block.settings.item_1_heading != blank %}
+      <button class="ai-faq-chip-{{ ai_gen_id }}" data-target="item-1" type="button">
+        {{ block.settings.item_1_heading }}
+      </button>
+    {% endif %}
+    {% if block.settings.item_2_heading != blank %}
+      <button class="ai-faq-chip-{{ ai_gen_id }}" data-target="item-2" type="button">
+        {{ block.settings.item_2_heading }}
+      </button>
+    {% endif %}
+    {% if block.settings.item_3_heading != blank %}
+      <button class="ai-faq-chip-{{ ai_gen_id }}" data-target="item-3" type="button">
+        {{ block.settings.item_3_heading }}
+      </button>
+    {% endif %}
+    {% if block.settings.item_4_heading != blank %}
+      <button class="ai-faq-chip-{{ ai_gen_id }}" data-target="item-4" type="button">
+        {{ block.settings.item_4_heading }}
+      </button>
+    {% endif %}
+    {% if block.settings.item_5_heading != blank %}
+      <button class="ai-faq-chip-{{ ai_gen_id }}" data-target="item-5" type="button">
+        {{ block.settings.item_5_heading }}
+      </button>
+    {% endif %}
+    {% if block.settings.item_6_heading != blank %}
+      <button class="ai-faq-chip-{{ ai_gen_id }}" data-target="item-6" type="button">
+        {{ block.settings.item_6_heading }}
+      </button>
+    {% endif %}
+    {% if block.settings.item_7_heading != blank %}
+      <button class="ai-faq-chip-{{ ai_gen_id }}" data-target="item-7" type="button">
+        {{ block.settings.item_7_heading }}
+      </button>
+    {% endif %}
+    {% if block.settings.item_8_heading != blank %}
+      <button class="ai-faq-chip-{{ ai_gen_id }}" data-target="item-8" type="button">
+        {{ block.settings.item_8_heading }}
+      </button>
+    {% endif %}
+    {% if block.settings.item_9_heading != blank %}
+      <button class="ai-faq-chip-{{ ai_gen_id }}" data-target="item-9" type="button">
+        {{ block.settings.item_9_heading }}
+      </button>
+    {% endif %}
+    {% if block.settings.item_10_heading != blank %}
+      <button class="ai-faq-chip-{{ ai_gen_id }}" data-target="item-10" type="button">
+        {{ block.settings.item_10_heading }}
+      </button>
+    {% endif %}
+    {% if block.settings.item_11_heading != blank %}
+      <button class="ai-faq-chip-{{ ai_gen_id }}" data-target="item-11" type="button">
+        {{ block.settings.item_11_heading }}
+      </button>
+    {% endif %}
+    {% if block.settings.item_12_heading != blank %}
+      <button class="ai-faq-chip-{{ ai_gen_id }}" data-target="item-12" type="button">
+        {{ block.settings.item_12_heading }}
+      </button>
+    {% endif %}
+  </div>
+
+  <div class="ai-faq-content-container-{{ ai_gen_id }}">
+    {% if block.settings.item_1_heading != blank %}
+      <div class="ai-faq-content-panel-{{ ai_gen_id }}" data-panel-id="item-1">
+        <div class="ai-faq-content-text-{{ ai_gen_id }}">
+          {{ block.settings.item_1_content }}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if block.settings.item_2_heading != blank %}
+      <div class="ai-faq-content-panel-{{ ai_gen_id }}" data-panel-id="item-2">
+        <div class="ai-faq-content-text-{{ ai_gen_id }}">
+          {{ block.settings.item_2_content }}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if block.settings.item_3_heading != blank %}
+      <div class="ai-faq-content-panel-{{ ai_gen_id }}" data-panel-id="item-3">
+        <div class="ai-faq-content-text-{{ ai_gen_id }}">
+          {{ block.settings.item_3_content }}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if block.settings.item_4_heading != blank %}
+      <div class="ai-faq-content-panel-{{ ai_gen_id }}" data-panel-id="item-4">
+        <div class="ai-faq-content-text-{{ ai_gen_id }}">
+          {{ block.settings.item_4_content }}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if block.settings.item_5_heading != blank %}
+      <div class="ai-faq-content-panel-{{ ai_gen_id }}" data-panel-id="item-5">
+        <div class="ai-faq-content-text-{{ ai_gen_id }}">
+          {{ block.settings.item_5_content }}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if block.settings.item_6_heading != blank %}
+      <div class="ai-faq-content-panel-{{ ai_gen_id }}" data-panel-id="item-6">
+        <div class="ai-faq-content-text-{{ ai_gen_id }}">
+          {{ block.settings.item_6_content }}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if block.settings.item_7_heading != blank %}
+      <div class="ai-faq-content-panel-{{ ai_gen_id }}" data-panel-id="item-7">
+        <div class="ai-faq-content-text-{{ ai_gen_id }}">
+          {{ block.settings.item_7_content }}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if block.settings.item_8_heading != blank %}
+      <div class="ai-faq-content-panel-{{ ai_gen_id }}" data-panel-id="item-8">
+        <div class="ai-faq-content-text-{{ ai_gen_id }}">
+          {{ block.settings.item_8_content }}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if block.settings.item_9_heading != blank %}
+      <div class="ai-faq-content-panel-{{ ai_gen_id }}" data-panel-id="item-9">
+        <div class="ai-faq-content-text-{{ ai_gen_id }}">
+          {{ block.settings.item_9_content }}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if block.settings.item_10_heading != blank %}
+      <div class="ai-faq-content-panel-{{ ai_gen_id }}" data-panel-id="item-10">
+        <div class="ai-faq-content-text-{{ ai_gen_id }}">
+          {{ block.settings.item_10_content }}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if block.settings.item_11_heading != blank %}
+      <div class="ai-faq-content-panel-{{ ai_gen_id }}" data-panel-id="item-11">
+        <div class="ai-faq-content-text-{{ ai_gen_id }}">
+          {{ block.settings.item_11_content }}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if block.settings.item_12_heading != blank %}
+      <div class="ai-faq-content-panel-{{ ai_gen_id }}" data-panel-id="item-12">
+        <div class="ai-faq-content-text-{{ ai_gen_id }}">
+          {{ block.settings.item_12_content }}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</faq-tabs-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class FaqTabs{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.chips = this.querySelectorAll('.ai-faq-chip-{{ ai_gen_id }}');
+        this.panels = this.querySelectorAll('.ai-faq-content-panel-{{ ai_gen_id }}');
+      }
+
+      connectedCallback() {
+        this.setupEventListeners();
+        if (this.chips.length > 0) {
+          this.showPanel(this.chips[0].getAttribute('data-target'));
+          this.chips[0].classList.add('active');
+        }
+      }
+
+      setupEventListeners() {
+        this.chips.forEach((chip) => {
+          chip.addEventListener('click', () => {
+            const targetId = chip.getAttribute('data-target');
+            this.showPanel(targetId);
+            this.updateActiveChip(chip);
+          });
+        });
+      }
+
+      showPanel(panelId) {
+        this.panels.forEach((panel) => {
+          panel.classList.remove('active');
+        });
+
+        const targetPanel = this.querySelector(`[data-panel-id="${panelId}"]`);
+        if (targetPanel) {
+          targetPanel.classList.add('active');
+        }
+      }
+
+      updateActiveChip(activeChip) {
+        this.chips.forEach((chip) => {
+          chip.classList.remove('active');
+        });
+        activeChip.classList.add('active');
+      }
+    }
+
+    customElements.define('faq-tabs-{{ ai_gen_id }}', FaqTabs{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "FAQ tabs with chips",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Chip navigation"
+    },
+    {
+      "type": "range",
+      "id": "chip_gap",
+      "label": "Gap between chips",
+      "min": 4,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "chips_spacing",
+      "label": "Spacing below chips",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "chip_padding_vertical",
+      "label": "Chip vertical padding",
+      "min": 4,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "chip_padding_horizontal",
+      "label": "Chip horizontal padding",
+      "min": 8,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "chip_font_size",
+      "label": "Chip font size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "chip_border_radius",
+      "label": "Chip border radius",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "chip_border_width",
+      "label": "Chip border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "Chip colors"
+    },
+    {
+      "type": "color",
+      "id": "chip_background",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "chip_text_color",
+      "label": "Text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "chip_border_color",
+      "label": "Border",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "color",
+      "id": "chip_hover_background",
+      "label": "Hover background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "chip_hover_text_color",
+      "label": "Hover text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "chip_hover_border_color",
+      "label": "Hover border",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "chip_active_background",
+      "label": "Active background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "chip_active_text_color",
+      "label": "Active text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "chip_active_border_color",
+      "label": "Active border",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Content area"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "content_padding",
+      "label": "Content padding",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "content_min_height",
+      "label": "Minimum height",
+      "min": 0,
+      "max": 300,
+      "step": 10,
+      "unit": "px",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "content_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "content_border_width",
+      "label": "Border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "content_text_size",
+      "label": "Text size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Content colors"
+    },
+    {
+      "type": "color",
+      "id": "content_background",
+      "label": "Background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "content_border_color",
+      "label": "Border",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "color",
+      "id": "content_text_color",
+      "label": "Text",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Item 1"
+    },
+    {
+      "type": "text",
+      "id": "item_1_heading",
+      "label": "Heading",
+      "default": "What are your shipping options?"
+    },
+    {
+      "type": "richtext",
+      "id": "item_1_content",
+      "label": "Content",
+      "default": "<p>We offer standard and express shipping options. Standard shipping takes 5-7 business days, while express shipping takes 2-3 business days.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Item 2"
+    },
+    {
+      "type": "text",
+      "id": "item_2_heading",
+      "label": "Heading",
+      "default": "What is your return policy?"
+    },
+    {
+      "type": "richtext",
+      "id": "item_2_content",
+      "label": "Content",
+      "default": "<p>We accept returns within 30 days of purchase. Items must be unused and in original packaging.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Item 3"
+    },
+    {
+      "type": "text",
+      "id": "item_3_heading",
+      "label": "Heading",
+      "default": "Do you ship internationally?"
+    },
+    {
+      "type": "richtext",
+      "id": "item_3_content",
+      "label": "Content",
+      "default": "<p>Yes, we ship to most countries worldwide. Shipping costs and delivery times vary by location.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Item 4"
+    },
+    {
+      "type": "text",
+      "id": "item_4_heading",
+      "label": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "item_4_content",
+      "label": "Content"
+    },
+    {
+      "type": "header",
+      "content": "Item 5"
+    },
+    {
+      "type": "text",
+      "id": "item_5_heading",
+      "label": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "item_5_content",
+      "label": "Content"
+    },
+    {
+      "type": "header",
+      "content": "Item 6"
+    },
+    {
+      "type": "text",
+      "id": "item_6_heading",
+      "label": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "item_6_content",
+      "label": "Content"
+    },
+    {
+      "type": "header",
+      "content": "Item 7"
+    },
+    {
+      "type": "text",
+      "id": "item_7_heading",
+      "label": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "item_7_content",
+      "label": "Content"
+    },
+    {
+      "type": "header",
+      "content": "Item 8"
+    },
+    {
+      "type": "text",
+      "id": "item_8_heading",
+      "label": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "item_8_content",
+      "label": "Content"
+    },
+    {
+      "type": "header",
+      "content": "Item 9"
+    },
+    {
+      "type": "text",
+      "id": "item_9_heading",
+      "label": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "item_9_content",
+      "label": "Content"
+    },
+    {
+      "type": "header",
+      "content": "Item 10"
+    },
+    {
+      "type": "text",
+      "id": "item_10_heading",
+      "label": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "item_10_content",
+      "label": "Content"
+    },
+    {
+      "type": "header",
+      "content": "Item 11"
+    },
+    {
+      "type": "text",
+      "id": "item_11_heading",
+      "label": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "item_11_content",
+      "label": "Content"
+    },
+    {
+      "type": "header",
+      "content": "Item 12"
+    },
+    {
+      "type": "text",
+      "id": "item_12_heading",
+      "label": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "item_12_content",
+      "label": "Content"
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ tabs with chips"
+    }
+  ]
+}
 {% endschema %}
