@@ -94,6 +94,9 @@
           "blocks": {}
         }
       },
+      "custom_css": [
+        ".menu-list__link-title {font-weight: 700;}"
+      ],
       "settings": {
         "logo_position": "left",
         "menu_position": "left",
