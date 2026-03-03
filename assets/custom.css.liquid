@@ -2,7 +2,7 @@
    OCTOPUS MEDIA SOLUTIONS — HORIZON THEME
    custom.css.liquid  |  Dawn → Horizon Migration
    
-   §1  Font Loading (unicode-range dual-font)
+   §1  Font Loading (Google Sans + Noto Sans Thai stack)
    §2  Horizon Variable Overrides
    §3  Brand Tokens
    §4  Typography
@@ -21,20 +21,23 @@
 
 
 /* ============================================================
-   §1  FONT LOADING — unicode-range บังคับ Thai → Noto เท่านั้น
+   §1  FONT LOADING
 
-   Google Sans มี Thai glyphs ด้วย ดังนั้นต้องใช้ unicode-range
-   ตัด Thai ออกจาก Google Sans และกำหนด Noto ให้ Thai โดยตรง
-   ทั้งคู่ใช้ชื่อ family เดียวกัน 'Brand Font'
-   browser จะเลือก font ตาม character โดยอัตโนมัติ
+   Strategy: แยกชื่อ family + unicode-range
+   - 'Google Sans'    → Latin, numbers, symbols (U+0000-00FF ฯลฯ)
+   - 'Noto Sans Thai' → Thai เท่านั้น (U+0E00-U+0E7F)
 
-   Noto โหลดจาก CDN URL ตรงๆ (ใช้ path เดิมที่ Dawn เคยใช้งานได้)
-   Google Sans โหลดจาก theme Assets
+   ทำไมต้องใช้ unicode-range:
+   Google Sans Thai มี Thai glyph ด้วย ถ้าไม่จำกัด browser
+   จะใช้ Google Sans render ภาษาไทยแทน Noto
+
+   ทำไมแยกชื่อ family (ไม่ใช้ชื่อเดียวกัน):
+   ป้องกัน conflict กับ @font-face ที่ Horizon inject ใน styles.css
    ============================================================ */
 
 /* ── Google Sans — Latin, numbers, symbols เท่านั้น ── */
 @font-face {
-  font-family: 'Brand Font';
+  font-family: 'Google Sans';
   src: url('{{ "GoogleSans-Regular.woff2" | asset_url }}') format('woff2');
   font-weight: 400;
   font-style: normal;
@@ -46,7 +49,7 @@
     U+FEFF, U+FFFD;
 }
 @font-face {
-  font-family: 'Brand Font';
+  font-family: 'Google Sans';
   src: url('{{ "GoogleSans-Bold.woff2" | asset_url }}') format('woff2');
   font-weight: 700;
   font-style: normal;
@@ -58,21 +61,18 @@
     U+FEFF, U+FFFD;
 }
 
-/* ── Noto Sans Thai — Thai characters เท่านั้น ── */
+/* ── Noto Sans Thai — Thai เท่านั้น ── */
 @font-face {
-  font-family: 'Brand Font';
-  src: url('https://cdn.shopify.com/s/files/1/0098/2653/3433/files/NotoSansThai-Regular.woff2') format('woff2'),
-       url('https://cdn.shopify.com/s/files/1/0098/2653/3433/files/NotoSansThai-Regular.woff') format('woff');
+  font-family: 'Noto Sans Thai';
+  src: url('https://cdn.shopify.com/s/files/1/0098/2653/3433/files/NotoSansThai-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
-  text-rendering: optimizeSpeed;
   unicode-range: U+0E00-U+0E7F;
 }
 @font-face {
-  font-family: 'Brand Font';
-  src: url('https://cdn.shopify.com/s/files/1/0098/2653/3433/files/NotoSansThai-Bold.woff2') format('woff2'),
-       url('https://cdn.shopify.com/s/files/1/0098/2653/3433/files/NotoSansThai-Bold.woff') format('woff');
+  font-family: 'Noto Sans Thai';
+  src: url('https://cdn.shopify.com/s/files/1/0098/2653/3433/files/NotoSansThai-Bold.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -211,26 +211,7 @@
   --oc-text-hero:  clamp(2rem,     5vw,  4rem);
 }
 
-/* ── Override Horizon's font CSS variables ──────────────────
-   base.css ใช้ var(--font-paragraph--family) ฯลฯ ทั้งหมด
-   ซึ่งมาจาก theme font picker settings
-   เราต้อง override ตัวแปรเหล่านี้ใน :root โดยตรง
-   เพื่อให้ทุกที่ใน base.css ได้ 'Brand Font' อัตโนมัติ
-   ────────────────────────────────────────────────────────── */
-:root {
-  --font-paragraph--family:       'Brand Font', sans-serif;
-  --font-h1--family:              'Brand Font', sans-serif;
-  --font-h2--family:              'Brand Font', sans-serif;
-  --font-h3--family:              'Brand Font', sans-serif;
-  --font-h4--family:              'Brand Font', sans-serif;
-  --font-h5--family:              'Brand Font', sans-serif;
-  --font-h6--family:              'Brand Font', sans-serif;
-  --button-font-family-primary:   'Brand Font', sans-serif;
-  --button-font-family-secondary: 'Brand Font', sans-serif;
-  --cart-primary-font-family:     'Brand Font', sans-serif;
-  --cart-secondary-font-family:   'Brand Font', sans-serif;
-  --font-family:                  'Brand Font', sans-serif;
-}
+/* ── ลบออกแล้ว — ย้ายไปอยู่ใน §2 แล้ว ── */
 
 /* ── Mobile: Tahoma fallback สำหรับ performance ── */
 @media (max-width: 767px) {
@@ -238,7 +219,7 @@
   .c-menu-wrapper, .categories .c-menu-wrapper a,
   .blog .c-menu-wrapper, .collection_link,
   .sub_col_h3, .layout_block, .categories {
-    font-family: 'Brand Font', 'Tahoma', sans-serif;
+    font-family: 'Google Sans', 'Noto Sans Thai', 'Tahoma', sans-serif;
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
     text-size-adjust: 100%;
@@ -247,7 +228,7 @@
 
 /* ── Headings ── */
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Brand Font', sans-serif;
+  font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
   color: var(--oc-ink);
   line-height: 1.25;
   font-weight: 700;
@@ -266,7 +247,7 @@ p {
 /* ── Links ── */
 a {
   text-decoration: none;
-  /*color: var(--oc-cyan-d);*/
+  color: var(--oc-cyan-d);
 }
 
 /* ── Legacy font helpers ── */
@@ -387,7 +368,7 @@ a {
 .button--primary,
 button.shopify-payment-button__button--unbranded {
   border-radius: var(--oc-radius-pill) !important;
-  font-family: 'Brand Font', sans-serif;
+  font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
   font-weight: 600;
   transition: transform var(--oc-dur-fast),
               box-shadow var(--oc-dur-base),
@@ -1065,7 +1046,7 @@ body.gm-menu-installed .gm-menu ul {
 .select__select {
   border-radius: var(--oc-radius-sm) !important;
   border-color: var(--oc-ink-15) !important;
-  font-family: 'Brand Font', sans-serif;
+  font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
 }
 .field__input:focus {
   border-color: var(--oc-cyan) !important;
@@ -1073,7 +1054,7 @@ body.gm-menu-installed .gm-menu ul {
 }
 
 /* ── Facets ── */
-.facets__heading { font-family: 'Brand Font', sans-serif; }
+.facets__heading { font-family: 'Google Sans', 'Noto Sans Thai', sans-serif; }
 
 /* ── Hide desktop header icons (GrandMenu handles nav) ── */
 @media screen and (min-width: 990px) {
