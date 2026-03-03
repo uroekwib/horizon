@@ -99,7 +99,6 @@
         "text_C9knYC"
       ],
       "custom_css": [
-        "a {text-decoration: none; color: var(--color-foreground);}",
         "h3 {padding-bottom: 5px; padding-top: 20px;}"
       ],
       "name": "t:names.footer",
@@ -107,8 +106,8 @@
         "section_width": "page-width",
         "gap": 5,
         "color_scheme": "scheme-1",
-        "padding-block-start": 0,
-        "padding-block-end": 60
+        "padding-block-start": 24,
+        "padding-block-end": 0
       }
     },
     "footer_cRnRKT": {
