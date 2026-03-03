@@ -1093,23 +1093,28 @@
   cursor: default;
   pointer-events: none;
 }
-/* mobile: toggle เข้า grid area rightA */
+/* ซ่อน account icon บน mobile */
 @media screen and (max-width: 749px) {
+  header-actions shopify-account,
+  header-actions .account-button {
+    display: none;
+  }
+
   .oc-lang-toggle {
     grid-area: rightA;
     background: transparent;
     padding: 0;
-    gap: 0;
   }
 
   .oc-lang-toggle__track {
-    display: none; /* ซ่อน sliding track บน mobile */
+    display: none;
   }
 
   .oc-lang-toggle__btn {
-    padding: 4px 8px;
+    padding: 4px 6px;
     font-size: 12px;
     opacity: 0.45;
+    color: var(--color-foreground);
   }
 
   .oc-lang-toggle__btn.active {
