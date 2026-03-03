@@ -1048,31 +1048,54 @@
     font-family: var(--menu-localization-font);
     font-size: var(--menu-localization-font-size);
   }
+
+  .oc-lang-toggle form {
+  display: contents;
+}
+
+.oc-lang-toggle form,
+.oc-lang-toggle form * {
+  margin: 0 !important;
+}
+.oc-lang-toggle__btn {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  line-height: 1 !important;
+}
+.oc-lang-toggle { overflow: hidden; }
+
 {% endstylesheet %}
 
 <script>
-(function() {
+(function () {
   function initToggle() {
-    // init ทุก toggle instance (desktop + mobile)
-    document.querySelectorAll('.oc-lang-toggle').forEach(function(toggle) {
+    document.querySelectorAll('.oc-lang-toggle').forEach(function (toggle) {
       var track = toggle.querySelector('.oc-lang-toggle__track');
       var activeBtn = toggle.querySelector('.oc-lang-toggle__btn.active');
       if (!track || !activeBtn) return;
 
       function moveTrack(btn) {
-        track.style.width = btn.offsetWidth + 'px';
-        track.style.transform = 'translateX(' + (btn.offsetLeft - 3) + 'px)';
+        var t = toggle.getBoundingClientRect();
+        var b = btn.getBoundingClientRect();
+
+        var left = (b.left - t.left);
+        track.style.width = b.width + 'px';
+        track.style.transform = 'translateX(' + left + 'px)';
       }
 
-      requestAnimationFrame(function() {
-        requestAnimationFrame(function() {
-          moveTrack(activeBtn);
-        });
-      });
+      function sync() { requestAnimationFrame(function () { moveTrack(activeBtn); }); }
+      sync();
+      window.addEventListener('resize', sync);
 
-      toggle.querySelectorAll('.oc-lang-toggle__btn').forEach(function(btn) {
-        btn.addEventListener('mouseenter', function() { moveTrack(btn); });
-        btn.addEventListener('mouseleave', function() { moveTrack(activeBtn); });
+      toggle.querySelectorAll('.oc-lang-toggle__btn').forEach(function (btn) {
+        btn.addEventListener('mouseenter', function () { moveTrack(btn); });
+        btn.addEventListener('mouseleave', function () { moveTrack(activeBtn); });
+        btn.addEventListener('focus', function () { moveTrack(btn); });
+        btn.addEventListener('blur', function () { moveTrack(activeBtn); });
       });
     });
   }
