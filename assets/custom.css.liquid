@@ -1957,17 +1957,22 @@ button.shopify-payment-button__button--unbranded:hover {
 
 /* ── §12 Mobile lang toggle ── */
 @media screen and (max-width: 749px) {
+
+  /* ขยาย rightA (ช่อง account เดิม) ให้กว้างขึ้นรับ toggle */
+  .header__columns {
+    grid-template-columns: 44px 44px 1fr 80px 44px !important;
+  }
+
+  /* ซ่อน account */
   header-actions shopify-account,
   header-actions .account-button { display: none !important; }
 
-  header-actions {
-    display: inline-flex !important;
-    align-items: center !important;
-  }
-
+  /* วาง form ใน grid-area rightA ที่ว่างอยู่ */
   .oc-lang-form {
+    grid-area: rightA !important;
     display: inline-flex !important;
     align-items: center !important;
+    justify-content: center !important;
     margin: 0 !important;
     padding: 0 !important;
     border: none !important;
@@ -1978,7 +1983,7 @@ button.shopify-payment-button__button--unbranded:hover {
   .oc-lang-toggle--in-actions {
     display: inline-flex !important;
     align-items: center !important;
-    background: rgba(0,0,0,0.08) !important;
+    background: rgba(0, 0, 0, 0.08) !important;
     border-radius: 999px !important;
     padding: 2px !important;
     position: relative !important;
@@ -1989,15 +1994,14 @@ button.shopify-payment-button__button--unbranded:hover {
 
   .oc-lang-toggle--in-actions .oc-lang-toggle__track {
     position: absolute !important;
-    top: 2px !important;
-    left: 2px !important;
+    top: 2px !important; left: 2px !important;
     height: calc(100% - 4px) !important;
     width: 36px !important;
     background: linear-gradient(90deg, #14c9df, #17a9bb) !important;
     border-radius: 999px !important;
-    box-shadow: 0 2px 8px rgba(20,201,223,0.35) !important;
-    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1),
-                width 0.25s cubic-bezier(0.34,1.56,0.64,1) !important;
+    box-shadow: 0 2px 8px rgba(20, 201, 223, 0.35) !important;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+                width 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
     pointer-events: none !important;
   }
 
@@ -2026,6 +2030,3 @@ button.shopify-payment-button__button--unbranded:hover {
     pointer-events: none !important;
   }
 }
-.oc-lang-toggle--in-actions {
-    display: inline-flex !important;
-  }
