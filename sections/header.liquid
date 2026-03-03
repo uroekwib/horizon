@@ -70,24 +70,15 @@
   capture actions
     render 'header-actions', customer_account_menu: section.settings.customer_account_menu, display_style: section.settings.actions_display_style, section: section
     if show_language
-      echo '<div class="oc-lang-toggle oc-lang-toggle--in-actions">'
-      echo '<div class="oc-lang-toggle__track"></div>'
-      assign lang_index = 0
+      echo '<form method="post" action="/localization" class="oc-lang-form"><input type="hidden" name="_method" value="patch"><input type="hidden" name="return_to" value="' | append: back | append: '"><input type="hidden" name="language_code" id="oc-lang-input" value="' | append: localization.language.iso_code | append: '"><div class="oc-lang-toggle oc-lang-toggle--in-actions"><div class="oc-lang-toggle__track"></div>'
       for language in localization.available_languages
-        if lang_index > 0
-          echo '<span class="oc-lang-sep">/</span>'
+        if language.iso_code == localization.language.iso_code
+          echo '<button type="button" class="oc-lang-toggle__btn active" data-lang="' | append: language.iso_code | append: '">' | append: language.iso_code | upcase | append: '</button>'
+        else
+          echo '<button type="button" class="oc-lang-toggle__btn" data-lang="' | append: language.iso_code | append: '">' | append: language.iso_code | upcase | append: '</button>'
         endif
-        form 'localization', return_to: back
-          echo '<input type="hidden" name="language_code" value="' | append: language.iso_code | append: '">'
-          if language.iso_code == localization.language.iso_code
-            echo '<button type="submit" class="oc-lang-toggle__btn active">' | append: language.iso_code | upcase | append: '</button>'
-          else
-            echo '<button type="submit" class="oc-lang-toggle__btn">' | append: language.iso_code | upcase | append: '</button>'
-          endif
-        endform
-        assign lang_index = lang_index | plus: 1
       endfor
-      echo '</div>'
+      echo '</div></form>'
     endif
   endcapture
 
@@ -95,7 +86,6 @@
     assign search_class = 'search-action--hidden-on-drawer'
   endif
 
-  # Handle localization positioning
   if section.settings.localization_position == 'left'
     if section.settings.search_position == 'left'
       if shop.customer_accounts_enabled
@@ -199,23 +189,20 @@
 
 {% comment %} Desktop-only localization toggle (hidden on mobile) {% endcomment %}
 {% capture localization_markup %}
-  if show_language
-      echo '<form method="post" action="/localization" class="oc-lang-form">'
-      echo '<input type="hidden" name="_method" value="patch">'
-      echo '<input type="hidden" name="return_to" value="' | append: back | append: '">'
-      echo '<input type="hidden" name="language_code" id="oc-lang-input" value="' | append: localization.language.iso_code | append: '">'
-      echo '<div class="oc-lang-toggle oc-lang-toggle--in-actions">'
-      echo '<div class="oc-lang-toggle__track"></div>'
-      for language in localization.available_languages
-        if language.iso_code == localization.language.iso_code
-          echo '<button type="button" class="oc-lang-toggle__btn active" data-lang="' | append: language.iso_code | append: '">' | append: language.iso_code | upcase | append: '</button>'
-        else
-          echo '<button type="button" class="oc-lang-toggle__btn" data-lang="' | append: language.iso_code | append: '">' | append: language.iso_code | upcase | append: '</button>'
-        endif
-      endfor
-      echo '</div>'
-      echo '</form>'
-    endif
+  {% if show_language %}
+    <div class="oc-lang-toggle mobile:hidden">
+      <div class="oc-lang-toggle__track"></div>
+      {%- for language in localization.available_languages -%}
+        {%- form 'localization', return_to: back -%}
+          <input type="hidden" name="language_code" value="{{ language.iso_code }}">
+          <button
+            type="submit"
+            class="oc-lang-toggle__btn{% if language.iso_code == localization.language.iso_code %} active{% endif %}"
+          >{{ language.iso_code | upcase }}</button>
+        {%- endform -%}
+      {%- endfor -%}
+    </div>
+  {% endif %}
 {% endcapture %}
 
 <script type="application/ld+json">
@@ -285,7 +272,6 @@
         when 'bottom'
           assign first = ''
           assign class = class | append: ' mobile:hidden'
-
           assign border_bottom_setting_id = 'border_width'
       endcase
 
@@ -338,6 +324,7 @@
   src="{{ 'header.js' | asset_url }}"
   type="module"
 ></script>
+
 
 {% stylesheet %}
   body {
@@ -1080,29 +1067,25 @@
       var track = toggle.querySelector('.oc-lang-toggle__track');
       var activeBtn = toggle.querySelector('.oc-lang-toggle__btn.active');
       if (!track || !activeBtn) return;
+
       function moveTrack(btn) {
-        var tRect = toggle.getBoundingClientRect();
-        var bRect = btn.getBoundingClientRect();
-        track.style.width = bRect.width + 'px';
-        track.style.transform = 'translateX(' + (bRect.left - tRect.left) + 'px)';
+        var t = toggle.getBoundingClientRect();
+        var b = btn.getBoundingClientRect();
+
+        var left = (b.left - t.left);
+        track.style.width = b.width + 'px';
+        track.style.transform = 'translateX(' + left + 'px)';
       }
+
       function sync() { requestAnimationFrame(function () { moveTrack(activeBtn); }); }
       sync();
       window.addEventListener('resize', sync);
+
       toggle.querySelectorAll('.oc-lang-toggle__btn').forEach(function (btn) {
         btn.addEventListener('mouseenter', function () { moveTrack(btn); });
         btn.addEventListener('mouseleave', function () { moveTrack(activeBtn); });
-      });
-    });
-
-    document.querySelectorAll('.oc-lang-toggle--in-actions .oc-lang-toggle__btn').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var lang = btn.getAttribute('data-lang');
-        var input = document.getElementById('oc-lang-input');
-        var form = btn.closest('.oc-lang-form');
-        if (!lang || !input || !form) return;
-        input.value = lang;
-        form.submit();
+        btn.addEventListener('focus', function () { moveTrack(btn); });
+        btn.addEventListener('blur', function () { moveTrack(activeBtn); });
       });
     });
   }
