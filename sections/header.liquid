@@ -1095,6 +1095,31 @@
 }
 {% endstylesheet %}
 
+
+<script>
+(function() {
+  const toggle = document.querySelector('.oc-lang-toggle');
+  if (!toggle) return;
+  const track = toggle.querySelector('.oc-lang-toggle__track');
+  const activeBtn = toggle.querySelector('.oc-lang-toggle__btn.active');
+  if (!track || !activeBtn) return;
+
+  function moveTrack(btn) {
+    track.style.width  = btn.offsetWidth + 'px';
+    track.style.transform = 'translateX(' + (btn.offsetLeft - 3) + 'px)';
+  }
+
+  // init position
+  moveTrack(activeBtn);
+
+  // hover preview
+  toggle.querySelectorAll('.oc-lang-toggle__btn').forEach(btn => {
+    btn.addEventListener('mouseenter', () => moveTrack(btn));
+    btn.addEventListener('mouseleave', () => moveTrack(activeBtn));
+  });
+})();
+</script>
+
 {% unless request.design_mode %}
   <script type="module">
     import { hydrate } from '@theme/section-hydration';
