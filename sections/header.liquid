@@ -75,7 +75,7 @@ capture actions
       if language.iso_code == localization.language.iso_code
         echo '<button type="button" class="oc-lang-toggle__btn active" disabled>' | append: language.iso_code | upcase | append: '</button>'
       else
-        echo '<form method="post" action="/localization" style="display:contents"><input type="hidden" name="_method" value="patch"><input type="hidden" name="return_to" value="' | append: back | append: '"><input type="hidden" name="language_code" value="' | append: language.iso_code | append: '"><button type="submit" class="oc-lang-toggle__btn">' | append: language.iso_code | upcase | append: '</button></form>'
+        echo '<form method="post" action="/localization" style="display:contents"><input type="hidden" name="_method" value="patch"><input type="hidden" name="return_to" value="' | append: request.path | append: '"><input type="hidden" name="language_code" value="' | append: language.iso_code | append: '"><button type="submit" class="oc-lang-toggle__btn">' | append: language.iso_code | upcase | append: '</button></form>'
       endif
     endfor
     echo '</div>'
