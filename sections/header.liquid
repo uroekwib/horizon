@@ -72,7 +72,11 @@
     if show_language
       echo '<div class="oc-lang-toggle oc-lang-toggle--in-actions">'
       echo '<div class="oc-lang-toggle__track"></div>'
+      assign lang_index = 0
       for language in localization.available_languages
+        if lang_index > 0
+          echo '<span class="oc-lang-sep">/</span>'
+        endif
         form 'localization', return_to: back
           echo '<input type="hidden" name="language_code" value="' | append: language.iso_code | append: '">'
           if language.iso_code == localization.language.iso_code
@@ -81,6 +85,7 @@
             echo '<button type="submit" class="oc-lang-toggle__btn">' | append: language.iso_code | upcase | append: '</button>'
           endif
         endform
+        assign lang_index = lang_index | plus: 1
       endfor
       echo '</div>'
     endif
@@ -915,18 +920,36 @@
       display: none;
     }
 
-    .oc-lang-toggle--in-actions .oc-lang-toggle__btn {
-      padding: 4px 5px;
-      font-size: 12px;
-      font-weight: 700;
-      opacity: 0.4;
+    /* separator */
+    .oc-lang-sep {
+      font-size: 11px;
+      opacity: 0.25;
       color: var(--color-foreground);
+      pointer-events: none;
+      line-height: 1;
+    }
+
+    .oc-lang-toggle--in-actions .oc-lang-toggle__btn {
+      padding: 4px 5px !important;
+      font-size: 12px !important;
+      font-weight: 700 !important;
+      opacity: 0.4;
+      color: var(--color-foreground) !important;
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      border-radius: 0 !important;
+      outline: none !important;
+      min-width: 0 !important;
+      height: auto !important;
+      width: auto !important;
     }
 
     .oc-lang-toggle--in-actions .oc-lang-toggle__btn.active {
-      opacity: 1;
-      color: #17a9bb;
-      background: transparent;
+      opacity: 1 !important;
+      color: #17a9bb !important;
+      background: transparent !important;
+      border: none !important;
     }
   }
 
