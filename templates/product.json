@@ -149,7 +149,7 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "color": "var(--color-foreground-heading)",
-                    "padding-block-start": 4,
+                    "padding-block-start": 0,
                     "padding-block-end": 0,
                     "padding-inline-start": 0,
                     "padding-inline-end": 0
@@ -186,13 +186,14 @@
                   "type": "ai_convertblock_linewhatsapp",
                   "name": "Contact link",
                   "settings": {
-                    "line_icon": "shopify://shop_images/LINE_Brand_icon_c4c9b72a-a3eb-4670-bf1d-dcfeb1940ea2.png",
+                    "line_icon": "shopify://shop_images/line-logo-svg_6728467d-aa7a-4c21-b0d4-d9591c7c52ab.svg",
                     "line_text": "สอบถามสั่งซื้อสะดวกทางไลน์",
                     "line_link": "https://page.line.me/pwy1559t?openQrModal=true",
+                    "whatsapp_icon": "shopify://shop_images/whatsapp-logo-svg.svg",
                     "whatsapp_text": "",
                     "whatsapp_link": "",
-                    "icon_size": 32,
-                    "text_size": 16,
+                    "icon_size": 28,
+                    "text_size": 15,
                     "icon_text_gap": 8,
                     "text_color": "#17a9bb",
                     "desktop_width_percent": 100
