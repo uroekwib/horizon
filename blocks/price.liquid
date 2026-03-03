@@ -47,12 +47,12 @@
   "
   {{ block.shopify_attributes }}
 >
-  <span class="price-prefix">เริ่มจาก</span>
-    {% render 'price',
-    show_unit_price: true,
-    product_resource: product_resource,
-    show_sale_price_first: block_settings.show_sale_price_first
-  %}
+  <span class="price-prefix" style="display: inline;">เริ่มจาก </span>
+{% render 'price',
+  show_unit_price: true,
+  product_resource: product_resource,
+  show_sale_price_first: block_settings.show_sale_price_first
+%}
 
   {% if block_settings.show_tax_info %}
     <div class="tax-note">
