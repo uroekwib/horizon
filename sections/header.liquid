@@ -67,11 +67,6 @@
     assign show_country = false
   endif
 
-capture actions
-  render 'header-actions', customer_account_menu: section.settings.customer_account_menu, display_style: section.settings.actions_display_style, section: section
-  echo mobile_lang_toggle
-endcapture
-
   if shop.customer_accounts_enabled
     assign search_class = 'search-action--hidden-on-drawer'
   endif
@@ -195,22 +190,32 @@ endcapture
   {% endif %}
 {% endcapture %}
 
+{% comment %} Mobile lang toggle — same form tag as desktop {% endcomment %}
 {% capture mobile_lang_toggle %}
   {% if show_language %}
     <div class="oc-lang-toggle oc-lang-toggle--in-actions">
       <div class="oc-lang-toggle__track"></div>
       {%- for language in localization.available_languages -%}
         {%- if language.iso_code == localization.language.iso_code -%}
-          <button type="button" class="oc-lang-toggle__btn active" disabled>{{ language.iso_code | upcase }}</button>
+          <button type="button" class="oc-lang-toggle__btn active" disabled>
+            {{ language.iso_code | upcase }}
+          </button>
         {%- else -%}
           {%- form 'localization', return_to: back -%}
             <input type="hidden" name="language_code" value="{{ language.iso_code }}">
-            <button type="submit" class="oc-lang-toggle__btn">{{ language.iso_code | upcase }}</button>
+            <button type="submit" class="oc-lang-toggle__btn">
+              {{ language.iso_code | upcase }}
+            </button>
           {%- endform -%}
         {%- endif -%}
       {%- endfor -%}
     </div>
   {% endif %}
+{% endcapture %}
+
+{% capture actions %}
+  {% render 'header-actions', customer_account_menu: section.settings.customer_account_menu, display_style: section.settings.actions_display_style, section: section %}
+  {{ mobile_lang_toggle }}
 {% endcapture %}
 
 <script type="application/ld+json">
@@ -332,6 +337,41 @@ endcapture
   src="{{ 'header.js' | asset_url }}"
   type="module"
 ></script>
+
+<script>
+(function () {
+  function syncTrack(toggle) {
+    var track = toggle.querySelector('.oc-lang-toggle__track');
+    var active = toggle.querySelector('.oc-lang-toggle__btn.active');
+    if (!track || !active) return;
+    track.style.width = active.offsetWidth + 'px';
+    track.style.transform = 'translateX(' + active.offsetLeft + 'px)';
+  }
+
+  function init() {
+    document.querySelectorAll('.oc-lang-toggle').forEach(function (toggle) {
+      syncTrack(toggle);
+      window.addEventListener('resize', function () { syncTrack(toggle); });
+      toggle.querySelectorAll('.oc-lang-toggle__btn').forEach(function (btn) {
+        btn.addEventListener('mouseenter', function () {
+          var track = toggle.querySelector('.oc-lang-toggle__track');
+          if (track) {
+            track.style.width = btn.offsetWidth + 'px';
+            track.style.transform = 'translateX(' + btn.offsetLeft + 'px)';
+          }
+        });
+        btn.addEventListener('mouseleave', function () { syncTrack(toggle); });
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
 
 
 {% stylesheet %}
