@@ -14,10 +14,11 @@
     "header_announcements_9jGBFp": {
       "type": "header-announcements",
       "blocks": {
-        "announcement_BxgCk9": {
+        "announcement_tJ6q8m": {
           "type": "_announcement",
+          "name": "t:names.announcement",
           "settings": {
-            "text": "Welcome to our store",
+            "text": "ป้ายโฆษณาครบวงจร ป้ายอิงค์เจ็ท อักษรโลหะ ป้ายโลโก้ กล่องไฟ สติ๊กเกอร์ ดิสเพลย์ อุปกรณ์จัดบูธ",
             "link": "",
             "font": "var(--font-subheading--family)",
             "font_size": "0.75rem",
@@ -26,9 +27,23 @@
             "case": "none"
           },
           "blocks": {}
+        },
+        "announcement_BxgCk9": {
+          "type": "_announcement",
+          "settings": {
+            "text": "ราคาดียุติธรรม   วัสดุคุณภาพสูง   จัดส่งติดตั้งทั่วประเทศ",
+            "link": "",
+            "font": "var(--font-subheading--family)",
+            "font_size": "0.75rem",
+            "weight": "400",
+            "letter_spacing": "normal",
+            "case": "none"
+          },
+          "blocks": {}
         }
       },
       "block_order": [
+        "announcement_tJ6q8m",
         "announcement_BxgCk9"
       ],
       "name": "t:names.announcement_bar",
