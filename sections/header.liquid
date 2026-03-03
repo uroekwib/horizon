@@ -67,18 +67,18 @@
     assign show_country = false
   endif
 
-  capture actions
+capture actions
   render 'header-actions', customer_account_menu: section.settings.customer_account_menu, display_style: section.settings.actions_display_style, section: section
   if show_language
-    echo '<form method="post" action="/localization" class="oc-lang-form"><input type="hidden" name="_method" value="patch"><input type="hidden" name="return_to" value="' | append: back | append: '"><input type="hidden" name="language_code" id="oc-lang-input" value="' | append: localization.language.iso_code | append: '"><div class="oc-lang-toggle oc-lang-toggle--in-actions"><div class="oc-lang-toggle__track"></div>'
+    echo '<div class="oc-lang-toggle oc-lang-toggle--in-actions"><div class="oc-lang-toggle__track"></div>'
     for language in localization.available_languages
       if language.iso_code == localization.language.iso_code
-        echo '<button type="button" class="oc-lang-toggle__btn active" data-lang="' | append: language.iso_code | append: '">' | append: language.iso_code | upcase | append: '</button>'
+        echo '<button type="button" class="oc-lang-toggle__btn active" disabled>' | append: language.iso_code | upcase | append: '</button>'
       else
-        echo '<button type="button" class="oc-lang-toggle__btn" data-lang="' | append: language.iso_code | append: '">' | append: language.iso_code | upcase | append: '</button>'
+        echo '<form method="post" action="/localization" style="display:contents"><input type="hidden" name="_method" value="patch"><input type="hidden" name="return_to" value="' | append: back | append: '"><input type="hidden" name="language_code" value="' | append: language.iso_code | append: '"><button type="submit" class="oc-lang-toggle__btn">' | append: language.iso_code | upcase | append: '</button></form>'
       endif
     endfor
-    echo '</div></form>'
+    echo '</div>'
   endif
 endcapture
 
@@ -1060,101 +1060,41 @@ endcapture
 
 {% endstylesheet %}
 
+
 <script>
 (function () {
-  function initToggle() {
+  function syncTrack(toggle) {
+    var track = toggle.querySelector('.oc-lang-toggle__track');
+    var active = toggle.querySelector('.oc-lang-toggle__btn.active');
+    if (!track || !active) return;
+    track.style.width = active.offsetWidth + 'px';
+    track.style.transform = 'translateX(' + active.offsetLeft + 'px)';
+  }
+
+  function init() {
     document.querySelectorAll('.oc-lang-toggle').forEach(function (toggle) {
-      var track = toggle.querySelector('.oc-lang-toggle__track');
-      var activeBtn = toggle.querySelector('.oc-lang-toggle__btn.active');
-      if (!track || !activeBtn) return;
-
-      function moveTrack(btn) {
-        var tRect = toggle.getBoundingClientRect();
-        var bRect = btn.getBoundingClientRect();
-        track.style.width = bRect.width + 'px';
-        track.style.transform = 'translateX(' + (bRect.left - tRect.left) + 'px)';
-      }
-
-      function sync() { requestAnimationFrame(function () { moveTrack(activeBtn); }); }
-      sync();
-      window.addEventListener('resize', sync);
-
+      syncTrack(toggle);
+      window.addEventListener('resize', function () { syncTrack(toggle); });
       toggle.querySelectorAll('.oc-lang-toggle__btn').forEach(function (btn) {
-        btn.addEventListener('mouseenter', function () { moveTrack(btn); });
-        btn.addEventListener('mouseleave', function () { moveTrack(activeBtn); });
-        btn.addEventListener('click', function () {
-          var lang = btn.getAttribute('data-lang');
-          var input = document.getElementById('oc-lang-input');
-          var form = btn.closest('.oc-lang-form');
-          if (!lang || !input || !form) return;
-          input.value = lang;
-          form.submit();
+        btn.addEventListener('mouseenter', function () {
+          var track = toggle.querySelector('.oc-lang-toggle__track');
+          if (track) {
+            track.style.width = btn.offsetWidth + 'px';
+            track.style.transform = 'translateX(' + btn.offsetLeft + 'px)';
+          }
         });
+        btn.addEventListener('mouseleave', function () { syncTrack(toggle); });
       });
     });
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initToggle);
+    document.addEventListener('DOMContentLoaded', init);
   } else {
-    initToggle();
+    init();
   }
 })();
 </script>
-
-
-<script>
-(function() {
-  function initToggle() {
-    document.querySelectorAll('.oc-lang-toggle').forEach(function(toggle) {
-      var track = toggle.querySelector('.oc-lang-toggle__track');
-      var activeBtn = toggle.querySelector('.oc-lang-toggle__btn.active');
-      if (!track || !activeBtn) return;
-
-      function getPadLeft() {
-        var cs = window.getComputedStyle(toggle);
-        return parseFloat(cs.paddingLeft) || 0;
-      }
-
-      function moveTrack(btn) {
-        var padLeft = getPadLeft();
-        track.style.width = btn.offsetWidth + 'px';
-        track.style.transform = 'translateX(' + (btn.offsetLeft - padLeft) + 'px)';
-      }
-
-      function sync() {
-        requestAnimationFrame(function() { moveTrack(activeBtn); });
-      }
-
-      sync();
-      window.addEventListener('resize', sync);
-
-      /* hover ใช้กับ desktop; mobile ไม่มี hover ก็ไม่กระทบ */
-      toggle.querySelectorAll('.oc-lang-toggle__btn').forEach(function(btn) {
-        btn.addEventListener('mouseenter', function() { moveTrack(btn); });
-        btn.addEventListener('mouseleave', function() { moveTrack(activeBtn); });
-        btn.addEventListener('focus', function() { moveTrack(btn); });
-        btn.addEventListener('blur', function() { moveTrack(activeBtn); });
-      });
-    });
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initToggle);
-  } else {
-    initToggle();
-  }
-})();
-</script>
-
-{% unless request.design_mode %}
-  <script type="module">
-    import { hydrate } from '@theme/section-hydration';
-    const url = new URL(window.location.href);
-    url.searchParams.delete('page');
-    hydrate('{{ section.id }}', url);
-  </script>
-{% endunless %}
 
 {% schema %}
 {
