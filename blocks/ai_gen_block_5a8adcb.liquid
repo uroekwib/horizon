@@ -43,9 +43,6 @@
 {% enddoc %}
 {% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 {% style %}
   .ai-hero-container-{{ ai_gen_id }} {
@@ -93,7 +90,7 @@
   }
 
   .ai-hero-heading-{{ ai_gen_id }} .thai-text {
-    font-family: 'Noto Sans Thai', sans-serif;
+    font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
   }
 
   @keyframes ai-rainbow-move-{{ ai_gen_id }} {
@@ -161,14 +158,14 @@
   }
 
   .ai-hero-stat-number-{{ ai_gen_id }} {
-    font-family: 'Noto Sans Thai', sans-serif;
+    font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
     font-size: {{ block.settings.stat_number_size }}px;
     font-weight: 700;
     color: {{ block.settings.stat_number_color }};
   }
 
   .ai-hero-stat-label-{{ ai_gen_id }} {
-    font-family: 'Noto Sans Thai', sans-serif;
+    font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
     font-size: 13px;
     color: {{ block.settings.stat_label_color }};
   }
@@ -280,7 +277,7 @@
   }
 
   .ai-hero-bento-card-title-{{ ai_gen_id }} {
-    font-family: 'Noto Sans Thai', sans-serif;
+    font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
     font-size: 14px;
     font-weight: 600;
     color: #ffffff;
