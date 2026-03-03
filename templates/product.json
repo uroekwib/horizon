@@ -403,7 +403,7 @@
                     "text_KxHmg4": {
                       "type": "text",
                       "settings": {
-                        "text": "<p>สินค้าของเราผลิตทั้งในประเทศและทั่วโลก เราคัดเลือกพาร์ทเนอร์การผลิตของเราอย่างพิถีพิถันเพื่อให้แน่ใจว่าสินค้าของเรามีคุณภาพสูงและราคายุติธรรม</p>",
+                        "text": "<p>{{ closest.product.metafields.custom.hulk_form | metafield_tag }}</p>",
                         "width": "100%",
                         "max_width": "normal",
                         "alignment": "left",
