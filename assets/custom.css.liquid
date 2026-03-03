@@ -352,50 +352,29 @@ a {
 
 
 /* ============================================================
-   §6  SECTION BACKGROUND COLOR SCHEMES
-   ใช้ใน Horizon: section > .section-background.color-scheme-X
-   
-   1 = Pastel Glass    (default ส่วนใหญ่)
-   2 = White Clean     (product card, content)
-   3 = Cyan Soft       (highlight, featured)
-   4 = Rainbow Button  (CTA, promo banner)
+   §6  SECTION BACKGROUND — gradient overrides
+   สี solid และ text ตั้งใน settings_data.json > color_schemes
+   CSS นี้เหลือเฉพาะ gradient ที่ JSON ทำไม่ได้
    ============================================================ */
 
-.section-background.color-scheme-1 {
-  background: linear-gradient(120deg, #ECFEFF 0%, #EEF2FF 50%, #F5F3FF 100%)!important;
-  /*
-  background: linear-gradient(
-    140deg,
-    rgba(241, 236, 255, 1)    22%,
-    rgba(235, 252, 255, 0.85) 45%,
-    rgba(236, 255, 254, 0.81) 74%,
-    rgba(242, 255, 250, 1)   100%
-  ) !important;
-   */
+/* scheme-1: Pastel Glass gradient */
+.color-scheme-1 .section-background,
+[data-color-scheme="scheme-1"] {
+  background: linear-gradient(120deg, #ECFEFF 0%, #EEF2FF 50%, #F5F3FF 100%);
 }
 
-.section-background.color-scheme-2 {
-  background: #ffffff !important;
+/* scheme-3: Cyan-Purple gradient */
+.color-scheme-3 .section-background,
+[data-color-scheme="scheme-3"] {
+  background: linear-gradient(177deg, #c3f9ff 0%, #c78ff2 100%);
 }
 
-.section-background.color-scheme-3 {
-  background: linear-gradient(177deg, #c3f9ff 0%, #c78ff2 100%) !important;
-}
-
-.section-background.color-scheme-4 {
-  background: var(--oc-grad-btn-rev) !important;
-  background-size: 200% 100% !important;
+/* scheme-4: Animated rainbow gradient */
+.color-scheme-4 .section-background,
+[data-color-scheme="scheme-4"] {
+  background: var(--oc-grad-btn-rev);
+  background-size: 200% 100%;
   animation: oc-rainbow-move 8s ease infinite;
-}
-
-/* Color scheme text contrast fixes */
-.section-background.color-scheme-3,
-.section-background.color-scheme-4 {
-  color: var(--oc-ink) !important;
-}
-.section-background.color-scheme-4 a,
-.section-background.color-scheme-4 .button {
-  color: #fff !important;
 }
 
 
