@@ -185,7 +185,7 @@
 
 {% capture localization_markup %}
   {% if show_language %}
-    <div class="oc-lang-toggle mobile:hidden">
+    <div class="oc-lang-toggle>
       <div class="oc-lang-toggle__track" id="oc-track"></div>
       {%- for language in localization.available_languages -%}
         {%- form 'localization', return_to: back -%}
@@ -1092,6 +1092,31 @@
   opacity: 1;
   cursor: default;
   pointer-events: none;
+}
+/* mobile: toggle เข้า grid area rightA */
+@media screen and (max-width: 749px) {
+  .oc-lang-toggle {
+    grid-area: rightA;
+    background: transparent;
+    padding: 0;
+    gap: 0;
+  }
+
+  .oc-lang-toggle__track {
+    display: none; /* ซ่อน sliding track บน mobile */
+  }
+
+  .oc-lang-toggle__btn {
+    padding: 4px 8px;
+    font-size: 12px;
+    opacity: 0.45;
+  }
+
+  .oc-lang-toggle__btn.active {
+    opacity: 1;
+    color: #17a9bb;
+    background: transparent;
+  }
 }
 {% endstylesheet %}
 
