@@ -95,7 +95,7 @@
         }
       },
       "custom_css": [
-        ".menu-list__link-title {font-weight: 700;}"
+        ".menu-list__link-title {font-weight: 700; font-size: 16px;}"
       ],
       "settings": {
         "logo_position": "left",
