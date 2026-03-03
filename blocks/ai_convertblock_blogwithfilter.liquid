@@ -33,7 +33,6 @@
     align-items: center;
     gap: 8px;
     padding: 10px 22px;
-    font-family: 'Brand Font', sans-serif;
     font-size: {{ block.settings.button_font_size }}px;
     font-weight: 600;
     border-radius: 999px;
@@ -94,8 +93,6 @@
       0 6px 24px rgba(20, 201, 223, 0.40),
       0 2px 8px rgba(23, 169, 187, 0.25);
   }
-
-
 
   /* ── Post Grid ── */
   .blog-filter__posts-{{ ai_gen_id }} {
@@ -185,7 +182,6 @@
   .blog-filter__post-meta-{{ ai_gen_id }} {
     display: flex;
     align-items: center;
-    /*gap: 8px; PEAR OMIT*/
     flex-wrap: wrap;
   }
 
@@ -236,7 +232,6 @@
 
   .blog-filter__load-more-btn-{{ ai_gen_id }} {
     padding: 12px 40px;
-    font-family: 'Brand Font', sans-serif;
     font-size: {{ block.settings.load_more_font_size }}px;
     font-weight: 600;
     border-radius: 999px;
@@ -352,7 +347,6 @@
                 {% if block.settings.show_blog_label %}
                   <span class="blog-filter__post-blog-label-{{ ai_gen_id }}">{{ article.blog.title }}</span>
                 {% endif %}
-
                 {% if block.settings.show_date %}
                   <span class="blog-filter__post-date-{{ ai_gen_id }}">{{ article.published_at | date: block.settings.date_format }}</span>
                 {% endif %}
@@ -394,7 +388,6 @@
                 {% if block.settings.show_blog_label %}
                   <span class="blog-filter__post-blog-label-{{ ai_gen_id }}">{{ article.blog.title }}</span>
                 {% endif %}
-
                 {% if block.settings.show_date %}
                   <span class="blog-filter__post-date-{{ ai_gen_id }}">{{ article.published_at | date: block.settings.date_format }}</span>
                 {% endif %}
@@ -436,7 +429,6 @@
                 {% if block.settings.show_blog_label %}
                   <span class="blog-filter__post-blog-label-{{ ai_gen_id }}">{{ article.blog.title }}</span>
                 {% endif %}
-
                 {% if block.settings.show_date %}
                   <span class="blog-filter__post-date-{{ ai_gen_id }}">{{ article.published_at | date: block.settings.date_format }}</span>
                 {% endif %}
@@ -480,7 +472,7 @@
       super();
       this.postsPerPage = parseInt('{{ block.settings.posts_per_page }}');
       this.currentPage  = 1;
-      this.activeFilter = null; // null = แสดงทั้งหมด
+      this.activeFilter = null;
     }
 
     connectedCallback() {
@@ -500,7 +492,6 @@
         });
       }
 
-      // แสดงทั้งหมดตอน init
       this.render();
     }
 
@@ -508,7 +499,6 @@
       const handle = btn.dataset.filter;
 
       if (this.activeFilter === handle) {
-        // กดซ้ำ → ยกเลิก filter
         this.activeFilter = null;
         this.buttons.forEach(b => {
           b.classList.remove('is-active');
@@ -525,7 +515,6 @@
 
       this.currentPage = 1;
 
-      // brief flash เพื่อให้รู้ว่า filter เปลี่ยน
       this.grid.classList.add('is-filtering');
       requestAnimationFrame(() => {
         this.render();
