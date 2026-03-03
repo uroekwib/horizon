@@ -376,17 +376,17 @@
                     "width": 20
                   },
                   "blocks": {
-                    "custom_liquid_yPNGrL": {
+                    "custom_liquid_RyHhEn": {
                       "type": "custom-liquid",
                       "name": "t:names.custom_liquid",
                       "settings": {
-                        "custom_liquid": "<p>Test: Custom liquid is working!</p>\n<p>Product: {{ product.title }}</p>"
+                        "custom_liquid": "{{ product.metafields.custom.hulk_form.value }}"
                       },
                       "blocks": {}
                     }
                   },
                   "block_order": [
-                    "custom_liquid_yPNGrL"
+                    "custom_liquid_RyHhEn"
                   ]
                 }
               },
