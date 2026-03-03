@@ -46,9 +46,7 @@
         "announcement_tJ6q8m",
         "announcement_BxgCk9"
       ],
-      "custom_css": [
-        ".announcement-bar__text {font-family: 'Google Sans', 'Noto Sans Thai', sans-serif ;}"
-      ],
+      "custom_css": [],
       "name": "t:names.announcement_bar",
       "settings": {
         "speed": 5,
