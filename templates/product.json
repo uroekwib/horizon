@@ -380,7 +380,7 @@
                       "type": "custom-liquid",
                       "name": "t:names.custom_liquid",
                       "settings": {
-                        "custom_liquid": "{{ product.metafields.custom.hulkform }}"
+                        "custom_liquid": "{{ product.metafields.custom.hulkform.value }}"
                       },
                       "blocks": {}
                     }
