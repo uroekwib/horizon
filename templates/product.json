@@ -380,7 +380,7 @@
                       "type": "custom-liquid",
                       "name": "t:names.custom_liquid",
                       "settings": {
-                        "custom_liquid": "<div class=\"hulkform-wrapper\">\n  {{ product.metafields.custom.hulkform.value }}\n</div>"
+                        "custom_liquid": "{% if product %}\n  <p>Product ID: {{ product.id }}</p>\n  <p>Product Title: {{ product.title }}</p>\n  {% if product.metafields.custom.hulkform %}\n    <p>Metafield exists!</p>\n    {{ product.metafields.custom.hulkform.value }}\n  {% else %}\n    <p>Metafield NOT found</p>\n  {% endif %}\n{% else %}\n  <p style=\"color: red;\">No product object available in this block context</p>\n{% endif %}"
                       },
                       "blocks": {}
                     }
