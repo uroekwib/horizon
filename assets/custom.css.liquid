@@ -1952,3 +1952,39 @@ button.shopify-payment-button__button--unbranded:hover {
   padding: 5px 8px 5px 8px;
   margin: 0 5px;
 }
+
+
+
+/***TOGGLE LANG***/
+/* §12 Mobile lang toggle — form reset */
+@media screen and (max-width: 749px) {
+  .oc-lang-toggle--in-actions form,
+  .oc-lang-toggle--in-actions .localization-form {
+    all: unset !important;
+    display: inline-flex !important;
+    align-items: center !important;
+  }
+
+  .oc-lang-toggle--in-actions .oc-lang-toggle__btn,
+  .oc-lang-toggle--in-actions .oc-lang-toggle__btn:hover,
+  .oc-lang-toggle--in-actions .oc-lang-toggle__btn:focus {
+    all: unset !important;
+    display: inline-block !important;
+    font-family: 'Google Sans', 'Noto Sans Thai', sans-serif !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.04em !important;
+    padding: 4px !important;
+    opacity: 0.4 !important;
+    color: var(--color-foreground) !important;
+    cursor: pointer !important;
+    line-height: 1 !important;
+  }
+
+  .oc-lang-toggle--in-actions .oc-lang-toggle__btn.active,
+  .oc-lang-toggle--in-actions .oc-lang-toggle__btn.active:hover {
+    opacity: 1 !important;
+    color: #17a9bb !important;
+    cursor: default !important;
+  }
+}
