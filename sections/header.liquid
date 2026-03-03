@@ -902,56 +902,71 @@
   }
 
   @media screen and (max-width: 749px) {
-    /* ซ่อน account icon */
-    header-actions shopify-account,
-    header-actions .account-button {
-      display: none;
-    }
-
-    /* โชว์ toggle ใน actions บน mobile */
-    .oc-lang-toggle--in-actions {
-      display: inline-flex;
-      background: transparent;
-      padding: 0;
-      align-items: center;
-    }
-
-    .oc-lang-toggle--in-actions .oc-lang-toggle__track {
-      display: none;
-    }
-
-    /* separator */
-    .oc-lang-sep {
-      font-size: 11px;
-      opacity: 0.25;
-      color: var(--color-foreground);
-      pointer-events: none;
-      line-height: 1;
-    }
-
-    .oc-lang-toggle--in-actions .oc-lang-toggle__btn {
-      padding: 4px 5px !important;
-      font-size: 12px !important;
-      font-weight: 700 !important;
-      opacity: 0.4;
-      color: var(--color-foreground) !important;
-      background: transparent !important;
-      border: none !important;
-      box-shadow: none !important;
-      border-radius: 0 !important;
-      outline: none !important;
-      min-width: 0 !important;
-      height: auto !important;
-      width: auto !important;
-    }
-
-    .oc-lang-toggle--in-actions .oc-lang-toggle__btn.active {
-      opacity: 1 !important;
-      color: #17a9bb !important;
-      background: transparent !important;
-      border: none !important;
-    }
+  /* ซ่อน account icon ตามเดิม */
+  header-actions shopify-account,
+  header-actions .account-button {
+    display: none;
   }
+
+  /* ทำให้ mobile toggle เป็น pill เหมือน desktop */
+  .oc-lang-toggle--in-actions {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 999px;
+    padding: 2px;              /* ขนาดเล็กลงกว่าดีสก์ท็อป */
+    position: relative;
+    gap: 0;
+  }
+
+  .header[transparent] .oc-lang-toggle--in-actions {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .oc-lang-toggle--in-actions .oc-lang-toggle__track {
+    display: block;            /* ✅ เอากลับมา */
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    height: calc(100% - 4px);
+    width: 40px;               /* fallback */
+    background: linear-gradient(90deg, #14c9df, #17a9bb);
+    border-radius: 999px;
+    box-shadow: 0 2px 8px rgba(20, 201, 223, 0.35);
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+                width 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+  }
+
+  .oc-lang-toggle--in-actions .oc-lang-toggle__btn {
+    position: relative;
+    z-index: 1;
+    padding: 4px 10px;         /* ปุ่มเล็กลง */
+    border-radius: 999px;      /* ✅ กลับมาเป็น pill */
+    border: none;
+    background: transparent;
+    color: var(--color-foreground);
+    opacity: 0.55;
+    cursor: pointer;
+    font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  .oc-lang-toggle--in-actions .oc-lang-toggle__btn.active {
+    color: #fff;
+    opacity: 1;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  /* ไม่ต้องใช้ / บน mobile */
+  .oc-lang-sep {
+    display: none;
+  }
+}
 
   /* ── Dropdown Localization (unused but keep for drawer fallback) ── */
   .dropdown-localization__button {
@@ -1058,6 +1073,50 @@
       toggle.querySelectorAll('.oc-lang-toggle__btn').forEach(function(btn) {
         btn.addEventListener('mouseenter', function() { moveTrack(btn); });
         btn.addEventListener('mouseleave', function() { moveTrack(activeBtn); });
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initToggle);
+  } else {
+    initToggle();
+  }
+})();
+</script>
+
+<script>
+(function() {
+  function initToggle() {
+    document.querySelectorAll('.oc-lang-toggle').forEach(function(toggle) {
+      var track = toggle.querySelector('.oc-lang-toggle__track');
+      var activeBtn = toggle.querySelector('.oc-lang-toggle__btn.active');
+      if (!track || !activeBtn) return;
+
+      function getPadLeft() {
+        var cs = window.getComputedStyle(toggle);
+        return parseFloat(cs.paddingLeft) || 0;
+      }
+
+      function moveTrack(btn) {
+        var padLeft = getPadLeft();
+        track.style.width = btn.offsetWidth + 'px';
+        track.style.transform = 'translateX(' + (btn.offsetLeft - padLeft) + 'px)';
+      }
+
+      function sync() {
+        requestAnimationFrame(function() { moveTrack(activeBtn); });
+      }
+
+      sync();
+      window.addEventListener('resize', sync);
+
+      /* hover ใช้กับ desktop; mobile ไม่มี hover ก็ไม่กระทบ */
+      toggle.querySelectorAll('.oc-lang-toggle__btn').forEach(function(btn) {
+        btn.addEventListener('mouseenter', function() { moveTrack(btn); });
+        btn.addEventListener('mouseleave', function() { moveTrack(activeBtn); });
+        btn.addEventListener('focus', function() { moveTrack(btn); });
+        btn.addEventListener('blur', function() { moveTrack(activeBtn); });
       });
     });
   }
