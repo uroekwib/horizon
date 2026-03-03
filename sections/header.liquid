@@ -69,17 +69,7 @@
 
 capture actions
   render 'header-actions', customer_account_menu: section.settings.customer_account_menu, display_style: section.settings.actions_display_style, section: section
-  if show_language
-    echo '<div class="oc-lang-toggle oc-lang-toggle--in-actions"><div class="oc-lang-toggle__track"></div>'
-    for language in localization.available_languages
-      if language.iso_code == localization.language.iso_code
-        echo '<button type="button" class="oc-lang-toggle__btn active" disabled>' | append: language.iso_code | upcase | append: '</button>'
-      else
-        echo '<form method="post" action="/localization" style="display:contents"><input type="hidden" name="_method" value="patch"><input type="hidden" name="return_to" value="' | append: request.path | append: '"><input type="hidden" name="language_code" value="' | append: language.iso_code | append: '"><button type="submit" class="oc-lang-toggle__btn">' | append: language.iso_code | upcase | append: '</button></form>'
-      endif
-    endfor
-    echo '</div>'
-  endif
+  echo mobile_lang_toggle
 endcapture
 
   if shop.customer_accounts_enabled
@@ -200,6 +190,24 @@ endcapture
             class="oc-lang-toggle__btn{% if language.iso_code == localization.language.iso_code %} active{% endif %}"
           >{{ language.iso_code | upcase }}</button>
         {%- endform -%}
+      {%- endfor -%}
+    </div>
+  {% endif %}
+{% endcapture %}
+
+{% capture mobile_lang_toggle %}
+  {% if show_language %}
+    <div class="oc-lang-toggle oc-lang-toggle--in-actions">
+      <div class="oc-lang-toggle__track"></div>
+      {%- for language in localization.available_languages -%}
+        {%- if language.iso_code == localization.language.iso_code -%}
+          <button type="button" class="oc-lang-toggle__btn active" disabled>{{ language.iso_code | upcase }}</button>
+        {%- else -%}
+          {%- form 'localization', return_to: back -%}
+            <input type="hidden" name="language_code" value="{{ language.iso_code }}">
+            <button type="submit" class="oc-lang-toggle__btn">{{ language.iso_code | upcase }}</button>
+          {%- endform -%}
+        {%- endif -%}
       {%- endfor -%}
     </div>
   {% endif %}
