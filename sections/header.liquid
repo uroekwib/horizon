@@ -1063,18 +1063,25 @@
 <script>
 (function () {
   function initToggle() {
+
+    /* mobile: ย้าย form เข้าไปใน header-actions เพื่อให้ได้ grid-area: rightB */
+    var form = document.querySelector('.oc-lang-form');
+    var ha = document.querySelector('header-actions');
+    if (form && ha && window.innerWidth < 750) {
+      ha.prepend(form);
+    }
+
+    /* sliding track */
     document.querySelectorAll('.oc-lang-toggle').forEach(function (toggle) {
       var track = toggle.querySelector('.oc-lang-toggle__track');
       var activeBtn = toggle.querySelector('.oc-lang-toggle__btn.active');
       if (!track || !activeBtn) return;
 
       function moveTrack(btn) {
-        var t = toggle.getBoundingClientRect();
-        var b = btn.getBoundingClientRect();
-
-        var left = (b.left - t.left);
-        track.style.width = b.width + 'px';
-        track.style.transform = 'translateX(' + left + 'px)';
+        var tRect = toggle.getBoundingClientRect();
+        var bRect = btn.getBoundingClientRect();
+        track.style.width = bRect.width + 'px';
+        track.style.transform = 'translateX(' + (bRect.left - tRect.left) + 'px)';
       }
 
       function sync() { requestAnimationFrame(function () { moveTrack(activeBtn); }); }
@@ -1084,8 +1091,18 @@
       toggle.querySelectorAll('.oc-lang-toggle__btn').forEach(function (btn) {
         btn.addEventListener('mouseenter', function () { moveTrack(btn); });
         btn.addEventListener('mouseleave', function () { moveTrack(activeBtn); });
-        btn.addEventListener('focus', function () { moveTrack(btn); });
-        btn.addEventListener('blur', function () { moveTrack(activeBtn); });
+      });
+    });
+
+    /* mobile submit */
+    document.querySelectorAll('.oc-lang-toggle--in-actions .oc-lang-toggle__btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var lang = btn.getAttribute('data-lang');
+        var input = document.getElementById('oc-lang-input');
+        var f = document.querySelector('.oc-lang-form');
+        if (!lang || !input || !f) return;
+        input.value = lang;
+        f.submit();
       });
     });
   }
@@ -1097,6 +1114,8 @@
   }
 })();
 </script>
+
+
 
 <script>
 (function() {
