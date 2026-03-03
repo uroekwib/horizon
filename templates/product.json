@@ -380,7 +380,7 @@
                       "type": "custom-liquid",
                       "name": "t:names.custom_liquid",
                       "settings": {
-                        "custom_liquid": "{{ product.metafields.custom.hulk_form.value }}"
+                        "custom_liquid": "{% if product.metafields.custom.hulk_form %}\n  {{ product.metafields.custom.hulk_form.value }}\n{% else %}\n  <p>Hulk form metafield is empty</p>\n{% endif %}"
                       },
                       "blocks": {}
                     }
