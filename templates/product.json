@@ -386,8 +386,8 @@
                 "accordion_row_ACxkmx": {
                   "type": "_accordion-row",
                   "settings": {
-                    "heading": "การผลิต",
-                    "open_by_default": false,
+                    "heading": "ขอใบเสนอราคา",
+                    "open_by_default": true,
                     "icon": "clipboard",
                     "width": 20
                   },
