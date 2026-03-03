@@ -106,8 +106,8 @@
         "section_width": "page-width",
         "gap": 5,
         "color_scheme": "scheme-1",
-        "padding-block-start": 24,
-        "padding-block-end": 0
+        "padding-block-start": 20,
+        "padding-block-end": 24
       }
     },
     "footer_cRnRKT": {
@@ -214,6 +214,7 @@
         "email_signup_gKCUTL",
         "group_wFGPfH"
       ],
+      "disabled": true,
       "name": "t:names.footer",
       "settings": {
         "section_width": "page-width",
