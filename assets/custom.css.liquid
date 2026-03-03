@@ -1955,34 +1955,18 @@ button.shopify-payment-button__button--unbranded:hover {
 
 
 
-/* ── §12 Mobile lang toggle ── */
+//* ── §12 Mobile lang toggle ── */
 @media screen and (max-width: 749px) {
 
-  /* ขยาย rightA (ช่อง account เดิม) ให้กว้างขึ้นรับ toggle */
-  .header__columns {
-    grid-template-columns: 44px 44px 1fr 80px 44px !important;
-  }
-
-  /* ซ่อน account */
   header-actions shopify-account,
   header-actions .account-button { display: none !important; }
 
-  /* วาง form ใน grid-area rightA ที่ว่างอยู่ */
-  .oc-lang-form {
+  /* วาง toggle ใน grid slot rightA (ช่องที่ account เคยอยู่) */
+  .oc-lang-toggle--in-actions {
     grid-area: rightA !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: none !important;
-    background: none !important;
-    box-shadow: none !important;
-  }
-
-  .oc-lang-toggle--in-actions {
-    display: inline-flex !important;
-    align-items: center !important;
     background: rgba(0, 0, 0, 0.08) !important;
     border-radius: 999px !important;
     padding: 2px !important;
@@ -2028,5 +2012,10 @@ button.shopify-payment-button__button--unbranded:hover {
     opacity: 1 !important;
     cursor: default !important;
     pointer-events: none !important;
+  }
+
+  /* form tags ที่อยู่ใน toggle ต้องไม่กินพื้นที่ */
+  .oc-lang-toggle--in-actions form {
+    display: contents !important;
   }
 }
