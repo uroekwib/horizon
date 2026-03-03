@@ -128,7 +128,7 @@
                     "background_color": "#00000026",
                     "corner_radius": 0,
                     "padding-block-start": 0,
-                    "padding-block-end": 0,
+                    "padding-block-end": 8,
                     "padding-inline-start": 0,
                     "padding-inline-end": 0
                   },
@@ -160,7 +160,7 @@
                   "type": "text",
                   "name": "t:names.text",
                   "settings": {
-                    "text": "<p>ราคาที่ตกลงจะคำนวนตามสเปคและจำนวนอีกที</p>",
+                    "text": "<h6>ราคาที่ตกลงจะคำนวนตามสเปคและจำนวนอีกที</h6>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",
@@ -176,7 +176,7 @@
                     "background_color": "#00000026",
                     "corner_radius": 0,
                     "padding-block-start": 0,
-                    "padding-block-end": 0,
+                    "padding-block-end": 13,
                     "padding-inline-start": 0,
                     "padding-inline-end": 0
                   },
@@ -357,7 +357,7 @@
                     "text_njJcBt": {
                       "type": "text",
                       "settings": {
-                        "text": "<p><strong>LINE ID</strong> : @octopusdesign<br/><br/><strong>เบอร์ติดต่อ </strong>: 081 776 8329 | 061 353 9555<br/><br/><strong>ลูกค้าธุรกิจ</strong> :</p><p>095 941 6449 (TH) - Inkjet Printing & POP Display</p><p>098 096 9294 (TH/EN) - Inkjet Printing & POP Display</p>",
+                        "text": "<p><strong>LINE ID</strong> : @octopusdesign<br/><strong>เบอร์ติดต่อ </strong>: 081 776 8329 | 061 353 9555<br/><strong>ลูกค้าธุรกิจ</strong> : 095 941 6449 (TH) - Inkjet Printing & POP Display 098 096 9294 (TH/EN) - Inkjet Printing & POP Display</p>",
                         "width": "100%",
                         "max_width": "normal",
                         "alignment": "left",
