@@ -68,19 +68,19 @@
   endif
 
   capture actions
-    render 'header-actions', customer_account_menu: section.settings.customer_account_menu, display_style: section.settings.actions_display_style, section: section
-    if show_language
-      echo '<form method="post" action="/localization" class="oc-lang-form"><input type="hidden" name="_method" value="patch"><input type="hidden" name="return_to" value="' | append: back | append: '"><input type="hidden" name="language_code" id="oc-lang-input" value="' | append: localization.language.iso_code | append: '"><div class="oc-lang-toggle oc-lang-toggle--in-actions"><div class="oc-lang-toggle__track"></div>'
-      for language in localization.available_languages
-        if language.iso_code == localization.language.iso_code
-          echo '<button type="button" class="oc-lang-toggle__btn active" data-lang="' | append: language.iso_code | append: '">' | append: language.iso_code | upcase | append: '</button>'
-        else
-          echo '<button type="button" class="oc-lang-toggle__btn" data-lang="' | append: language.iso_code | append: '">' | append: language.iso_code | upcase | append: '</button>'
-        endif
-      endfor
-      echo '</div></form>'
-    endif
-  endcapture
+  render 'header-actions', customer_account_menu: section.settings.customer_account_menu, display_style: section.settings.actions_display_style, section: section
+  if show_language
+    echo '<form method="post" action="/localization" class="oc-lang-form"><input type="hidden" name="_method" value="patch"><input type="hidden" name="return_to" value="' | append: back | append: '"><input type="hidden" name="language_code" id="oc-lang-input" value="' | append: localization.language.iso_code | append: '"><div class="oc-lang-toggle oc-lang-toggle--in-actions"><div class="oc-lang-toggle__track"></div>'
+    for language in localization.available_languages
+      if language.iso_code == localization.language.iso_code
+        echo '<button type="button" class="oc-lang-toggle__btn active" data-lang="' | append: language.iso_code | append: '">' | append: language.iso_code | upcase | append: '</button>'
+      else
+        echo '<button type="button" class="oc-lang-toggle__btn" data-lang="' | append: language.iso_code | append: '">' | append: language.iso_code | upcase | append: '</button>'
+      endif
+    endfor
+    echo '</div></form>'
+  endif
+endcapture
 
   if shop.customer_accounts_enabled
     assign search_class = 'search-action--hidden-on-drawer'
