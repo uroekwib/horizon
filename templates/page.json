@@ -118,7 +118,7 @@
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
-                "padding-block-start": 20,
+                "padding-block-start": 10,
                 "padding-block-end": 20,
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
@@ -277,11 +277,37 @@
               },
               "blocks": {}
             },
+            "text_DePBYq": {
+              "type": "text",
+              "name": "t:names.heading",
+              "settings": {
+                "text": "<h2>ลูกค้ากลุ่ม Corporate ติดต่อสายตรง</h2>",
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "var(--color-foreground)",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 20,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
             "text_8QGWmP": {
               "type": "text",
               "name": "t:names.description",
               "settings": {
-                "text": "<h3>ลูกค้ากลุ่ม Corporate ติดต่อสายตรง</h3><ul><li><strong>095 941 6449 (TH) - Barrisol stretch ceiling</strong></li><li><strong>081 323 6999 (TH/EN) - Alpha Digital singage LED</strong></li><li><strong>098 096 9294 (EN) - Inkjet Printing & POP Display</strong></li></ul><p>ทีมงานผสมผสานจากทั้งผู้ชำนาญทางการตลาด เทคโนโลยีการพิมพ์ สถาปัตยกรรม และวิศวกรรม ศาสตร์บูรณาการจึงทำให้โพรเซสมีมาตรฐานชัดเจน</p>",
+                "text": "<ul><li><strong>095 941 6449 (TH) - Barrisol stretch ceiling</strong></li><li><strong>081 323 6999 (TH/EN) - Alpha Digital singage LED</strong></li><li><strong>098 096 9294 (EN) - Inkjet Printing & POP Display</strong></li></ul><p>ทีมงานผสมผสานจากทั้งผู้ชำนาญทางการตลาด เทคโนโลยีการพิมพ์ สถาปัตยกรรม และวิศวกรรม ศาสตร์บูรณาการจึงทำให้โพรเซสมีมาตรฐานชัดเจน</p>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
@@ -296,7 +322,7 @@
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
-                "padding-block-start": 24,
+                "padding-block-start": 16,
                 "padding-block-end": 20,
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
@@ -385,6 +411,7 @@
           },
           "block_order": [
             "image_Vz6znE",
+            "text_DePBYq",
             "text_8QGWmP",
             "button_ExB9P3",
             "image_TfagX4",
