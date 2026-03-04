@@ -340,27 +340,34 @@
 
 <script>
 (function () {
-  function syncTrack(toggle) {
+  function moveTrack(toggle, btn) {
     var track = toggle.querySelector('.oc-lang-toggle__track');
+    if (!track) return;
+    var pad = parseFloat(window.getComputedStyle(toggle).paddingLeft) || 2;
+    var tr = toggle.getBoundingClientRect();
+    var br = btn.getBoundingClientRect();
+    track.style.width = br.width + 'px';
+    track.style.transform = 'translateX(' + (br.left - tr.left - pad) + 'px)';
+  }
+
+  function syncTrack(toggle) {
     var active = toggle.querySelector('.oc-lang-toggle__btn.active');
-    if (!track || !active) return;
-     var pad = parseFloat(window.getComputedStyle(toggle).paddingLeft) || 2;
-    track.style.width = active.offsetWidth + 'px';
-    track.style.transform = 'translateX(' + (active.offsetLeft - pad) + 'px)';
+    if (!active) return;
+    moveTrack(toggle, active);
   }
 
   function init() {
     document.querySelectorAll('.oc-lang-toggle').forEach(function (toggle) {
-      syncTrack(toggle);
-      window.addEventListener('resize', function () { syncTrack(toggle); });
-      toggle.querySelectorAll('.oc-lang-toggle__btn').forEach(function (btn) {
-        btn.addEventListener('mouseenter', function () {
-          var track = toggle.querySelector('.oc-lang-toggle__track');
-          if (track) {
-            track.style.width = btn.offsetWidth + 'px';
-            track.style.transform = 'translateX(' + btn.offsetLeft + 'px)';
-          }
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          syncTrack(toggle);
         });
+      });
+
+      window.addEventListener('resize', function () { syncTrack(toggle); });
+
+      toggle.querySelectorAll('.oc-lang-toggle__btn').forEach(function (btn) {
+        btn.addEventListener('mouseenter', function () { moveTrack(toggle, btn); });
         btn.addEventListener('mouseleave', function () { syncTrack(toggle); });
       });
     });
