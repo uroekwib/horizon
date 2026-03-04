@@ -1367,7 +1367,9 @@
         "image_tmAxxJ",
         "group_Mm3ht8"
       ],
-      "custom_css": [],
+      "custom_css": [
+        ":host .spacing-style.layout-panel-flex.layout-panel-flex--row.section-content-wrapper {display: flex; justify-content: center; align-items: center;}"
+      ],
       "name": "t:names.image_with_text",
       "settings": {
         "content_direction": "row",
