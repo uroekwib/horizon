@@ -1,6 +1,944 @@
+{% doc %}
+  @prompt
+    dynamic grid of product cards list up from sub-collection nested under collection
+    
+    there are 7 collections and each collection contains up to 18 sub-collections, เราสามารถ dynamic เพิ่มลด subcollection ภายใต้ collection ได้มั้ย ไม่งั้นตอนนี้มันจะ fix ที่ 18 มันก็ไม่ยืดหยุ่นเท่าไร
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-subcollection-grid-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    padding: {{ block.settings.section_padding }}px 0;
+  }
+
+  .ai-subcollection-grid__header-{{ ai_gen_id }} {
+    margin-bottom: {{ block.settings.header_spacing }}px;
+    text-align: {{ block.settings.header_alignment }};
+  }
+
+  .ai-subcollection-grid__title-{{ ai_gen_id }} {
+    margin: 0 0 8px;
+    color: {{ block.settings.heading_color }};
+    font-size: {{ block.settings.heading_size }}px;
+  }
+
+  .ai-subcollection-grid__description-{{ ai_gen_id }} {
+    margin: 0;
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.description_size }}px;
+  }
+
+  .ai-subcollection-grid__collection-selector-{{ ai_gen_id }} {
+    margin-bottom: {{ block.settings.selector_spacing }}px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: {{ block.settings.selector_alignment }};
+  }
+
+  .ai-subcollection-grid__collection-btn-{{ ai_gen_id }} {
+    padding: 10px 20px;
+    background-color: {{ block.settings.button_bg_color }};
+    color: {{ block.settings.button_text_color }};
+    border: {{ block.settings.button_border_width }}px solid {{ block.settings.button_border_color }};
+    border-radius: {{ block.settings.button_border_radius }}px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: {{ block.settings.button_font_size }}px;
+  }
+
+  .ai-subcollection-grid__collection-btn-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_bg_color }};
+    color: {{ block.settings.button_hover_text_color }};
+    border-color: {{ block.settings.button_hover_border_color }};
+  }
+
+  .ai-subcollection-grid__collection-btn-{{ ai_gen_id }}.active {
+    background-color: {{ block.settings.button_active_bg_color }};
+    color: {{ block.settings.button_active_text_color }};
+    border-color: {{ block.settings.button_active_border_color }};
+  }
+
+  .ai-subcollection-grid__subcollection-selector-{{ ai_gen_id }} {
+    margin-bottom: {{ block.settings.subcollection_spacing }}px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: {{ block.settings.selector_alignment }};
+  }
+
+  .ai-subcollection-grid__subcollection-btn-{{ ai_gen_id }} {
+    padding: 8px 16px;
+    background-color: {{ block.settings.subcollection_button_bg_color }};
+    color: {{ block.settings.subcollection_button_text_color }};
+    border: 1px solid {{ block.settings.subcollection_button_border_color }};
+    border-radius: {{ block.settings.subcollection_button_border_radius }}px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: {{ block.settings.subcollection_button_font_size }}px;
+  }
+
+  .ai-subcollection-grid__subcollection-btn-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.subcollection_button_hover_bg_color }};
+    color: {{ block.settings.subcollection_button_hover_text_color }};
+    border-color: {{ block.settings.subcollection_button_hover_border_color }};
+  }
+
+  .ai-subcollection-grid__subcollection-btn-{{ ai_gen_id }}.active {
+    background-color: {{ block.settings.subcollection_button_active_bg_color }};
+    color: {{ block.settings.subcollection_button_active_text_color }};
+    border-color: {{ block.settings.subcollection_button_active_border_color }};
+  }
+
+  .ai-subcollection-grid__products-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat({{ block.settings.columns_desktop }}, 1fr);
+    gap: {{ block.settings.grid_gap }}px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-subcollection-grid__products-{{ ai_gen_id }} {
+      grid-template-columns: repeat({{ block.settings.columns_mobile }}, 1fr);
+    }
+  }
+
+  .ai-subcollection-grid__product-card-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    background-color: {{ block.settings.card_bg_color }};
+    border: {{ block.settings.card_border_width }}px solid {{ block.settings.card_border_color }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .ai-subcollection-grid__product-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .ai-subcollection-grid__product-image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    padding-bottom: 100%;
+    overflow: hidden;
+    background-color: #f5f5f5;
+  }
+
+  .ai-subcollection-grid__product-image-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-subcollection-grid__product-image-placeholder-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f4f4f4;
+  }
+
+  .ai-subcollection-grid__product-image-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .ai-subcollection-grid__product-info-{{ ai_gen_id }} {
+    padding: {{ block.settings.card_padding }}px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ai-subcollection-grid__product-title-{{ ai_gen_id }} {
+    margin: 0;
+    font-size: {{ block.settings.product_title_size }}px;
+    color: {{ block.settings.product_title_color }};
+    font-weight: 600;
+  }
+
+  .ai-subcollection-grid__product-title-{{ ai_gen_id }} a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .ai-subcollection-grid__product-title-{{ ai_gen_id }} a:hover {
+    text-decoration: underline;
+  }
+
+  .ai-subcollection-grid__product-price-{{ ai_gen_id }} {
+    font-size: {{ block.settings.product_price_size }}px;
+    color: {{ block.settings.product_price_color }};
+    font-weight: 500;
+  }
+
+  .ai-subcollection-grid__empty-state-{{ ai_gen_id }} {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+    font-size: 16px;
+  }
+
+  .ai-subcollection-grid__collection-group-{{ ai_gen_id }} {
+    display: none;
+  }
+
+  .ai-subcollection-grid__collection-group-{{ ai_gen_id }}.active {
+    display: block;
+  }
+
+  .ai-subcollection-grid__subcollection-group-{{ ai_gen_id }} {
+    display: none;
+  }
+
+  .ai-subcollection-grid__subcollection-group-{{ ai_gen_id }}.active {
+    display: block;
+  }
+{% endstyle %}
+
+<subcollection-product-grid-{{ ai_gen_id }}
+  class="ai-subcollection-grid-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  {% if block.settings.show_header %}
+    <div class="ai-subcollection-grid__header-{{ ai_gen_id }}">
+      {% if block.settings.heading != blank %}
+        <h2 class="ai-subcollection-grid__title-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+      {% endif %}
+      {% if block.settings.description != blank %}
+        <div class="ai-subcollection-grid__description-{{ ai_gen_id }}">{{ block.settings.description }}</div>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <div class="ai-subcollection-grid__collection-selector-{{ ai_gen_id }}">
+    {% for i in (1..7) %}
+      {% liquid
+        assign collection_key = 'collection_' | append: i
+        assign collection = block.settings[collection_key]
+      %}
+      {% if collection != blank %}
+        <button
+          class="ai-subcollection-grid__collection-btn-{{ ai_gen_id }} {% if forloop.first %}active{% endif %}"
+          data-collection-index="{{ i }}"
+        >
+          {{ collection.title }}
+        </button>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  {% for i in (1..7) %}
+    {% liquid
+      assign collection_key = 'collection_' | append: i
+      assign collection = block.settings[collection_key]
+      assign subcollections_key = 'subcollections_' | append: i
+      assign subcollections = block.settings[subcollections_key]
+    %}
+    {% if collection != blank %}
+      <div
+        class="ai-subcollection-grid__collection-group-{{ ai_gen_id }} {% if forloop.first %}active{% endif %}"
+        data-collection-group="{{ i }}"
+      >
+        {% if subcollections.size > 0 %}
+          <div class="ai-subcollection-grid__subcollection-selector-{{ ai_gen_id }}">
+            {% for subcollection in subcollections %}
+              <button
+                class="ai-subcollection-grid__subcollection-btn-{{ ai_gen_id }} {% if forloop.first %}active{% endif %}"
+                data-subcollection-index="{{ i }}-{{ forloop.index }}"
+              >
+                {{ subcollection.title }}
+              </button>
+            {% endfor %}
+          </div>
+
+          {% for subcollection in subcollections %}
+            <div
+              class="ai-subcollection-grid__subcollection-group-{{ ai_gen_id }} {% if forloop.first %}active{% endif %}"
+              data-subcollection-group="{{ i }}-{{ forloop.index }}"
+            >
+              <div class="ai-subcollection-grid__products-{{ ai_gen_id }}">
+                {% if subcollection.products.size > 0 %}
+                  {% for product in subcollection.products limit: block.settings.products_per_subcollection %}
+                    <div class="ai-subcollection-grid__product-card-{{ ai_gen_id }}">
+                      <div class="ai-subcollection-grid__product-image-wrapper-{{ ai_gen_id }}">
+                        {% if product.featured_image %}
+                          <img
+                            src="{{ product.featured_image | image_url: width: 600 }}"
+                            alt="{{ product.featured_image.alt | escape }}"
+                            class="ai-subcollection-grid__product-image-{{ ai_gen_id }}"
+                            loading="lazy"
+                            width="600"
+                            height="600"
+                          >
+                        {% else %}
+                          <div class="ai-subcollection-grid__product-image-placeholder-{{ ai_gen_id }}">
+                            {{ 'product-1' | placeholder_svg_tag }}
+                          </div>
+                        {% endif %}
+                      </div>
+                      <div class="ai-subcollection-grid__product-info-{{ ai_gen_id }}">
+                        <h3 class="ai-subcollection-grid__product-title-{{ ai_gen_id }}">
+                          <a href="{{ product.url }}">{{ product.title }}</a>
+                        </h3>
+                        {% if block.settings.show_price %}
+                          <div class="ai-subcollection-grid__product-price-{{ ai_gen_id }}">
+                            {{ product.price | money }}
+                          </div>
+                        {% endif %}
+                      </div>
+                    </div>
+                  {% endfor %}
+                {% else %}
+                  <div class="ai-subcollection-grid__empty-state-{{ ai_gen_id }}">
+                    ไม่มีสินค้าในคอลเลกชันนี้
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="ai-subcollection-grid__empty-state-{{ ai_gen_id }}">
+            กรุณาเพิ่ม subcollections สำหรับ {{ collection.title }}
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+  {% endfor %}
+</subcollection-product-grid-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class SubcollectionProductGrid{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.collectionButtons = this.querySelectorAll('.ai-subcollection-grid__collection-btn-{{ ai_gen_id }}');
+        this.subcollectionButtons = this.querySelectorAll('.ai-subcollection-grid__subcollection-btn-{{ ai_gen_id }}');
+        this.collectionGroups = this.querySelectorAll('.ai-subcollection-grid__collection-group-{{ ai_gen_id }}');
+        this.subcollectionGroups = this.querySelectorAll('.ai-subcollection-grid__subcollection-group-{{ ai_gen_id }}');
+
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        this.collectionButtons.forEach((button) => {
+          button.addEventListener('click', (e) => {
+            const collectionIndex = e.target.getAttribute('data-collection-index');
+            this.switchCollection(collectionIndex);
+          });
+        });
+
+        this.subcollectionButtons.forEach((button) => {
+          button.addEventListener('click', (e) => {
+            const subcollectionIndex = e.target.getAttribute('data-subcollection-index');
+            this.switchSubcollection(subcollectionIndex);
+          });
+        });
+      }
+
+      switchCollection(index) {
+        this.collectionButtons.forEach((btn) => {
+          if (btn.getAttribute('data-collection-index') === index) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        });
+
+        this.collectionGroups.forEach((group) => {
+          if (group.getAttribute('data-collection-group') === index) {
+            group.classList.add('active');
+            const firstSubBtn = group.querySelector('.ai-subcollection-grid__subcollection-btn-{{ ai_gen_id }}');
+            if (firstSubBtn) {
+              firstSubBtn.click();
+            }
+          } else {
+            group.classList.remove('active');
+          }
+        });
+      }
+
+      switchSubcollection(index) {
+        const [collectionIndex] = index.split('-');
+
+        const activeCollectionGroup = this.querySelector(
+          `.ai-subcollection-grid__collection-group-{{ ai_gen_id }}[data-collection-group="${collectionIndex}"]`
+        );
+
+        if (!activeCollectionGroup) return;
+
+        const subcollectionButtonsInGroup = activeCollectionGroup.querySelectorAll(
+          '.ai-subcollection-grid__subcollection-btn-{{ ai_gen_id }}'
+        );
+        subcollectionButtonsInGroup.forEach((btn) => {
+          if (btn.getAttribute('data-subcollection-index') === index) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        });
+
+        const subcollectionGroupsInCollection = activeCollectionGroup.querySelectorAll(
+          '.ai-subcollection-grid__subcollection-group-{{ ai_gen_id }}'
+        );
+        subcollectionGroupsInCollection.forEach((group) => {
+          if (group.getAttribute('data-subcollection-group') === index) {
+            group.classList.add('active');
+          } else {
+            group.classList.remove('active');
+          }
+        });
+      }
+    }
+
+    customElements.define('subcollection-product-grid-{{ ai_gen_id }}', SubcollectionProductGrid{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Nested collection grid",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Header"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_header",
+      "label": "Show header",
+      "default": true
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Browse by category"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "select",
+      "id": "header_alignment",
+      "label": "Header alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "description_size",
+      "label": "Description size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Section padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "header_spacing",
+      "label": "Header spacing",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "selector_spacing",
+      "label": "Selector spacing",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "subcollection_spacing",
+      "label": "Subcollection spacing",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "select",
+      "id": "selector_alignment",
+      "label": "Selector alignment",
+      "options": [
+        { "value": "flex-start", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "flex-end", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Grid"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columns on desktop",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns on mobile",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "label": "Grid gap",
+      "min": 8,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "products_per_subcollection",
+      "label": "Products per subcollection",
+      "min": 4,
+      "max": 24,
+      "step": 4,
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Collection buttons"
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "label": "Font size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "button_border_width",
+      "label": "Border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "Border",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_bg_color",
+      "label": "Hover background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_text_color",
+      "label": "Hover text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_border_color",
+      "label": "Hover border",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_active_bg_color",
+      "label": "Active background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_active_text_color",
+      "label": "Active text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_active_border_color",
+      "label": "Active border",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Subcollection buttons"
+    },
+    {
+      "type": "range",
+      "id": "subcollection_button_font_size",
+      "label": "Font size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "subcollection_button_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 6
+    },
+    {
+      "type": "color",
+      "id": "subcollection_button_bg_color",
+      "label": "Background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "subcollection_button_text_color",
+      "label": "Text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "subcollection_button_border_color",
+      "label": "Border",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "color",
+      "id": "subcollection_button_hover_bg_color",
+      "label": "Hover background",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "color",
+      "id": "subcollection_button_hover_text_color",
+      "label": "Hover text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "subcollection_button_hover_border_color",
+      "label": "Hover border",
+      "default": "#cccccc"
+    },
+    {
+      "type": "color",
+      "id": "subcollection_button_active_bg_color",
+      "label": "Active background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "subcollection_button_active_text_color",
+      "label": "Active text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "subcollection_button_active_border_color",
+      "label": "Active border",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Product cards"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "label": "Show price",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Card padding",
+      "min": 8,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "card_border_width",
+      "label": "Border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Border",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "range",
+      "id": "product_title_size",
+      "label": "Title size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "product_title_color",
+      "label": "Title color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "product_price_size",
+      "label": "Price size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "product_price_color",
+      "label": "Price color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Collection 1"
+    },
+    {
+      "type": "collection",
+      "id": "collection_1",
+      "label": "Parent collection"
+    },
+    {
+      "type": "collection_list",
+      "id": "subcollections_1",
+      "label": "Subcollections"
+    },
+    {
+      "type": "header",
+      "content": "Collection 2"
+    },
+    {
+      "type": "collection",
+      "id": "collection_2",
+      "label": "Parent collection"
+    },
+    {
+      "type": "collection_list",
+      "id": "subcollections_2",
+      "label": "Subcollections"
+    },
+    {
+      "type": "header",
+      "content": "Collection 3"
+    },
+    {
+      "type": "collection",
+      "id": "collection_3",
+      "label": "Parent collection"
+    },
+    {
+      "type": "collection_list",
+      "id": "subcollections_3",
+      "label": "Subcollections"
+    },
+    {
+      "type": "header",
+      "content": "Collection 4"
+    },
+    {
+      "type": "collection",
+      "id": "collection_4",
+      "label": "Parent collection"
+    },
+    {
+      "type": "collection_list",
+      "id": "subcollections_4",
+      "label": "Subcollections"
+    },
+    {
+      "type": "header",
+      "content": "Collection 5"
+    },
+    {
+      "type": "collection",
+      "id": "collection_5",
+      "label": "Parent collection"
+    },
+    {
+      "type": "collection_list",
+      "id": "subcollections_5",
+      "label": "Subcollections"
+    },
+    {
+      "type": "header",
+      "content": "Collection 6"
+    },
+    {
+      "type": "collection",
+      "id": "collection_6",
+      "label": "Parent collection"
+    },
+    {
+      "type": "collection_list",
+      "id": "subcollections_6",
+      "label": "Subcollections"
+    },
+    {
+      "type": "header",
+      "content": "Collection 7"
+    },
+    {
+      "type": "collection",
+      "id": "collection_7",
+      "label": "Parent collection"
+    },
+    {
+      "type": "collection_list",
+      "id": "subcollections_7",
+      "label": "Subcollections"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Nested collection grid"
+    }
+  ]
+}
 {% endschema %}
