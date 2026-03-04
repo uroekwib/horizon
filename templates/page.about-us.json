@@ -1913,6 +1913,7 @@
         "group_PL3RpP",
         "image_4ewrjm"
       ],
+      "custom_css": [],
       "name": "t:names.image_with_text",
       "settings": {
         "content_direction": "row",
