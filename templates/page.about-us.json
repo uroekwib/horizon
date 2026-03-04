@@ -1367,6 +1367,9 @@
         "image_tmAxxJ",
         "group_Mm3ht8"
       ],
+      "custom_css": [
+        "[data-testid=\"section-content\"] > *{margin-left: auto !important; margin-right: auto !important;}"
+      ],
       "name": "t:names.image_with_text",
       "settings": {
         "content_direction": "row",
