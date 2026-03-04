@@ -344,8 +344,9 @@
     var track = toggle.querySelector('.oc-lang-toggle__track');
     var active = toggle.querySelector('.oc-lang-toggle__btn.active');
     if (!track || !active) return;
+     var pad = parseFloat(window.getComputedStyle(toggle).paddingLeft) || 2;
     track.style.width = active.offsetWidth + 'px';
-    track.style.transform = 'translateX(' + active.offsetLeft + 'px)';
+    track.style.transform = 'translateX(' + (active.offsetLeft - pad) + 'px)';
   }
 
   function init() {
