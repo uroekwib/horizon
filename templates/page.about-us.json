@@ -1757,8 +1757,8 @@
         "overlay_color": "#00000026",
         "overlay_style": "solid",
         "gradient_direction": "to top",
-        "padding-block-start": 40,
-        "padding-block-end": 40
+        "padding-block-start": 10,
+        "padding-block-end": 12
       }
     },
     "section_PUi7r3": {
@@ -1940,8 +1940,8 @@
         "overlay_color": "#00000026",
         "overlay_style": "solid",
         "gradient_direction": "to top",
-        "padding-block-start": 40,
-        "padding-block-end": 40
+        "padding-block-start": 10,
+        "padding-block-end": 10
       }
     },
     "section_UmpNqE": {
@@ -2122,8 +2122,8 @@
         "overlay_color": "#00000026",
         "overlay_style": "solid",
         "gradient_direction": "to top",
-        "padding-block-start": 40,
-        "padding-block-end": 40
+        "padding-block-start": 10,
+        "padding-block-end": 10
       }
     },
     "section_DVJLbk": {
@@ -2304,8 +2304,8 @@
         "overlay_color": "#00000026",
         "overlay_style": "solid",
         "gradient_direction": "to top",
-        "padding-block-start": 40,
-        "padding-block-end": 40
+        "padding-block-start": 10,
+        "padding-block-end": 10
       }
     },
     "section_HcCC4b": {
@@ -2486,8 +2486,8 @@
         "overlay_color": "#00000026",
         "overlay_style": "solid",
         "gradient_direction": "to top",
-        "padding-block-start": 40,
-        "padding-block-end": 40
+        "padding-block-start": 10,
+        "padding-block-end": 10
       }
     },
     "section_rDmDe3": {
@@ -2668,8 +2668,8 @@
         "overlay_color": "#00000026",
         "overlay_style": "solid",
         "gradient_direction": "to top",
-        "padding-block-start": 40,
-        "padding-block-end": 40
+        "padding-block-start": 10,
+        "padding-block-end": 10
       }
     },
     "section_LRGrgQ": {
@@ -2850,8 +2850,8 @@
         "overlay_color": "#00000026",
         "overlay_style": "solid",
         "gradient_direction": "to top",
-        "padding-block-start": 40,
-        "padding-block-end": 40
+        "padding-block-start": 10,
+        "padding-block-end": 10
       }
     },
     "section_KKtjRC": {
@@ -3032,8 +3032,8 @@
         "overlay_color": "#00000026",
         "overlay_style": "solid",
         "gradient_direction": "to top",
-        "padding-block-start": 40,
-        "padding-block-end": 40
+        "padding-block-start": 10,
+        "padding-block-end": 10
       }
     }
   },
