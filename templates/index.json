@@ -353,7 +353,7 @@
           "type": "button",
           "name": "t:names.button",
           "settings": {
-            "label": "View all products and services.",
+            "label": "ดูสินค้าและบริการทั้งหมด",
             "link": "shopify://collections/all",
             "open_in_new_tab": false,
             "style_class": "button",
