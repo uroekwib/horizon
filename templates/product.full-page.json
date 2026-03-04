@@ -16,7 +16,7 @@
           "type": "_product-media-gallery",
           "static": true,
           "settings": {
-            "media_presentation": "grid",
+            "media_presentation": "carousel",
             "media_columns": "two",
             "image_gap": 10,
             "large_first_image": true,
@@ -399,6 +399,7 @@
             "text_aEtTtq": {
               "type": "text",
               "name": "Product description",
+              "disabled": true,
               "settings": {
                 "text": "{{ closest.product.description }}",
                 "width": "100%",
@@ -589,6 +590,32 @@
     "177243582566261078": {
       "type": "_blocks",
       "blocks": {
+        "product_description_p8hnKF": {
+          "type": "product-description",
+          "name": "t:names.product_description",
+          "settings": {
+            "text": "{{ closest.product.description }}",
+            "width": "100%",
+            "max_width": "none",
+            "alignment": "left",
+            "type_preset": "rte",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
         "ai_gen_block_6cc2309_zP6QKb": {
           "type": "ai_gen_block_6cc2309",
           "settings": {
@@ -625,6 +652,7 @@
         }
       },
       "block_order": [
+        "product_description_p8hnKF",
         "ai_gen_block_6cc2309_zP6QKb"
       ],
       "settings": {
@@ -639,7 +667,7 @@
         "section_width": "page-width",
         "section_height": "",
         "section_height_custom": 50,
-        "color_scheme": "",
+        "color_scheme": "scheme-2",
         "background_media": "none",
         "video_position": "cover",
         "background_image_position": "cover",
