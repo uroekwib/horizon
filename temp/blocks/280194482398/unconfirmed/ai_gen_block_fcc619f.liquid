@@ -1,6 +1,322 @@
+{% doc %}
+  @prompt
+    Create a Shopify section with two rows of pill navigation links. Row 1: parent collection pills. Row 2: child collection pills from custom.subcollections metafield of the active parent. Each pill is an <a> tag linking to that collection's URL. Active state: pill whose handle matches collection.handle. Style: active pill background: linear-gradient(135deg, #14c9df, #17a9bb) white text, inactive background: rgba(0,0,0,0.06). Schema blocks each have a collection picker. No JavaScript needed.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-collection-nav-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+  }
+
+  .ai-collection-nav__container-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ block.settings.row_gap }}px;
+    padding: {{ block.settings.vertical_padding }}px {{ block.settings.horizontal_padding }}px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .ai-collection-nav__row-{{ ai_gen_id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: {{ block.settings.pill_gap }}px;
+  }
+
+  .ai-collection-nav__pill-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: {{ block.settings.pill_padding_vertical }}px {{ block.settings.pill_padding_horizontal }}px;
+    border-radius: {{ block.settings.pill_border_radius }}px;
+    text-decoration: none;
+    font-size: {{ block.settings.font_size }}px;
+    font-weight: {{ block.settings.font_weight }};
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .ai-collection-nav__pill-{{ ai_gen_id }}--inactive {
+    background-color: rgba(0, 0, 0, 0.06);
+    color: {{ block.settings.inactive_text_color }};
+  }
+
+  .ai-collection-nav__pill-{{ ai_gen_id }}--inactive:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .ai-collection-nav__pill-{{ ai_gen_id }}--active {
+    background: linear-gradient(135deg, #14c9df, #17a9bb);
+    color: #ffffff;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-collection-nav__container-{{ ai_gen_id }} {
+      padding: {{ block.settings.vertical_padding | times: 0.7 }}px {{ block.settings.horizontal_padding | times: 0.7 }}px;
+    }
+
+    .ai-collection-nav__pill-{{ ai_gen_id }} {
+      font-size: {{ block.settings.font_size | times: 0.9 }}px;
+      padding: {{ block.settings.pill_padding_vertical | times: 0.8 }}px {{ block.settings.pill_padding_horizontal | times: 0.8 }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-collection-nav-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-collection-nav__container-{{ ai_gen_id }}">
+    {% assign parent_collections = '' | split: ',' %}
+    {% assign active_parent = null %}
+
+    {% for i in (1..10) %}
+      {% assign collection_key = 'parent_collection_' | append: i %}
+      {% assign parent_coll = block.settings[collection_key] %}
+      
+      {% if parent_coll != blank %}
+        {% assign parent_collections = parent_collections | push: parent_coll %}
+        
+        {% if collection.handle == parent_coll.handle %}
+          {% assign active_parent = parent_coll %}
+        {% else %}
+          {% assign subcollections = parent_coll.metafields.custom.subcollections.value %}
+          {% if subcollections != blank %}
+            {% for subcollection in subcollections %}
+              {% if collection.handle == subcollection.handle %}
+                {% assign active_parent = parent_coll %}
+                {% break %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+    {% if parent_collections.size > 0 %}
+      <div class="ai-collection-nav__row-{{ ai_gen_id }}">
+        {% for parent_coll in parent_collections %}
+          {% assign is_active = false %}
+          
+          {% if active_parent and active_parent.handle == parent_coll.handle %}
+            {% assign is_active = true %}
+          {% endif %}
+
+          <a
+            href="{{ parent_coll.url }}"
+            class="ai-collection-nav__pill-{{ ai_gen_id }} {% if is_active %}ai-collection-nav__pill-{{ ai_gen_id }}--active{% else %}ai-collection-nav__pill-{{ ai_gen_id }}--inactive{% endif %}"
+          >
+            {{ parent_coll.title }}
+          </a>
+        {% endfor %}
+      </div>
+
+      {% if active_parent %}
+        {% assign subcollections = active_parent.metafields.custom.subcollections.value %}
+        {% if subcollections != blank and subcollections.size > 0 %}
+          <div class="ai-collection-nav__row-{{ ai_gen_id }}">
+            {% for subcollection in subcollections %}
+              <a
+                href="{{ subcollection.url }}"
+                class="ai-collection-nav__pill-{{ ai_gen_id }} {% if collection.handle == subcollection.handle %}ai-collection-nav__pill-{{ ai_gen_id }}--active{% else %}ai-collection-nav__pill-{{ ai_gen_id }}--inactive{% endif %}"
+              >
+                {{ subcollection.title }}
+              </a>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endif %}
+    {% endif %}
+  </div>
+</div>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Collection pill nav",
+  "tag": null,
+  "class": "ai-collection-nav-block",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Parent collections"
+    },
+    {
+      "type": "collection",
+      "id": "parent_collection_1",
+      "label": "Parent collection 1"
+    },
+    {
+      "type": "collection",
+      "id": "parent_collection_2",
+      "label": "Parent collection 2"
+    },
+    {
+      "type": "collection",
+      "id": "parent_collection_3",
+      "label": "Parent collection 3"
+    },
+    {
+      "type": "collection",
+      "id": "parent_collection_4",
+      "label": "Parent collection 4"
+    },
+    {
+      "type": "collection",
+      "id": "parent_collection_5",
+      "label": "Parent collection 5"
+    },
+    {
+      "type": "collection",
+      "id": "parent_collection_6",
+      "label": "Parent collection 6"
+    },
+    {
+      "type": "collection",
+      "id": "parent_collection_7",
+      "label": "Parent collection 7"
+    },
+    {
+      "type": "collection",
+      "id": "parent_collection_8",
+      "label": "Parent collection 8"
+    },
+    {
+      "type": "collection",
+      "id": "parent_collection_9",
+      "label": "Parent collection 9"
+    },
+    {
+      "type": "collection",
+      "id": "parent_collection_10",
+      "label": "Parent collection 10"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "vertical_padding",
+      "label": "Vertical padding",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "horizontal_padding",
+      "label": "Horizontal padding",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "row_gap",
+      "label": "Row gap",
+      "min": 4,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "pill_gap",
+      "label": "Pill gap",
+      "min": 4,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Pill style"
+    },
+    {
+      "type": "range",
+      "id": "pill_padding_vertical",
+      "label": "Vertical padding",
+      "min": 4,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "pill_padding_horizontal",
+      "label": "Horizontal padding",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "pill_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Font size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "font_weight",
+      "label": "Font weight",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "color",
+      "id": "inactive_text_color",
+      "label": "Inactive text color",
+      "default": "#000000"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection pill nav"
+    }
+  ]
+}
 {% endschema %}
