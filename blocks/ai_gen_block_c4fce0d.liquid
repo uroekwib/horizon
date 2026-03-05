@@ -409,7 +409,6 @@
   </div>
 </div>
 
-
 {%- comment -%} Meta: price suffix per product {%- endcomment -%}
 <script id="ocf-meta-{{ ai_gen_id }}" type="application/json">
 {
@@ -471,83 +470,116 @@
     'created-desc': 'created-descending'
   };
 
+  var page      = 1;
+  var isLoading = false;
+  var hasMore   = true;
+
   function updateCounter(handle) {
     if (!counter) return;
     var total = countMap[handle];
     counter.textContent = total != null ? total + ' รายการ' : '';
   }
 
-  async function loadProducts() {
-    if (!state.handle) return;
-
-    if (counter) counter.textContent = '';
-
+  function skeletonHTML() {
     var radius = {{ block.settings.product_image_radius }};
-    grid.innerHTML = Array(Math.min(perPage, 8)).fill(null).map(function() {
+    return Array(Math.min(perPage, 8)).fill(null).map(function() {
       return '<div style="display:flex;flex-direction:column;gap:10px;">'
         + '<div style="aspect-ratio:4/3;border-radius:' + radius + 'px;background:linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%);background-size:200% 100%;animation:ocf-shimmer 1.4s infinite;"></div>'
         + '<div style="height:13px;width:65%;border-radius:4px;background:linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%);background-size:200% 100%;animation:ocf-shimmer 1.4s infinite 0.1s;"></div>'
         + '<div style="height:13px;width:35%;border-radius:4px;background:linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%);background-size:200% 100%;animation:ocf-shimmer 1.4s infinite 0.2s;"></div>'
         + '</div>';
     }).join('');
+  }
 
-    var url = '/collections/' + state.handle + '/products.json?limit=' + perPage;
+  function cardHTML(p) {
+    var img    = (p.featured_image && p.featured_image.src) || (p.images && p.images[0] && p.images[0].src) || '';
+    var price  = p.variants && p.variants[0] ? parseFloat(p.variants[0].price) : 0;
+    var fmt    = new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB' }).format(price);
+    var suffix = metaMap[p.handle] ? ' / ' + metaMap[p.handle] : '';
+    var d      = document.createElement('div');
+    d.textContent = p.title;
+    var title  = d.innerHTML;
+
+    return '<a href="/products/' + p.handle + '" class="ocf__card-{{ ai_gen_id }}">'
+      + (img ? '<div class="ocf__card-img-wrap-{{ ai_gen_id }}"><img src="' + img + '" alt="' + title + '" class="ocf__card-img-{{ ai_gen_id }}" loading="lazy"></div>' : '')
+      + '<div class="ocf__card-body-{{ ai_gen_id }}">'
+      + '<h3 class="ocf__card-title-{{ ai_gen_id }}">' + title + '</h3>'
+      + '<div class="ocf__card-price-{{ ai_gen_id }}">เริ่มจาก ' + fmt + suffix + '</div>'
+      + '</div></a>';
+  }
+
+  async function loadProducts(reset) {
+    if (isLoading) return;
+    if (reset) { page = 1; hasMore = true; grid.innerHTML = ''; if (counter) counter.textContent = ''; }
+    if (!state.handle || !hasMore) return;
+
+    isLoading = true;
+
+    if (page === 1) grid.innerHTML = skeletonHTML();
+
+    var url = '/collections/' + state.handle + '/products.json?limit=' + perPage + '&page=' + page;
     if (sortMap[state.sort]) url += '&sort_by=' + sortMap[state.sort];
 
     try {
       var res  = await fetch(url);
       var data = await res.json();
 
+      if (page === 1) grid.innerHTML = '';
+
       if (!data.products || !data.products.length) {
-        grid.innerHTML = '<div class="ocf__empty-{{ ai_gen_id }}">ไม่พบสินค้าในหมวดนี้</div>';
+        if (page === 1) grid.innerHTML = '<div class="ocf__empty-{{ ai_gen_id }}">ไม่พบสินค้าในหมวดนี้</div>';
+        hasMore = false;
+        isLoading = false;
         return;
       }
 
-      updateCounter(state.handle);
+      if (data.products.length < perPage) hasMore = false;
+      if (page === 1) updateCounter(state.handle);
 
-      grid.innerHTML = data.products.map(function (p) {
-        var img    = (p.featured_image && p.featured_image.src) || (p.images && p.images[0] && p.images[0].src) || '';
-        var price  = p.variants && p.variants[0] ? parseFloat(p.variants[0].price) : 0;
-        var fmt    = new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB' }).format(price);
-        var suffix = metaMap[p.handle] ? ' / ' + metaMap[p.handle] : '';
-        var d      = document.createElement('div');
-        d.textContent = p.title;
-        var title  = d.innerHTML;
-
-        return '<a href="/products/' + p.handle + '" class="ocf__card-{{ ai_gen_id }}">'
-          + (img ? '<div class="ocf__card-img-wrap-{{ ai_gen_id }}"><img src="' + img + '" alt="' + title + '" class="ocf__card-img-{{ ai_gen_id }}" loading="lazy"></div>' : '')
-          + '<div class="ocf__card-body-{{ ai_gen_id }}">'
-          + '<h3 class="ocf__card-title-{{ ai_gen_id }}">' + title + '</h3>'
-          + '<div class="ocf__card-price-{{ ai_gen_id }}">เริ่มจาก ' + fmt + suffix + '</div>'
-          + '</div></a>';
-      }).join('');
+      grid.insertAdjacentHTML('beforeend', data.products.map(cardHTML).join(''));
+      page++;
 
     } catch(e) {
-      grid.innerHTML = '<div class="ocf__empty-{{ ai_gen_id }}">เกิดข้อผิดพลาด กรุณาลองใหม่</div>';
+      if (page === 1) grid.innerHTML = '<div class="ocf__empty-{{ ai_gen_id }}">เกิดข้อผิดพลาด กรุณาลองใหม่</div>';
     }
+
+    isLoading = false;
   }
 
-  /* Parent pill → navigate */
+  /* ── Infinite scroll sentinel ── */
+  var sentinel = document.createElement('div');
+  sentinel.style.height = '1px';
+  grid.after(sentinel);
+
+  var observer = new IntersectionObserver(function(entries) {
+    if (entries[0].isIntersecting && !isLoading && hasMore) {
+      loadProducts(false);
+    }
+  }, { rootMargin: '300px' });
+
+  observer.observe(sentinel);
+
+  /* ── Parent pill → navigate ── */
   root.querySelectorAll('[data-col-index]').forEach(function (pill) {
     pill.addEventListener('click', function () { window.location.href = pill.href; });
   });
 
-  /* Sub pill → JS load */
+  /* ── Sub pill → JS load ── */
   root.querySelectorAll('[data-sub-handle]').forEach(function (btn) {
     btn.addEventListener('click', function () {
       root.querySelectorAll('[data-sub-handle]').forEach(function (b) { b.classList.remove('active'); });
       btn.classList.add('active');
       state.handle = btn.dataset.subHandle;
-      loadProducts();
+      loadProducts(true);
     });
   });
 
-  /* Sort */
+  /* ── Sort ── */
   if (sortEl) {
-    sortEl.addEventListener('change', function () { state.sort = sortEl.value; loadProducts(); });
+    sortEl.addEventListener('change', function () { state.sort = sortEl.value; loadProducts(true); });
   }
 
-  /* View toggle */
+  /* ── View toggle ── */
   viewBtns.forEach(function (btn) {
     btn.addEventListener('click', function () {
       viewBtns.forEach(function (b) { b.classList.remove('active'); });
@@ -556,10 +588,10 @@
     });
   });
 
-  loadProducts();
+  /* ── Init ── */
+  loadProducts(true);
 })();
 </script>
-
 
 {% schema %}
 {
