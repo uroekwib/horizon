@@ -100,13 +100,19 @@
   box-shadow: 0 2px 8px rgba(20,201,223,0.28);
 }
 
+
+
         .ocf__subrow-wrap-{{ ai_gen_id }} {
           display: none;
         }
 
         .ocf__subrow-wrap-{{ ai_gen_id }}.visible {
-           display: block;
-          animation: ocf-fadein 0.25s ease;
+          display: block;
+  border-left: 2px solid #14c9df;
+  padding-left: 16px;
+  margin-left: 4px;
+  animation: ocf-fadein 0.25s ease;
+
         }
 
         @keyframes ocf-fadein {
