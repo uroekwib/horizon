@@ -34,11 +34,6 @@
         gap: 16px;
       }
 
-      @media screen and (max-width: 749px) {
-        .ocf__wrap-{{ ai_gen_id }} {
-        overflow: visible;
-       }
-
       .ocf__row-{{ ai_gen_id }} {
         display: flex;
         flex-wrap: wrap;
@@ -102,17 +97,15 @@
       }
 
       .ocf__subrow-wrap-{{ ai_gen_id }} {
-        display: none;
+        overflow: hidden;
+        max-height: 0;
+        opacity: 0;
+        transition: max-height 0.3s ease, opacity 0.25s ease;
       }
 
       .ocf__subrow-wrap-{{ ai_gen_id }}.visible {
-        display: block;
-        animation: ocf-fadein 0.25s ease;
-      }
-
-      @keyframes ocf-fadein {
-      from { opacity: 0; transform: translateY(-4px); }
-      to   { opacity: 1; transform: translateY(0); }
+        max-height: 300px;
+        opacity: 1;
       }
 
       .ocf__toolbar-{{ ai_gen_id }} {
