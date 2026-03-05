@@ -443,7 +443,11 @@
           + (img ? '<div class="ocf__card-img-wrap-{{ ai_gen_id }}"><img src="' + img + '" alt="' + title + '" class="ocf__card-img-{{ ai_gen_id }}" loading="lazy"></div>' : '')
           + '<div class="ocf__card-body-{{ ai_gen_id }}">'
           + '<h3 class="ocf__card-title-{{ ai_gen_id }}">' + title + '</h3>'
-          + '<div class="ocf__card-price-{{ ai_gen_id }}">' + fmt + '</div>'
+          + '<div class="ocf__card-price-{{ ai_gen_id }}">'
+          + '<span style="font-size:0.85em;opacity:0.6;font-weight:400;">เริ่มจาก</span> '
+          + fmt
+          + ' <span style="font-size:0.85em;opacity:0.6;font-weight:400;">/ ชุด</span>'
+          + '</div>'
           + '</div></a>';
       }).join('');
 
