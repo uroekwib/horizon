@@ -1,6 +1,407 @@
+{% doc %}
+  @prompt
+    อยากได้ section โชว์ product card ที่ filter มาจาก collection/subcollection
+    
+    เราจะโชว์ collection pill 8-10 อัน พอกดให้ active ก็จะโชว์ subcillection pils ออกมาเพิ่มเติม ให้กดเพื่อเลือก filter และแสดงแต่ product cards ที่อยู่ภายใต้หมวดนั้น ๆ ออกมา โดยเป็นการโหลดหน้า url ของ collection หรือ subcollection นั้น ๆ ออกมา, subcoll เตรียมไว้แล้ว เป็น list Metafields ชื่อ subcollections, พอเรากดเลือก  Collection ก็จะเปลี่ยน url เลย แล้วก็มี subcoll โชว์ และกดก็เปลี่ยน url ไปต่อ
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-collection-filter-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+  }
+
+  .ai-collection-filter__container-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .ai-collection-filter__heading-{{ ai_gen_id }} {
+    margin: 0;
+    font-size: {{ block.settings.heading_size }}px;
+    color: {{ block.settings.text_color }};
+  }
+
+  .ai-collection-filter__pills-wrapper-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .ai-collection-filter__pills-container-{{ ai_gen_id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .ai-collection-filter__pill-{{ ai_gen_id }} {
+    padding: 10px 20px;
+    background-color: {{ block.settings.pill_background }};
+    color: {{ block.settings.pill_text_color }};
+    border: {{ block.settings.pill_border_width }}px solid {{ block.settings.pill_border_color }};
+    border-radius: {{ block.settings.pill_border_radius }}px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    font-size: {{ block.settings.pill_font_size }}px;
+  }
+
+  .ai-collection-filter__pill-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.pill_hover_background }};
+    color: {{ block.settings.pill_hover_text_color }};
+    border-color: {{ block.settings.pill_hover_border_color }};
+  }
+
+  .ai-collection-filter__pill-{{ ai_gen_id }}.active {
+    background-color: {{ block.settings.pill_active_background }};
+    color: {{ block.settings.pill_active_text_color }};
+    border-color: {{ block.settings.pill_active_border_color }};
+  }
+
+  .ai-collection-filter__subcollections-{{ ai_gen_id }} {
+    display: none;
+    padding-left: 16px;
+  }
+
+  .ai-collection-filter__subcollections-{{ ai_gen_id }}.visible {
+    display: block;
+  }
+{% endstyle %}
+
+<collection-filter-{{ ai_gen_id }}
+  class="ai-collection-filter-{{ ai_gen_id }}"
+  data-current-handle="{{ collection.handle }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-collection-filter__container-{{ ai_gen_id }}">
+    {% if block.settings.heading != blank %}
+      <h2 class="ai-collection-filter__heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+    {% endif %}
+
+    <div class="ai-collection-filter__pills-wrapper-{{ ai_gen_id }}">
+      <div class="ai-collection-filter__pills-container-{{ ai_gen_id }}">
+        {% for i in (1..10) %}
+          {% liquid
+            assign collection_key = 'collection_' | append: i
+            assign selected_collection = block.settings[collection_key]
+          %}
+
+          {% if selected_collection != blank %}
+            {% assign is_active = false %}
+            {% if collection.handle == selected_collection.handle %}
+              {% assign is_active = true %}
+            {% endif %}
+
+            {% assign has_active_subcollection = false %}
+            {% if selected_collection.metafields.custom.subcollections.value != blank %}
+              {% for subcollection in selected_collection.metafields.custom.subcollections.value %}
+                {% if collection.handle == subcollection.handle %}
+                  {% assign has_active_subcollection = true %}
+                  {% assign is_active = true %}
+                  {% break %}
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+
+            <a
+              href="{{ selected_collection.url }}"
+              class="ai-collection-filter__pill-{{ ai_gen_id }} {% if is_active %}active{% endif %}"
+              data-collection-id="{{ selected_collection.id }}"
+              data-has-subcollections="{% if selected_collection.metafields.custom.subcollections.value != blank %}true{% else %}false{% endif %}"
+            >
+              {{ selected_collection.title }}
+            </a>
+
+            {% if selected_collection.metafields.custom.subcollections.value != blank %}
+              <div
+                class="ai-collection-filter__subcollections-{{ ai_gen_id }} {% if is_active %}visible{% endif %}"
+                data-parent-collection="{{ selected_collection.id }}"
+              >
+                <div class="ai-collection-filter__pills-container-{{ ai_gen_id }}">
+                  {% for subcollection in selected_collection.metafields.custom.subcollections.value %}
+                    {% assign is_subcollection_active = false %}
+                    {% if collection.handle == subcollection.handle %}
+                      {% assign is_subcollection_active = true %}
+                    {% endif %}
+
+                    <a
+                      href="{{ subcollection.url }}"
+                      class="ai-collection-filter__pill-{{ ai_gen_id }} {% if is_subcollection_active %}active{% endif %}"
+                      data-collection-id="{{ subcollection.id }}"
+                    >
+                      {{ subcollection.title }}
+                    </a>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</collection-filter-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class CollectionFilter{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.pills = this.querySelectorAll('.ai-collection-filter__pill-{{ ai_gen_id }}');
+      }
+
+      connectedCallback() {
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        this.pills.forEach((pill) => {
+          pill.addEventListener('click', (e) => {
+            const hasSubcollections = pill.getAttribute('data-has-subcollections') === 'true';
+            const isParentPill = !pill.closest('.ai-collection-filter__subcollections-{{ ai_gen_id }}');
+
+            if (hasSubcollections && isParentPill) {
+              e.preventDefault();
+              
+              const collectionId = pill.getAttribute('data-collection-id');
+              const subcollections = this.querySelector(
+                `.ai-collection-filter__subcollections-{{ ai_gen_id }}[data-parent-collection="${collectionId}"]`
+              );
+
+              this.querySelectorAll('.ai-collection-filter__subcollections-{{ ai_gen_id }}').forEach((sub) => {
+                if (sub !== subcollections) {
+                  sub.classList.remove('visible');
+                }
+              });
+
+              this.pills.forEach((p) => {
+                if (!p.closest('.ai-collection-filter__subcollections-{{ ai_gen_id }}')) {
+                  p.classList.remove('active');
+                }
+              });
+
+              pill.classList.add('active');
+
+              if (subcollections) {
+                const isVisible = subcollections.classList.contains('visible');
+                subcollections.classList.toggle('visible');
+                
+                if (!isVisible) {
+                  return;
+                }
+              }
+
+              window.location.href = pill.href;
+            }
+          });
+        });
+      }
+    }
+
+    customElements.define('collection-filter-{{ ai_gen_id }}', CollectionFilter{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Collection filter",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "เนื้อหา"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "หัวข้อ",
+      "default": "เลือก Collection"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "ขนาดหัวข้อ",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "ความกว้างบนเดสก์ท็อป",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Collections"
+    },
+    {
+      "type": "paragraph",
+      "content": "เลือก collections หลักได้สูงสุด 10 รายการ Subcollections จะดึงมาจาก metafield 'custom.subcollections' ของแต่ละ collection โดยอัตโนมัติ"
+    },
+    {
+      "type": "collection",
+      "id": "collection_1",
+      "label": "Collection 1"
+    },
+    {
+      "type": "collection",
+      "id": "collection_2",
+      "label": "Collection 2"
+    },
+    {
+      "type": "collection",
+      "id": "collection_3",
+      "label": "Collection 3"
+    },
+    {
+      "type": "collection",
+      "id": "collection_4",
+      "label": "Collection 4"
+    },
+    {
+      "type": "collection",
+      "id": "collection_5",
+      "label": "Collection 5"
+    },
+    {
+      "type": "collection",
+      "id": "collection_6",
+      "label": "Collection 6"
+    },
+    {
+      "type": "collection",
+      "id": "collection_7",
+      "label": "Collection 7"
+    },
+    {
+      "type": "collection",
+      "id": "collection_8",
+      "label": "Collection 8"
+    },
+    {
+      "type": "collection",
+      "id": "collection_9",
+      "label": "Collection 9"
+    },
+    {
+      "type": "collection",
+      "id": "collection_10",
+      "label": "Collection 10"
+    },
+    {
+      "type": "header",
+      "content": "สไตล์ Pill"
+    },
+    {
+      "type": "range",
+      "id": "pill_font_size",
+      "label": "ขนาดตัวอักษร",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "pill_border_radius",
+      "label": "มุมโค้ง",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "pill_border_width",
+      "label": "ความหนาขอบ",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "pill_background",
+      "label": "สีพื้นหลัง",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "pill_text_color",
+      "label": "สีตัวอักษร",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "pill_border_color",
+      "label": "สีขอบ",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "pill_hover_background",
+      "label": "สีพื้นหลังเมื่อ hover",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "pill_hover_text_color",
+      "label": "สีตัวอักษรเมื่อ hover",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "pill_hover_border_color",
+      "label": "สีขอบเมื่อ hover",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "pill_active_background",
+      "label": "สีพื้นหลังเมื่อเลือก",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "pill_active_text_color",
+      "label": "สีตัวอักษรเมื่อเลือก",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "pill_active_border_color",
+      "label": "สีขอบเมื่อเลือก",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "สี"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "สีข้อความ",
+      "default": "#000000"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection filter"
+    }
+  ]
+}
 {% endschema %}
