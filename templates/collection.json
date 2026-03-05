@@ -16,7 +16,7 @@
           "type": "text",
           "name": "Title",
           "settings": {
-            "text": "<h1>{{ closest.collection.title }}</h1>",
+            "text": "<h1>รวมงานป้ายทุกประเภท</h1>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
