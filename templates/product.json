@@ -452,11 +452,11 @@
           "type": "text",
           "name": "t:names.header",
           "settings": {
-            "text": "<h3>You may also like </h3>",
+            "text": "<h2>สินค้าอื่นที่น่าสนใจ </h2>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
-            "type_preset": "h4",
+            "type_preset": "rte",
             "font": "var(--font-primary--family)",
             "font_size": "",
             "line_height": "normal",
