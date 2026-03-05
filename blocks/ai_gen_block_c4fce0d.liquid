@@ -331,7 +331,9 @@
 
       renderProducts(products) {
         this.productsContainer.innerHTML = products.map(product => {
-          const imageUrl = product.featured_image || (product.images && product.images[0]) || '';
+          const imageUrl = (product.featured_image && product.featured_image.src)
+          || (product.images && product.images[0] && product.images[0].src)
+          || '';
           const price = product.variants && product.variants[0] ? product.variants[0].price : 0;
           
           return `
