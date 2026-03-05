@@ -354,18 +354,28 @@
     {% endfor %}
 
     {%- comment -%} Toolbar {%- endcomment -%}
-    <div class="ocf__toolbar-{{ ai_gen_id }}">
-      <div class="ocf__sort-{{ ai_gen_id }}">
-        <label for="ocf-sort-{{ ai_gen_id }}" style="opacity:0.6;">เรียงโดย</label>
-        <select id="ocf-sort-{{ ai_gen_id }}" class="ocf__sort-select-{{ ai_gen_id }}" data-sort>
-          <option value="default">แนะนำ</option>
-          <option value="price-asc">ราคา: ต่ำ → สูง</option>
-          <option value="price-desc">ราคา: สูง → ต่ำ</option>
-          <option value="title-asc">ชื่อ A → Z</option>
-          <option value="title-desc">ชื่อ Z → A</option>
-          <option value="created-desc">ใหม่ล่าสุด</option>
-        </select>
-      </div>
+<div class="ocf__toolbar-{{ ai_gen_id }}">
+  <span class="ocf__counter-{{ ai_gen_id }}" style="font-size:13px;opacity:0.55;min-width:60px;"></span>
+  <div class="ocf__sort-{{ ai_gen_id }}">
+    <label for="ocf-sort-{{ ai_gen_id }}" style="opacity:0.6;">เรียงโดย</label>
+    <select id="ocf-sort-{{ ai_gen_id }}" class="ocf__sort-select-{{ ai_gen_id }}" data-sort>
+      <option value="default">แนะนำ</option>
+      <option value="price-asc">ราคา: ต่ำ → สูง</option>
+      <option value="price-desc">ราคา: สูง → ต่ำ</option>
+      <option value="title-asc">ชื่อ A → Z</option>
+      <option value="title-desc">ชื่อ Z → A</option>
+      <option value="created-desc">ใหม่ล่าสุด</option>
+    </select>
+  </div>
+  <div class="ocf__view-toggle-{{ ai_gen_id }}">
+    <button type="button" class="ocf__view-btn-{{ ai_gen_id }} active" data-view="large" title="การ์ดใหญ่">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+    </button>
+    <button type="button" class="ocf__view-btn-{{ ai_gen_id }}" data-view="small" title="การ์ดเล็ก">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="3.5" height="3.5" rx="0.5"/><rect x="6.25" y="1" width="3.5" height="3.5" rx="0.5"/><rect x="11.5" y="1" width="3.5" height="3.5" rx="0.5"/><rect x="1" y="6.25" width="3.5" height="3.5" rx="0.5"/><rect x="6.25" y="6.25" width="3.5" height="3.5" rx="0.5"/><rect x="11.5" y="6.25" width="3.5" height="3.5" rx="0.5"/><rect x="1" y="11.5" width="3.5" height="3.5" rx="0.5"/><rect x="6.25" y="11.5" width="3.5" height="3.5" rx="0.5"/><rect x="11.5" y="11.5" width="3.5" height="3.5" rx="0.5"/></svg>
+    </button>
+  </div>
+</div>
 
 <div class="ocf__toolbar-{{ ai_gen_id }}">
   <div class="ocf__sort-{{ ai_gen_id }}">
@@ -416,6 +426,24 @@
 }
 </script>
 
+<script id="ocf-counts-{{ ai_gen_id }}" type="application/json">
+{
+  {% for i in (1..10) %}
+    {% assign col_key = 'collection_' | append: i %}
+    {% assign col_item = block.settings[col_key] %}
+    {% if col_item != blank %}
+      "{{ col_item.handle }}": {{ col_item.products_count }}
+      {% if col_item.metafields.custom.subcollections.value != blank %}
+        {% for sub in col_item.metafields.custom.subcollections.value %}
+          ,"{{ sub.handle }}": {{ sub.products_count }}
+        {% endfor %}
+      {% endif %}
+      {% unless forloop.last %},{% endunless %}
+    {% endif %}
+  {% endfor %}
+}
+</script>
+
 <script>
 (function () {
   var root = document.querySelector('.ocf-{{ ai_gen_id }}');
@@ -430,6 +458,9 @@
   var metaMap = {};
   var metaEl = document.getElementById('ocf-meta-{{ ai_gen_id }}');
   if (metaEl) { try { metaMap = JSON.parse(metaEl.textContent); } catch(e) {} }
+  var countMap = {};
+var countEl = document.getElementById('ocf-counts-{{ ai_gen_id }}');
+if (countEl) { try { countMap = JSON.parse(countEl.textContent); } catch(e) {} }
 
   var state = { handle: root.dataset.activeHandle || '', sort: 'default' };
 
@@ -468,7 +499,10 @@
         return;
       }
 
-      if (counter) counter.textContent = data.products.length + ' รายการ';
+      if (counter) {
+  var total = countMap[state.handle] || data.products.length;
+  counter.textContent = total + ' รายการ';
+}
 
       grid.innerHTML = data.products.map(function (p) {
         var img    = (p.featured_image && p.featured_image.src) || (p.images && p.images[0] && p.images[0].src) || '';
