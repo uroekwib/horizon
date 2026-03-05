@@ -384,36 +384,52 @@
   </div>
 </div>
 
+<script id="ocf-meta-{{ ai_gen_id }}" type="application/json">
+{
+  {% for product in collection.products %}
+    "{{ product.handle }}": "{{ product.metafields.custom.product_price }}"
+    {% unless forloop.last %},{% endunless %}
+  {% endfor %}
+}
+</script>
+
+<script id="ocf-meta-{{ ai_gen_id }}" type="application/json">
+{
+  {% for product in collection.products %}
+    "{{ product.handle }}": "{{ product.metafields.custom.product_price }}"
+    {% unless forloop.last %},{% endunless %}
+  {% endfor %}
+}
+</script>
+
 <script>
-    (function () {
-      var root = document.querySelector('.ocf-{{ ai_gen_id }}');
-      if (!root) return;
+(function () {
+  var root = document.querySelector('.ocf-{{ ai_gen_id }}');
+  if (!root) return;
 
-      var grid = root.querySelector('[data-products-container]');
-      var loading = root.querySelector('.ocf__loading-{{ ai_gen_id }}');
-      var sortEl = root.querySelector('[data-sort]');
-      var viewBtns = root.querySelectorAll('[data-view]');
-      var subWraps = root.querySelectorAll('[data-parent-index]');
-      var perPage = parseInt(root.dataset.productsPerPage) || 12;
-      var defCols = parseInt(root.dataset.desktopCols) || 4;
+  var grid     = root.querySelector('[data-products-container]');
+  var sortEl   = root.querySelector('[data-sort]');
+  var viewBtns = root.querySelectorAll('[data-view]');
+  var perPage  = parseInt(root.dataset.productsPerPage) || 12;
+  var defCols  = parseInt(root.dataset.desktopCols) || 4;
 
-      var state = {
-        handle: root.dataset.activeHandle || '',
-        sort: 'default',
-      };
+  var metaMap = {};
+  var metaEl = document.getElementById('ocf-meta-{{ ai_gen_id }}');
+  if (metaEl) { try { metaMap = JSON.parse(metaEl.textContent); } catch(e) {} }
 
-      var sortMap = {
-        'price-asc': 'price-ascending',
-        'price-desc': 'price-descending',
-        'title-asc': 'title-ascending',
-        'title-desc': 'title-descending',
-        'created-desc': 'created-descending',
-      };
+  var state = { handle: root.dataset.activeHandle || '', sort: 'default' };
 
-      async function loadProducts() {
+  var sortMap = {
+    'price-asc':    'price-ascending',
+    'price-desc':   'price-descending',
+    'title-asc':    'title-ascending',
+    'title-desc':   'title-descending',
+    'created-desc': 'created-descending'
+  };
+
+  async function loadProducts() {
     if (!state.handle) return;
 
-    /* ── Skeleton ── */
     var radius = {{ block.settings.product_image_radius }};
     grid.innerHTML = Array(perPage).fill(null).map(function() {
       return '<div style="display:flex;flex-direction:column;gap:10px;">'
@@ -436,22 +452,19 @@
       }
 
       grid.innerHTML = data.products.map(function (p) {
-        var img   = (p.featured_image && p.featured_image.src) || (p.images && p.images[0] && p.images[0].src) || '';
-        var price = p.variants && p.variants[0] ? parseFloat(p.variants[0].price) : 0;
-        var fmt   = new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB' }).format(price);
-        var d     = document.createElement('div');
+        var img    = (p.featured_image && p.featured_image.src) || (p.images && p.images[0] && p.images[0].src) || '';
+        var price  = p.variants && p.variants[0] ? parseFloat(p.variants[0].price) : 0;
+        var fmt    = new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB' }).format(price);
+        var suffix = metaMap[p.handle] ? ' / ' + metaMap[p.handle] : '';
+        var d      = document.createElement('div');
         d.textContent = p.title;
-        var title = d.innerHTML;
+        var title  = d.innerHTML;
 
         return '<a href="/products/' + p.handle + '" class="ocf__card-{{ ai_gen_id }}">'
           + (img ? '<div class="ocf__card-img-wrap-{{ ai_gen_id }}"><img src="' + img + '" alt="' + title + '" class="ocf__card-img-{{ ai_gen_id }}" loading="lazy"></div>' : '')
           + '<div class="ocf__card-body-{{ ai_gen_id }}">'
           + '<h3 class="ocf__card-title-{{ ai_gen_id }}">' + title + '</h3>'
-          + '<div class="ocf__card-price-{{ ai_gen_id }}">'
-          + 'เริ่มจาก '
-          + fmt
-          + ' / ชุด</span>'
-          + '</div>'
+          + '<div class="ocf__card-price-{{ ai_gen_id }}">เริ่มจาก ' + fmt + suffix + '</div>'
           + '</div></a>';
       }).join('');
 
@@ -460,48 +473,33 @@
     }
   }
 
-      /* ── Parent pill → navigate ── */
-      root.querySelectorAll('[data-col-index]').forEach(function (pill) {
-        pill.addEventListener('click', function () {
-          window.location.href = pill.href;
-        });
-      });
+  root.querySelectorAll('[data-col-index]').forEach(function (pill) {
+    pill.addEventListener('click', function () { window.location.href = pill.href; });
+  });
 
-      /* ── Sub pill → JS load ── */
-      root.querySelectorAll('[data-sub-handle]').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          root.querySelectorAll('[data-sub-handle]').forEach(function (b) {
-            b.classList.remove('active');
-          });
-          btn.classList.add('active');
-          state.handle = btn.dataset.subHandle;
-          loadProducts();
-        });
-      });
-
-      /* ── Sort ── */
-      if (sortEl) {
-        sortEl.addEventListener('change', function () {
-          state.sort = sortEl.value;
-          loadProducts();
-        });
-      }
-
-      /* ── View toggle ── */
-      viewBtns.forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          viewBtns.forEach(function (b) {
-            b.classList.remove('active');
-          });
-          btn.classList.add('active');
-          var cols = btn.dataset.view === 'small' ? defCols + 2 : defCols;
-          grid.style.setProperty('--ocf-cols', cols);
-        });
-      });
-
-      /* ── Init ── */
+  root.querySelectorAll('[data-sub-handle]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      root.querySelectorAll('[data-sub-handle]').forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      state.handle = btn.dataset.subHandle;
       loadProducts();
-    })();
+    });
+  });
+
+  if (sortEl) {
+    sortEl.addEventListener('change', function () { state.sort = sortEl.value; loadProducts(); });
+  }
+
+  viewBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      viewBtns.forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      grid.style.setProperty('--ocf-cols', btn.dataset.view === 'small' ? defCols + 2 : defCols);
+    });
+  });
+
+  loadProducts();
+})();
 </script>
 
 {% schema %}
