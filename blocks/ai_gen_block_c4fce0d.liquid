@@ -366,6 +366,19 @@
           <option value="created-desc">ใหม่ล่าสุด</option>
         </select>
       </div>
+
+<div class="ocf__toolbar-{{ ai_gen_id }}">
+  <div class="ocf__sort-{{ ai_gen_id }}">
+    ...
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <span class="ocf__counter-{{ ai_gen_id }}" style="font-size:13px;opacity:0.55;"></span>
+    <div class="ocf__view-toggle-{{ ai_gen_id }}">
+      ...
+    </div>
+  </div>
+</div>
+
       <div class="ocf__view-toggle-{{ ai_gen_id }}">
         <button type="button" class="ocf__view-btn-{{ ai_gen_id }} active" data-view="large" title="การ์ดใหญ่">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
@@ -431,10 +444,13 @@
   async function loadProducts() {
     if (!state.handle) return;
 
+    var counter = root.querySelector('.ocf__counter-{{ ai_gen_id }}');
+    if (counter) counter.textContent = '';
+
     var radius = {{ block.settings.product_image_radius }};
     grid.innerHTML = Array(perPage).fill(null).map(function() {
       return '<div style="display:flex;flex-direction:column;gap:10px;">'
-        + '<div style="aspect-ratio:1;border-radius:' + radius + 'px;background:linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%);background-size:200% 100%;animation:ocf-shimmer 1.4s infinite;"></div>'
+        + '<div style="aspect-ratio:4/3;border-radius:' + radius + 'px;background:linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%);background-size:200% 100%;animation:ocf-shimmer 1.4s infinite;"></div>'
         + '<div style="height:13px;width:65%;border-radius:4px;background:linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%);background-size:200% 100%;animation:ocf-shimmer 1.4s infinite 0.1s;"></div>'
         + '<div style="height:13px;width:35%;border-radius:4px;background:linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%);background-size:200% 100%;animation:ocf-shimmer 1.4s infinite 0.2s;"></div>'
         + '</div>';
@@ -451,6 +467,8 @@
         grid.innerHTML = '<div class="ocf__empty-{{ ai_gen_id }}">ไม่พบสินค้าในหมวดนี้</div>';
         return;
       }
+
+      if (counter) counter.textContent = data.products.length + ' รายการ';
 
       grid.innerHTML = data.products.map(function (p) {
         var img    = (p.featured_image && p.featured_image.src) || (p.images && p.images[0] && p.images[0].src) || '';
