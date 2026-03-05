@@ -32,7 +32,7 @@
             "background_color": "#00000026",
             "corner_radius": 0,
             "padding-block-start": 0,
-            "padding-block-end": 0,
+            "padding-block-end": 20,
             "padding-inline-start": 0,
             "padding-inline-end": 0
           },
@@ -61,7 +61,7 @@
             "products_per_row_desktop": 4,
             "products_per_row_mobile": "2",
             "product_grid_gap": 20,
-            "products_per_page": 12,
+            "products_per_page": 16,
             "pill_font_size": 14,
             "pill_padding_vertical": 10,
             "pill_padding_horizontal": 16,
@@ -69,7 +69,7 @@
             "icon_size": 20,
             "product_image_radius": 8,
             "product_title_size": 14,
-            "product_price_size": 14
+            "product_price_size": 13
           },
           "blocks": {}
         },
