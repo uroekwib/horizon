@@ -165,7 +165,18 @@
           {% if collection != blank %}
             <a
               href="{{ collection.url }}"
-              class="ai-collection-filter__pill-{{ ai_gen_id }} {% if forloop.first %}active{% endif %}"
+              {%- assign pill_active = false -%}
+              {%- if collection.handle == collection.handle -%}
+                {%- assign pill_active = true -%}
+              {%- endif -%}
+              {%- if collection.metafields.custom.subcollections.value != blank -%}
+                {%- for sub in collection.metafields.custom.subcollections.value -%}
+                  {%- if request.path contains sub.handle -%}
+                    {%- assign pill_active = true -%}
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- endif -%}
+              class="ai-collection-filter__pill-{{ ai_gen_id }} {% if pill_active %}active{% endif %}"
               data-collection-handle="{{ collection.handle }}"
               data-collection-index="{{ i }}"
             >
