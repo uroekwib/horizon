@@ -213,9 +213,7 @@
       {% endfor %}
     </div>
 
-    <div class="ai-collection-filter__loading-{{ ai_gen_id }}">
-      กำลังโหลด...
-    </div>
+    <div class="ai-collection-filter__loading-{{ ai_gen_id }}">กำลังโหลด...</div>
 
     <div class="ai-collection-filter__products-{{ ai_gen_id }}" data-products-container></div>
   </div>
@@ -245,56 +243,30 @@
         }
       }
 
-      setupEventListeners() {
-        this.collectionPills.forEach(pill => {
-          pill.addEventListener('click', (e) => {
-            e.preventDefault();
-            const handle = pill.dataset.collectionHandle;
-            const index = pill.dataset.collectionIndex;
-            
-            window.history.pushState({}, '', pill.href);
-            
-            this.collectionPills.forEach(p => p.classList.remove('active'));
-            pill.classList.add('active');
-            
-            this.subcollectionContainers.forEach(container => {
-              container.classList.remove('active');
-            });
-            
-            const targetSubcollections = this.querySelector(`[data-parent-collection="${index}"]`);
-            if (targetSubcollections) {
-              targetSubcollections.classList.add('active');
-            }
-            
-            this.querySelectorAll('[data-subcollection-handle]').forEach(sp => {
-              sp.classList.remove('active');
-            });
-            
-            this.currentCollectionHandle = handle;
-            this.currentSubcollectionHandle = null;
-            
-            this.loadProducts(handle);
-          });
-        });
+ setupEventListeners() {
+  this.collectionPills.forEach(pill => {
+    pill.addEventListener('click', (e) => {
+      window.location.href = pill.href;
+    });
+  });
 
-        this.subcollectionPills.forEach(pill => {
-          pill.addEventListener('click', () => {
-            const handle = pill.dataset.subcollectionHandle;
-            
-            const parentContainer = pill.closest('.ai-collection-filter__subcollections-{{ ai_gen_id }}');
-            if (parentContainer) {
-              parentContainer.querySelectorAll('[data-subcollection-handle]').forEach(p => {
-                p.classList.remove('active');
-              });
-            }
-            pill.classList.add('active');
-            
-            this.currentSubcollectionHandle = handle;
-            
-            this.loadProducts(handle);
-          });
+  this.subcollectionPills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      const handle = pill.dataset.subcollectionHandle;
+      
+      const parentContainer = pill.closest('.ai-collection-filter__subcollections-{{ ai_gen_id }}');
+      if (parentContainer) {
+        parentContainer.querySelectorAll('[data-subcollection-handle]').forEach(p => {
+          p.classList.remove('active');
         });
       }
+      pill.classList.add('active');
+      
+      this.currentSubcollectionHandle = handle;
+      this.loadProducts(handle);
+    });
+  });
+}
 
       async loadProducts(collectionHandle) {
         if (!collectionHandle) {
