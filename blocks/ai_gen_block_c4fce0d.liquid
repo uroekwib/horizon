@@ -97,17 +97,19 @@
       }
 
       .ocf__subrow-wrap-{{ ai_gen_id }} {
-        overflow: hidden;
-        max-height: 0;
-        opacity: 0;
-        transition: max-height 0.3s ease, opacity 0.25s ease;
+        display: none;
       }
 
       .ocf__subrow-wrap-{{ ai_gen_id }}.visible {
-        max-height: 300px;
-        opacity: 1;
+         display: block;
+        animation: ocf-fadein 0.25s ease;
       }
 
+      @keyframes ocf-fadein {
+        from { opacity: 0; transform: translateY(-4px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      
       .ocf__toolbar-{{ ai_gen_id }} {
         display: flex;
         align-items: center;
