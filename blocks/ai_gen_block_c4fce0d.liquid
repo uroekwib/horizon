@@ -73,32 +73,32 @@
           box-shadow: 0 2px 10px rgba(20,201,223,0.35);
         }
 
-        .ocf__subpill-{{ ai_gen_id }} {
-          display: inline-flex;
-          align-items: center;
-          gap: 5px;
-          padding: 6px 14px;
-          border-radius: {{ block.settings.pill_border_radius }}px;
-          background: rgba(0,0,0,0.04);
-          color: var(--color-foreground);
-          font-size: {{ block.settings.pill_font_size | minus: 1 }}px;
-          font-weight: 400;
-          white-space: nowrap;
-          cursor: pointer;
-          border: none;
-          transition: background 0.2s, color 0.2s;
-        }
+.ocf__subpill-{{ ai_gen_id }} {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  background: rgba(23,169,187,0.09);
+  border: none;
+  color: #17a9bb;
+  font-size: {{ block.settings.pill_font_size | minus: 1 }}px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
+  transition: background 0.2s;
+}
 
-        .ocf__subpill-{{ ai_gen_id }}:hover {
-          background: rgba(23,169,187,0.12);
-          color: #17a9bb;
-        }
+.ocf__subpill-{{ ai_gen_id }}:hover {
+  background: rgba(23,169,187,0.18);
+}
 
-        .ocf__subpill-{{ ai_gen_id }}.active {
-          background: linear-gradient(135deg, #14c9df, #17a9bb);
-          color: #fff !important;
-          box-shadow: 0 2px 8px rgba(20,201,223,0.28);
-        }
+.ocf__subpill-{{ ai_gen_id }}.active {
+  background: linear-gradient(135deg, #14c9df, #17a9bb);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(20,201,223,0.28);
+}
 
         .ocf__subrow-wrap-{{ ai_gen_id }} {
           display: none;
