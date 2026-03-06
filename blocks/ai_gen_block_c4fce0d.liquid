@@ -95,9 +95,17 @@
 }
 
 .ocf__subpill-{{ ai_gen_id }}.active {
-  background: linear-gradient(135deg, #14c9df, #17a9bb);
+  background: linear-gradient(135deg, #14c9df, #17a9bb, #818CF8, #A78BFA);
+  background-size: 300% 100%;
   color: #fff;
   box-shadow: 0 2px 8px rgba(20,201,223,0.28);
+  animation: ocf-subpill-shimmer-{{ ai_gen_id }} 4s ease infinite;
+}
+
+@keyframes ocf-subpill-shimmer-{{ ai_gen_id }} {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 
