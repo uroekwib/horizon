@@ -22,33 +22,29 @@
 
   /* ── Chip base ── */
   .ai-faq-chip-{{ ai_gen_id }} {
-    font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
-    padding: 4px 10px;
-    background: rgba(255, 255, 255, 0.8);
-    color: #374151;
-    border: 1.5px solid rgba(23, 169, 187, 0.3);
-    border-radius: 20px;
-    font-size: {{ block.settings.chip_font_size }}px;
-    font-weight: 700!important;
-    cursor: pointer;
-    white-space: nowrap;
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    letter-spacing: 0.01em;
-    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
+  font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
+  padding: 6px 14px;
+  border-radius: 6px;
+  background: rgba(23,169,187,0.09);
+  border: none;
+  color: #17a9bb;
+  font-size: {{ block.settings.chip_font_size }}px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  letter-spacing: 0.03em;
+  transition: background 0.2s;
+}
 
-  .ai-faq-chip-{{ ai_gen_id }}:hover {
-    border-color: #17a9bb;
-    color: #17a9bb;
-    background: #e3f8fb;
-    transform: translateY(-1px);
-    box-shadow: 0 3px 12px rgba(20, 201, 223, 0.18);
-  }
+.ai-faq-chip-{{ ai_gen_id }}:hover {
+  background: rgba(23,169,187,0.18);
+}
 
-  .ai-faq-chip-{{ ai_gen_id }}:active {
-    transform: scale(0.96);
-  }
+.ai-faq-chip-{{ ai_gen_id }}.active {
+  background: linear-gradient(135deg, #14c9df, #17a9bb);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(20,201,223,0.28);
+}
 
   /* Active = CI gradient */
   .ai-faq-chip-{{ ai_gen_id }}.active {
