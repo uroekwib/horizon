@@ -1110,32 +1110,28 @@ body.gm-menu-installed .gm-menu ul {
 
 /* ── Horizon AI FAQ chip buttons ── */
 [class*="ai-faq-chip-"] {
-  font-family: font-family: 'Google Sans', 'Noto Sans Thai', sans-serif !important;
-  border-radius: var(--oc-radius-pill) !important;
-  border: 1.5px solid rgba(23, 169, 187, 0.3) !important;
-  background: rgba(255,255,255,0.8) !important;
-  color: var(--oc-ink-70) !important;
-  font-weight: 500 !important;
-  transition: all 0.2s var(--oc-ease-back) !important;
-  backdrop-filter: blur(6px) !important;
-  -webkit-backdrop-filter: blur(6px) !important;
+  font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
+  padding: 6px 14px;
+  border-radius: 6px;
+  background: rgba(23,169,187,0.09);
+  border: none;
+  color: #17a9bb;
+  font-size: {{ block.settings.chip_font_size }}px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  letter-spacing: 0.03em;
+  transition: background 0.2s;
 }
 
 [class*="ai-faq-chip-"]:hover {
-  border-color: var(--oc-cyan) !important;
-  color: var(--oc-cyan-d) !important;
-  /*background: var(--oc-cyan-l) !important;*/
-  transform: translateY(-1px) !important;
-  box-shadow: 0 3px 12px rgba(20, 201, 223, 0.18) !important;
+  background: rgba(23,169,187,0.18);
 }
 
 [class*="ai-faq-chip-"].active {
-  background: var(--oc-grad-btn) !important;
-  background-size: 200% 100% !important;
-  border-color: transparent !important;
-  color: #fff !important;
-  box-shadow: var(--oc-shadow-glow-cyan) !important;
-  animation: oc-rainbow-move 4s ease infinite !important;
+  background: linear-gradient(135deg, #14c9df, #17a9bb);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(20,201,223,0.28);
 }
 
 /* ============================================================
