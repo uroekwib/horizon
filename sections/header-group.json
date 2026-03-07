@@ -46,7 +46,9 @@
         "announcement_tJ6q8m",
         "announcement_BxgCk9"
       ],
-      "custom_css": [],
+      "custom_css": [
+        "p {letter-spacing: 0.03em;}"
+      ],
       "name": "t:names.announcement_bar",
       "settings": {
         "speed": 5,
