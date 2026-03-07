@@ -791,14 +791,15 @@
             "custom_height": 100,
             "inherit_color_scheme": true,
             "color_scheme": "",
-            "background_media": "none",
+            "background_media": "image",
             "video_position": "cover",
-            "background_image_position": "cover",
+            "background_image": "shopify://shop_images/LOGO_3M.svg",
+            "background_image_position": "fit",
             "border": "solid",
             "border_width": 0,
             "border_opacity": 100,
-            "border_radius": 11,
-            "toggle_overlay": true,
+            "border_radius": 0,
+            "toggle_overlay": false,
             "overlay_color": "#eaedf1",
             "overlay_style": "solid",
             "gradient_direction": "to top",
@@ -810,33 +811,7 @@
             "padding-inline-start": 24,
             "padding-inline-end": 24
           },
-          "blocks": {
-            "image_qybgW9": {
-              "type": "image",
-              "name": "t:names.image",
-              "settings": {
-                "link": "",
-                "image_ratio": "adapt",
-                "width": "fill",
-                "custom_width": 100,
-                "width_mobile": "fill",
-                "custom_width_mobile": 100,
-                "height": "fit",
-                "border": "none",
-                "border_width": 1,
-                "border_opacity": 100,
-                "border_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "image_qybgW9"
-          ]
+          "blocks": {}
         },
         "group_yR3AWW": {
           "type": "group",
@@ -858,14 +833,15 @@
             "custom_height": 100,
             "inherit_color_scheme": true,
             "color_scheme": "",
-            "background_media": "none",
+            "background_media": "image",
             "video_position": "cover",
-            "background_image_position": "cover",
+            "background_image": "shopify://shop_images/LOGO_Mactac.svg",
+            "background_image_position": "fit",
             "border": "solid",
             "border_width": 0,
             "border_opacity": 100,
             "border_radius": 11,
-            "toggle_overlay": true,
+            "toggle_overlay": false,
             "overlay_color": "#eaedf1",
             "overlay_style": "solid",
             "gradient_direction": "to top",
@@ -874,36 +850,10 @@
             "placeholder": "",
             "padding-block-start": 24,
             "padding-block-end": 24,
-            "padding-inline-start": 24,
-            "padding-inline-end": 24
+            "padding-inline-start": 32,
+            "padding-inline-end": 32
           },
-          "blocks": {
-            "image_QCUgxr": {
-              "type": "image",
-              "name": "t:names.image",
-              "settings": {
-                "link": "",
-                "image_ratio": "adapt",
-                "width": "fill",
-                "custom_width": 100,
-                "width_mobile": "fill",
-                "custom_width_mobile": 100,
-                "height": "fit",
-                "border": "none",
-                "border_width": 1,
-                "border_opacity": 100,
-                "border_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "image_QCUgxr"
-          ]
+          "blocks": {}
         },
         "group_y9PppV": {
           "type": "group",
@@ -925,14 +875,15 @@
             "custom_height": 100,
             "inherit_color_scheme": true,
             "color_scheme": "",
-            "background_media": "none",
+            "background_media": "image",
             "video_position": "cover",
-            "background_image_position": "cover",
+            "background_image": "shopify://shop_images/Avery_Dennison_Logo_a2b67042-19aa-4759-ae01-30fd4fffe45e.svg",
+            "background_image_position": "fit",
             "border": "solid",
             "border_width": 0,
             "border_opacity": 100,
             "border_radius": 11,
-            "toggle_overlay": true,
+            "toggle_overlay": false,
             "overlay_color": "#eaedf1",
             "overlay_style": "solid",
             "gradient_direction": "to top",
@@ -944,33 +895,7 @@
             "padding-inline-start": 24,
             "padding-inline-end": 24
           },
-          "blocks": {
-            "image_ik7Xi8": {
-              "type": "image",
-              "name": "t:names.image",
-              "settings": {
-                "link": "",
-                "image_ratio": "adapt",
-                "width": "fill",
-                "custom_width": 100,
-                "width_mobile": "fill",
-                "custom_width_mobile": 100,
-                "height": "fit",
-                "border": "none",
-                "border_width": 1,
-                "border_opacity": 100,
-                "border_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "image_ik7Xi8"
-          ]
+          "blocks": {}
         },
         "group_icRBKD": {
           "type": "group",
