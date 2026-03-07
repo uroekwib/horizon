@@ -1158,6 +1158,10 @@
         "group_taJYCb",
         "group_famw4C"
       ],
+      "custom_css": [
+        "@media (max-width: 749px) {.section-content-wrapper.mobile-column {display: grid !important; grid-template-columns: repeat(2, 1fr) !important; flex-wrap: unset !important; }}",
+        ".group-block {display: flex !important; flex-direction: column !important; height: 100% !important;}"
+      ],
       "name": "t:names.multicolumn",
       "settings": {
         "content_direction": "row",
