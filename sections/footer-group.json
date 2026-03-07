@@ -99,7 +99,8 @@
         "text_C9knYC"
       ],
       "custom_css": [
-        "h3 {padding-bottom: 10px; padding-top: 20px;}"
+        "h3 {padding-bottom: 10px; padding-top: 20px;}",
+        "@media only screen and (max-width: 767px) {.text-block p, .text-block.p > * {margin-block: 4px; }}"
       ],
       "name": "t:names.footer",
       "settings": {
