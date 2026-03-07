@@ -268,7 +268,7 @@
             "button_zDkPWm": {
               "type": "button",
               "settings": {
-                "label": "Shop now",
+                "label": "เลือกหมวดหมู่สินค้าที่คุณต้องการ",
                 "link": "shopify://collections/all",
                 "open_in_new_tab": false,
                 "style_class": "button",
@@ -1238,6 +1238,41 @@
         "padding-block-end": 48
       }
     },
+    "hero_JX8pzU": {
+      "type": "hero",
+      "name": "t:names.hero",
+      "settings": {
+        "media_type_1": "image",
+        "media_type_2": "image",
+        "image_2": "shopify://shop_images/OCTOPUS_LAND_Revised2.jpg",
+        "stack_media_on_mobile": false,
+        "custom_mobile_media": false,
+        "media_type_1_mobile": "image",
+        "media_type_2_mobile": "image",
+        "link": "",
+        "open_in_new_tab": false,
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 16,
+        "section_width": "page-width",
+        "section_height": "auto",
+        "section_height_custom": 50,
+        "color_scheme": "scheme-5",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "gradient",
+        "gradient_direction": "to top",
+        "blurred_reflection": false,
+        "reflection_opacity": 75,
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
     "section_kfm38x": {
       "type": "section",
       "blocks": {
@@ -2038,6 +2073,7 @@
     "section_rDEeTf",
     "section_9r9Qef",
     "section_cfQEnY",
+    "hero_JX8pzU",
     "section_kfm38x",
     "section_3xH3gX",
     "1772340576b1154f8e"
