@@ -95,9 +95,13 @@
     endif
   endif
 
-  capture search
-    render 'search', style: search_style, class: search_class, display_style: section.settings.actions_display_style
-  endcapture
+capture search
+  render 'search', style: search_style, class: search_class, display_style: section.settings.actions_display_style
+  echo '<form action="/search" method="get" class="oc-search-expand mobile:hidden">'
+  echo '<input type="search" name="q" placeholder="ค้นหาสินค้าง่าย ๆ กดเลย" class="oc-search-expand__input" autocomplete="off">'
+  echo '<button type="submit" class="oc-search-expand__btn" aria-label="ค้นหา"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>'
+  echo '</form>'
+endcapture
 
   assign skip_drawer_search = false
   if shop.customer_accounts_enabled == false and section.settings.search_position == 'left' and search_style != 'none'
