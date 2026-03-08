@@ -1061,8 +1061,21 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
   z-index: 9998;
   left: -9999px;
   top: -9999px;
+  opacity: 0;
   transition: none;
   will-change: left, top, width;
+}
+
+.oc-search-morph.ready {
+  opacity: 1;
+  transition:
+    left 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    top 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    width 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.oc-search-morph.no-anim {
+  transition: none !important;
 }
 
 .oc-search-morph.ready {
