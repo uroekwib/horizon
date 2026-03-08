@@ -85,9 +85,9 @@
       "social-bar": {
         "type": "social-bar",
         "settings": {
-          "marquee_text_1": "ป้าย · สติ๊กเกอร์ · สื่อสิ่งพิมพ์",
-          "marquee_text_2": "ออกแบบ · ผลิต · ติดตั้ง",
-          "marquee_text_3": "พิมพ์คุณภาพสูง รับงานด่วน"
+          "marquee_text_1": "ทัก LINE ติดต่อสะดวก",
+          "marquee_text_2": "ทัก LINE สอบถามราคาได้เลย",
+          "marquee_text_3": "ทัก LINE สั่งซื้อได้เลย"
         }
       }
     },
