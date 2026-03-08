@@ -710,9 +710,11 @@ function init() {
   window.addEventListener('resize', onResize);
 
   if (!isAllowedPage) {
+  requestAnimationFrame(function () {
     showSlimImmediately();
-    return;
-  }
+  });
+  return;
+}
 
   if (hasPlayed) {
   requestAnimationFrame(function () {
