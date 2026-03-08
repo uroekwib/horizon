@@ -82,7 +82,7 @@
           "type": "ai_gen_block_1d076a5_unused",
           "disabled": true,
           "settings": {
-            "heading": "<p>Creating <em>high-quality</em> signs and printed materials | Premium Signage &amp; Printing</p>",
+            "heading": "<p>Creating <em>high-quality</em> signs and printed materials | Premium Signage & Printing</p>",
             "subheading": "We offer design and production services for advertising signs, promotional materials, and all types of printing, using modern technology and a team of professionals.",
             "cta_primary_text": "request a quote",
             "cta_primary_link": "",
@@ -2019,10 +2019,10 @@
           "settings": {
             "blog": "how-to",
             "heading": "บทความล่าสุด",
-            "heading_size": 32,
+            "heading_size": 28,
             "view_all_label": "ดูบทความทั้งหมด",
             "view_all_url": "https://octopusmedia.myshopify.com/blogs/how-to",
-            "container_width": 1200,
+            "container_width": 1500,
             "card_background": "#f3f7fa",
             "card_border_radius": 8,
             "heading_color": "#000000",
