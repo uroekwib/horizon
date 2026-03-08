@@ -370,8 +370,13 @@ endcapture
   }
 
   function showSlimImmediately() {
+  morph.classList.remove('ready');
+  morph.classList.add('no-anim');
+
+  morph.style.transition = 'none';
+  morph.style.opacity = '0';
+
   setSlotPos();
-  morph.classList.add('ready');
   morph.classList.add('slim');
   slim = true;
   clearTimer();
@@ -383,6 +388,12 @@ endcapture
     band.classList.add('collapsed');
     band.style.display = 'none';
   }
+
+  void morph.offsetWidth;
+
+  morph.style.opacity = '1';
+  morph.classList.add('ready');
+}
 }
 
   function init() {
