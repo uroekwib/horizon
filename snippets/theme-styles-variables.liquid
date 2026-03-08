@@ -125,18 +125,18 @@
 
   :root {
     /* Page Layout */
-    --sidebar-width: 25rem;
-    --narrow-content-width: 36rem;
-    --normal-content-width: 42rem;
-    --wide-content-width: 46rem;
-    --narrow-page-width: 90rem;
-    --normal-page-width: 120rem;
-    --wide-page-width: 150rem;
+    --sidebar-width: 25rem; /*25*/
+    --narrow-content-width: 40rem;  /*36*/
+    --normal-content-width: 46rem;   /*42*/
+    --wide-content-width: 56rem;   /*46*/
+    --narrow-page-width: 110rem;   /*90*/
+    --normal-page-width: 140rem;   /*120*/
+    --wide-page-width: 175rem;   /*150*/
 
     /* Section Heights */
-    --section-height-small: 15rem;
-    --section-height-medium: 25rem;
-    --section-height-large: 35rem;
+    --section-height-small: 8rem; /*15*/
+    --section-height-medium: 15rem; /*25*/
+    --section-height-large: 24rem; /*35*/
 
     @media screen and (min-width: 40em) {
       --section-height-small: 40svh;
@@ -151,8 +151,8 @@
     }
 
     /* Letter spacing */
-    --letter-spacing-sm: 0.06em;
-    --letter-spacing-md: 0.13em;
+    --letter-spacing-sm: 0.03em;
+    --letter-spacing-md: 0.07em;
 
     /* Font families */
     --font-body--family: {{ settings.type_body_font.family }}, {{ settings.type_body_font.fallback_families }};
