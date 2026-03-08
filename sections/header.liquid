@@ -412,20 +412,39 @@ endcapture
     return getHeaderRect().bottom;
   }
 
-  function setHeroPos() {
-    var headerBottom = getHeaderBottom();
 
-    morph.style.left = '0px';
-    morph.style.top = headerBottom + 'px';
-    morph.style.width = window.innerWidth + 'px';
+  function getHeroBounds() {
+  var columns = headerEl.querySelector('.header__row--top .header__columns') || headerEl.querySelector('.header__columns');
 
-    if (band) {
-      band.style.left = '0px';
-      band.style.top = (headerBottom + 55) + 'px';
-      band.style.width = window.innerWidth + 'px';
-    }
+  if (!columns) {
+    return {
+      left: 16,
+      width: window.innerWidth - 32
+    };
   }
 
+  var r = columns.getBoundingClientRect();
+
+  return {
+    left: r.left,
+    width: r.width
+  };
+}
+
+  function setHeroPos() {
+  var headerBottom = getHeaderBottom();
+  var bounds = getHeroBounds();
+
+  morph.style.left = bounds.left + 'px';
+  morph.style.top = (headerBottom + 10) + 'px';
+  morph.style.width = bounds.width + 'px';
+
+  if (band) {
+    band.style.left = bounds.left + 'px';
+    band.style.top = (headerBottom + 72) + 'px';
+    band.style.width = bounds.width + 'px';
+  }
+}
   function setSlotPos() {
     var r = slot.getBoundingClientRect();
     var headerRect = getHeaderRect();
@@ -992,6 +1011,7 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
 }
 
 .oc-search-morph__rainbow {
+  border-radius: 999px;
   position: absolute;
   inset: 0;
   border-radius: 0;
@@ -1004,6 +1024,7 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
 }
 
 .oc-search-morph__rainbow::after {
+  border-radius: 999px;
   content: '';
   position: absolute;
   inset: 2px;
@@ -1013,6 +1034,7 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
 }
 
 .oc-search-morph__inner {
+  border-radius: 999px;
   position: relative;
   z-index: 1;
   display: flex;
