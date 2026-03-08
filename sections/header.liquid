@@ -715,9 +715,11 @@ function init() {
   }
 
   if (hasPlayed) {
+  requestAnimationFrame(function () {
     showSlimImmediately();
-    return;
-  }
+  });
+  return;
+}
 
   window.addEventListener('scroll', handleScroll, { passive: true });
   tryPlace(30);
