@@ -947,7 +947,22 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
 }
 
 @media screen and (min-width: 750px) {
-  .search-action { display: none !important; }
+  .oc-search-action-wrap {
+    display: none !important;
+  }
+
+  .oc-search-slot-wrap {
+    display: flex;
+    align-items: center;
+    min-width: 220px;
+    flex: 0 0 220px;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .oc-search-slot-wrap {
+    display: none !important;
+  }
 }
 
 .oc-search-slot {
