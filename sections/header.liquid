@@ -368,6 +368,23 @@ endcapture
     var active = toggle.querySelector('.oc-lang-toggle__btn.active');
     if (active) moveTrack(toggle, active);
   }
+
+  function showSlimImmediately() {
+  setSlotPos();
+  morph.classList.add('ready');
+  morph.classList.add('slim');
+  slim = true;
+  clearTimer();
+
+  morph.style.display = '';
+
+  if (band) {
+    band.classList.remove('visible');
+    band.classList.add('collapsed');
+    band.style.display = 'none';
+  }
+}
+
   function init() {
     document.querySelectorAll('.oc-lang-toggle').forEach(function (toggle) {
       requestAnimationFrame(function () { requestAnimationFrame(function () { syncTrack(toggle); }); });
@@ -524,55 +541,48 @@ try {
     }, timerRemaining);
   }
 
-  function goSlim() {
-    if (slim) return;
-    slim = true;
-    clearTimer();
+function goSlim() {
+  if (slim) return;
+  slim = true;
+  clearTimer();
 
-    setSlotPos();
-    morph.classList.add('slim');
+  setSlotPos();
+  morph.classList.add('slim');
 
-    if (band) {
-      band.classList.remove('visible');
-      band.classList.add('collapsed');
-    }
+  if (band) {
+    band.classList.remove('visible');
+    band.classList.add('collapsed');
+    band.style.display = 'none';
   }
+}
 
   function goHero() {
-    if (!slim) {
-      setHeroPos();
-      if (band) {
-        band.classList.add('visible');
-        band.classList.remove('collapsed');
-      }
-      return;
-    }
+  slim = false;
 
-    slim = false;
+  morph.style.transition = 'none';
+  setHeroPos();
+  void morph.offsetWidth;
+  morph.style.transition = '';
 
-    morph.style.transition = 'none';
-    setHeroPos();
-    void morph.offsetWidth;
-    morph.style.transition = '';
+  morph.classList.remove('slim');
 
-    morph.classList.remove('slim');
-
-    if (band) {
-      band.classList.remove('collapsed');
-      band.classList.add('visible');
-    }
-
-    timerRemaining = TIMER_DURATION;
-    startTimer(timerRemaining);
+  if (band) {
+    band.style.display = '';
+    band.classList.remove('collapsed');
+    band.classList.add('visible');
   }
 
-  function handleScroll() {
-    if (window.scrollY > SCROLL_TRIGGER) {
-      goSlim();
-    } else {
-      goHero();
-    }
+  timerRemaining = TIMER_DURATION;
+  startTimer(timerRemaining);
+}
+
+function handleScroll() {
+  if (!isAllowedPage) return;
+
+  if (window.scrollY > SCROLL_TRIGGER) {
+    goSlim();
   }
+}
 
   function bindHints() {
     if (!band || !input) return;
@@ -643,6 +653,7 @@ function tryPlace(attempts) {
   setHeroPos();
 
   if (band) {
+    band.style.display = '';
     band.classList.add('visible');
     band.classList.remove('collapsed');
   }
@@ -660,41 +671,48 @@ function tryPlace(attempts) {
   });
 }
 
-  function init() {
+ function showSlimImmediately() {
+  setSlotPos();
+  morph.classList.add('ready');
+  morph.classList.add('slim');
+  slim = true;
+  clearTimer();
+
+  morph.style.display = '';
+
+  if (band) {
+    band.classList.remove('visible');
+    band.classList.add('collapsed');
+    band.style.display = 'none';
+  }
+}
+
+function init() {
+  if (!morph || !slot || !timerBar || !headerEl) return;
+
+  bindHints();
+  bindHoverPause();
+  window.addEventListener('resize', onResize);
+
   if (!isAllowedPage) {
-    disableMorph();
+    showSlimImmediately();
     return;
   }
 
   if (hasPlayed) {
-    setSlotPos();
-    morph.classList.add('slim');
-    slim = true;
-
-    if (band) {
-      band.classList.remove('visible');
-      band.classList.add('collapsed');
-    }
-
-    morph.style.display = '';
+    showSlimImmediately();
     return;
   }
 
-  bindHints();
-  bindHoverPause();
-  handleScroll();
-
   window.addEventListener('scroll', handleScroll, { passive: true });
-  window.addEventListener('resize', onResize);
-
   tryPlace(30);
 }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
 })();
 </script>
 
