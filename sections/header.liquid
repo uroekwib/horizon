@@ -416,7 +416,7 @@ endcapture
 
   var pageTemplate = '{{ template.name }}';
 var isAllowedPage = pageTemplate === 'index' || pageTemplate === 'blog' || pageTemplate === 'article';
-var sessionKey = 'ocSearchMorphPlayed';
+var sessionKey = 'ocSearchMorphPlayed_' + pageTemplate;
 var hasPlayed = false;
 
 try {
@@ -672,9 +672,10 @@ function tryPlace(attempts) {
 }
 
  function showSlimImmediately() {
+  morph.style.transition = 'none';
   setSlotPos();
-  morph.classList.add('ready');
   morph.classList.add('slim');
+  morph.classList.add('ready');
   slim = true;
   clearTimer();
 
@@ -685,6 +686,9 @@ function tryPlace(attempts) {
     band.classList.add('collapsed');
     band.style.display = 'none';
   }
+
+  void morph.offsetWidth;
+  morph.style.transition = '';
 }
 
 function init() {
