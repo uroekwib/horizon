@@ -396,6 +396,18 @@ endcapture
   var input    = document.getElementById('oc-search-morph-input');
   var headerEl = document.getElementById('header-component');
 
+
+  var pageTemplate = '{{ template.name }}';
+var isAllowedPage = pageTemplate === 'index' || pageTemplate === 'blog' || pageTemplate === 'article';
+var sessionKey = 'ocSearchMorphPlayed';
+var hasPlayed = false;
+
+try {
+  hasPlayed = sessionStorage.getItem(sessionKey) === '1';
+} catch (e) {
+  hasPlayed = false;
+}
+
   if (!morph || !slot || !timerBar || !headerEl) return;
 
   var slim = false;
@@ -611,44 +623,72 @@ endcapture
     }
   }
 
+  function disableMorph() {
+  if (morph) morph.style.display = 'none';
+  if (band) band.style.display = 'none';
+}
+
+function tryPlace(attempts) {
+  var headerBottom = getHeaderBottom();
+  var slotRect = slot.getBoundingClientRect();
+
+  if ((headerBottom <= 1 || slotRect.width <= 0) && attempts > 0) {
+    requestAnimationFrame(function () {
+      tryPlace(attempts - 1);
+    });
+    return;
+  }
+
+  morph.style.transition = 'none';
+  setHeroPos();
+
+  if (band) {
+    band.classList.add('visible');
+    band.classList.remove('collapsed');
+  }
+
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () {
+      morph.style.transition = '';
+      morph.classList.add('ready');
+      startTimer(TIMER_DURATION);
+
+      try {
+        sessionStorage.setItem(sessionKey, '1');
+      } catch (e) {}
+    });
+  });
+}
+
   function init() {
-    function tryPlace(attempts) {
-      var headerBottom = getHeaderBottom();
-      var slotRect = slot.getBoundingClientRect();
+  if (!isAllowedPage) {
+    disableMorph();
+    return;
+  }
 
-      if ((headerBottom <= 1 || slotRect.width <= 0) && attempts > 0) {
-        requestAnimationFrame(function () {
-          tryPlace(attempts - 1);
-        });
-        return;
-      }
+  if (hasPlayed) {
+    setSlotPos();
+    morph.classList.add('slim');
+    slim = true;
 
-      morph.style.transition = 'none';
-      setHeroPos();
-
-      if (band) {
-        band.classList.add('visible');
-        band.classList.remove('collapsed');
-      }
-
-      requestAnimationFrame(function () {
-        requestAnimationFrame(function () {
-          morph.style.transition = '';
-          morph.classList.add('ready');
-          startTimer(TIMER_DURATION);
-        });
-      });
+    if (band) {
+      band.classList.remove('visible');
+      band.classList.add('collapsed');
     }
 
-    bindHints();
-    bindHoverPause();
-    handleScroll();
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', onResize);
-
-    tryPlace(30);
+    morph.style.display = '';
+    return;
   }
+
+  bindHints();
+  bindHoverPause();
+  handleScroll();
+
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  window.addEventListener('resize', onResize);
+
+  tryPlace(30);
+}
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
@@ -1014,7 +1054,7 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
   border-radius: 999px;
   position: absolute;
   inset: 0;
-  border-radius: 0;
+  
   background: linear-gradient(90deg, #14c9df 0%, #17a9bb 25%, #818CF8 55%, #A78BFA 80%, #14c9df 100%);
   background-size: 300% 100%;
   animation: oc-rainbow-move 3s linear infinite;
@@ -1028,7 +1068,7 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
   content: '';
   position: absolute;
   inset: 2px;
-  border-radius: 0;
+  
   background: #fff;
   transition: border-radius 0.65s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -1040,7 +1080,7 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
   display: flex;
   align-items: center;
   background: #fff;
-  border-radius: 0;
+  
   overflow: hidden;
   height: 52px;
   transition:
