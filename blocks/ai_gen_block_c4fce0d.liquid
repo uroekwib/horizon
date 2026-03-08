@@ -46,22 +46,22 @@
         }
 
         .ocf__pill-{{ ai_gen_id }} {
-          -webkit-text-size-adjust: 100%;
-          text-size-adjust: 100%;
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          padding: {{ block.settings.pill_padding_vertical }}px {{ block.settings.pill_padding_horizontal }}px;
-          border-radius: {{ block.settings.pill_border_radius }}px;
-          background: rgba(0,0,0,0.06);
-          color: var(--color-foreground);
-          text-decoration: none;
-          font-size: {{ block.settings.pill_font_size }}px;
-          font-weight: 700;
-          white-space: nowrap;
-          cursor: pointer;
-          border: none;
-          transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+            display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: {{ block.settings.pill_padding_vertical }}px {{ block.settings.pill_padding_horizontal }}px;
+  border-radius: {{ block.settings.pill_border_radius }}px;
+  background: rgba(0,0,0,0.06);
+  color: var(--color-foreground);
+  text-decoration: none;
+  font-size: {{ block.settings.pill_font_size }}px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  flex-shrink: 0;
+  min-width: fit-content;
         }
 
         .ocf__pill-{{ ai_gen_id }}:hover {
