@@ -532,57 +532,76 @@ function setHeroPos() {
     }, timerRemaining);
   }
 
-  function hideBand() {
-    if (!band) return;
-    band.classList.remove('visible');
-    band.classList.add('collapsed');
-    band.style.display = 'none';
-  }
+function hideBand() {
+  if (!band) return;
+  band.classList.add('is-mounted');
+  band.classList.remove('visible');
+  band.classList.add('collapsed');
+  band.style.display = 'none';
+}
 
-  function showBand() {
-    if (!band) return;
-    band.style.display = '';
-    band.classList.remove('collapsed');
-    band.classList.add('visible');
-  }
+function showBand() {
+  if (!band) return;
+  band.style.display = '';
+  band.classList.add('is-mounted');
+  band.classList.remove('collapsed');
+  band.classList.add('visible');
+}
 
   function showSlimInstant() {
-    clearTimer();
-    slim = true;
+  clearTimer();
+  slim = true;
 
-    morph.classList.remove('ready');
-    morph.classList.add('slim', 'instant');
-    morph.style.opacity = '0';
-    morph.style.transition = 'none';
+  morph.classList.remove('ready');
+  morph.classList.add('slim', 'instant', 'is-mounted');
+  morph.style.opacity = '0';
+  morph.style.transition = 'none';
+  morph.style.display = '';
 
-    setSlotPos();
-    hideBand();
+  setSlotPos();
+  hideBand();
 
-    morph.style.display = '';
-    void morph.offsetWidth;
+  void morph.offsetWidth;
 
-    morph.style.opacity = '1';
-  }
+  morph.style.opacity = '1';
+}
 
   function showHeroAnimated() {
-    slim = false;
+  slim = false;
 
-    morph.classList.remove('slim', 'instant');
-    morph.style.transition = 'none';
-    morph.style.opacity = '0';
+  morph.classList.remove('slim', 'instant', 'ready');
+  band.classList.remove('collapsed', 'visible');
 
-    setHeroPos();
-    showBand();
+  morph.style.transition = 'none';
+  morph.style.opacity = '0';
+  morph.style.display = '';
 
-    morph.style.display = '';
-    void morph.offsetWidth;
+  if (band) {
+    band.style.display = '';
+    band.style.opacity = '0';
+  }
 
+  setHeroPos();
+
+  morph.classList.add('is-mounted');
+  if (band) band.classList.add('is-mounted');
+
+  void morph.offsetWidth;
+  if (band) void band.offsetWidth;
+
+  requestAnimationFrame(function () {
     morph.classList.add('ready');
     morph.style.transition = '';
     morph.style.opacity = '1';
 
+    if (band) {
+      band.classList.add('visible');
+      band.style.opacity = '1';
+    }
+
     startTimer(TIMER_DURATION);
-  }
+  });
+}
 
   function goSlimAnimated() {
     if (slim) return;
@@ -1111,8 +1130,13 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
   top: -9999px;
   width: 220px;
   opacity: 0;
-  will-change: left, top, width;
+  visibility: hidden;
+  will-change: left, top, width, opacity;
   transition: none;
+}
+
+.oc-search-morph.is-mounted {
+  visibility: visible;
 }
 
 .oc-search-morph.ready {
@@ -1120,7 +1144,7 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
     left 0.65s cubic-bezier(0.16, 1, 0.3, 1),
     top 0.65s cubic-bezier(0.16, 1, 0.3, 1),
     width 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 0.2s ease;
+    opacity 0.18s ease;
 }
 
 .oc-search-morph.instant {
@@ -1273,30 +1297,34 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
   position: fixed;
   left: 0;
   top: -9999px;
-  padding-top: 0;
   width: 100vw;
   z-index: 9996;
   background: linear-gradient(
     140deg,
-    rgba(241,236,255,0.98) 22%,
-    rgba(235,252,255,0.95) 45%,
-    rgba(236,255,254,0.94) 74%,
-    rgba(242,255,250,0.98) 100%
+    rgba(241,236,255,0.96) 22%,
+    rgba(235,252,255,0.92) 45%,
+    rgba(236,255,254,0.90) 74%,
+    rgba(242,255,250,0.96) 100%
   );
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(23,169,187,0.10);
   box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
   overflow: hidden;
   opacity: 0;
+  visibility: hidden;
   transform: translateY(-8px);
   pointer-events: none;
   transition:
     top 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 0.35s ease,
+    opacity 0.18s ease,
     transform 0.65s cubic-bezier(0.16, 1, 0.3, 1),
     max-height 0.65s cubic-bezier(0.16, 1, 0.3, 1);
   max-height: 220px;
+}
+
+.oc-hero-band.is-mounted {
+  visibility: visible;
 }
 
 .oc-hero-band.visible {
