@@ -1,9 +1,9 @@
 {% liquid
   assign order = 'logo,menu,search,localization,drawer_search,actions'
 
-  if shop.customer_accounts_enabled
-    assign order = 'drawer_search,logo,menu,search,localization,actions'
-  endif
+ if shop.customer_accounts_enabled
+  assign order = 'drawer_search,logo,menu,search,localization,actions'
+endif
 
   assign rows = 'top,bottom' | split: ','
   assign search_style = 'none'
@@ -95,11 +95,13 @@
     endif
   endif
 
-  # search capture: modal icon (mobile) + invisible slot anchor (desktop)
-  capture search
-    render 'search', style: search_style, class: search_class, display_style: section.settings.actions_display_style
-    echo '<div class="oc-search-slot" id="oc-search-slot"></div>'
-  endcapture
+capture search
+  render 'search', style: search_style, class: search_class, display_style: section.settings.actions_display_style
+  echo '<form action="/search" method="get" class="oc-search-expand mobile:hidden">'
+  echo '<input type="search" name="q" placeholder="ค้นหาสินค้าง่าย ๆ กดเลย" class="oc-search-expand__input" autocomplete="off">'
+  echo '<button type="submit" class="oc-search-expand__btn" aria-label="ค้นหา"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>'
+  echo '</form>'
+endcapture
 
   assign skip_drawer_search = false
   if shop.customer_accounts_enabled == false and section.settings.search_position == 'left' and search_style != 'none'
@@ -174,7 +176,7 @@
   endif
 %}
 
-{% comment %} Desktop lang toggle {% endcomment %}
+{% comment %} Desktop-only localization toggle (hidden on mobile) {% endcomment %}
 {% capture localization_markup %}
   {% if show_language %}
     <div class="oc-lang-toggle mobile:hidden">
@@ -182,27 +184,32 @@
       {%- for language in localization.available_languages -%}
         {%- form 'localization', return_to: back -%}
           <input type="hidden" name="language_code" value="{{ language.iso_code }}">
-          <button type="submit" class="oc-lang-toggle__btn{% if language.iso_code == localization.language.iso_code %} active{% endif %}">
-            {{ language.iso_code | upcase }}
-          </button>
+          <button
+            type="submit"
+            class="oc-lang-toggle__btn{% if language.iso_code == localization.language.iso_code %} active{% endif %}"
+          >{{ language.iso_code | upcase }}</button>
         {%- endform -%}
       {%- endfor -%}
     </div>
   {% endif %}
 {% endcapture %}
 
-{% comment %} Mobile lang toggle {% endcomment %}
+{% comment %} Mobile lang toggle — same form tag as desktop {% endcomment %}
 {% capture mobile_lang_toggle %}
   {% if show_language %}
     <div class="oc-lang-toggle oc-lang-toggle--in-actions">
       <div class="oc-lang-toggle__track"></div>
       {%- for language in localization.available_languages -%}
         {%- if language.iso_code == localization.language.iso_code -%}
-          <button type="button" class="oc-lang-toggle__btn active" disabled>{{ language.iso_code | upcase }}</button>
+          <button type="button" class="oc-lang-toggle__btn active" disabled>
+            {{ language.iso_code | upcase }}
+          </button>
         {%- else -%}
           {%- form 'localization', return_to: back -%}
             <input type="hidden" name="language_code" value="{{ language.iso_code }}">
-            <button type="submit" class="oc-lang-toggle__btn">{{ language.iso_code | upcase }}</button>
+            <button type="submit" class="oc-lang-toggle__btn">
+              {{ language.iso_code | upcase }}
+            </button>
           {%- endform -%}
         {%- endif -%}
       {%- endfor -%}
@@ -227,64 +234,24 @@
   }
 </script>
 
-{% comment %}
-  ── Search Morph ───────────────────────────────────────────────
-  Desktop only. Starts as a full-width bar anchored just below
-  the sticky header. Has a rainbow timer bar counting down 8s.
-  On timeout or scroll → morphs into #oc-search-slot inside
-  the header (between menu and localization).
-  Hover pauses the timer.
-  ────────────────────────────────────────────────────────────── {% endcomment %}
-<div class="oc-search-morph" id="oc-search-morph">
-  <div class="oc-search-morph__rainbow"></div>
-  <div class="oc-search-morph__inner">
-    <div class="oc-search-morph__icon">
-      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
-        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-      </svg>
-    </div>
-    <form action="/search" method="get" style="display:contents">
-      <input
-        type="search"
-        name="q"
-        class="oc-search-morph__input"
-        id="oc-search-morph-input"
-        placeholder="ค้นหาสินค้าง่าย ๆ กดเลย…"
-        autocomplete="off"
-      >
-      <button type="submit" class="oc-search-morph__btn">ค้นหา</button>
-    </form>
-  </div>
-  <div class="oc-search-morph__timer" id="oc-search-timer"></div>
-</div>
-
-{% comment %}
-  ── Hero Band — text + hints below the search bar ────────── {% endcomment %}
-<div class="oc-hero-band" id="oc-hero-band">
-  <div class="oc-hero-band__inner">
-    <div class="oc-hero-text">
-      <p>ป้าย · สติ๊กเกอร์ · งานพิมพ์คุณภาพสูง — ออกแบบ · ผลิต · ติดตั้ง</p>
-    </div>
-    <div class="oc-hero-hints">
-      <span data-q="ป้ายไฟ LED">💡 ป้ายไฟ LED</span>
-      <span data-q="สติ๊กเกอร์ตัดลาย">✂️ สติ๊กเกอร์ตัดลาย</span>
-      <span data-q="ไวนิลพิมพ์">🖨️ ไวนิลพิมพ์</span>
-      <span data-q="ป้าย channel letter">🔠 Channel Letter</span>
-      <span data-q="stretch ceiling">✨ Stretch Ceiling</span>
-    </div>
-  </div>
-</div>
-
 <header-component
   id="header-component"
   class="{{ class }}"
   data-theme-color="rgb({{ section.settings.color_scheme_top.settings.background.rgb }})"
-  {% if transparent %}transparent="{{ transparent }}"{% endif %}
-  {% if sticky %}sticky="{{ sticky }}"{% endif %}
+  {% if transparent %}
+    transparent="{{ transparent }}"
+  {% endif %}
+  {% if sticky %}
+    sticky="{{ sticky }}"
+  {% endif %}
   data-skip-node-update
   data-scroll-direction="none"
-  {% if section.settings.menu_row == 'top' and bottom_row_blocks.size > 0 %}data-submenu-overlap-bottom-row{% endif %}
-  {% if transparent_color_scheme_value %}data-transparent-color-scheme="{{ transparent_color_scheme_value }}"{% endif %}
+  {% if section.settings.menu_row == 'top' and bottom_row_blocks.size > 0 %}
+    data-submenu-overlap-bottom-row
+  {% endif %}
+  {% if transparent_color_scheme_value %}
+    data-transparent-color-scheme="{{ transparent_color_scheme_value }}"
+  {% endif %}
   style="
     --color-scheme-top-row: rgba({{ section.settings.color_scheme_top.settings.background.rgba }});
     --color-scheme-bottom-row: rgba({{ section.settings.color_scheme_bottom.settings.background.rgba }});
@@ -301,7 +268,6 @@
   {%- if request.page_type == 'index' -%}
     <h1 class="visually-hidden">{{ shop.name }}</h1>
   {%- endif -%}
-
   {% for row in rows %}
     {% liquid
       assign scheme = 'color_scheme_' | append: row
@@ -310,9 +276,11 @@
       case row
         when 'top'
           assign first = drawer_menu
+
           if bottom_row_blocks.size > 0 and section.settings.divider_size == 'page-width'
             assign class = class | append: ' divider--page-width'
           endif
+
           if bottom_row_blocks.size > 0
             assign border_bottom_setting_id = 'divider_width'
           else
@@ -325,6 +293,7 @@
       endcase
 
       assign style = '--border-bottom-width: [width]px; ' | replace: '[width]', section.settings[border_bottom_setting_id]
+
       if row == 'top'
         assign style = style | append: '--border-bottom-width-mobile: [width]px; ' | replace: '[width]', section.settings.border_width
       endif
@@ -347,7 +316,13 @@
 
     {% assign content = content | strip %}
     {% if content != blank %}
-      <div class="{{ class | strip }}" ref="headerRowTop" {% if style != blank %}style="{{ style | strip }}"{% endif %}>
+      <div
+        class="{{ class | strip }}"
+        ref="headerRowTop"
+        {%- if style != blank -%}
+          style="{{ style | strip }}"
+        {%- endif -%}
+      >
         <div class="header__columns spacing-style">
           {{ content }}
         </div>
@@ -362,241 +337,44 @@
   {% endif %}
 </header-component>
 
-<script src="{{ 'header.js' | asset_url }}" type="module"></script>
+<script
+  src="{{ 'header.js' | asset_url }}"
+  type="module"
+></script>
 
-{% comment %} ── Lang Toggle JS ── {% endcomment %}
 <script>
 (function () {
   function moveTrack(toggle, btn) {
     var track = toggle.querySelector('.oc-lang-toggle__track');
     if (!track) return;
     var pad = parseFloat(window.getComputedStyle(toggle).paddingLeft) || 2;
-    var tr  = toggle.getBoundingClientRect();
-    var br  = btn.getBoundingClientRect();
-    track.style.width     = br.width + 'px';
+    var tr = toggle.getBoundingClientRect();
+    var br = btn.getBoundingClientRect();
+    track.style.width = br.width + 'px';
     track.style.transform = 'translateX(' + (br.left - tr.left - pad) + 'px)';
   }
+
   function syncTrack(toggle) {
     var active = toggle.querySelector('.oc-lang-toggle__btn.active');
-    if (active) moveTrack(toggle, active);
+    if (!active) return;
+    moveTrack(toggle, active);
   }
+
   function init() {
     document.querySelectorAll('.oc-lang-toggle').forEach(function (toggle) {
-      requestAnimationFrame(function () { requestAnimationFrame(function () { syncTrack(toggle); }); });
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          syncTrack(toggle);
+        });
+      });
+
       window.addEventListener('resize', function () { syncTrack(toggle); });
+
       toggle.querySelectorAll('.oc-lang-toggle__btn').forEach(function (btn) {
         btn.addEventListener('mouseenter', function () { moveTrack(toggle, btn); });
         btn.addEventListener('mouseleave', function () { syncTrack(toggle); });
       });
     });
-  }
-  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); }
-})();
-</script>
-
-{% comment %}
-  ── Search Morph JS ────────────────────────────────────────────
-  States:
-    hero  — full-width bar just below sticky header, timer running
-    slim  — small pill inside header, between menu & localization
-
-  Triggers to go slim:
-    • scroll > 40px
-    • timer countdown complete (8s)
-    • pressing Enter / submitting search
-
-  Trigger to go hero:
-    • scroll back to top (scrollY <= 40)
-
-  Timer:
-    • CSS animation drives the visible bar (scaleX 1→0)
-    • JS setTimeout drives the actual state change
-    • mouseenter on morph → pause both
-    • mouseleave → resume from remaining time
-  ────────────────────────────────────────────────────────────── {% endcomment %}
-<script>
-(function () {
-  if (window.innerWidth < 750) return;
-
-  var TIMER_DURATION = 8000; /* ms */
-
-  var morph     = document.getElementById('oc-search-morph');
-  var timerBar  = document.getElementById('oc-search-timer');
-  var slot      = document.getElementById('oc-search-slot');
-  var band      = document.getElementById('oc-hero-band');
-  var input     = document.getElementById('oc-search-morph-input');
-  var headerEl  = document.getElementById('header-component');
-
-  if (!morph || !slot || !timerBar) return;
-
-  var slim          = false;
-  var timerTimeout  = null;
-  var timerStart    = null;
-  var timerRemaining = TIMER_DURATION;
-  var timerPaused   = false;
-
-  /* ── Position helpers ───────────────────────────────── */
-
-  function headerBottom() {
-    /* Measure header-component's own bottom edge.
-       getBoundingClientRect() returns viewport coords — correct for position:fixed. */
-    if (headerEl) return headerEl.getBoundingClientRect().bottom;
-    return parseFloat(getComputedStyle(document.documentElement)
-      .getPropertyValue('--header-height')) || 60;
-  }
-
-  function setHeroPos() {
-    var top = headerBottom();
-    morph.style.left   = '0px';
-    morph.style.top    = top + 'px';
-    morph.style.width  = window.innerWidth + 'px';
-  }
-
-  function setSlotPos() {
-    var r = slot.getBoundingClientRect();
-    /* Center morph vertically on the slot's midpoint */
-    var morphH = 36; /* slim height */
-    morph.style.left  = r.left + 'px';
-    morph.style.top   = (r.top + r.height / 2 - morphH / 2) + 'px';
-    morph.style.width = Math.max(r.width, 220) + 'px';
-  }
-
-  /* ── Timer ──────────────────────────────────────────── */
-
-  function restartTimerBar(durationMs) {
-    /* Re-trigger CSS animation */
-    timerBar.style.animation = 'none';
-    void timerBar.offsetWidth; /* reflow */
-    timerBar.style.animationDuration = (durationMs / 1000) + 's';
-    timerBar.style.animation =
-      'oc-rainbow-move 3s linear infinite, oc-timer-countdown ' +
-      (durationMs / 1000) + 's linear forwards';
-  }
-
-  function pauseTimerBar() {
-    timerBar.style.animationPlayState = 'paused';
-  }
-
-  function resumeTimerBar() {
-    timerBar.style.animationPlayState = 'running';
-  }
-
-  function startTimer(durationMs) {
-    clearTimeout(timerTimeout);
-    timerRemaining = durationMs;
-    restartTimerBar(durationMs);
-    timerStart = Date.now();
-    timerTimeout = setTimeout(goSlim, durationMs);
-  }
-
-  function pauseTimer() {
-    if (slim || timerPaused) return;
-    timerPaused = true;
-    clearTimeout(timerTimeout);
-    timerRemaining -= (Date.now() - timerStart);
-    pauseTimerBar();
-  }
-
-  function resumeTimer() {
-    if (slim || !timerPaused) return;
-    timerPaused = false;
-    timerStart = Date.now();
-    resumeTimerBar();
-    timerTimeout = setTimeout(goSlim, Math.max(timerRemaining, 0));
-  }
-
-  /* ── State transitions ──────────────────────────────── */
-
-  function goSlim() {
-    if (slim) return;
-    slim = true;
-    clearTimeout(timerTimeout);
-
-    setSlotPos();
-    morph.classList.add('slim');
-
-    if (band) {
-      band.classList.add('collapsed');
-    }
-  }
-
-  function goHero() {
-    if (!slim) return;
-    slim = false;
-
-    /* First snap to hero pos without transition, then re-enable */
-    morph.style.transition = 'none';
-    setHeroPos();
-    void morph.offsetWidth; /* reflow */
-    morph.style.transition = '';
-
-    morph.classList.remove('slim');
-
-    if (band) {
-      band.classList.remove('collapsed');
-    }
-
-    timerRemaining = TIMER_DURATION;
-    startTimer(timerRemaining);
-  }
-
-  /* ── Scroll trigger ─────────────────────────────────── */
-  window.addEventListener('scroll', function () {
-    if (window.scrollY > 40) {
-      goSlim();
-    } else {
-      goHero();
-    }
-  }, { passive: true });
-
-  /* ── Hover: pause / resume timer ───────────────────── */
-  morph.addEventListener('mouseenter', pauseTimer);
-  morph.addEventListener('mouseleave', resumeTimer);
-
-  /* ── Search focus: pause timer ──────────────────────── */
-  if (input) {
-    input.addEventListener('focus', pauseTimer);
-    input.addEventListener('blur',  resumeTimer);
-  }
-
-  /* ── Hint tags ──────────────────────────────────────── */
-  if (band) {
-    band.querySelectorAll('.oc-hero-hints span').forEach(function (el) {
-      el.addEventListener('click', function () {
-        if (input) { input.value = el.dataset.q; input.focus(); }
-      });
-    });
-  }
-
-  /* ── Resize: reposition ─────────────────────────────── */
-  window.addEventListener('resize', function () {
-    if (window.innerWidth < 750) { morph.style.display = 'none'; return; }
-    morph.style.display = '';
-    if (!slim) setHeroPos();
-    else setSlotPos();
-  });
-
-  /* ── Init ───────────────────────────────────────────── */
-  function init() {
-    /* Wait until header-component has painted and has real dimensions */
-    function tryPlace(attempts) {
-      var hBottom = headerBottom();
-      if (hBottom <= 1 && attempts > 0) {
-        /* Header not painted yet — retry next frame */
-        requestAnimationFrame(function () { tryPlace(attempts - 1); });
-        return;
-      }
-      morph.style.transition = 'none';
-      setHeroPos();
-      requestAnimationFrame(function () {
-        requestAnimationFrame(function () {
-          morph.style.transition = '';
-          morph.classList.add('ready');
-          startTimer(TIMER_DURATION);
-        });
-      });
-    }
-    tryPlace(20); /* max 20 frames wait */
   }
 
   if (document.readyState === 'loading') {
@@ -607,679 +385,828 @@
 })();
 </script>
 
+
 {% stylesheet %}
-
-/* ════════════════════════════════════════
-   BASE HEADER (Horizon — untouched)
-   ════════════════════════════════════════ */
-body {
-  --header-height: 60px;
-  --header-group-height: var(--header-height);
-  --transparent-header-offset-boolean: 0; /* stylelint-disable-line */
-}
-
-.header {
-  --header-padding: var(--padding-sm);
-  --font-paragraph--line-height: 1;
-  --header-content-transition-timing: 0s;
-  display: block;
-  contain: layout style;
-  background: transparent;
-
-  a, .button, .button-secondary, .header-actions__action {
-    transition: color var(--header-content-transition-timing), border-color var(--header-content-transition-timing);
-  }
-}
-
-#header-component :is(.header-menu, .dropdown-localization) { display: none; }
-
-@media screen and (min-width: 750px) {
-  #header-component[data-menu-style='menu'] :is(.header-menu, .dropdown-localization) { display: flex; }
-  #header-component[data-menu-style='menu'] .header__navigation-bar-row { display: none; }
-}
-
-#header-component[data-menu-style='drawer'] .header__column { display: contents; }
-
-.header[transparent] {
-  --language-button-background-color: transparent;
-  --language-button-border-color: transparent;
-  --header-content-transition-timing: calc(var(--submenu-animation-speed) - var(--animation-speed-fast))
-    var(--animation-speed-fast) var(--ease-out-cubic);
-  --closed-underlay-height: 0px;
-  --header-logo-display: none;
-  --header-logo-inverse-display: block;
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  z-index: var(--layer-overlay);
-
-  &[transparent='not-sticky'][data-sticky-state='active'],
-  &:has(.menu-list__link:not([aria-haspopup]):hover) {
-    --header-logo-display: unset;
-    --header-logo-inverse-display: unset;
-    --color-foreground: inherit; --color-foreground-rgb: inherit;
-    --color-background: inherit; --color-background-rgb: inherit;
-    --color-border: inherit; --color-border-rgb: inherit;
-    --closed-underlay-height: 100%;
+  body {
+    --header-height: 60px;
+    --header-group-height: var(--header-height);
+    --transparent-header-offset-boolean: 0; /* stylelint-disable-line declaration-property-value-disallowed-list */
   }
 
-  &:not([data-sticky-state='active']):not(:has(.menu-list__link:is(:hover, [aria-expanded='true']))) .header__row {
-    --color-foreground: inherit; --color-foreground-rgb: inherit;
-    --color-border: inherit; --color-border-rgb: inherit;
-    --color-primary-button-background: inherit; --color-primary-button-text: inherit;
+  .header {
+    --header-padding: var(--padding-sm);
+    --font-paragraph--line-height: 1;
+    --header-content-transition-timing: 0s;
+
+    display: block;
+    contain: layout style;
+    background: transparent;
+
+    a,
+    .button,
+    .button-secondary,
+    .header-actions__action {
+      transition: color var(--header-content-transition-timing), border-color var(--header-content-transition-timing);
+    }
   }
 
-  &:has(.mega-menu__list:hover),
-  &:has(.menu-list__link:is(:hover, [aria-expanded='true'])),
-  &:has(.menu-list__list-item[slot='overflow'] .menu-list__link:is(:hover, [aria-expanded='true'])) {
-    --header-logo-display: unset; --header-logo-inverse-display: unset;
-    --color-foreground: inherit; --color-foreground-rgb: inherit;
-    --color-background: inherit; --color-background-rgb: inherit;
-    --color-border: inherit; --color-border-rgb: inherit;
-    --header-content-transition-timing: var(--submenu-animation-speed) var(--ease-out-cubic);
+  #header-component :is(.header-menu, .dropdown-localization) {
+    display: none;
   }
-}
 
-[data-transparent-color-scheme='top']:hover .header__row--top,
-[data-transparent-color-scheme='top']:focus-within .header__row--top,
-[data-transparent-color-scheme='both']:hover .header__row--top,
-[data-transparent-color-scheme='both']:focus-within .header__row--top,
-[data-transparent-color-scheme='bottom']:hover .header__row--bottom,
-[data-transparent-color-scheme='bottom']:focus-within .header__row--bottom,
-[data-transparent-color-scheme='both']:hover .header__row--bottom,
-[data-transparent-color-scheme='both']:focus-within .header__row--bottom {
-  --color-foreground: inherit; --color-foreground-rgb: inherit;
-  --color-border: inherit; --color-border-rgb: inherit;
-  --color-primary-button-background: inherit; --color-primary-button-text: inherit;
-}
-
-.header-section { position: relative; z-index: var(--layer-heightened); }
-
-#header-component {
-  --submenu-height: 0px;
-  --full-open-header-height: 0px;
-}
-
-#header-group:has(#header-component[sticky]) { display: contents; }
-
-.header-section:has(> #header-component[sticky='always']),
-.header-section:has(> #header-component[sticky='scroll-up'][data-sticky-state='active']) {
-  position: sticky;
-  top: -1px;
-  z-index: var(--layer-sticky);
-}
-
-.header[data-sticky-state] { transition: opacity var(--animation-speed) var(--animation-easing); opacity: 1; }
-.header[data-sticky-state='active'] { view-transition-name: sticky-header; }
-:active-view-transition-type(empty-cart-drawer) { .header[data-sticky-state='active'] { view-transition-name: none; } }
-.header[data-sticky-state='idle'] { opacity: 0; }
-
-.header__underlay { position: absolute; inset: 0; }
-
-.header__underlay-closed {
-  height: var(--closed-underlay-height, 100%);
-  z-index: var(--layer-lowest);
-  background: linear-gradient(
-    var(--color-scheme-top-row) 0 var(--top-row-height),
-    var(--color-scheme-bottom-row) var(--top-row-height) var(--header-height)
-  );
-  transition: height var(--animation-speed-slow) var(--ease-out-cubic);
-}
-
-.header__underlay-open {
-  height: var(--full-open-header-height);
-  background: linear-gradient(
-    var(--color-scheme-top-row) 0 var(--top-row-height),
-    var(--color-scheme-bottom-row) var(--top-row-height) var(--header-height),
-    var(--color-submenu) var(--header-height) 100%
-  );
-  transition: height var(--submenu-animation-speed) var(--ease-out-cubic);
-}
-
-.header__underlay-open::after {
-  content: ''; position: absolute; inset: 0;
-  box-shadow: var(--shadow-popover);
-  clip-path: inset(var(--header-height) 0 -100px 0); /* stylelint-disable-line */
-  transition: height var(--submenu-animation-speed) var(--ease-out-cubic);
-}
-
-[data-transparent-color-scheme='top']:hover,
-[data-transparent-color-scheme='top']:focus-within,
-[data-transparent-color-scheme='both']:hover,
-[data-transparent-color-scheme='both']:focus-within {
-  :is(.header__underlay-open, .header__underlay-closed) { --color-scheme-top-row: var(--color-background); }
-}
-
-[data-transparent-color-scheme='bottom']:hover,
-[data-transparent-color-scheme='bottom']:focus-within,
-[data-transparent-color-scheme='both']:hover,
-[data-transparent-color-scheme='both']:focus-within {
-  :is(.header__underlay-open, .header__underlay-closed) { --color-scheme-bottom-row: var(--color-background); }
-}
-
-[data-submenu-overlap-bottom-row] {
-  .header__underlay-open {
-    background: linear-gradient(var(--color-scheme-top-row) 0 var(--top-row-height), var(--color-submenu) var(--top-row-height) 100%);
+  @media screen and (min-width: 750px) {
+    #header-component[data-menu-style='menu'] :is(.header-menu, .dropdown-localization) {
+      display: flex;
+    }
   }
-  .header__row--bottom { z-index: var(--layer-lowest); }
-}
 
-.header__row {
-  --color-account-icon: var(--color-foreground);
-  position: relative; background-color: transparent;
+  #header-component[data-menu-style='drawer'] .header__column {
+    display: contents;
+  }
 
-  &:has(.mega-menu__list:hover),
-  &:has(.menu-list__link[aria-haspopup]:is(:hover, [aria-expanded='true'])),
-  &:has(.menu-list__list-item[slot='overflow'] .menu-list__link:is(:hover, [aria-expanded='true'])) {
+  @media screen and (min-width: 750px) {
+    #header-component[data-menu-style='menu'] .header__navigation-bar-row {
+      display: none;
+    }
+  }
+
+  .header[transparent] {
+    --language-button-background-color: transparent;
+    --language-button-border-color: transparent;
+    --header-content-transition-timing: calc(var(--submenu-animation-speed) - var(--animation-speed-fast))
+      var(--animation-speed-fast) var(--ease-out-cubic);
+
+    --closed-underlay-height: 0px;
+
+    --header-logo-display: none;
+    --header-logo-inverse-display: block;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    z-index: var(--layer-overlay);
+
+    &[transparent='not-sticky'][data-sticky-state='active'],
+    &:has(.menu-list__link:not([aria-haspopup]):hover) {
+      --header-logo-display: unset;
+      --header-logo-inverse-display: unset;
+      --color-foreground: inherit;
+      --color-foreground-rgb: inherit;
+      --color-background: inherit;
+      --color-background-rgb: inherit;
+      --color-border: inherit;
+      --color-border-rgb: inherit;
+      --closed-underlay-height: 100%;
+    }
+
+    &:not([data-sticky-state='active']):not(:has(.menu-list__link:is(:hover, [aria-expanded='true']))) .header__row {
+      --color-foreground: inherit;
+      --color-foreground-rgb: inherit;
+      --color-border: inherit;
+      --color-border-rgb: inherit;
+      --color-primary-button-background: inherit;
+      --color-primary-button-text: inherit;
+    }
+
+    &:has(.mega-menu__list:hover),
+    &:has(.menu-list__link:is(:hover, [aria-expanded='true'])),
+    &:has(.menu-list__list-item[slot='overflow'] .menu-list__link:is(:hover, [aria-expanded='true'])) {
+      --header-logo-display: unset;
+      --header-logo-inverse-display: unset;
+      --color-foreground: inherit;
+      --color-foreground-rgb: inherit;
+      --color-background: inherit;
+      --color-background-rgb: inherit;
+      --color-border: inherit;
+      --color-border-rgb: inherit;
+      --header-content-transition-timing: var(--submenu-animation-speed) var(--ease-out-cubic);
+    }
+  }
+
+  [data-transparent-color-scheme='top']:hover .header__row--top,
+  [data-transparent-color-scheme='top']:focus-within .header__row--top,
+  [data-transparent-color-scheme='both']:hover .header__row--top,
+  [data-transparent-color-scheme='both']:focus-within .header__row--top {
+    --color-foreground: inherit;
+    --color-foreground-rgb: inherit;
+    --color-border: inherit;
+    --color-border-rgb: inherit;
+    --color-primary-button-background: inherit;
+    --color-primary-button-text: inherit;
+  }
+
+  [data-transparent-color-scheme='bottom']:hover .header__row--bottom,
+  [data-transparent-color-scheme='bottom']:focus-within .header__row--bottom,
+  [data-transparent-color-scheme='both']:hover .header__row--bottom,
+  [data-transparent-color-scheme='both']:focus-within .header__row--bottom {
+    --color-foreground: inherit;
+    --color-foreground-rgb: inherit;
+    --color-border: inherit;
+    --color-border-rgb: inherit;
+    --color-primary-button-background: inherit;
+    --color-primary-button-text: inherit;
+  }
+
+  .header-section {
+    position: relative;
     z-index: var(--layer-heightened);
   }
-}
 
-.header__row--top:not(.divider--page-width),
-.header__row--top.divider--page-width .header__columns,
-.header__row--bottom {
-  border-bottom: var(--border-bottom-width) solid var(--color-border);
-}
+  #header-component {
+    --submenu-height: 0px;
+    --full-open-header-height: 0px;
+  }
 
-@media screen and (max-width: 749px) {
+  #header-group:has(#header-component[sticky]) {
+    display: contents;
+  }
+
+  .header-section:has(> #header-component[sticky='always']),
+  .header-section:has(> #header-component[sticky='scroll-up'][data-sticky-state='active']) {
+    position: sticky;
+    top: -1px;
+    z-index: var(--layer-sticky);
+  }
+
+  .header[data-sticky-state] {
+    transition: opacity var(--animation-speed) var(--animation-easing);
+    opacity: 1;
+  }
+
+  .header[data-sticky-state='active'] {
+    view-transition-name: sticky-header;
+  }
+
+  :active-view-transition-type(empty-cart-drawer) {
+    .header[data-sticky-state='active'] {
+      view-transition-name: none;
+    }
+  }
+
+  .header[data-sticky-state='idle'] {
+    opacity: 0;
+  }
+
+  .header__underlay {
+    position: absolute;
+    inset: 0;
+  }
+
+  .header__underlay-closed {
+    height: var(--closed-underlay-height, 100%);
+    z-index: var(--layer-lowest);
+    background: linear-gradient(
+      var(--color-scheme-top-row) 0 var(--top-row-height),
+      var(--color-scheme-bottom-row) var(--top-row-height) var(--header-height)
+    );
+    transition: height var(--animation-speed-slow) var(--ease-out-cubic);
+  }
+
+  .header__underlay-open {
+    height: var(--full-open-header-height);
+    background: linear-gradient(
+      var(--color-scheme-top-row) 0 var(--top-row-height),
+      var(--color-scheme-bottom-row) var(--top-row-height) var(--header-height),
+      var(--color-submenu) var(--header-height) 100%
+    );
+    transition: height var(--submenu-animation-speed) var(--ease-out-cubic);
+  }
+
+  .header__underlay-open::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    box-shadow: var(--shadow-popover);
+    clip-path: inset(var(--header-height) 0 -100px 0); /* stylelint-disable-line */
+    transition: height var(--submenu-animation-speed) var(--ease-out-cubic);
+  }
+
+  [data-transparent-color-scheme='top']:hover,
+  [data-transparent-color-scheme='top']:focus-within,
+  [data-transparent-color-scheme='both']:hover,
+  [data-transparent-color-scheme='both']:focus-within {
+    :is(.header__underlay-open, .header__underlay-closed) {
+      --color-scheme-top-row: var(--color-background);
+    }
+  }
+
+  [data-transparent-color-scheme='bottom']:hover,
+  [data-transparent-color-scheme='bottom']:focus-within,
+  [data-transparent-color-scheme='both']:hover,
+  [data-transparent-color-scheme='both']:focus-within {
+    :is(.header__underlay-open, .header__underlay-closed) {
+      --color-scheme-bottom-row: var(--color-background);
+    }
+  }
+
+  [data-submenu-overlap-bottom-row] {
+    .header__underlay-open {
+      background: linear-gradient(
+        var(--color-scheme-top-row) 0 var(--top-row-height),
+        var(--color-submenu) var(--top-row-height) 100%
+      );
+    }
+
+    .header__row--bottom {
+      z-index: var(--layer-lowest);
+    }
+  }
+
+  .header__row {
+    --color-account-icon: var(--color-foreground);
+
+    position: relative;
+    background-color: transparent;
+
+    &:has(.mega-menu__list:hover),
+    &:has(.menu-list__link[aria-haspopup]:is(:hover, [aria-expanded='true'])),
+    &:has(.menu-list__list-item[slot='overflow'] .menu-list__link:is(:hover, [aria-expanded='true'])) {
+      z-index: var(--layer-heightened);
+    }
+  }
+
   .header__row--top:not(.divider--page-width),
-  .header__row--top.divider--page-width .header__columns {
+  .header__row--top.divider--page-width .header__columns,
+  .header__row--bottom {
+    border-bottom: var(--border-bottom-width) solid var(--color-border);
+  }
+
+  @media screen and (max-width: 749px) {
+    .header__row--top:not(.divider--page-width),
+    .header__row--top.divider--page-width .header__columns {
+      border-bottom-width: var(--border-bottom-width-mobile);
+    }
+  }
+
+  #header-component[data-menu-style='drawer'] .header__row--top:not(.divider--page-width),
+  #header-component[data-menu-style='drawer'] .header__row--top.divider--page-width .header__columns {
     border-bottom-width: var(--border-bottom-width-mobile);
   }
-}
 
-#header-component[data-menu-style='drawer'] .header__row--top:not(.divider--page-width),
-#header-component[data-menu-style='drawer'] .header__row--top.divider--page-width .header__columns {
-  border-bottom-width: var(--border-bottom-width-mobile);
-}
-
-.header__row.divider--page-width:not(.section--page-width) .header__columns {
-  @media screen and (min-width: 750px) {
-    padding-inline-start: 0; padding-inline-end: 0;
-    margin-inline-start: var(--page-margin); margin-inline-end: var(--page-margin);
-  }
-}
-
-.header__column {
-  display: flex; align-items: center;
-  @media screen and (max-width: 749px) { display: contents; }
-}
-
-.header__column--left, .header__column--center { gap: var(--gap-xl); grid-area: left; }
-.header__column--center {
-  justify-content: center; grid-area: center;
-  header-menu:only-child .overflow-menu::part(list) { justify-content: center; }
-}
-.header__column--right {
-  gap: var(--gap-xl); justify-content: flex-end; grid-area: right;
-  .overflow-menu::part(list) { justify-content: flex-end; }
-}
-
-.header__columns {
-  --header-left: 1fr; --header-center: auto; --header-right: 1fr;
-  --header-template-columns: var(--header-left) var(--header-center) var(--header-right);
-  --header-mobile-bookend: 44px;
-  display: grid; grid-template-areas: 'left center right';
-  grid-gap: var(--gap-xl); grid-template-columns: var(--header-template-columns);
-
-  &:has(.header__column--center header-menu) {
-    --header-center: auto;
-    --header-left: minmax(max-content, 1fr);
-    --header-right: minmax(max-content, 1fr);
-  }
-
-  &:where(:not(:has(.header__column--center))) {
+  .header__row.divider--page-width:not(.section--page-width) .header__columns {
     @media screen and (min-width: 750px) {
-      --header-template-columns: var(--header-left) var(--header-right);
-      grid-template-areas: 'left right';
-    }
-    &:has(.header__column--right header-menu) { --header-right: auto; --header-left: minmax(max-content, 1fr); }
-    &:has(.header__column--left header-menu)  { --header-left: auto;  --header-right: minmax(max-content, 1fr); }
-  }
-}
-
-.header__columns:not(:has(.header__column)) { grid-template-columns: 1fr; }
-
-@media (hover: hover) {
-  .header__column:has(header-menu:hover),
-  .header__column:has(.header-actions__action:hover),
-  .header__column:has(.header__icon--menu:hover) {
-    header-menu:not(:hover), .header-actions__action:not(:hover), .header__icon--menu:not(:hover) {
-      opacity: var(--opacity-subdued-text);
-      transition: opacity var(--animation-speed) var(--animation-easing);
+      padding-inline-start: 0;
+      padding-inline-end: 0;
+      margin-inline-start: var(--page-margin);
+      margin-inline-end: var(--page-margin);
     }
   }
-}
 
-header-menu, .header-actions__action, .header__icon--menu {
-  transition: opacity var(--animation-speed) var(--animation-easing);
-}
+  .header__column {
+    display: flex;
+    align-items: center;
 
-.header-actions__action {
-  --button-color: var(--color-foreground);
-  color: var(--button-color); cursor: pointer; display: flex; justify-content: center;
-  &:hover { --button-color: var(--color-foreground); }
-}
-.header-actions__action:not(.account-button) .svg-wrapper { height: var(--button-size); width: var(--button-size); }
-.header-actions__action:not(.account-button) svg { width: var(--icon-size-md); height: var(--icon-size-md); }
-
-.header:has(#Details-menu-drawer-container[open]) { contain: style; }
-.header.header--compact { --header-padding: var(--padding-2xs); }
-.header__columns { --padding-block-start: var(--header-padding); --padding-block-end: var(--header-padding); }
-.header:not(.header--compact) .header__row--bottom { --header-padding: var(--padding-xs); }
-
-.header--collapse-row-paddings {
-  .header__row--top .header__columns  { --padding-block-end: 0px; }
-  .header__row--bottom .header__columns { --padding-block-start: 0px; }
-}
-
-.header-section:has(.header[transparent]) + .shopify-section { margin-top: var(--header-height); }
-
-main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
-  &.spacing-style, .spacing-style {
-    --section-top-offset: calc(var(--header-height) * var(--transparent-header-offset-boolean));
-    :is(.spacing-style, .inherit-spacing) { --section-top-offset: 0px; }
+    @media screen and (max-width: 749px) {
+      display: contents;
+    }
   }
-  .sticky-content { margin-top: calc(var(--header-height) * var(--transparent-header-offset-boolean) * -1); }
-}
 
-.header-menu .menu-list__submenu { content-visibility: auto; contain-intrinsic-size: 0px 500px; }
-.header-menu details[open] .menu-list__submenu,
-.header-menu .menu-list__submenu[data-active],
-.header-menu .menu-list__list-item[slot='overflow'] .menu-list__submenu { content-visibility: visible; }
+  .header__column--left,
+  .header__column--center {
+    gap: var(--gap-xl);
+    grid-area: left;
+  }
 
-/* ════════════════════════════════════════
-   MOBILE (single consolidated block)
-   ════════════════════════════════════════ */
-@media screen and (max-width: 749px) {
-  /* Grid columns */
-  .header__columns,
+  .header__column--center {
+    justify-content: center;
+    grid-area: center;
+
+    header-menu:only-child .overflow-menu::part(list) {
+      justify-content: center;
+    }
+  }
+
+  .header__column--right {
+    gap: var(--gap-xl);
+    justify-content: flex-end;
+    grid-area: right;
+
+    .overflow-menu::part(list) {
+      justify-content: flex-end;
+    }
+  }
+
+  .header__columns {
+    --header-left: 1fr;
+    --header-center: auto;
+    --header-right: 1fr;
+    --header-template-columns: var(--header-left) var(--header-center) var(--header-right);
+    --header-mobile-bookend: 44px;
+
+    display: grid;
+    grid-template-areas: 'left center right';
+    grid-gap: var(--gap-xl);
+    grid-template-columns: var(--header-template-columns);
+
+    &:has(.header__column--center header-menu) {
+      --header-center: auto;
+      --header-left: minmax(max-content, 1fr);
+      --header-right: minmax(max-content, 1fr);
+    }
+
+    &:where(:not(:has(.header__column--center))) {
+      @media screen and (min-width: 750px) {
+        --header-template-columns: var(--header-left) var(--header-right);
+        grid-template-areas: 'left right';
+      }
+
+      &:has(.header__column--right header-menu) {
+        --header-right: auto;
+        --header-left: minmax(max-content, 1fr);
+      }
+
+      &:has(.header__column--left header-menu) {
+        --header-left: auto;
+        --header-right: minmax(max-content, 1fr);
+      }
+    }
+
+    @media screen and (max-width: 749px) {
+      --header-template-columns: var(--header-mobile-bookend) var(--header-mobile-bookend) 1fr
+        var(--header-mobile-bookend) var(--header-mobile-bookend);
+
+      grid-template-areas: 'leftA leftB center rightA rightB';
+      grid-column: span 3;
+      column-gap: 0;
+      align-items: center;
+      padding-block: 0;
+      padding-inline: 0 var(--padding-3xs);
+
+      .header-logo {
+        grid-area: center;
+      }
+
+      &:not(:has(header-actions)) .search-action {
+        grid-area: leftB;
+      }
+
+      &:not(:has(shopify-account)) .search-action {
+        grid-area: rightA;
+      }
+
+      .search-action {
+        grid-area: leftB;
+      }
+
+      header-actions {
+        grid-area: rightB;
+      }
+    }
+  }
+
   #header-component[data-menu-style='drawer'] .header__columns {
-    --header-template-columns: 44px 44px 1fr 65px 44px;
+    --header-template-columns: var(--header-mobile-bookend) var(--header-mobile-bookend) 1fr
+      var(--header-mobile-bookend) var(--header-mobile-bookend);
+
     grid-template-areas: 'leftA leftB center rightA rightB';
-    grid-column: span 3; column-gap: 0; align-items: center;
-    padding-block: 0; padding-inline: 0 var(--padding-3xs);
+    grid-column: span 3;
+    column-gap: 0;
+    align-items: center;
+    padding-block: 0;
+    padding-inline: 0 var(--padding-3xs);
+
+    .header-logo {
+      grid-area: center;
+    }
+
+    &:not(:has(header-actions)) .search-action {
+      grid-area: leftB;
+    }
+
+    &:not(:has(shopify-account)) .search-action {
+      grid-area: rightA;
+    }
+
+    .search-action {
+      grid-area: leftB;
+    }
+
+    header-actions {
+      grid-area: rightB;
+    }
   }
 
-  .header-logo                              { grid-area: center; }
-  .search-action                            { grid-area: leftB; }
-  .header__columns:not(:has(header-actions)) .search-action { grid-area: leftB; }
-  .header__columns:not(:has(shopify-account)) .search-action { grid-area: rightA; }
-  header-actions                            { grid-area: rightB; }
-
-  /* Hide account — lang toggle replaces it */
-  header-actions shopify-account,
-  header-actions .account-button { display: none !important; }
-
-  .oc-lang-toggle--in-actions { grid-area: rightA; justify-self: center; align-self: center; }
-
-  /* Morph search: hidden on mobile */
-  .oc-search-morph { display: none !important; }
-  .oc-search-slot  { display: none; }
-  .oc-hero-band    { display: none; }
-}
-
-/* ════════════════════════════════════════
-   SEARCH — hide modal icon on desktop
-   (morph search replaces it)
-   ════════════════════════════════════════ */
-@media screen and (min-width: 750px) {
-  .search-action { display: none !important; }
-}
-
-/* ════════════════════════════════════════
-   OC SEARCH SLOT
-   Invisible flex placeholder in header.
-   Marks the morph's destination position.
-   ════════════════════════════════════════ */
-.oc-search-slot {
-  width: 220px;
-  height: 36px;
-  flex-shrink: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-/* ════════════════════════════════════════
-   OC SEARCH MORPH
-   Always position:fixed. JS sets left/top/width.
-   CSS transitions handle the visual animation.
-   ════════════════════════════════════════ */
-.oc-search-morph {
-  position: fixed;
-  z-index: 9998;
-  /* Hidden offscreen until JS initialises */
-  left: -9999px;
-  top:  -9999px;
-
-  /* Transitions applied once .ready is added */
-  transition: none;
-}
-
-.oc-search-morph.ready {
-  transition:
-    left   0.65s cubic-bezier(0.16, 1, 0.3, 1),
-    top    0.65s cubic-bezier(0.16, 1, 0.3, 1),
-    width  0.65s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* Rainbow border wrap */
-.oc-search-morph__rainbow {
-  position: absolute;
-  inset: 0;
-  border-radius: 0; /* hero: no radius on full-width bar */
-  background: linear-gradient(90deg, #14c9df 0%, #17a9bb 25%, #818CF8 55%, #A78BFA 80%, #14c9df 100%);
-  background-size: 300% 100%;
-  animation: oc-rainbow-move 3s linear infinite;
-  transition:
-    border-radius 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-    inset         0.65s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.oc-search-morph__rainbow::after {
-  content: '';
-  position: absolute;
-  inset: 2px;
-  border-radius: 0;
-  background: #fff;
-  transition: border-radius 0.65s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* Inner layout */
-.oc-search-morph__inner {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  background: #fff;
-  border-radius: 0;
-  overflow: hidden;
-  height: 52px;
-  transition:
-    height        0.55s cubic-bezier(0.16, 1, 0.3, 1),
-    border-radius 0.65s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.oc-search-morph__icon {
-  padding: 0 14px 0 24px;
-  color: #9ca3af;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  transition: padding 0.55s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.oc-search-morph__input {
-  flex: 1;
-  border: none;
-  outline: none;
-  font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
-  font-size: 15px;
-  color: #1a2332;
-  background: transparent;
-  min-width: 0;
-  transition: font-size 0.4s ease;
-}
-.oc-search-morph__input::placeholder { color: #9ca3af; }
-
-.oc-search-morph__btn {
-  margin: 8px;
-  height: calc(100% - 16px);
-  padding: 0 24px;
-  border: none;
-  border-radius: 999px;
-  cursor: pointer;
-  font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  color: white;
-  background: linear-gradient(90deg, #17a9bb, #818CF8, #A78BFA);
-  background-size: 200% 100%;
-  box-shadow: 0 4px 24px rgba(23, 169, 187, 0.32);
-  flex-shrink: 0;
-  white-space: nowrap;
-  transition:
-    background-position 0.25s ease,
-    transform           0.15s ease,
-    padding             0.55s cubic-bezier(0.16, 1, 0.3, 1),
-    margin              0.55s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.oc-search-morph__btn:hover { background-position: 100% 0; transform: scale(1.03); }
-
-/* Timer bar — sits at bottom of morph element */
-.oc-search-morph__timer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #14c9df 0%, #17a9bb 25%, #818CF8 55%, #A78BFA 80%, #14c9df 100%);
-  background-size: 300% 100%;
-  transform-origin: left;
-  transform: scaleX(1);
-  transition: opacity 0.3s ease;
-  z-index: 2;
-  /* Animation set by JS */
-}
-
-/* ── SLIM state ─────────────────────────── */
-.oc-search-morph.slim .oc-search-morph__rainbow {
-  inset: -1.5px;
-  border-radius: calc(999px + 1.5px);
-}
-.oc-search-morph.slim .oc-search-morph__rainbow::after {
-  border-radius: 999px;
-}
-.oc-search-morph.slim .oc-search-morph__inner {
-  height: 36px;
-  border-radius: 999px;
-}
-.oc-search-morph.slim .oc-search-morph__icon {
-  padding: 0 8px 0 14px;
-}
-.oc-search-morph.slim .oc-search-morph__input {
-  font-size: 13px;
-}
-.oc-search-morph.slim .oc-search-morph__btn {
-  padding: 0 14px;
-  margin: 4px;
-}
-.oc-search-morph.slim .oc-search-morph__timer {
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* ════════════════════════════════════════
-   OC HERO BAND — text + hints below search
-   ════════════════════════════════════════ */
-.oc-hero-band {
-  /* Sits in normal layout flow right below header */
-  background: linear-gradient(140deg,
-    rgba(241,236,255,1) 22%, rgba(235,252,255,0.85) 45%,
-    rgba(236,255,254,0.81) 74%, rgba(242,255,250,1) 100%);
-  /* Extra top padding = height of morph bar (52px hero height + 6px rainbow) */
-  padding-top: calc(52px + 6px);
-  overflow: hidden;
-  transition:
-    padding-top   0.65s cubic-bezier(0.16, 1, 0.3, 1),
-    max-height    0.65s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity       0.4s  ease;
-  max-height: 200px;
-}
-
-.oc-hero-band.collapsed {
-  padding-top: 0;
-  max-height: 0;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.oc-hero-band__inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  padding: 16px 20px 20px;
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
-}
-.oc-hero-band.collapsed .oc-hero-band__inner {
-  transform: translateY(-12px);
-  opacity: 0;
-}
-
-.oc-hero-text p {
-  font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
-  font-size: 13px;
-  color: #6b7280;
-  text-align: center;
-}
-
-.oc-hero-hints {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-.oc-hero-hints span {
-  font-size: 12px;
-  color: #374151;
-  background: white;
-  border: 1.5px solid #e5e7eb;
-  border-radius: 999px;
-  padding: 3px 12px;
-  cursor: pointer;
-  font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
-}
-.oc-hero-hints span:hover {
-  border-color: #17a9bb;
-  color: #17a9bb;
-  background: #e8f7fa;
-}
-
-/* ════════════════════════════════════════
-   KEYFRAMES
-   ════════════════════════════════════════ */
-@keyframes oc-rainbow-move {
-  0%   { background-position: 0% 50%; }
-  100% { background-position: 100% 50%; }
-}
-@keyframes oc-timer-countdown {
-  from { transform: scaleX(1); }
-  to   { transform: scaleX(0); }
-}
-
-/* ════════════════════════════════════════
-   LANG TOGGLE — Sliding pill
-   ════════════════════════════════════════ */
-.oc-lang-toggle {
-  display: inline-flex;
-  align-items: center;
-  background: rgba(0, 0, 0, 0.08);
-  border-radius: 999px;
-  padding: 3px;
-  position: relative;
-  gap: 0;
-}
-
-.header[transparent] .oc-lang-toggle { background: rgba(255,255,255,0.15); }
-
-.oc-lang-toggle__track {
-  position: absolute;
-  top: 3px; left: 3px;
-  height: calc(100% - 6px);
-  width: 44px;
-  background: linear-gradient(90deg, #14c9df, #17a9bb);
-  border-radius: 999px;
-  box-shadow: 0 2px 8px rgba(20,201,223,0.4);
-  transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), width 0.25s cubic-bezier(0.34,1.56,0.64,1);
-  pointer-events: none;
-}
-
-.oc-lang-toggle__btn {
-  position: relative; z-index: 1;
-  padding: 5px 16px;
-  border-radius: 999px;
-  color: var(--color-foreground);
-  opacity: 0.5;
-  cursor: pointer;
-  font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
-  font-size: 13px; font-weight: 600; letter-spacing: 0.04em;
-  transition: opacity 0.2s ease, color 0.2s ease;
-  white-space: nowrap;
-  -webkit-appearance: none; appearance: none;
-  background: transparent !important; border: 0 !important;
-  outline: 0 !important; box-shadow: none !important; line-height: 1 !important;
-}
-
-.oc-lang-toggle__btn.active { color: #fff; opacity: 1; cursor: default; pointer-events: none; }
-.oc-lang-toggle form { display: contents; }
-.oc-lang-toggle form, .oc-lang-toggle form * { margin: 0 !important; }
-.oc-lang-toggle--in-actions { display: none; }
-
-@media screen and (max-width: 749px) {
-  .oc-lang-toggle--in-actions {
-    display: inline-flex; align-items: center;
-    background: rgba(0,0,0,0.08); border-radius: 999px;
-    padding: 2px; position: relative; gap: 0;
+  .header__columns:not(:has(.header__column)) {
+    grid-template-columns: 1fr;
   }
-  .header[transparent] .oc-lang-toggle--in-actions { background: rgba(255,255,255,0.15); }
 
-  .oc-lang-toggle--in-actions .oc-lang-toggle__track {
-    position: absolute; top: 2px; left: 2px;
-    height: calc(100% - 4px); width: 30px !important;
+  @media (hover: hover) {
+    .header__column:has(header-menu:hover),
+    .header__column:has(.header-actions__action:hover),
+    .header__column:has(.header__icon--menu:hover) {
+      header-menu:not(:hover),
+      .header-actions__action:not(:hover),
+      .header__icon--menu:not(:hover) {
+        opacity: var(--opacity-subdued-text);
+        transition: opacity var(--animation-speed) var(--animation-easing);
+      }
+    }
+  }
+
+  header-menu,
+  .header-actions__action,
+  .header__icon--menu {
+    transition: opacity var(--animation-speed) var(--animation-easing);
+  }
+
+  .header-actions__action {
+    --button-color: var(--color-foreground);
+    color: var(--button-color);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+
+    &:hover {
+      --button-color: var(--color-foreground);
+    }
+  }
+
+  .header-actions__action:not(.account-button) .svg-wrapper {
+    height: var(--button-size);
+    width: var(--button-size);
+  }
+
+  .header-actions__action:not(.account-button) svg {
+    width: var(--icon-size-md);
+    height: var(--icon-size-md);
+  }
+
+  .header:has(#Details-menu-drawer-container[open]) {
+    contain: style;
+  }
+
+  .header.header--compact {
+    --header-padding: var(--padding-2xs);
+  }
+
+  .header__columns {
+    --padding-block-start: var(--header-padding);
+    --padding-block-end: var(--header-padding);
+  }
+
+  .header:not(.header--compact) .header__row--bottom {
+    --header-padding: var(--padding-xs);
+  }
+
+  .header--collapse-row-paddings {
+    .header__row--top .header__columns {
+      --padding-block-end: 0px;
+    }
+
+    .header__row--bottom .header__columns {
+      --padding-block-start: 0px;
+    }
+  }
+
+  .header-section:has(.header[transparent]) + .shopify-section {
+    margin-top: var(--header-height);
+  }
+
+  main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
+    &.spacing-style,
+    .spacing-style {
+      --section-top-offset: calc(var(--header-height) * var(--transparent-header-offset-boolean));
+
+      :is(.spacing-style, .inherit-spacing) {
+        --section-top-offset: 0px;
+      }
+    }
+
+    .sticky-content {
+      margin-top: calc(var(--header-height) * var(--transparent-header-offset-boolean) * -1);
+    }
+  }
+
+  .header-menu .menu-list__submenu {
+    content-visibility: auto;
+    contain-intrinsic-size: 0px 500px;
+  }
+
+  .header-menu details[open] .menu-list__submenu,
+  .header-menu .menu-list__submenu[data-active],
+  .header-menu .menu-list__list-item[slot='overflow'] .menu-list__submenu {
+    content-visibility: visible;
+  }
+
+  /* ── Lang toggle — Sliding pill ── */
+  .oc-lang-toggle {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 999px;
+    padding: 3px;
+    position: relative;
+    gap: 0;
+  }
+
+  .header[transparent] .oc-lang-toggle {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .oc-lang-toggle__track {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    height: calc(100% - 6px);
+    width: 44px; /* fallback ก่อน JS kick in */
     background: linear-gradient(90deg, #14c9df, #17a9bb);
-    border-radius: 999px; box-shadow: 0 2px 8px rgba(20,201,223,0.35);
-    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), width 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    border-radius: 999px;
+    box-shadow: 0 2px 8px rgba(20, 201, 223, 0.4);
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+                width 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
     pointer-events: none;
   }
 
-  .oc-lang-toggle--in-actions .oc-lang-toggle__btn { padding: 4px 7px; font-size: 12px; font-weight: 700; opacity: 0.55; }
-  .oc-lang-toggle--in-actions .oc-lang-toggle__btn.active { color: #fff; opacity: 1; cursor: default; pointer-events: none; }
+  .oc-lang-toggle__btn {
+    position: relative;
+    z-index: 1;
+    padding: 5px 16px;
+    border-radius: 999px;
+    border: none;
+    background: transparent;
+    color: var(--color-foreground);
+    opacity: 0.5;
+    cursor: pointer;
+    font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    transition: opacity 0.2s ease, color 0.2s ease;
+    box-shadow: none;
+    white-space: nowrap;
+  }
+
+  .oc-lang-toggle__btn.active {
+    color: #fff;
+    opacity: 1;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  /* ── Mobile: ซ่อน account, โชว์ toggle ใน actions ── */
+  /* desktop: ซ่อน toggle ที่อยู่ใน actions */
+  .oc-lang-toggle--in-actions {
+    display: none;
+  }
+
+  @media screen and (max-width: 749px) {
+  /* ซ่อน account icon ตามเดิม */
+  header-actions shopify-account,
+  header-actions .account-button {
+    display: none;
+  }
+
+  /* ทำให้ mobile toggle เป็น pill เหมือน desktop */
+  .oc-lang-toggle--in-actions {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 999px;
+    padding: 2px;              /* ขนาดเล็กลงกว่าดีสก์ท็อป */
+    position: relative;
+    gap: 0;
+  }
+
+  .header[transparent] .oc-lang-toggle--in-actions {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .oc-lang-toggle--in-actions .oc-lang-toggle__track {
+    display: block;            /* ✅ เอากลับมา */
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    height: calc(100% - 4px);
+    width: 40px;               /* fallback */
+    background: linear-gradient(90deg, #14c9df, #17a9bb);
+    border-radius: 999px;
+    box-shadow: 0 2px 8px rgba(20, 201, 223, 0.35);
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+                width 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+  }
+
+  .oc-lang-toggle--in-actions .oc-lang-toggle__btn {
+    position: relative;
+    z-index: 1;
+    padding: 4px 7px;         /* ปุ่มเล็กลง */
+    border-radius: 999px;      /* ✅ กลับมาเป็น pill */
+    border: none;
+    background: transparent;
+    color: var(--color-foreground);
+    opacity: 0.55;
+    cursor: pointer;
+    font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+   .oc-lang-toggle--in-actions .oc-lang-toggle__track {
+    width: 30px !important; /* ลด fallback ให้เล็กลง */
+  }
+
+  .oc-lang-toggle--in-actions .oc-lang-toggle__btn.active {
+    color: #fff;
+    opacity: 1;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  /* ไม่ต้องใช้ / บน mobile */
+  .oc-lang-sep {
+    display: none;
+  }
 }
 
-/* ════════════════════════════════════════
-   DROPDOWN LOCALIZATION (drawer fallback)
-   ════════════════════════════════════════ */
-.dropdown-localization__button {
-  display: flex; position: relative; align-items: center; gap: 4px;
-  font-family: var(--menu-localization-font);
-  font-size: var(--menu-localization-font-size);
-  font-weight: var(--menu-top-level-font-weight);
-  padding-inline: var(--padding-2xs);
-  margin-inline: calc(-1 * var(--padding-2xs));
-}
-.dropdown-localization__button .svg-wrapper.icon-caret {
-  height: var(--icon-size-xs); width: var(--icon-size-xs);
-  right: var(--margin-xs); top: calc(50% - var(--padding-2xs));
-  flex-shrink: 0; transition: transform var(--animation-speed) var(--animation-easing);
-}
-.dropdown-localization__button,
-.dropdown-localization__button:hover { box-shadow: none; background-color: transparent; border-color: transparent; }
+  /* ── Dropdown Localization (unused but keep for drawer fallback) ── */
+  .dropdown-localization__button {
+    display: flex;
+    position: relative;
+    align-items: center;
+    gap: 4px;
+    font-family: var(--menu-localization-font);
+    font-size: var(--menu-localization-font-size);
+    font-weight: var(--menu-top-level-font-weight);
+    padding-inline: var(--padding-2xs);
+    margin-inline: calc(-1 * var(--padding-2xs));
+  }
 
-dropdown-localization-component .localization-form__list { max-height: 20.5rem; }
+  .dropdown-localization__button .svg-wrapper.icon-caret {
+    height: var(--icon-size-xs);
+    width: var(--icon-size-xs);
+    right: var(--margin-xs);
+    top: calc(50% - var(--padding-2xs));
+    flex-shrink: 0;
+    transition: transform var(--animation-speed) var(--animation-easing);
+  }
 
-.localization-wrapper {
-  position: fixed; z-index: var(--layer-raised);
-  border-radius: var(--style-border-radius-popover);
-  transition-property: display, opacity, translate;
-  transition-duration: 0.3s; transition-timing-function: var(--ease-out-quad);
-  transition-behavior: allow-discrete; translate: 0 20px; opacity: 0;
-}
-.localization-wrapper:not([hidden]) { translate: 0 0; opacity: 1; }
-@starting-style { .localization-wrapper:not([hidden]) { translate: 0 20px; opacity: 0; } }
+  .dropdown-localization__button,
+  .dropdown-localization__button:hover {
+    box-shadow: none;
+    background-color: transparent;
+    border-color: transparent;
+  }
 
-dropdown-localization-component { position: relative; background-color: transparent; }
-dropdown-localization-component .localization-wrapper {
-  box-shadow: var(--shadow-popover); border: var(--style-border-popover);
-  background-color: var(--color-background); max-height: 27.5rem;
-  position: absolute; top: calc(100% + 10px);
-  z-index: calc(var(--layer-header-menu) + 1);
+  dropdown-localization-component .localization-form__list {
+    max-height: 20.5rem;
+  }
+
+  .localization-wrapper {
+    position: fixed;
+    z-index: var(--layer-raised);
+    border-radius: var(--style-border-radius-popover);
+    transition-property: display, opacity, translate;
+    transition-duration: 0.3s;
+    transition-timing-function: var(--ease-out-quad);
+    transition-behavior: allow-discrete;
+    translate: 0 20px;
+    opacity: 0;
+  }
+
+  .localization-wrapper:not([hidden]) {
+    translate: 0 0;
+    opacity: 1;
+  }
+
+  @starting-style {
+    .localization-wrapper:not([hidden]) {
+      translate: 0 20px;
+      opacity: 0;
+    }
+  }
+
+  dropdown-localization-component {
+    position: relative;
+    background-color: transparent;
+  }
+
+  dropdown-localization-component .localization-wrapper {
+    box-shadow: var(--shadow-popover);
+    border: var(--style-border-popover);
+    background-color: var(--color-background);
+    max-height: 27.5rem;
+    position: absolute;
+    top: calc(100% + 10px);
+    z-index: calc(var(--layer-header-menu) + 1);
+  }
+
+  .dropdown-localization .language-selector:where(:not(.top-shadow)) {
+    font-weight: var(--menu-top-level-font-weight);
+  }
+
+  .dropdown-localization:not(dropdown-localization-component) .language-selector {
+    font-family: var(--menu-localization-font);
+    font-size: var(--menu-localization-font-size);
+  }
+
+  .oc-lang-toggle form {
+  display: contents;
 }
-.dropdown-localization .language-selector:where(:not(.top-shadow)) { font-weight: var(--menu-top-level-font-weight); }
-.dropdown-localization:not(dropdown-localization-component) .language-selector {
-  font-family: var(--menu-localization-font); font-size: var(--menu-localization-font-size);
+
+.oc-lang-toggle form,
+.oc-lang-toggle form * {
+  margin: 0 !important;
+}
+.oc-lang-toggle__btn {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  line-height: 1 !important;
+}
+
+  @media screen and (max-width: 749px) {
+    .header__columns,
+    #header-component[data-menu-style='drawer'] .header__columns {
+      grid-template-columns: 44px 44px 1fr 65px 44px !important;
+    }
+
+    header-actions shopify-account,
+    header-actions .account-button {
+      display: none !important;
+    }
+
+    .oc-lang-toggle--in-actions {
+      grid-area: rightA;
+      justify-self: center;
+      align-self: center;
+    }
+  }
+
+
+  /* ซ่อน modal search icon บน desktop เพราะมี expanded แล้ว */
+@media screen and (min-width: 750px) {
+  .search-action:not(.search-action--hidden-on-drawer) {
+    display: none;
+  }
+}
+
+.oc-search-expand {
+  display: flex;
+  align-items: center;
+  background: rgba(0,0,0,0.06);
+  border-radius: 999px;
+  padding: 0 6px 0 16px;
+  gap: 4px;
+  transition: background 0.2s;
+}
+
+.oc-search-expand:focus-within {
+  background: rgba(23,169,187,0.1);
+  outline: 1.5px solid rgba(20,201,223,0.4);
+}
+
+.oc-search-expand__input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 13px;
+  font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
+  color: var(--color-foreground);
+  width: 200px;
+  padding: 7px 0;
+}
+
+.oc-search-expand__input::placeholder {
+  color: var(--color-foreground);
+  opacity: 0.45;
+}
+
+.oc-search-expand__btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px; height: 32px;
+  border-radius: 999px;
+  color: var(--color-foreground);
+  opacity: 0.6;
+  transition: opacity 0.2s, background 0.2s;
+}
+
+.oc-search-expand__btn:hover {
+  opacity: 1;
+  background: rgba(23,169,187,0.15);
+}
+
+@media screen and (min-width: 767px) {
+  .search-action {
+    display: none !important;
+  }
 }
 
 {% endstylesheet %}
+
+
+
 
 {% schema %}
 {
@@ -1287,51 +1214,369 @@ dropdown-localization-component .localization-wrapper {
   "tag": "header",
   "class": "header-section",
   "settings": [
-    { "type": "header", "content": "t:content.logo" },
-    { "type": "select", "id": "logo_position", "label": "t:settings.position", "options": [{"value":"left","label":"t:options.left"},{"value":"center","label":"t:options.center"},{"value":"right","label":"t:options.right"}], "default": "center" },
-    { "type": "header", "content": "t:content.menu" },
-    { "type": "select", "id": "menu_position", "label": "t:settings.position", "options": [{"value":"left","label":"t:options.left"},{"value":"center","label":"t:options.center"},{"value":"right","label":"t:options.right"}], "default": "left" },
-    { "type": "select", "id": "menu_row", "label": "t:settings.row", "options": [{"value":"top","label":"t:options.top"},{"value":"bottom","label":"t:options.bottom"}], "default": "top" },
-    { "type": "header", "content": "t:content.customer_account" },
-    { "type": "paragraph", "content": "t:content.manage_customer_accounts" },
-    { "type": "link_list", "id": "customer_account_menu", "label": "t:settings.menu", "default": "customer-account-main-menu" },
-    { "type": "header", "content": "t:content.search" },
-    { "type": "checkbox", "id": "show_search", "label": "t:settings.search_icon", "default": true },
-    { "type": "select", "id": "search_position", "label": "t:settings.search_position", "options": [{"value":"left","label":"t:options.left"},{"value":"right","label":"t:options.right"}], "default": "right", "visible_if": "{{ section.settings.show_search }}" },
-    { "type": "select", "id": "search_row", "label": "t:settings.search_row", "options": [{"value":"top","label":"t:options.top"},{"value":"bottom","label":"t:options.bottom"}], "default": "top", "visible_if": "{{ section.settings.show_search }}" },
-    { "type": "header", "content": "t:content.localization" },
-    { "type": "checkbox", "id": "show_country", "label": "t:settings.country_region", "info": "t:info.manage_countries_regions", "default": true },
-    { "type": "checkbox", "id": "country_selector_style", "label": "t:settings.flag", "default": true, "visible_if": "{{ section.settings.show_country }}" },
-    { "type": "checkbox", "id": "show_language", "label": "t:settings.language_selector", "info": "t:info.manage_languages", "default": true },
-    { "type": "select", "id": "localization_font", "label": "t:settings.font", "options": [{"value":"heading","label":"t:options.heading"},{"value":"subheading","label":"t:options.subheading"},{"value":"body","label":"t:options.body"},{"value":"accent","label":"t:options.accent"}], "default": "heading", "visible_if": "{{ section.settings.show_country or section.settings.show_language }}" },
-    { "type": "select", "id": "localization_font_size", "label": "t:settings.size", "options": [{"value":"0.625rem","label":"10px"},{"value":"0.75rem","label":"12px"},{"value":"0.875rem","label":"14px"},{"value":"1rem","label":"16px"},{"value":"1.125rem","label":"18px"}], "default": "1rem" },
-    { "type": "select", "id": "localization_position", "label": "t:settings.position", "options": [{"value":"left","label":"t:options.left"},{"value":"right","label":"t:options.right"}], "default": "right", "visible_if": "{{ section.settings.show_country or section.settings.show_language }}" },
-    { "type": "select", "id": "localization_row", "label": "t:settings.row", "options": [{"value":"top","label":"t:options.top"},{"value":"bottom","label":"t:options.bottom"}], "default": "top", "visible_if": "{{ section.settings.show_country or section.settings.show_language }}" },
-    { "type": "header", "content": "t:content.appearance" },
-    { "type": "select", "id": "section_width", "label": "t:settings.width", "options": [{"value":"page-width","label":"t:options.page"},{"value":"full-width","label":"t:options.full"}] },
-    { "type": "select", "id": "section_height", "label": "t:settings.height", "options": [{"value":"compact","label":"t:options.compact"},{"value":"standard","label":"t:options.standard"}], "default": "standard" },
-    { "type": "select", "id": "enable_sticky_header", "label": "t:settings.sticky_header", "options": [{"value":"always","label":"t:options.always"},{"value":"scroll-up","label":"t:options.on_scroll_up"},{"value":"never","label":"t:options.never"}], "default": "always" },
-    { "type": "range", "id": "divider_width", "label": "t:settings.divider_thickness", "min": 0, "max": 5, "step": 0.5, "unit": "px", "default": 0, "visible_if": "{{ section.settings.menu_row == 'bottom' or section.settings.localization_row == 'bottom' or section.settings.search_row == 'bottom' }}" },
-    { "type": "select", "id": "divider_size", "label": "t:settings.divider_width", "options": [{"value":"page-width","label":"t:options.page"},{"value":"full-width","label":"t:options.full"}], "visible_if": "{{ section.settings.divider_width > 0 and section.settings.menu_row == 'bottom' or section.settings.localization_row == 'bottom' or section.settings.search_row == 'bottom' }}" },
-    { "type": "range", "id": "border_width", "label": "t:settings.border_width", "min": 0, "max": 5, "step": 0.5, "unit": "px", "default": 0 },
-    { "type": "header", "content": "t:content.utilities" },
-    { "type": "select", "id": "actions_display_style", "label": "t:settings.actions_display_style", "info": "t:info.actions_display_style", "options": [{"value":"icon","label":"t:options.icons"},{"value":"text","label":"t:options.text"}], "default": "icon" },
-    { "type": "select", "id": "actions_font_size", "label": "t:settings.size", "options": [{"value":"0.75rem","label":"12px"},{"value":"0.875rem","label":"14px"},{"value":"1rem","label":"16px"},{"value":"1.125rem","label":"18px"}], "default": "0.875rem", "visible_if": "{{ section.settings.actions_display_style == 'text' }}" },
-    { "type": "select", "id": "actions_font", "label": "t:settings.font", "options": [{"value":"heading","label":"t:options.heading"},{"value":"subheading","label":"t:options.subheading"},{"value":"body","label":"t:options.body"},{"value":"accent","label":"t:options.accent"}], "default": "body", "visible_if": "{{ section.settings.actions_display_style == 'text' }}" },
-    { "type": "select", "id": "actions_text_case", "label": "t:settings.case", "options": [{"value":"none","label":"t:options.default"},{"value":"uppercase","label":"t:options.uppercase"}], "default": "none", "visible_if": "{{ section.settings.actions_display_style == 'text' }}" },
-    { "type": "header", "content": "t:content.colors" },
-    { "type": "color_scheme", "id": "color_scheme_top", "label": "t:settings.default", "default": "primary" },
-    { "type": "color_scheme", "id": "color_scheme_bottom", "label": "t:settings.bottom_row", "default": "primary", "visible_if": "{{ section.settings.menu_row == 'bottom' or section.settings.localization_row == 'bottom' or section.settings.search_row == 'bottom' }}" },
-    { "type": "color_scheme", "id": "color_scheme_transparent", "label": "t:settings.inverse", "default": "primary", "visible_if": "{{ section.settings.enable_transparent_header_home or section.settings.enable_transparent_header_product or section.settings.enable_transparent_header_collection }}" },
-    { "type": "header", "content": "t:content.home_page" },
-    { "type": "checkbox", "id": "enable_transparent_header_home", "label": "t:settings.transparent_background", "default": false },
-    { "type": "select", "id": "home_color_scheme", "label": "t:settings.color_scheme", "options": [{"value":"default","label":"t:options.default"},{"value":"inverse","label":"t:options.inverse"}], "default": "default", "visible_if": "{{ section.settings.enable_transparent_header_home }}" },
-    { "type": "header", "content": "t:content.product_page" },
-    { "type": "checkbox", "id": "enable_transparent_header_product", "label": "t:settings.transparent_background", "default": false },
-    { "type": "select", "id": "product_color_scheme", "label": "t:settings.color_scheme", "options": [{"value":"default","label":"t:options.default"},{"value":"inverse","label":"t:options.inverse"}], "default": "default", "visible_if": "{{ section.settings.enable_transparent_header_product }}" },
-    { "type": "header", "content": "t:content.collection_page" },
-    { "type": "checkbox", "id": "enable_transparent_header_collection", "label": "t:settings.transparent_background", "default": false },
-    { "type": "select", "id": "collection_color_scheme", "label": "t:settings.color_scheme", "options": [{"value":"default","label":"t:options.default"},{"value":"inverse","label":"t:options.inverse"}], "default": "default", "visible_if": "{{ section.settings.enable_transparent_header_collection }}" }
+    {
+      "type": "header",
+      "content": "t:content.logo"
+    },
+    {
+      "type": "select",
+      "id": "logo_position",
+      "label": "t:settings.position",
+      "options": [
+        { "value": "left", "label": "t:options.left" },
+        { "value": "center", "label": "t:options.center" },
+        { "value": "right", "label": "t:options.right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "t:content.menu"
+    },
+    {
+      "type": "select",
+      "id": "menu_position",
+      "label": "t:settings.position",
+      "options": [
+        { "value": "left", "label": "t:options.left" },
+        { "value": "center", "label": "t:options.center" },
+        { "value": "right", "label": "t:options.right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "menu_row",
+      "label": "t:settings.row",
+      "options": [
+        { "value": "top", "label": "t:options.top" },
+        { "value": "bottom", "label": "t:options.bottom" }
+      ],
+      "default": "top"
+    },
+    {
+      "type": "header",
+      "content": "t:content.customer_account"
+    },
+    {
+      "type": "paragraph",
+      "content": "t:content.manage_customer_accounts"
+    },
+    {
+      "type": "link_list",
+      "id": "customer_account_menu",
+      "label": "t:settings.menu",
+      "default": "customer-account-main-menu"
+    },
+    {
+      "type": "header",
+      "content": "t:content.search"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "t:settings.search_icon",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "search_position",
+      "label": "t:settings.search_position",
+      "options": [
+        { "value": "left", "label": "t:options.left" },
+        { "value": "right", "label": "t:options.right" }
+      ],
+      "default": "right",
+      "visible_if": "{{ section.settings.show_search }}"
+    },
+    {
+      "type": "select",
+      "id": "search_row",
+      "label": "t:settings.search_row",
+      "options": [
+        { "value": "top", "label": "t:options.top" },
+        { "value": "bottom", "label": "t:options.bottom" }
+      ],
+      "default": "top",
+      "visible_if": "{{ section.settings.show_search }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.localization"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_country",
+      "label": "t:settings.country_region",
+      "info": "t:info.manage_countries_regions",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "country_selector_style",
+      "label": "t:settings.flag",
+      "default": true,
+      "visible_if": "{{ section.settings.show_country }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_language",
+      "label": "t:settings.language_selector",
+      "info": "t:info.manage_languages",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "localization_font",
+      "label": "t:settings.font",
+      "options": [
+        { "value": "heading", "label": "t:options.heading" },
+        { "value": "subheading", "label": "t:options.subheading" },
+        { "value": "body", "label": "t:options.body" },
+        { "value": "accent", "label": "t:options.accent" }
+      ],
+      "default": "heading",
+      "visible_if": "{{ section.settings.show_country or section.settings.show_language }}"
+    },
+    {
+      "type": "select",
+      "id": "localization_font_size",
+      "label": "t:settings.size",
+      "options": [
+        { "value": "0.625rem", "label": "10px" },
+        { "value": "0.75rem", "label": "12px" },
+        { "value": "0.875rem", "label": "14px" },
+        { "value": "1rem", "label": "16px" },
+        { "value": "1.125rem", "label": "18px" }
+      ],
+      "default": "1rem"
+    },
+    {
+      "type": "select",
+      "id": "localization_position",
+      "label": "t:settings.position",
+      "options": [
+        { "value": "left", "label": "t:options.left" },
+        { "value": "right", "label": "t:options.right" }
+      ],
+      "default": "right",
+      "visible_if": "{{ section.settings.show_country or section.settings.show_language }}"
+    },
+    {
+      "type": "select",
+      "id": "localization_row",
+      "label": "t:settings.row",
+      "options": [
+        { "value": "top", "label": "t:options.top" },
+        { "value": "bottom", "label": "t:options.bottom" }
+      ],
+      "default": "top",
+      "visible_if": "{{ section.settings.show_country or section.settings.show_language }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.appearance"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:settings.width",
+      "options": [
+        { "value": "page-width", "label": "t:options.page" },
+        { "value": "full-width", "label": "t:options.full" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "section_height",
+      "label": "t:settings.height",
+      "options": [
+        { "value": "compact", "label": "t:options.compact" },
+        { "value": "standard", "label": "t:options.standard" }
+      ],
+      "default": "standard"
+    },
+    {
+      "type": "select",
+      "id": "enable_sticky_header",
+      "label": "t:settings.sticky_header",
+      "options": [
+        { "value": "always", "label": "t:options.always" },
+        { "value": "scroll-up", "label": "t:options.on_scroll_up" },
+        { "value": "never", "label": "t:options.never" }
+      ],
+      "default": "always"
+    },
+    {
+      "type": "range",
+      "id": "divider_width",
+      "label": "t:settings.divider_thickness",
+      "min": 0,
+      "max": 5,
+      "step": 0.5,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ section.settings.menu_row == 'bottom' or section.settings.localization_row == 'bottom' or section.settings.search_row == 'bottom' }}"
+    },
+    {
+      "type": "select",
+      "id": "divider_size",
+      "label": "t:settings.divider_width",
+      "options": [
+        { "value": "page-width", "label": "t:options.page" },
+        { "value": "full-width", "label": "t:options.full" }
+      ],
+      "visible_if": "{{ section.settings.divider_width > 0 and section.settings.menu_row == 'bottom' or section.settings.localization_row == 'bottom' or section.settings.search_row == 'bottom' }}"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "t:settings.border_width",
+      "min": 0,
+      "max": 5,
+      "step": 0.5,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "t:content.utilities"
+    },
+    {
+      "type": "select",
+      "id": "actions_display_style",
+      "label": "t:settings.actions_display_style",
+      "info": "t:info.actions_display_style",
+      "options": [
+        { "value": "icon", "label": "t:options.icons" },
+        { "value": "text", "label": "t:options.text" }
+      ],
+      "default": "icon"
+    },
+    {
+      "type": "select",
+      "id": "actions_font_size",
+      "label": "t:settings.size",
+      "options": [
+        { "value": "0.75rem", "label": "12px" },
+        { "value": "0.875rem", "label": "14px" },
+        { "value": "1rem", "label": "16px" },
+        { "value": "1.125rem", "label": "18px" }
+      ],
+      "default": "0.875rem",
+      "visible_if": "{{ section.settings.actions_display_style == 'text' }}"
+    },
+    {
+      "type": "select",
+      "id": "actions_font",
+      "label": "t:settings.font",
+      "options": [
+        { "value": "heading", "label": "t:options.heading" },
+        { "value": "subheading", "label": "t:options.subheading" },
+        { "value": "body", "label": "t:options.body" },
+        { "value": "accent", "label": "t:options.accent" }
+      ],
+      "default": "body",
+      "visible_if": "{{ section.settings.actions_display_style == 'text' }}"
+    },
+    {
+      "type": "select",
+      "id": "actions_text_case",
+      "label": "t:settings.case",
+      "options": [
+        { "value": "none", "label": "t:options.default" },
+        { "value": "uppercase", "label": "t:options.uppercase" }
+      ],
+      "default": "none",
+      "visible_if": "{{ section.settings.actions_display_style == 'text' }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.colors"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme_top",
+      "label": "t:settings.default",
+      "default": "primary"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme_bottom",
+      "label": "t:settings.bottom_row",
+      "default": "primary",
+      "visible_if": "{{ section.settings.menu_row == 'bottom' or section.settings.localization_row == 'bottom' or section.settings.search_row == 'bottom' }}"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme_transparent",
+      "label": "t:settings.inverse",
+      "default": "primary",
+      "visible_if": "{{ section.settings.enable_transparent_header_home or section.settings.enable_transparent_header_product or section.settings.enable_transparent_header_collection }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.home_page"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_transparent_header_home",
+      "label": "t:settings.transparent_background",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "home_color_scheme",
+      "label": "t:settings.color_scheme",
+      "options": [
+        { "value": "default", "label": "t:options.default" },
+        { "value": "inverse", "label": "t:options.inverse" }
+      ],
+      "default": "default",
+      "visible_if": "{{ section.settings.enable_transparent_header_home }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.product_page"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_transparent_header_product",
+      "label": "t:settings.transparent_background",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "product_color_scheme",
+      "label": "t:settings.color_scheme",
+      "options": [
+        { "value": "default", "label": "t:options.default" },
+        { "value": "inverse", "label": "t:options.inverse" }
+      ],
+      "default": "default",
+      "visible_if": "{{ section.settings.enable_transparent_header_product }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.collection_page"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_transparent_header_collection",
+      "label": "t:settings.transparent_background",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "collection_color_scheme",
+      "label": "t:settings.color_scheme",
+      "options": [
+        { "value": "default", "label": "t:options.default" },
+        { "value": "inverse", "label": "t:options.inverse" }
+      ],
+      "default": "default",
+      "visible_if": "{{ section.settings.enable_transparent_header_collection }}"
+    }
   ],
   "presets": []
 }
