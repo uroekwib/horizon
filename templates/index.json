@@ -653,7 +653,7 @@
           "settings": {
             "text": "<p><strong>Octopus Media Solutions </strong>เราให้บริการงานป้ายโฆษณาครบวงจร ตั้งแต่ออกแบบ เขียนแบบ ผลิต ติดตั้ง โดยทีมงานมืออาชีพที่มีทักษะเฉพาะทาง พร้อมดำเนินงานโครงสร้างตามหลักวิศวกรรมและสถาปัตยกรรม เพื่อตอบโจทย์ธุรกิจและอุตสาหกรรมที่ต้องการเพิ่มความโดดเด่น ทันสมัย แข็งแรงมีมาตรฐานทนทานใช้งานได้ยาวนาน</p><p><strong>เรามีความเชี่ยวชาญด้าน </strong>ป้ายอักษร ป้ายไฟ LED ป้ายโลหะ ป้ายกล่องไฟ ป้ายบริษัท ป้ายทาวเวอร์ ป้ายติดอาคาร และป้ายโฆษณาทุกประเภท ให้บริการครบจบในที่เดียว</p>",
             "width": "fit-content",
-            "max_width": "normal",
+            "max_width": "narrow",
             "alignment": "center",
             "type_preset": "rte",
             "font": "var(--font-body--family)",
@@ -666,8 +666,8 @@
             "background": false,
             "background_color": "#00000026",
             "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
+            "padding-block-start": 12,
+            "padding-block-end": 12,
             "padding-inline-start": 0,
             "padding-inline-end": 0
           },
