@@ -95,10 +95,12 @@
     endif
   endif
 
-  capture search
-    render 'search', style: search_style, class: search_class, display_style: section.settings.actions_display_style
-    echo '<div class="oc-search-slot" id="oc-search-slot"></div>'
-  endcapture
+ capture search
+  echo '<div class="oc-search-slot-wrap"><div class="oc-search-slot" id="oc-search-slot"></div></div>'
+  echo '<div class="oc-search-action-wrap">'
+  render 'search', style: search_style, class: search_class, display_style: section.settings.actions_display_style
+  echo '</div>'
+endcapture
 
   assign skip_drawer_search = false
   if shop.customer_accounts_enabled == false and section.settings.search_position == 'left' and search_style != 'none'
