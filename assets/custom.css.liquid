@@ -537,30 +537,35 @@ button.shopify-payment-button__button--unbranded:hover {
    FIX: Reset ปุ่ม + / - (Quantity) และปุ่ม X (Close)
    ============================================================ */
 
-/* สั่งให้กล่องหลักตัดขอบมุมที่ล้นออกมาทิ้งไปเลย */
+/* ============================================================
+   FIX: Reset ปุ่ม + / - (Quantity) ให้ Hover ตัดตรงพอดีมุม
+   ============================================================ */
+
+/* 1. สั่งให้กล่องหลักตัดขอบส่วนเกินทิ้ง (กันทะลักออกมุม) */
 .quantity-selector {
   overflow: hidden !important; 
 }
 
-/* 1. แก้ไขปุ่ม + และ - ในกล่องจำนวนสินค้า */
+/* 2. บังคับให้ปุ่มเป็นสี่เหลี่ยมมุมฉาก (รอยต่อด้านในจะได้เป็นเส้นตรง) */
 .quantity-selector .quantity-minus, 
 .quantity-selector .quantity-plus {
   background: transparent !important; 
   box-shadow: none !important; 
   border: none !important;
-  width: 35px !important; 
+  width: 40px !important; /* ปรับให้กว้างขึ้นนิดนึงจะได้กดง่าย */
   height: 100% !important;
   min-width: unset !important;
-  /* เอา border-radius: 0 ออกไปแล้วครับ */
+  border-radius: 0 !important; /* << สำคัญมาก! ต้องให้เป็น 0 */
 }
 
-/* ตอนเอาเมาส์ชี้ให้เป็นสีเทาอ่อน และไอคอนสีฟ้า */
+/* ตอนเอาเมาส์ชี้ให้เป็นสีเทาอ่อน */
 .quantity-selector .quantity-minus:hover, 
 .quantity-selector .quantity-plus:hover {
   background: rgba(0, 0, 0, 0.05) !important; 
   color: var(--brand-cyan) !important; 
   transform: none !important; 
   box-shadow: none !important;
+  border-radius: 0 !important; /* << ย้ำตอน Hover ด้วย จะได้ไม่กลายร่างเป็นวงกลม */
 }
 
 /* 2. แก้ไขปุ่มเปิด-ปิด Modal / Drawer (ปุ่ม X) */
