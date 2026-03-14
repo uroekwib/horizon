@@ -565,37 +565,67 @@ button.shopify-payment-button__button--unbranded:hover {
     font-size: 13px !important; 
   }
 }
-
 /* ============================================================
-   FIX: Reset ปุ่ม + / - (Quantity) และป้องกันการแฟบ
+   FIX: กล่อง Quantity Selector (+ / -) แบบแคปซูล (รวมทุกอุปกรณ์)
    ============================================================ */
 .quantity-selector {
   display: flex !important;
-  min-height: 44px !important; /* ล็อคความสูงขั้นต่ำไว้ กล่องจะได้ไม่แฟบเป็นเส้น */
+  min-height: 44px !important;
   align-items: center !important;
-  overflow: hidden !important; /* ตัดมุมล้นๆ ทิ้ง */
+  justify-content: space-between !important;
+  overflow: hidden !important; 
+  border: 1.5px solid var(--oc-ink-15) !important; /* สร้างกรอบแคปซูลที่ตัวแม่ */
+  border-radius: 999px !important; /* โค้งมน */
+  background-color: #fff !important;
+  width: 100% !important;
+  max-width: 140px !important; /* ป้องกันไม่ให้กล่องยืดกว้างเกินไปบนมือถือ */
 }
 
+/* เคลียร์เส้นขอบของช่องตัวเลขตรงกลางให้เนียนไปกับกล่องแม่ */
+.quantity-selector input[type='number'] {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  text-align: center !important;
+  font-weight: 700 !important;
+  font-size: 16px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  outline: none !important;
+  -moz-appearance: textfield !important;
+}
+
+/* ซ่อนลูกศรขึ้นลง (Spinners) ของช่องตัวเลข */
+.quantity-selector input[type='number']::-webkit-outer-spin-button,
+.quantity-selector input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0 !important;
+}
+
+/* ปุ่ม + และ - */
 .quantity-selector .quantity-minus, 
 .quantity-selector .quantity-plus {
   background: transparent !important; 
   box-shadow: none !important; 
   border: none !important;
-  width: 40px !important; 
-  height: 44px !important; /* ล็อคความสูงปุ่มให้เท่ากล่อง */
+  width: 44px !important; 
+  height: 44px !important;
   min-width: unset !important;
-  border-radius: 0 !important; /* ตัดตรง */
+  border-radius: 0 !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
+  color: var(--oc-ink) !important;
+  cursor: pointer !important;
+  flex-shrink: 0 !important; /* ป้องกันปุ่มโดนบีบจนเบี้ยว */
 }
 
+/* เอฟเฟกต์ตอนเอาเมาส์ชี้ หรือตอนใช้นิ้วแตะ */
 .quantity-selector .quantity-minus:hover, 
 .quantity-selector .quantity-plus:hover {
-  background: rgba(0, 0, 0, 0.05) !important; 
+  background: rgba(23, 169, 187, 0.08) !important; 
   color: var(--brand-cyan) !important; 
-  transform: none !important; 
-  box-shadow: none !important;
   border-radius: 0 !important; 
 }
 
