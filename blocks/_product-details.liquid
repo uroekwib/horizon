@@ -41,6 +41,7 @@
     display: none;
   }
 
+  /* Container styles */
   .product-details {
     display: flex;
     align-self: start;
@@ -61,34 +62,8 @@
     .full-height--desktop .group-block {
       align-self: var(--details-position, 'flex-start');
     }
-
-    /* ปรับ sticky behaviour ของ product info */
-    .product-details.sticky-content--desktop {
-      --sticky-gap: 24px;
-      --sticky-safe-top: var(--sticky-header-offset, 0);
-      position: sticky;
-      top: max(
-        var(--sticky-safe-top),
-        calc(100vh - var(--product-details-height, 0px) - var(--sticky-gap))
-      );
-      align-self: start;
-    }
   }
 {% endstylesheet %}
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const details = document.querySelector('.product-details.sticky-content--desktop');
-    if (!details) return;
-
-    const setDetailsHeight = () => {
-      details.style.setProperty('--product-details-height', `${details.offsetHeight}px`);
-    };
-
-    setDetailsHeight();
-    window.addEventListener('resize', setDetailsHeight);
-  });
-</script>
 
 {% schema %}
 {
