@@ -1,6 +1,299 @@
+{% doc %}
+  @prompt
+    อยากได้ div heading ที่มีเส้น ขีดคั่นข้างใต้เป็นเป็น divider ที่สวยสีสันหน่อย
+    .oc-title-with-line {
+      /* ดึงสีข้อความจากแบรนด์ของคุณมาใช้ (Cyan) */
+      color: var(--brand-cyan, #17a9bb); 
+      font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
+      font-weight: 700;
+      font-size: clamp(1.125rem, 2vw, 1.5rem); /* ให้ขนาดตัวอักษรยืดหยุ่นตามหน้าจอ */
+      margin-bottom: 24px;
+      padding-bottom: 12px; /* ระยะห่างระหว่างตัวหนังสือกับเส้น */
+      position: relative;
+      display: block;
+      width: 100%; /* ให้กางเต็มความกว้าง */
+    }
+    
+    .oc-title-with-line::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%; /* ความยาวของเส้น (กางสุดขอบ) */
+      height: 3px; /* ความหนาของเส้น */
+      border-radius: 2px;
+      /* ไล่สีจากฟ้าพาสเทลไปม่วงพาสเทล (อิงจากโทน --brand-grad-2 ของคุณแต่หมุนเป็น 90 องศา) */
+      background: linear-gradient(90deg, #c3f9ff 0%, #c78ff2 100%);
+    }, font ก็ใช้ H2 H3 H4...P ได้เลย
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-title-divider-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+  }
+
+  .ai-title-divider__heading-{{ ai_gen_id }} {
+    color: {{ block.settings.heading_color }};
+    margin: 0 0 {{ block.settings.spacing_bottom }}px 0;
+    padding-bottom: {{ block.settings.line_spacing }}px;
+    position: relative;
+    display: block;
+    width: 100%;
+  }
+
+  {% if block.settings.heading_preset == 'h1' %}
+    .ai-title-divider__heading-{{ ai_gen_id }} {
+      font-family: var(--font-heading-family);
+      font-weight: var(--font-heading-weight);
+      font-size: var(--font-size-h1);
+      line-height: var(--line-height-h1);
+      letter-spacing: var(--letter-spacing-h1);
+      text-transform: var(--text-case-h1);
+    }
+  {% elsif block.settings.heading_preset == 'h2' %}
+    .ai-title-divider__heading-{{ ai_gen_id }} {
+      font-family: var(--font-heading-family);
+      font-weight: var(--font-heading-weight);
+      font-size: var(--font-size-h2);
+      line-height: var(--line-height-h2);
+      letter-spacing: var(--letter-spacing-h2);
+      text-transform: var(--text-case-h2);
+    }
+  {% elsif block.settings.heading_preset == 'h3' %}
+    .ai-title-divider__heading-{{ ai_gen_id }} {
+      font-family: var(--font-heading-family);
+      font-weight: var(--font-heading-weight);
+      font-size: var(--font-size-h3);
+      line-height: var(--line-height-h3);
+      letter-spacing: var(--letter-spacing-h3);
+      text-transform: var(--text-case-h3);
+    }
+  {% elsif block.settings.heading_preset == 'h4' %}
+    .ai-title-divider__heading-{{ ai_gen_id }} {
+      font-family: var(--font-heading-family);
+      font-weight: var(--font-heading-weight);
+      font-size: var(--font-size-h4);
+      line-height: var(--line-height-h4);
+      letter-spacing: var(--letter-spacing-h4);
+      text-transform: var(--text-case-h4);
+    }
+  {% elsif block.settings.heading_preset == 'h5' %}
+    .ai-title-divider__heading-{{ ai_gen_id }} {
+      font-family: var(--font-heading-family);
+      font-weight: var(--font-heading-weight);
+      font-size: var(--font-size-h5);
+      line-height: var(--line-height-h5);
+      letter-spacing: var(--letter-spacing-h5);
+      text-transform: var(--text-case-h5);
+    }
+  {% elsif block.settings.heading_preset == 'h6' %}
+    .ai-title-divider__heading-{{ ai_gen_id }} {
+      font-family: var(--font-heading-family);
+      font-weight: var(--font-heading-weight);
+      font-size: var(--font-size-h6);
+      line-height: var(--line-height-h6);
+      letter-spacing: var(--letter-spacing-h6);
+      text-transform: var(--text-case-h6);
+    }
+  {% else %}
+    .ai-title-divider__heading-{{ ai_gen_id }} {
+      font-family: var(--font-body-family);
+      font-weight: var(--font-body-weight);
+      font-size: var(--font-size-paragraph);
+      line-height: var(--line-height-paragraph);
+    }
+  {% endif %}
+
+  .ai-title-divider__heading-{{ ai_gen_id }}::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: {{ block.settings.line_width }}%;
+    height: {{ block.settings.line_height }}px;
+    border-radius: {{ block.settings.line_border_radius }}px;
+    {% if block.settings.gradient_enabled %}
+      background: linear-gradient({{ block.settings.gradient_angle }}deg, {{ block.settings.gradient_color_start }} 0%, {{ block.settings.gradient_color_end }} 100%);
+    {% else %}
+      background-color: {{ block.settings.line_color }};
+    {% endif %}
+  }
+{% endstyle %}
+
+<div class="ai-title-divider-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  {% if block.settings.heading_text != blank %}
+    <h2 class="ai-title-divider__heading-{{ ai_gen_id }}">
+      {{ block.settings.heading_text }}
+    </h2>
+  {% else %}
+    <h2 class="ai-title-divider__heading-{{ ai_gen_id }}">
+      Heading with divider
+    </h2>
+  {% endif %}
+</div>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Heading with divider",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "heading_text",
+      "label": "Heading text",
+      "default": "Your heading here"
+    },
+    {
+      "type": "select",
+      "id": "heading_preset",
+      "label": "Typography preset",
+      "options": [
+        {
+          "value": "h1",
+          "label": "H1"
+        },
+        {
+          "value": "h2",
+          "label": "H2"
+        },
+        {
+          "value": "h3",
+          "label": "H3"
+        },
+        {
+          "value": "h4",
+          "label": "H4"
+        },
+        {
+          "value": "h5",
+          "label": "H5"
+        },
+        {
+          "value": "h6",
+          "label": "H6"
+        },
+        {
+          "value": "paragraph",
+          "label": "Paragraph"
+        }
+      ],
+      "default": "h3"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Text color",
+      "default": "#17a9bb"
+    },
+    {
+      "type": "range",
+      "id": "spacing_bottom",
+      "label": "Bottom spacing",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Divider line"
+    },
+    {
+      "type": "checkbox",
+      "id": "gradient_enabled",
+      "label": "Enable gradient",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "gradient_color_start",
+      "label": "Gradient start color",
+      "default": "#c3f9ff"
+    },
+    {
+      "type": "color",
+      "id": "gradient_color_end",
+      "label": "Gradient end color",
+      "default": "#c78ff2"
+    },
+    {
+      "type": "range",
+      "id": "gradient_angle",
+      "label": "Gradient angle",
+      "min": 0,
+      "max": 360,
+      "step": 10,
+      "unit": "deg",
+      "default": 90
+    },
+    {
+      "type": "color",
+      "id": "line_color",
+      "label": "Solid color",
+      "default": "#c3f9ff"
+    },
+    {
+      "type": "range",
+      "id": "line_width",
+      "label": "Line width",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "line_height",
+      "label": "Line thickness",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "line_border_radius",
+      "label": "Line border radius",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "line_spacing",
+      "label": "Space between text and line",
+      "min": 4,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    }
+  ],
+  "presets": [
+    {
+      "name": "Heading with divider"
+    }
+  ]
+}
 {% endschema %}
