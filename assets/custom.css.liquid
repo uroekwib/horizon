@@ -533,28 +533,32 @@ button.shopify-payment-button__button--unbranded:hover {
 .variant-option--equal-width-buttons .variant-option__button-label {
   min-width: fit-content !important;
 }
-
 /* ============================================================
    FIX: Reset ปุ่ม + / - (Quantity) และปุ่ม X (Close)
    ============================================================ */
 
+/* สั่งให้กล่องหลักตัดขอบมุมที่ล้นออกมาทิ้งไปเลย */
+.quantity-selector {
+  overflow: hidden !important; 
+}
+
 /* 1. แก้ไขปุ่ม + และ - ในกล่องจำนวนสินค้า */
 .quantity-selector .quantity-minus, 
 .quantity-selector .quantity-plus {
-  background: transparent !important; /* เอาวงกลมสีขาวออก */
-  box-shadow: none !important; /* เอาเงาออก */
+  background: transparent !important; 
+  box-shadow: none !important; 
   border: none !important;
-  width: 35px !important; /* บีบความกว้างให้พอดี ไม่ใหญ่คับกล่อง */
+  width: 35px !important; 
   height: 100% !important;
   min-width: unset !important;
-  border-radius: 0 !important;
+  /* เอา border-radius: 0 ออกไปแล้วครับ */
 }
 
-/* ยกเลิกแอนิเมชันปุ่มเด้งของ + / - และเปลี่ยนสีตอนเอาเมาส์ชี้ */
+/* ตอนเอาเมาส์ชี้ให้เป็นสีเทาอ่อน และไอคอนสีฟ้า */
 .quantity-selector .quantity-minus:hover, 
 .quantity-selector .quantity-plus:hover {
-  background: rgba(0, 0, 0, 0.05) !important; /* เป็นสีเทาอ่อนๆ บางๆ */
-  color: var(--brand-cyan) !important; /* ไอคอนเปลี่ยนเป็นสีฟ้า CI */
+  background: rgba(0, 0, 0, 0.05) !important; 
+  color: var(--brand-cyan) !important; 
   transform: none !important; 
   box-shadow: none !important;
 }
@@ -573,8 +577,9 @@ button.shopify-payment-button__button--unbranded:hover {
 .close-button:hover,
 .drawer__close:hover {
   background: rgba(0, 0, 0, 0.05) !important;
-  transform: scale(1.1) !important; /* ให้ขยายขึ้นนิดนึงพอสวยงาม */
+  transform: scale(1.1) !important; 
   box-shadow: none !important;
+  border-radius: 50% !important; /* บังคับให้ปุ่ม X เป็นวงกลมสวยๆ ตอนเมาส์วาง */
 }
 
 /* ============================================================
