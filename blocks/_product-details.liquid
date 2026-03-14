@@ -37,7 +37,7 @@
     }
 
     /* ==========================================
-       FIX: ล็อค Product Media บน Mobile ให้เป็น Slider 
+       FIX 1: ล็อค Product Media (รูปสินค้าหลัก) บน Mobile ให้เป็น Slider 
        (แก้บั๊กรูปซ้อนทับกันยาวๆ)
        ========================================== */
     media-gallery .media-gallery__grid {
@@ -70,12 +70,25 @@
     display: none;
   }
 
+  /* ==========================================
+     FIX 2: จัดระเบียบกล่องข้อมูลสินค้า (ไม่ให้เละเทะ)
+     ========================================== */
   .product-details {
     display: flex;
     align-self: start;
     justify-content: center;
   }
 
+  /* ล็อก Flex ชั้นนอกสุด และบังคับให้เรียงจากบนลงล่าง จะได้ไม่เบียดกันบนมือถือ */
+  .product-details > .group-block > .group-block-content.layout-panel-flex {
+    display: flex !important;
+    flex-direction: column !important; 
+    width: 100% !important; 
+  }
+
+  /* ==========================================
+     FIX 3: ปรับ Sticky บน Desktop แบบ Internal Scroll (ลื่น 100%)
+     ========================================== */
   @media screen and (min-width: 750px) {
     .product-details > .group-block {
       height: min-content;
@@ -91,9 +104,6 @@
       align-self: var(--details-position, 'flex-start');
     }
 
-    /* ==========================================
-       ปรับ sticky behaviour แบบ Internal Scroll (ลื่น 100%)
-       ========================================== */
     .product-details.sticky-content--desktop {
       position: sticky;
       top: var(--sticky-header-offset, 24px);
@@ -109,70 +119,7 @@
       display: none;
     }
   }
-
-  
-  /* Clear padding on mobile, if not full-width */
-  @media screen and (max-width: 749px) {
-    .product-information.section--page-width .product-details > .group-block {
-      padding-inline: 0;
-    }
-  }
-
-  .view-product-title {
-    display: none;
-  }
-
-  .product-details {
-    display: flex;
-    align-self: start;
-    justify-content: center;
-  }
-
-  /* ==========================================
-     FIX: แก้ Layout Shift เจาะจงเฉพาะกล่องข้อมูลหลัก
-     (ล็อก Flex ไว้แค่ชั้นนอกสุด จะได้ไม่กระทบระบบ Slider ของรูปภาพและสินค้าแนะนำ)
-     ========================================== */
-  .product-details > .group-block > .group-block-content.layout-panel-flex {
-    display: flex !important;
-    flex-direction: column !important;
-    width: 100% !important; /* 👈 กันเหนียว บังคับให้กางเต็มจอ 100% */
-  }
-
-  @media screen and (min-width: 750px) {
-    .product-details > .group-block {
-      height: min-content;
-    }
-
-    .full-height--desktop {
-      height: 100%;
-      max-height: calc(100vh - var(--header-group-height, 0));
-      min-height: fit-content;
-    }
-
-    .full-height--desktop .group-block {
-      align-self: var(--details-position, 'flex-start');
-    }
-
-    /* ==========================================
-       ปรับ sticky behaviour แบบ Internal Scroll
-       ========================================== */
-    .product-details.sticky-content--desktop {
-      position: sticky;
-      top: var(--sticky-header-offset, 24px);
-      align-self: start;
-      max-height: calc(100vh - var(--sticky-header-offset, 24px) - 24px);
-      overflow-y: auto;
-      overscroll-behavior: contain;
-      scrollbar-width: none; 
-    }
-
-    .product-details.sticky-content--desktop::-webkit-scrollbar {
-      display: none;
-    }
-  }
-
 {% endstylesheet %}
-
 
 
 {% schema %}
