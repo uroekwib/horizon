@@ -1221,6 +1221,10 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
   font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
   font-size: 14px;
   padding-right: 4px;
+
+  /* 👇 เพิ่ม 2 บรรทัดนี้เพื่อดันข้อความ (และ Placeholder) ลงมาให้อยู่กึ่งกลาง */
+  padding-top: 2px; /* ถ้ายังดูลอยอยู่ ให้ลองเพิ่มเป็น 3px หรือ 4px ครับ */
+  line-height: 1.5; /* ช่วยจัดระเบียบความสูงของกล่องข้อความให้เสถียรขึ้น */
 }
 
 .oc-search-morph__input::placeholder {
