@@ -371,7 +371,7 @@
                   "type": "_accordion-row",
                   "settings": {
                     "heading": "ขอใบเสนอราคา",
-                    "open_by_default": true,
+                    "open_by_default": false,
                     "icon": "clipboard",
                     "width": 20
                   },
