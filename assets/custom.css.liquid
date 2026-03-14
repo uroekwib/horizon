@@ -509,6 +509,28 @@ button.shopify-payment-button__button--unbranded:hover {
   border-radius: var(--oc-radius-pill);
 }
 
+/* ============================================================
+   FIX: ปรับขนาดปุ่ม Variant (Pill) ให้พอดีกับข้อความ ไม่ยืดเต็ม
+   ============================================================ */
+.variant-option--buttons,
+.variant-option--equal-width-buttons {
+  display: flex !important; /* เปลี่ยนจาก Grid กลับมาเป็น Flex */
+  flex-wrap: wrap !important;
+  gap: 10px !important; /* ระยะห่างระหว่างปุ่ม */
+}
+
+.variant-option__button-label {
+  flex: 0 1 auto !important; /* ยกเลิกการบังคับยืด */
+  width: fit-content !important; /* กว้างพอดีข้อความ */
+  min-width: 48px !important; /* กำหนดขั้นต่ำนิดนึง ป้องกันปุ่มเล็กเกินไปถ้ามีแค่ไซส์ S, M */
+  padding-inline: 16px !important; /* ระยะห่างซ้าย-ขวาภายในปุ่ม */
+  justify-content: center !important;
+}
+
+/* กรณีที่ปุ่มมีการใช้ Grid กั้นเนื้อหาข้างใน ให้รีเซ็ตด้วย */
+.variant-option--equal-width-buttons .variant-option__button-label {
+  min-width: fit-content !important;
+}
 
 /* ============================================================
    §8  UTILITY CLASSES
