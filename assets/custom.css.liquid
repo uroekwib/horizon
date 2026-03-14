@@ -509,28 +509,27 @@ button.shopify-payment-button__button--unbranded:hover {
   padding: 8px 15px;
   border-radius: var(--oc-radius-pill);
 }
-
 /* ============================================================
-   FIX: ปรับขนาดปุ่ม Variant (Pill) ให้พอดีกับข้อความ ไม่ยืดเต็ม
+   FIX: ปรับขนาดปุ่ม Variant, Quantity Selector และ Close Button
    ============================================================ */
+
 .variant-option--buttons,
 .variant-option--equal-width-buttons {
-  display: flex !important; /* เปลี่ยนจาก Grid กลับมาเป็น Flex */
+  display: flex !important;
   flex-wrap: wrap !important;
-  gap: 10px !important; /* ระยะห่างระหว่างปุ่ม */
+  gap: 10px !important;
 }
 
 .variant-option__button-label {
-  flex: 0 1 auto !important; /* ยกเลิกการบังคับยืด */
-  width: fit-content !important; /* กว้างพอดีข้อความ */
-  min-width: 48px !important; /* กำหนดขั้นต่ำนิดนึง ป้องกันปุ่มเล็กเกินไปถ้ามีแค่ไซส์ S, M */
-  padding-inline: 16px !important; /* ระยะห่างซ้าย-ขวาภายในปุ่ม */
+  flex: 0 1 auto !important; 
+  width: fit-content !important; 
+  min-width: 48px !important; 
+  padding-inline: 16px !important; 
   justify-content: center !important;
   min-height: 2.0em; 
   border-radius: 999px;
 }
 
-/* กรณีที่ปุ่มมีการใช้ Grid กั้นเนื้อหาข้างใน ให้รีเซ็ตด้วย */
 .variant-option--equal-width-buttons .variant-option__button-label {
   min-width: fit-content !important;
 }
@@ -544,12 +543,8 @@ button.shopify-payment-button__button--unbranded:hover {
     font-weight: 700;
     font-size: 18px;
   }
-} /* ✅ เติมปีกกาปิด @media ให้แล้วครับ โค้ดด้านล่างจะได้เป็นอิสระ! */
+} 
 
-
-/* ============================================================
-   FIX: ทุบขนาด Variant (Pill) บนมือถือให้เล็กและแบนลง
-   ============================================================ */
 @media screen and (max-width: 749px) {
   .variant-option__button-label {
     min-height: 0 !important; 
@@ -557,7 +552,6 @@ button.shopify-payment-button__button--unbranded:hover {
     flex: 0 1 auto !important; 
     padding: 4px 12px !important; 
   }
-
   .variant-option__button-label__text {
     padding: 0 !important;
     margin: 0 !important;
@@ -566,14 +560,37 @@ button.shopify-payment-button__button--unbranded:hover {
   }
 }
 
-/* ============================================================
-   FIX: Reset ปุ่ม + / - (Quantity) และป้องกันการแฟบ
-   ============================================================ */
 .quantity-selector {
   display: flex !important;
-  min-height: 44px !important; /* ล็อคความสูงขั้นต่ำไว้ กล่องจะได้ไม่แฟบเป็นเส้น */
-  align-items: center !important;
-  overflow: hidden !important; /* ตัดมุมล้นๆ ทิ้ง */
+  min-height: 44px !important;
+  align-items: stretch !important; 
+  justify-content: space-between !important;
+  overflow: hidden !important; 
+  border: 1.5px solid var(--oc-ink-15) !important; 
+  border-radius: 999px !important; 
+  background-color: #fff !important;
+  width: 100% !important;
+  max-width: 140px !important; 
+}
+
+.quantity-selector input[type='number'] {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  text-align: center !important;
+  font-weight: 700 !important;
+  font-size: 16px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  outline: none !important;
+  -moz-appearance: textfield !important;
+}
+
+.quantity-selector input[type='number']::-webkit-outer-spin-button,
+.quantity-selector input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0 !important;
 }
 
 .quantity-selector .quantity-minus, 
@@ -581,25 +598,36 @@ button.shopify-payment-button__button--unbranded:hover {
   background: transparent !important; 
   box-shadow: none !important; 
   border: none !important;
-  width: 40px !important; 
-  height: 44px !important; /* ล็อคความสูงปุ่มให้เท่ากล่อง */
+  width: 44px !important; 
+  height: auto !important; 
   min-width: unset !important;
-  border-radius: 0 !important; /* ตัดตรง */
+  border-radius: 0 !important; 
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
+  color: var(--oc-ink) !important;
+  cursor: pointer !important;
+  flex-shrink: 0 !important; 
+  transform: none !important; 
 }
 
 .quantity-selector .quantity-minus:hover, 
 .quantity-selector .quantity-plus:hover {
   background: rgba(0, 0, 0, 0.05) !important; 
-  color: var(--brand-cyan) !important; 
-  transform: none !important; 
-  box-shadow: none !important;
+  color: var(--oc-ink) !important; 
   border-radius: 0 !important; 
+  box-shadow: none !important; 
+  transform: none !important; 
 }
 
-/* 2. แก้ไขปุ่มเปิด-ปิด Modal / Drawer (ปุ่ม X) */
+.quantity-selector .quantity-minus::after, 
+.quantity-selector .quantity-plus::after,
+.quantity-selector .quantity-minus::before, 
+.quantity-selector .quantity-plus::before {
+  display: none !important;
+  box-shadow: none !important;
+}
+
 .close-button,
 .drawer__close {
   background: transparent !important;
@@ -617,7 +645,6 @@ button.shopify-payment-button__button--unbranded:hover {
   box-shadow: none !important;
   border-radius: 50% !important; 
 }
-
 /* ============================================================
    §8  UTILITY CLASSES
    ============================================================ */
