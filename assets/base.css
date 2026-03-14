@@ -1842,7 +1842,7 @@ zoom-dialog dialog {
   height: auto;
   transition: transform var(--animation-speed) var(--animation-easing);
   flex-shrink: 0;
-  border-radius: var(--media-radius);
+  border-radius: var(--media-radius)!important;
 
   img {
     height: 100%;
