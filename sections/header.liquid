@@ -1155,12 +1155,18 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
   position: absolute;
   inset: 0;
   border-radius: 999px;
-  background: linear-gradient(90deg, #14c9df 0%, #17a9bb 28%, #818CF8 56%, #A78BFA 82%, #14c9df 100%);
+  
+  /* ลบ background แบบเดิมออก และเปลี่ยนมาใช้ border ที่หนาเท่ากันทุกด้านแทน */
+  /* ความหนา 1.5px คือความหนาเดิมที่คุณเคยใช้ใน inset: 1.5px */
+  border: 2px solid transparent; 
+  
+  /* ใช้ border-image เพื่อทำ Gradient ให้กับเส้นขอบ */
+  /* แต่อาจจะไม่รองรับ border-radius ในบางเบราว์เซอร์เก่าๆ */
+  background: linear-gradient(#ffffff, #ffffff) padding-box, 
+              linear-gradient(90deg, #14c9df 0%, #17a9bb 28%, #818CF8 56%, #A78BFA 82%, #14c9df 100%) border-box;
+  
   background-size: 250% 100%;
   animation: oc-rainbow-move 4s linear infinite;
-  
-  /* 👇 ปรับตัวเลขตรงนี้ให้เยอะขึ้นครับ เช่น 2.5px หรือ 3px */
-  padding: 2.5px; 
 }
 
 /* ลบตัวนี้ทิ้งไปเลยครับ ไม่จำเป็นต้องใช้แล้ว */
