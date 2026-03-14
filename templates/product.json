@@ -397,29 +397,23 @@
                 "accordion_row_ACxkmx"
               ]
             },
-            "text_wTYhJd": {
-              "type": "text",
-              "name": "t:names.heading",
+            "ai_gen_block_f3242a1_6UeFxy": {
+              "type": "ai_gen_block_f3242a1",
               "settings": {
-                "text": "<h2>รายละเอียดสินค้า</h2>",
-                "width": "fit-content",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "rte",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "color": "var(--color-foreground)",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
+                "heading_text": "Your heading here",
+                "heading_preset": "h2",
+                "heading_color": "#17a9bb",
+                "spacing_bottom": 24,
+                "gradient_enabled": true,
+                "gradient_color_start": "#c3f9ff",
+                "gradient_color_end": "#c78ff2",
+                "gradient_angle": 90,
+                "line_color": "#c3f9ff",
+                "line_width": 100,
+                "line_height": 4,
+                "line_border_radius": 5,
+                "line_spacing": 12,
+                "desktop_width_percent": 100
               },
               "blocks": {}
             },
@@ -455,7 +449,7 @@
             "variant_picker_R3rGDr",
             "buy_buttons_eYQEYi",
             "accordion_XTDkDQ",
-            "text_wTYhJd",
+            "ai_gen_block_f3242a1_6UeFxy",
             "text_aEtTtq"
           ]
         }
