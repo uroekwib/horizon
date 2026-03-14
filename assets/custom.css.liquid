@@ -565,6 +565,44 @@ button.shopify-payment-button__button--unbranded:hover {
     font-size: 13px !important; 
   }
 }
+/* ============================================================
+   FIX: กล่อง Quantity Selector (+ / -) แบบแคปซูล (รวมทุกอุปกรณ์)
+   ============================================================ */
+.quantity-selector {
+  display: flex !important;
+  min-height: 44px !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  overflow: hidden !important; 
+  border: 1.5px solid var(--oc-ink-15) !important; /* สร้างกรอบแคปซูลที่ตัวแม่ */
+  border-radius: 999px !important; /* โค้งมน */
+  background-color: #fff !important;
+  width: 100% !important;
+  max-width: 140px !important; /* ป้องกันไม่ให้กล่องยืดกว้างเกินไปบนมือถือ */
+}
+
+/* เคลียร์เส้นขอบของช่องตัวเลขตรงกลางให้เนียนไปกับกล่องแม่ */
+.quantity-selector input[type='number'] {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  text-align: center !important;
+  font-weight: 700 !important;
+  font-size: 16px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  outline: none !important;
+  -moz-appearance: textfield !important;
+}
+
+/* ซ่อนลูกศรขึ้นลง (Spinners) ของช่องตัวเลข */
+.quantity-selector input[type='number']::-webkit-outer-spin-button,
+.quantity-selector input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0 !important;
+}
+
 /* ปุ่ม + และ - */
 .quantity-selector .quantity-minus, 
 .quantity-selector .quantity-plus {
@@ -602,6 +640,7 @@ button.shopify-payment-button__button--unbranded:hover {
   display: none !important;
   box-shadow: none !important;
 }
+
 /* 2. แก้ไขปุ่มเปิด-ปิด Modal / Drawer (ปุ่ม X) */
 .close-button,
 .drawer__close {
