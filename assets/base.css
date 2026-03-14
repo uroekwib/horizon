@@ -2577,6 +2577,7 @@ deferred-media[class] :is(.deferred-media__poster-button img, .deferred-media__p
   z-index: var(--layer-flat);
 }
 
+/*
 @media screen and (min-width: 750px) {
   .sticky-content--desktop,
   .sticky-content--desktop.full-height--desktop > .group-block {
@@ -2585,7 +2586,17 @@ deferred-media[class] :is(.deferred-media__poster-button img, .deferred-media__p
     z-index: var(--layer-flat);
   }
 }
-
+*/
+@media screen and (min-width: 750px) {
+    .sticky-content--desktop,
+    .sticky-content--desktop.full-height--desktop > .group-block {
+      position: sticky;
+      /* เปลี่ยนมารับค่า dynamic top แทน */
+      top: var(--dynamic-sticky-top, var(--sticky-header-offset, 0px));
+      z-index: var(--layer-flat);
+      /* เพิ่ม transition เบาๆ เพื่อความนุ่มนวลเวลาเนื้อหาหด/ขยาย */
+      transition: top 0.1s ease-out; 
+    }
 
 .price,
 .compare-at-price,
