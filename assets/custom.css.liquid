@@ -229,13 +229,21 @@
 
 
 /* ── Headings ── */
-h1, h2, h3, h4, h5, h6, div.title a, b, .headline, strong, .subtitle {
+h1, .h1.h1,
+h2, .h2.h2,
+h3, .h3.h3,
+h4, .h4.h4,
+h5, .h5.h5,
+h6, .h6.h6,
+div.title a, b, .headline, strong, .subtitle {
   font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
   color: var(--oc-ink);
   line-height: 1.25;
   font-weight: 700;
   letter-spacing: 0;
 }
+
+
 /*h1 { font-size: var(--oc-text-h1); }
 h2 { font-size: var(--oc-text-h2); }
 h3 { font-size: var(--oc-text-h3); }
@@ -243,12 +251,12 @@ h4 { font-size: var(--oc-text-h4); } PEAR TEST OMIT*/
 
 /* ── Paragraph letter-spacing ── */
 
- a, #nav li a, div.title a, .headline, .subtitle, p, span, label,ul, li, bold,.tiny,th, tr ,td {
-
+body,
+p,
+.paragraph:not(.button),
+.paragraph > *,
+a, #nav li a, div.title a, .headline, .subtitle, span, label, ul, li, .tiny, th, tr, td {
   font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
-  letter-spacing: 0.03em;
-  font-weight: 400;
-  line-height: 2.0;
 }
 
 /* ── Links ── */
