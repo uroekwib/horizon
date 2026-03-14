@@ -48,99 +48,45 @@
   }
 
   @media screen and (min-width: 750px) {
-    /* reset wrapper height เฉพาะฝั่ง product info */
-    .product-details,
-    .product-details > .group-block,
-    .product-details > .group-block > .group-block-content {
-      height: auto !important;
-      min-height: 0 !important;
-    }
-
-    /* กัน flex column ยืดสูงเกินจริง */
-    .product-details .group-block-content.layout-panel-flex.layout-panel-flex--column {
-      display: flex;
-      flex-direction: column;
-      flex-wrap: nowrap;
-      justify-content: flex-start !important;
-      align-items: stretch !important;
-      gap: max(20px, calc(var(--gap-scale, 1) * 24px));
-      height: auto !important;
-      min-height: 0 !important;
-    }
-
-    /* ยกเลิกพฤติกรรมเดิมที่ใช้ min-content */
     .product-details > .group-block {
-      height: auto !important;
+      height: min-content;
     }
 
-    /* sticky แบบนิ่ง ลดโอกาส shift */
+    .full-height--desktop {
+      height: 100%;
+      max-height: calc(100vh - var(--header-group-height, 0));
+      min-height: fit-content;
+    }
+
+    .full-height--desktop .group-block {
+      align-self: var(--details-position, 'flex-start');
+    }
+
+    /* ปรับ sticky behaviour ของ product info */
     .product-details.sticky-content--desktop {
+      --sticky-gap: 24px;
+      --sticky-safe-top: var(--sticky-header-offset, 0);
       position: sticky;
-      top: calc(var(--sticky-header-offset, 0) + 72px);
-      align-self: start;
-    }
-
-    /* กัน block ภายในโดน stretch แปลก ๆ */
-    .product-details .group-block--height-fill,
-    .product-details .group-block--height-custom,
-    .product-details .group-block--height-fit {
-      flex: 0 0 auto;
-      height: auto;
-      min-height: 0;
-    }
-
-    /* ปิด full-height logic เฉพาะฝั่งนี้ */
-    .product-details.full-height--desktop {
-      height: auto !important;
-      max-height: none !important;
-      min-height: 0 !important;
-    }
-
-    .product-details.full-height--desktop .group-block {
+      top: max(
+        var(--sticky-safe-top),
+        calc(100vh - var(--product-details-height, 0px) - var(--sticky-gap))
+      );
       align-self: start;
     }
   }
 {% endstylesheet %}
 
-
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const stickyElements = document.querySelectorAll('.sticky-content--desktop');
-    
-    if (stickyElements.length === 0) return;
+    const details = document.querySelector('.product-details.sticky-content--desktop');
+    if (!details) return;
 
-    const adjustStickyTop = () => {
-      stickyElements.forEach(el => {
-        const viewportHeight = window.innerHeight;
-        // ใช้ getBoundingClientRect().height เพื่อความแม่นยำที่สุด
-        const elHeight = el.getBoundingClientRect().height; 
-        
-        // ดึงค่า offset ของ Header เดิมมาใช้ (ถ้ามี)
-        const headerOffsetStr = getComputedStyle(el).getPropertyValue('--sticky-header-offset').trim();
-        const headerOffset = parseInt(headerOffsetStr) || 20; // เผื่อระยะขอบไว้ 20px
-
-        if (elHeight + headerOffset > viewportHeight) {
-          // กรณีเนื้อหายาวกว่าหน้าจอ: เกาะที่ขอบล่าง
-          // คำนวณดัน element ขึ้นไปให้ขอบล่างพอดีกับจอ (เผื่อขอบล่างไว้ 20px)
-          const topValue = viewportHeight - elHeight - 20; 
-          el.style.setProperty('--dynamic-sticky-top', `${topValue}px`);
-        } else {
-          // กรณีเนื้อหาสั้นกว่าจอ: เกาะที่ขอบบนตามปกติ
-          el.style.setProperty('--dynamic-sticky-top', `var(--sticky-header-offset, 20px)`);
-        }
-      });
+    const setDetailsHeight = () => {
+      details.style.setProperty('--product-details-height', `${details.offsetHeight}px`);
     };
 
-    // คำนวณทันทีเมื่อโหลดเสร็จ
-    adjustStickyTop();
-
-    // คำนวณใหม่เมื่อมีการย่อ/ขยายหน้าจอ
-    window.addEventListener('resize', adjustStickyTop);
-
-    // ใช้ ResizeObserver เพื่อจับตาดูการเปลี่ยนแปลงความสูงของเนื้อหาข้างใน (เช่น กดเปิด/ปิด Accordion)
-    // ทำให้ Layout ไม่พังและไม่ต้องกลัว Layout Shift
-    const observer = new ResizeObserver(adjustStickyTop);
-    stickyElements.forEach(el => observer.observe(el));
+    setDetailsHeight();
+    window.addEventListener('resize', setDetailsHeight);
   });
 </script>
 
