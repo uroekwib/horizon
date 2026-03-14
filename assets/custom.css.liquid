@@ -1027,7 +1027,59 @@ input[type="checkbox"] {
   animation-delay: -10s;
 }
 
+/* ==========================================
+   FIX: Product recommendations / related products
+   Mobile = 1 image per product card
+   ========================================== */
+@media screen and (max-width: 749px) {
+  .product-recommendations .card-gallery,
+  product-recommendations .card-gallery,
+  .product-details .card-gallery {
+    overflow: hidden;
+  }
 
+  .product-recommendations .card-gallery slideshow-component,
+  product-recommendations .card-gallery slideshow-component,
+  .product-details .card-gallery slideshow-component {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .product-recommendations .card-gallery slideshow-container,
+  product-recommendations .card-gallery slideshow-container,
+  .product-details .card-gallery slideshow-container {
+    display: block !important;
+    width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  .product-recommendations .card-gallery slideshow-slides,
+  product-recommendations .card-gallery slideshow-slides,
+  .product-details .card-gallery slideshow-slides {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow: hidden !important;
+    width: 100% !important;
+    gap: 0 !important;
+  }
+
+  .product-recommendations .card-gallery slideshow-slide,
+  product-recommendations .card-gallery slideshow-slide,
+  .product-details .card-gallery slideshow-slide {
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    display: block !important;
+  }
+
+  .product-recommendations .card-gallery img,
+  product-recommendations .card-gallery img,
+  .product-details .card-gallery img {
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+  }
+}
 
 /* ============================================================
    §10 DAWN LEGACY — carry-over from custom.css
