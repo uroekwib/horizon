@@ -235,7 +235,11 @@
       name="q"
       class="oc-search-morph__input"
       id="oc-search-morph-input"
-      placeholder="Search products, signs, stickers, displays..."
+      {% if localization.language.iso_code == 'th' %}
+        placeholder="ง่าย ๆ ค้นหาเลยที่นี่.."
+      {% else %}
+        placeholder="Search products, signs, stickers, displays..."
+      {% endif %}
       autocomplete="off"
     >
 
