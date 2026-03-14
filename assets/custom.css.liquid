@@ -535,6 +535,49 @@ button.shopify-payment-button__button--unbranded:hover {
 }
 
 /* ============================================================
+   FIX: Reset ปุ่ม + / - (Quantity) และปุ่ม X (Close)
+   ============================================================ */
+
+/* 1. แก้ไขปุ่ม + และ - ในกล่องจำนวนสินค้า */
+.quantity-selector .quantity-minus, 
+.quantity-selector .quantity-plus {
+  background: transparent !important; /* เอาวงกลมสีขาวออก */
+  box-shadow: none !important; /* เอาเงาออก */
+  border: none !important;
+  width: 35px !important; /* บีบความกว้างให้พอดี ไม่ใหญ่คับกล่อง */
+  height: 100% !important;
+  min-width: unset !important;
+  border-radius: 0 !important;
+}
+
+/* ยกเลิกแอนิเมชันปุ่มเด้งของ + / - และเปลี่ยนสีตอนเอาเมาส์ชี้ */
+.quantity-selector .quantity-minus:hover, 
+.quantity-selector .quantity-plus:hover {
+  background: rgba(0, 0, 0, 0.05) !important; /* เป็นสีเทาอ่อนๆ บางๆ */
+  color: var(--brand-cyan) !important; /* ไอคอนเปลี่ยนเป็นสีฟ้า CI */
+  transform: none !important; 
+  box-shadow: none !important;
+}
+
+/* 2. แก้ไขปุ่มเปิด-ปิด Modal / Drawer (ปุ่ม X) */
+.close-button,
+.drawer__close {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  width: 40px !important;
+  height: 40px !important;
+  min-width: unset !important;
+}
+
+.close-button:hover,
+.drawer__close:hover {
+  background: rgba(0, 0, 0, 0.05) !important;
+  transform: scale(1.1) !important; /* ให้ขยายขึ้นนิดนึงพอสวยงาม */
+  box-shadow: none !important;
+}
+
+/* ============================================================
    §8  UTILITY CLASSES
    ============================================================ */
 
