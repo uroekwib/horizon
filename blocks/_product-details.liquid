@@ -62,33 +62,38 @@
       align-self: var(--details-position, 'flex-start');
     }
 
-    /* ปรับ sticky behaviour ของ product info */
+    /* ปรับ sticky behaviour ของ product info แบบ Internal Scroll (ลื่น 100%) */
     .product-details.sticky-content--desktop {
-      --sticky-gap: 24px;
-      --sticky-safe-top: var(--sticky-header-offset, 0);
       position: sticky;
-      top: max(
-        var(--sticky-safe-top),
-        calc(100vh - var(--product-details-height, 0px) - var(--sticky-gap))
-      );
+      top: var(--sticky-header-offset, 24px); /* ระยะขอบบนตอนเกาะติด */
       align-self: start;
+      
+      /* ล็อคความสูงไม่ให้เกินจอ เพื่อไม่ให้เกิด Layout Shift และเกิด Scroll ด้านในแทน */
+      max-height: calc(100vh - var(--sticky-header-offset, 24px) - 24px);
+      overflow-y: auto;
+      
+      /* ป้องกัน Scroll Chaining: ไถฝั่งขวาสุดแล้ว หน้าเว็บหลักจะไม่ไหลตาม */
+      overscroll-behavior: contain;
+    }
+
+    /* แต่ง Scrollbar ฝั่งขวาให้บางๆ มินิมอล ไม่ขัดใจ UX */
+    .product-details.sticky-content--desktop::-webkit-scrollbar {
+      width: 4px;
+    }
+    .product-details.sticky-content--desktop::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .product-details.sticky-content--desktop::-webkit-scrollbar-thumb {
+      background-color: rgb(var(--color-foreground-rgb) / 0.15);
+      border-radius: 4px;
+    }
+    .product-details.sticky-content--desktop::-webkit-scrollbar-thumb:hover {
+      background-color: rgb(var(--color-foreground-rgb) / 0.3);
     }
   }
 {% endstylesheet %}
 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const details = document.querySelector('.product-details.sticky-content--desktop');
-    if (!details) return;
 
-    const setDetailsHeight = () => {
-      details.style.setProperty('--product-details-height', `${details.offsetHeight}px`);
-    };
-
-    setDetailsHeight();
-    window.addEventListener('resize', setDetailsHeight);
-  });
-</script>
 
 {% schema %}
 {
