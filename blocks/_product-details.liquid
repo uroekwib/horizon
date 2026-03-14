@@ -63,17 +63,21 @@
     }
 
     /* ปรับ sticky behaviour ของ product info แบบ Internal Scroll (ลื่น 100%) */
+    /* ปรับ sticky behaviour ของ product info */
     .product-details.sticky-content--desktop {
+      --sticky-gap: 24px;
+      --sticky-safe-top: var(--sticky-header-offset, 0px);
       position: sticky;
-      top: var(--sticky-header-offset, 24px); /* ระยะขอบบนตอนเกาะติด */
+      
+      /* 1. เปลี่ยนจาก max เป็น min */
+      /* 2. แนะนำให้ใช้ 100dvh แทน 100vh เพื่อลดอาการกระตุกบนมือถือเวลาแถบ URL โผล่/หด */
+      top: min(
+        var(--sticky-safe-top),
+        calc(100dvh - var(--product-details-height, 0px) - var(--sticky-gap))
+      );
       align-self: start;
-      
-      /* ล็อคความสูงไม่ให้เกินจอ เพื่อไม่ให้เกิด Layout Shift และเกิด Scroll ด้านในแทน */
-      max-height: calc(100vh - var(--sticky-header-offset, 24px) - 24px);
-      overflow-y: auto;
-      
-      /* ป้องกัน Scroll Chaining: ไถฝั่งขวาสุดแล้ว หน้าเว็บหลักจะไม่ไหลตาม */
-      overscroll-behavior: contain;
+      /* เพิ่ม transition เบาๆ ให้เนียนตาเวลากาง Accordion */
+      transition: top 0.2s ease-out;
     }
 
     /* แต่ง Scrollbar ฝั่งขวาให้บางๆ มินิมอล ไม่ขัดใจ UX */
@@ -93,7 +97,25 @@
   }
 {% endstylesheet %}
 
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const details = document.querySelector('.product-details.sticky-content--desktop');
+    if (!details) return;
 
+    // ใช้ ResizeObserver แทน Window Resize
+    // ตัวนี้ฉลาดมาก มันจะจับตาดูเลยว่าถ้ากดเปิด/ปิด FAQ แล้วกล่องนี้สูงขึ้นหรือเตี้ยลง มันจะคำนวณให้ใหม่แบบเรียลไทม์
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        // อัปเดตตัวแปร CSS อัตโนมัติ
+        const height = entry.target.offsetHeight;
+        details.style.setProperty('--product-details-height', `${height}px`);
+      }
+    });
+
+    // เริ่มจับตาดูความสูงของกล่อง product info
+    resizeObserver.observe(details);
+  });
+</script>
 
 {% schema %}
 {
