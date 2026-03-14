@@ -35,6 +35,35 @@
     .product-information.section--page-width .product-details > .group-block {
       padding-inline: 0;
     }
+
+    /* ==========================================
+       FIX: ล็อค Product Media บน Mobile ให้เป็น Slider 
+       (แก้บั๊กรูปซ้อนทับกันยาวๆ)
+       ========================================== */
+    media-gallery .media-gallery__grid {
+      display: none !important;
+    }
+    media-gallery slideshow-component {
+      display: flex !important;
+      flex-direction: column !important;
+    }
+    media-gallery slideshow-slides {
+      display: flex !important;
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
+      overflow-x: auto !important;
+      scroll-snap-type: x mandatory !important;
+      scrollbar-width: none;
+    }
+    media-gallery slideshow-slides::-webkit-scrollbar {
+      display: none;
+    }
+    media-gallery slideshow-slide {
+      width: 100% !important;
+      flex: 0 0 100% !important;
+      scroll-snap-align: center !important;
+      display: block !important;
+    }
   }
 
   .view-product-title {
@@ -62,34 +91,22 @@
       align-self: var(--details-position, 'flex-start');
     }
 
-    /* ปรับ sticky behaviour ของ product info แบบ Internal Scroll (ลื่น 100%) */
+    /* ==========================================
+       ปรับ sticky behaviour แบบ Internal Scroll (ลื่น 100%)
+       ========================================== */
     .product-details.sticky-content--desktop {
       position: sticky;
-      top: var(--sticky-header-offset, 24px); /* ระยะขอบบนตอนเกาะติด */
+      top: var(--sticky-header-offset, 24px);
       align-self: start;
-      
-      /* ล็อคความสูงไม่ให้เกินจอ เพื่อไม่ให้เกิด Layout Shift และเกิด Scroll ด้านในแทน */
       max-height: calc(100vh - var(--sticky-header-offset, 24px) - 24px);
       overflow-y: auto;
-      
-      /* ป้องกัน Scroll Chaining: ไถฝั่งขวาสุดแล้ว หน้าเว็บหลักจะไม่ไหลตาม */
       overscroll-behavior: contain;
-      scrollbar-width: none;
+      scrollbar-width: none; /* ซ่อน scrollbar สำหรับ Firefox */
     }
 
-    /* แต่ง Scrollbar ฝั่งขวาให้บางๆ มินิมอล ไม่ขัดใจ UX */
+    /* ซ่อน Scrollbar สำหรับ Chrome, Safari, Edge */
     .product-details.sticky-content--desktop::-webkit-scrollbar {
-      width: 4px;
-    }
-    .product-details.sticky-content--desktop::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    .product-details.sticky-content--desktop::-webkit-scrollbar-thumb {
-      background-color: rgb(var(--color-foreground-rgb) / 0.15);
-      border-radius: 4px;
-    }
-    .product-details.sticky-content--desktop::-webkit-scrollbar-thumb:hover {
-      background-color: rgb(var(--color-foreground-rgb) / 0.3);
+      display: none;
     }
   }
 {% endstylesheet %}
