@@ -41,7 +41,6 @@
     display: none;
   }
 
-  /* Container styles */
   .product-details {
     display: flex;
     align-self: start;
@@ -49,18 +48,56 @@
   }
 
   @media screen and (min-width: 750px) {
+    /* reset wrapper height เฉพาะฝั่ง product info */
+    .product-details,
+    .product-details > .group-block,
+    .product-details > .group-block > .group-block-content {
+      height: auto !important;
+      min-height: 0 !important;
+    }
+
+    /* กัน flex column ยืดสูงเกินจริง */
+    .product-details .group-block-content.layout-panel-flex.layout-panel-flex--column {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: nowrap;
+      justify-content: flex-start !important;
+      align-items: stretch !important;
+      gap: max(20px, calc(var(--gap-scale, 1) * 24px));
+      height: auto !important;
+      min-height: 0 !important;
+    }
+
+    /* ยกเลิกพฤติกรรมเดิมที่ใช้ min-content */
     .product-details > .group-block {
-      height: min-content;
+      height: auto !important;
     }
 
-    .full-height--desktop {
-      height: 100%;
-      max-height: calc(100vh - var(--header-group-height, 0));
-      min-height: fit-content;
+    /* sticky แบบนิ่ง ลดโอกาส shift */
+    .product-details.sticky-content--desktop {
+      position: sticky;
+      top: calc(var(--sticky-header-offset, 0) + 72px);
+      align-self: start;
     }
 
-    .full-height--desktop .group-block {
-      align-self: var(--details-position, 'flex-start');
+    /* กัน block ภายในโดน stretch แปลก ๆ */
+    .product-details .group-block--height-fill,
+    .product-details .group-block--height-custom,
+    .product-details .group-block--height-fit {
+      flex: 0 0 auto;
+      height: auto;
+      min-height: 0;
+    }
+
+    /* ปิด full-height logic เฉพาะฝั่งนี้ */
+    .product-details.full-height--desktop {
+      height: auto !important;
+      max-height: none !important;
+      min-height: 0 !important;
+    }
+
+    .product-details.full-height--desktop .group-block {
+      align-self: start;
     }
   }
 {% endstylesheet %}
