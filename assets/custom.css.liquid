@@ -1027,54 +1027,7 @@ input[type="checkbox"] {
   animation-delay: -10s;
 }
 
-/* ============================================================
-   FIX: ล็อค "สินค้าที่น่าสนใจ" (Complementary Products) ให้เป็น Slider บนมือถือ
-   ============================================================ */
-@media screen and (max-width: 749px) {
-  /* ล็อคกล่องแม่ไม่ให้ล้น */
-  product-recommendations, 
-  .complementary-products {
-    display: block !important;
-    width: 100% !important;
-    overflow: hidden !important;
-  }
-  
-  /* บังคับให้พื้นที่ด้านในเรียงเป็นแถวแนวนอน (ไม่ปัดบรรทัดใหม่) */
-  product-recommendations .grid,
-  product-recommendations ul,
-  .complementary-products .grid {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important; /* ห้ามปัดขึ้นบรรทัดใหม่เด็ดขาด */
-    overflow-x: auto !important; /* ให้ไถซ้าย-ขวาได้ */
-    overflow-y: hidden !important;
-    scroll-snap-type: x mandatory !important; /* ล็อคให้การ์ดหยุดตรงกลางพอดี */
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; /* ซ่อนหลอด Scrollbar (Firefox) */
-    gap: 15px !important;
-    padding-bottom: 20px !important; /* เว้นที่ว่างด้านล่างกันเงาแหว่ง */
-    margin: 0 !important;
-  }
-  
-  /* ซ่อนหลอด Scrollbar แนวนอน (Chrome, Safari, iOS) */
-  product-recommendations .grid::-webkit-scrollbar,
-  product-recommendations ul::-webkit-scrollbar,
-  .complementary-products .grid::-webkit-scrollbar {
-    display: none !important;
-  }
 
-  /* ตั้งค่าขนาดการ์ดสินค้าแต่ละใบใน Slider */
-  product-recommendations .grid__item,
-  product-recommendations li,
-  .complementary-products .grid__item {
-    flex: 0 0 75% !important; /* กางการ์ดแค่ 75% ของจอ เพื่อให้เห็นการ์ดใบถัดไปแง้มอยู่ด้านขวา */
-    max-width: 75% !important;
-    width: 75% !important;
-    scroll-snap-align: start !important;
-    list-style: none !important;
-    margin: 0 !important;
-  }
-}
 
 /* ============================================================
    §10 DAWN LEGACY — carry-over from custom.css
