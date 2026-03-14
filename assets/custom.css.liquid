@@ -546,14 +546,24 @@ button.shopify-payment-button__button--unbranded:hover {
 }
 
 /* ============================================================
-   FIX: ลดขนาดความสูงและช่องว่างของปุ่ม Variant (Pill) บนมือถือ
+   FIX: ทุบขนาด Variant (Pill) บนมือถือให้เล็กและแบนลง
    ============================================================ */
 @media screen and (max-width: 749px) {
   .variant-option__button-label {
-    min-height: auto !important; /* ปลดล็อคความสูงขั้นต่ำเดิมที่ทำให้ปุ่มยืด */
-    padding-block: 6px !important; /* ลดช่องว่างด้านบนและล่าง (ปรับเลขให้น้อยลงถ้าอยากให้แบนอีก) */
-    padding-inline: 12px !important; /* ลดช่องว่างด้านซ้ายและขวาให้สมดุล */
-    line-height: 1.2 !important; /* กระชับบรรทัดตัวหนังสือข้างใน */
+    min-height: 0 !important; /* บังคับลบค่าความสูงขั้นต่ำ 3.25em ทิ้ง */
+    height: auto !important; /* ให้สูงพอดีกับเนื้อหาข้างใน */
+    flex: 0 1 auto !important; /* ปลดล็อคความกว้าง/สูงที่ติดมาจาก Flex */
+    
+    /* ปรับระยะขอบบน-ล่าง (4px) ซ้าย-ขวา (12px) */
+    padding: 4px 12px !important; 
+  }
+
+  /* คุมตัวหนังสือข้างในให้กระชับ ไม่ดันกล่องให้พอง */
+  .variant-option__button-label__text {
+    padding: 0 !important;
+    margin: 0 !important;
+    line-height: 1.2 !important; 
+    font-size: 13px !important; /* ปรับขนาดฟอนต์ให้เล็กลงนิดนึงบนมือถือ */
   }
 }
 
