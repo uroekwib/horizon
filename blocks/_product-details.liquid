@@ -65,6 +65,48 @@
   }
 {% endstylesheet %}
 
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const stickyElements = document.querySelectorAll('.sticky-content--desktop');
+    
+    if (stickyElements.length === 0) return;
+
+    const adjustStickyTop = () => {
+      stickyElements.forEach(el => {
+        const viewportHeight = window.innerHeight;
+        // ใช้ getBoundingClientRect().height เพื่อความแม่นยำที่สุด
+        const elHeight = el.getBoundingClientRect().height; 
+        
+        // ดึงค่า offset ของ Header เดิมมาใช้ (ถ้ามี)
+        const headerOffsetStr = getComputedStyle(el).getPropertyValue('--sticky-header-offset').trim();
+        const headerOffset = parseInt(headerOffsetStr) || 20; // เผื่อระยะขอบไว้ 20px
+
+        if (elHeight + headerOffset > viewportHeight) {
+          // กรณีเนื้อหายาวกว่าหน้าจอ: เกาะที่ขอบล่าง
+          // คำนวณดัน element ขึ้นไปให้ขอบล่างพอดีกับจอ (เผื่อขอบล่างไว้ 20px)
+          const topValue = viewportHeight - elHeight - 20; 
+          el.style.setProperty('--dynamic-sticky-top', `${topValue}px`);
+        } else {
+          // กรณีเนื้อหาสั้นกว่าจอ: เกาะที่ขอบบนตามปกติ
+          el.style.setProperty('--dynamic-sticky-top', `var(--sticky-header-offset, 20px)`);
+        }
+      });
+    };
+
+    // คำนวณทันทีเมื่อโหลดเสร็จ
+    adjustStickyTop();
+
+    // คำนวณใหม่เมื่อมีการย่อ/ขยายหน้าจอ
+    window.addEventListener('resize', adjustStickyTop);
+
+    // ใช้ ResizeObserver เพื่อจับตาดูการเปลี่ยนแปลงความสูงของเนื้อหาข้างใน (เช่น กดเปิด/ปิด Accordion)
+    // ทำให้ Layout ไม่พังและไม่ต้องกลัว Layout Shift
+    const observer = new ResizeObserver(adjustStickyTop);
+    stickyElements.forEach(el => observer.observe(el));
+  });
+</script>
+
 {% schema %}
 {
   "name": "t:names.details",
