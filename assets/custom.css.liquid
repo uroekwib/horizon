@@ -210,6 +210,12 @@
   --oc-text-h2:    clamp(1.25rem,  2.5vw, 2rem);
   --oc-text-h1:    clamp(1.75rem,  4vw,  3.125rem);
   --oc-text-hero:  clamp(2rem,     5vw,  4rem);
+
+  /* ── Line-height tokens (ใหม่) ── */
+  --oc-lh-tight:   1.2;    /* h1–h2 */
+  --oc-lh-snug:    1.35;   /* h3–h6 */
+  --oc-lh-base:    1.6;    /* body, paragraph */
+  --oc-lh-relaxed: 1.75;   /* long-form, FAQ, blog */
 }
 
 /* ── ลบออกแล้ว — ย้ายไปอยู่ใน §2 แล้ว ── */
@@ -238,9 +244,17 @@ h6, .h6.h6,
 div.title a, b, .headline, strong, .subtitle {
   font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
   color: var(--oc-ink);
-  line-height: 1.95rem;
   font-weight: 700;
-  letter-spacing: 0.03em;
+  line-height: var(--oc-lh-tight);
+  /* letter-spacing: ลบออก — Horizon จัดการผ่าน --font-h*--letter-spacing */
+}
+
+/* h3–h6 ได้ line-height ที่ผ่อนกว่า เพราะ font-size เล็กกว่า */
+h3, .h3.h3,
+h4, .h4.h4,
+h5, .h5.h5,
+h6, .h6.h6 {
+  line-height: var(--oc-lh-snug);
 }
 
 
@@ -249,16 +263,15 @@ h2 { font-size: var(--oc-text-h2); }
 h3 { font-size: var(--oc-text-h3); }
 h4 { font-size: var(--oc-text-h4); } PEAR TEST OMIT*/
 
-/* ── Paragraph letter-spacing ── */
-
+/* ── Paragraph ── */
 body,
 p,
 .paragraph:not(.button),
 .paragraph > *,
 a, #nav li a, div.title a, .headline, .subtitle, span, label, ul, li, .tiny, th, tr, td {
   font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
-  line-height: 1.65rem;
-}                                                                             
+  line-height: var(--oc-lh-base);
+}
 
 /* ── Links ── */
 a {
@@ -268,12 +281,12 @@ a {
 }
 
 /* ── Legacy font helpers ── */
-.tiny    { font-size: 0.8rem; line-height: 1.6rem; font-weight: 700; }
-.prod_h2 { font-size: 1.4rem; line-height: 1.8rem; }
-.prod_h4 { font-size: 1.2rem; line-height: 1.6rem; }
+.tiny    { font-size: 0.8rem; line-height: var(--oc-lh-base); font-weight: 700; }
+.prod_h2 { font-size: 1.4rem; line-height: var(--oc-lh-snug); }
+.prod_h4 { font-size: 1.2rem; line-height: var(--oc-lh-snug); }
 .field__label {
   font-size: 11px;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.03em; /* intentional — legibility ที่ขนาดเล็ก */
   font-weight: 700;
   top: 13px;
 }
