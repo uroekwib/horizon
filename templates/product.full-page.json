@@ -16,7 +16,7 @@
           "type": "_product-media-gallery",
           "static": true,
           "settings": {
-            "media_presentation": "grid",
+            "media_presentation": "carousel",
             "media_columns": "two",
             "image_gap": 10,
             "large_first_image": true,
@@ -399,6 +399,7 @@
             "ai_convertblock_headerwithline_WyWHQ4": {
               "type": "ai_convertblock_headerwithline",
               "name": "Heading with divider",
+              "disabled": true,
               "settings": {
                 "heading_text": "รายละเอียดสินค้า",
                 "heading_preset": "h3",
@@ -420,6 +421,7 @@
             "text_aEtTtq": {
               "type": "text",
               "name": "Product description",
+              "disabled": true,
               "settings": {
                 "text": "{{ closest.product.description }}",
                 "width": "100%",
@@ -458,13 +460,24 @@
       "settings": {
         "content_width": "content-center-aligned",
         "desktop_media_position": "right",
-        "equal_columns": true,
-        "limit_details_width": false,
+        "equal_columns": false,
+        "limit_details_width": true,
         "gap": 40,
         "enable_sticky_add_to_cart": true,
         "color_scheme": "scheme-2",
         "padding-block-start": 26,
         "padding-block-end": 30
+      }
+    },
+    "custom_liquid_i8EYNq": {
+      "type": "custom-liquid",
+      "name": "t:names.custom_liquid",
+      "settings": {
+        "custom_liquid": "{{ product.description }}",
+        "color_scheme": "scheme-2",
+        "section_width": "page-width",
+        "padding-block-start": 0,
+        "padding-block-end": 0
       }
     },
     "product_recommendations_qggXJq": {
@@ -611,6 +624,7 @@
   },
   "order": [
     "main",
+    "custom_liquid_i8EYNq",
     "product_recommendations_qggXJq"
   ]
 }
