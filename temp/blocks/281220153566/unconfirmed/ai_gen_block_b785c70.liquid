@@ -1,6 +1,606 @@
+{% doc %}
+  @prompt
+    multicolumn cards ดยอ้างอิงโครงสร้างมาตรฐานของ Dawn section multicolumn
+    รองรับ mobile slider เมื่อจำนวน block มากกว่าจำนวนคอลัมน์มือถือ
+    
+    loop section.blocks เพื่อแสดง image / title / text / link
+    
+    ใช้ image_tag + sizes + widths แบบ responsive
+    
+    มี schema ครบทั้ง settings, blocks, presets Desktop: columns_desktop เลือกได้ 1–6 คอลัมน์ และครบจำนวนนี้แล้วให้ขึ้นบรรทัดใหม่อัตโนมัติ
+    
+    Mobile: columns_mobile เลือกได้ 1 หรือ 2 คอลัมน์ และครบจำนวนนี้แล้วให้ขึ้นบรรทัดใหม่อัตโนมัติ
+    
+    ใช้ class grid ของ Shopify ในรูปแบบ grid--{{ section.settings.columns_mobile }}-col-tablet-down และ grid--{{ section.settings.columns_desktop }}-col-desktop
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-multicolumn-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+  }
+
+  .ai-multicolumn-container-{{ ai_gen_id }} {
+    padding: {{ block.settings.padding_top }}px 0 {{ block.settings.padding_bottom }}px;
+  }
+
+  .ai-multicolumn-heading-{{ ai_gen_id }} {
+    text-align: {{ block.settings.heading_alignment }};
+    margin-bottom: {{ block.settings.heading_spacing }}px;
+  }
+
+  .ai-multicolumn-grid-{{ ai_gen_id }} {
+    display: grid;
+    gap: {{ block.settings.column_gap }}px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-multicolumn-grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat({{ block.settings.columns_mobile }}, 1fr);
+      {% if block.settings.enable_mobile_slider %}
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        gap: {{ block.settings.column_gap }}px;
+        padding-bottom: 16px;
+      {% endif %}
+    }
+
+    {% if block.settings.enable_mobile_slider %}
+      .ai-multicolumn-item-{{ ai_gen_id }} {
+        flex: 0 0 calc((100% - {{ block.settings.column_gap | times: block.settings.columns_mobile | minus: block.settings.column_gap }}px) / {{ block.settings.columns_mobile }});
+        scroll-snap-align: start;
+      }
+    {% endif %}
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-multicolumn-grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat({{ block.settings.columns_desktop }}, 1fr);
+    }
+  }
+
+  .ai-multicolumn-item-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    text-align: {{ block.settings.text_alignment }};
+  }
+
+  .ai-multicolumn-image-wrapper-{{ ai_gen_id }} {
+    margin-bottom: {{ block.settings.image_spacing }}px;
+    {% if block.settings.image_width == 'full' %}
+      width: 100%;
+    {% else %}
+      width: {{ block.settings.image_width }}px;
+      {% if block.settings.text_alignment == 'center' %}
+        margin-left: auto;
+        margin-right: auto;
+      {% elsif block.settings.text_alignment == 'right' %}
+        margin-left: auto;
+      {% endif %}
+    {% endif %}
+  }
+
+  .ai-multicolumn-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: {{ block.settings.image_border_radius }}px;
+  }
+
+  .ai-multicolumn-image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    aspect-ratio: 1;
+    background-color: #f4f4f4;
+    border-radius: {{ block.settings.image_border_radius }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-multicolumn-image-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-multicolumn-title-{{ ai_gen_id }} {
+    margin: 0 0 {{ block.settings.title_spacing }}px;
+    font-size: {{ block.settings.title_size }}px;
+  }
+
+  .ai-multicolumn-text-{{ ai_gen_id }} {
+    margin: 0 0 {{ block.settings.text_spacing }}px;
+    color: rgba(var(--color-foreground), 0.75);
+  }
+
+  .ai-multicolumn-link-{{ ai_gen_id }} {
+    display: inline-block;
+    text-decoration: underline;
+    color: rgb(var(--color-foreground));
+    margin-top: auto;
+  }
+
+  .ai-multicolumn-link-{{ ai_gen_id }}:hover {
+    opacity: 0.7;
+  }
+{% endstyle %}
+
+<multicolumn-cards-{{ ai_gen_id }} class="ai-multicolumn-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-multicolumn-container-{{ ai_gen_id }} page-width">
+    {% if block.settings.heading != blank %}
+      <div class="ai-multicolumn-heading-{{ ai_gen_id }}">
+        <h2>{{ block.settings.heading }}</h2>
+      </div>
+    {% endif %}
+
+    <ul class="ai-multicolumn-grid-{{ ai_gen_id }} grid grid--{{ block.settings.columns_mobile }}-col-tablet-down grid--{{ block.settings.columns_desktop }}-col-desktop">
+      {% for i in (1..6) %}
+        {% liquid
+          assign image_key = 'image_' | append: i
+          assign title_key = 'title_' | append: i
+          assign text_key = 'text_' | append: i
+          assign link_label_key = 'link_label_' | append: i
+          assign link_key = 'link_' | append: i
+
+          assign image = block.settings[image_key]
+          assign title = block.settings[title_key]
+          assign text = block.settings[text_key]
+          assign link_label = block.settings[link_label_key]
+          assign link = block.settings[link_key]
+
+          assign has_content = false
+          if image != blank or title != blank or text != blank or link_label != blank
+            assign has_content = true
+          endif
+        %}
+
+        {% if has_content %}
+          <li class="ai-multicolumn-item-{{ ai_gen_id }}">
+            {% if image != blank %}
+              <div class="ai-multicolumn-image-wrapper-{{ ai_gen_id }}">
+                {% liquid
+                  assign widths = '165, 330, 535, 750, 1070, 1500'
+                  assign sizes = '(min-width: 990px) calc((100vw - 130px) / ' | append: block.settings.columns_desktop | append: '), (min-width: 750px) calc((100vw - 120px) / ' | append: block.settings.columns_desktop | append: '), calc((100vw - 35px) / ' | append: block.settings.columns_mobile | append: ')'
+                %}
+                {{
+                  image
+                  | image_url: width: 1500
+                  | image_tag:
+                    loading: 'lazy',
+                    class: 'ai-multicolumn-image-' | append: ai_gen_id,
+                    widths: widths,
+                    sizes: sizes
+                }}
+              </div>
+            {% elsif block.settings.show_placeholder_images %}
+              <div class="ai-multicolumn-image-wrapper-{{ ai_gen_id }}">
+                <div class="ai-multicolumn-image-placeholder-{{ ai_gen_id }}">
+                  {{ 'image' | placeholder_svg_tag }}
+                </div>
+              </div>
+            {% endif %}
+
+            {% if title != blank %}
+              <h3 class="ai-multicolumn-title-{{ ai_gen_id }}">{{ title }}</h3>
+            {% endif %}
+
+            {% if text != blank %}
+              <div class="ai-multicolumn-text-{{ ai_gen_id }}">{{ text }}</div>
+            {% endif %}
+
+            {% if link_label != blank and link != blank %}
+              <a href="{{ link }}" class="ai-multicolumn-link-{{ ai_gen_id }}">
+                {{ link_label }}
+              </a>
+            {% endif %}
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </div>
+</multicolumn-cards-{{ ai_gen_id }}>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Multicolumn cards",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing",
+      "label": "Heading spacing",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Desktop columns",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Mobile columns",
+      "options": [
+        {
+          "value": "1",
+          "label": "1"
+        },
+        {
+          "value": "2",
+          "label": "2"
+        }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_mobile_slider",
+      "label": "Enable mobile slider",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "label": "Column gap",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_placeholder_images",
+      "label": "Show placeholder images",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "image_width",
+      "label": "Image width",
+      "options": [
+        {
+          "value": "full",
+          "label": "Full width"
+        },
+        {
+          "value": "100",
+          "label": "100px"
+        },
+        {
+          "value": "150",
+          "label": "150px"
+        },
+        {
+          "value": "200",
+          "label": "200px"
+        }
+      ],
+      "default": "full"
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "label": "Image border radius",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "image_spacing",
+      "label": "Image spacing",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title size",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "title_spacing",
+      "label": "Title spacing",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "text_spacing",
+      "label": "Text spacing",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "header",
+      "content": "Card 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_1",
+      "label": "Image"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "title_1",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "text_1",
+      "label": "Text"
+    },
+    {
+      "type": "text",
+      "id": "link_label_1",
+      "label": "Link label"
+    },
+    {
+      "type": "url",
+      "id": "link_1",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_2",
+      "label": "Image"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "title_2",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "text_2",
+      "label": "Text"
+    },
+    {
+      "type": "text",
+      "id": "link_label_2",
+      "label": "Link label"
+    },
+    {
+      "type": "url",
+      "id": "link_2",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_3",
+      "label": "Image"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "title_3",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "text_3",
+      "label": "Text"
+    },
+    {
+      "type": "text",
+      "id": "link_label_3",
+      "label": "Link label"
+    },
+    {
+      "type": "url",
+      "id": "link_3",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_4",
+      "label": "Image"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "title_4",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "text_4",
+      "label": "Text"
+    },
+    {
+      "type": "text",
+      "id": "link_label_4",
+      "label": "Link label"
+    },
+    {
+      "type": "url",
+      "id": "link_4",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_5",
+      "label": "Image"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "title_5",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "text_5",
+      "label": "Text"
+    },
+    {
+      "type": "text",
+      "id": "link_label_5",
+      "label": "Link label"
+    },
+    {
+      "type": "url",
+      "id": "link_5",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 6"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_6",
+      "label": "Image"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "title_6",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "text_6",
+      "label": "Text"
+    },
+    {
+      "type": "text",
+      "id": "link_label_6",
+      "label": "Link label"
+    },
+    {
+      "type": "url",
+      "id": "link_6",
+      "label": "Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Multicolumn cards"
+    }
+  ]
+}
 {% endschema %}
