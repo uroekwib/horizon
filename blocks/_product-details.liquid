@@ -122,28 +122,36 @@
 document.addEventListener('DOMContentLoaded', () => {
   if (window.innerWidth < 750) return;
 
-  const detail = document.querySelector('.product-details.sticky-content--desktop');
-  if (!detail) return;
+  const root = document.querySelector('.product-details.sticky-content--desktop');
+  if (!root) return;
 
-  const EDGE = 2; // กันค่าคลาดเคลื่อนเวลาเช็กสุดบน/สุดล่าง
+  function findActualScrollElement(el) {
+    const candidates = [el, ...el.querySelectorAll('*')];
+    for (const node of candidates) {
+      const style = window.getComputedStyle(node);
+      const overflowY = style.overflowY;
+      const isScrollable = (overflowY === 'auto' || overflowY === 'scroll') && node.scrollHeight > node.clientHeight;
+      if (isScrollable) return node;
+    }
+    return el;
+  }
 
-  detail.addEventListener('wheel', (e) => {
+  let scrollEl = findActualScrollElement(root);
+  const EDGE = 2;
+
+  window.addEventListener('resize', () => {
+    scrollEl = findActualScrollElement(root);
+  });
+
+  scrollEl.addEventListener('wheel', (e) => {
     const delta = e.deltaY;
-    const maxScroll = detail.scrollHeight - detail.clientHeight;
-    const currentScroll = detail.scrollTop;
+    const maxScroll = scrollEl.scrollHeight - scrollEl.clientHeight;
+    const currentScroll = scrollEl.scrollTop;
 
     const atTop = currentScroll <= EDGE;
     const atBottom = currentScroll >= (maxScroll - EDGE);
 
-    const scrollingDown = delta > 0;
-    const scrollingUp = delta < 0;
-
-    /* 
-      ส่งต่อให้ page เฉพาะตอนชนขอบจริง ๆ เท่านั้น
-      - ลง: detail สุดล่างแล้วค่อยส่งต่อ
-      - ขึ้น: detail สุดบนแล้วค่อยส่งต่อ
-    */
-    if ((scrollingDown && atBottom) || (scrollingUp && atTop)) {
+    if ((delta > 0 && atBottom) || (delta < 0 && atTop)) {
       e.preventDefault();
       window.scrollBy(0, delta);
     }
