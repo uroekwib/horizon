@@ -210,7 +210,6 @@
             },
             "variant_picker_R3rGDr": {
               "type": "variant-picker",
-              "disabled": true,
               "settings": {
                 "variant_style": "buttons",
                 "show_swatches": false,
@@ -224,7 +223,6 @@
             },
             "buy_buttons_eYQEYi": {
               "type": "buy-buttons",
-              "disabled": true,
               "settings": {
                 "stacking": true,
                 "show_pickup_availability": false,
@@ -462,9 +460,9 @@
       "settings": {
         "content_width": "content-center-aligned",
         "desktop_media_position": "right",
-        "equal_columns": false,
-        "limit_details_width": true,
-        "gap": 40,
+        "equal_columns": true,
+        "limit_details_width": false,
+        "gap": 12,
         "enable_sticky_add_to_cart": true,
         "color_scheme": "scheme-2",
         "padding-block-start": 26,
