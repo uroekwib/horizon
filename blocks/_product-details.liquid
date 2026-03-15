@@ -36,15 +36,18 @@
       padding-inline: 0;
     }
 
-    /* FIX 1: scoped เฉพาะ product page แล้ว */
-    .product-details media-gallery .media-gallery__grid {
+    /* ==========================================
+       FIX 1: ล็อค Product Media (รูปสินค้าหลัก) บน Mobile ให้เป็น Slider 
+       (แก้บั๊กรูปซ้อนทับกันยาวๆ)
+       ========================================== */
+    media-gallery .media-gallery__grid {
       display: none !important;
     }
-    .product-details media-gallery slideshow-component {
+    media-gallery slideshow-component {
       display: flex !important;
       flex-direction: column !important;
     }
-    .product-details media-gallery slideshow-slides {
+    media-gallery slideshow-slides {
       display: flex !important;
       flex-direction: row !important;
       flex-wrap: nowrap !important;
@@ -52,15 +55,19 @@
       scroll-snap-type: x mandatory !important;
       scrollbar-width: none;
     }
-    .product-details media-gallery slideshow-slides::-webkit-scrollbar {
+    media-gallery slideshow-slides::-webkit-scrollbar {
       display: none;
     }
-    .product-details media-gallery slideshow-slide {
+    media-gallery slideshow-slide {
       width: 100% !important;
       flex: 0 0 100% !important;
       scroll-snap-align: center !important;
       display: block !important;
     }
+  }
+
+  .view-product-title {
+    display: none;
   }
 
   /* ==========================================
