@@ -2597,7 +2597,7 @@ deferred-media[class] :is(.deferred-media__poster-button img, .deferred-media__p
       /* เพิ่ม transition เบาๆ เพื่อความนุ่มนวลเวลาเนื้อหาหด/ขยาย */
       transition: top 0.1s ease-out; 
     }
-
+  }
 .price,
 .compare-at-price,
 .unit-price {
