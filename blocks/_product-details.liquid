@@ -1,3 +1,5 @@
+
+
 {%- assign block_settings = block.settings -%}
 <div
   id="ProductInformation-{{ section.id }}"
@@ -28,81 +30,81 @@
 </div>
 
 {% stylesheet %}
-    /* Clear padding on mobile, if not full-width */
-    @media screen and (max-width: 749px) {
-      .product-information.section--page-width .product-details > .group-block {
-        padding-inline: 0;
-      }
-
-      /* ==========================================
-         FIX 1: ล็อค Product Media (รูปสินค้าหลัก) บน Mobile ให้เป็น Slider
-         (แก้บั๊กรูปซ้อนทับกันยาวๆ)
-         ========================================== */
-      media-gallery .media-gallery__grid {
-        display: none !important;
-      }
-      media-gallery slideshow-component {
-        display: flex !important;
-        flex-direction: column !important;
-      }
-      media-gallery slideshow-slides {
-        display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: nowrap !important;
-        overflow-x: auto !important;
-        scroll-snap-type: x mandatory !important;
-        scrollbar-width: none;
-      }
-      media-gallery slideshow-slides::-webkit-scrollbar {
-        display: none;
-      }
-      media-gallery slideshow-slide {
-        width: 100% !important;
-        flex: 0 0 100% !important;
-        scroll-snap-align: center !important;
-        display: block !important;
-      }
-    }
-
-    .view-product-title {
-      display: none;
+  /* Clear padding on mobile, if not full-width */
+  @media screen and (max-width: 749px) {
+    .product-information.section--page-width .product-details > .group-block {
+      padding-inline: 0;
     }
 
     /* ==========================================
-       FIX 2: จัดระเบียบกล่องข้อมูลสินค้า (ไม่ให้เละเทะ)
+       FIX 1: ล็อค Product Media (รูปสินค้าหลัก) บน Mobile ให้เป็น Slider 
+       (แก้บั๊กรูปซ้อนทับกันยาวๆ)
        ========================================== */
-    .product-details {
-      display: flex;
-      align-self: start;
-      justify-content: center;
+    media-gallery .media-gallery__grid {
+      display: none !important;
     }
-
-    /* ล็อก Flex ชั้นนอกสุด และบังคับให้เรียงจากบนลงล่าง จะได้ไม่เบียดกันบนมือถือ */
-    .product-details > .group-block > .group-block-content.layout-panel-flex {
+    media-gallery slideshow-component {
       display: flex !important;
       flex-direction: column !important;
+    }
+    media-gallery slideshow-slides {
+      display: flex !important;
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
+      overflow-x: auto !important;
+      scroll-snap-type: x mandatory !important;
+      scrollbar-width: none;
+    }
+    media-gallery slideshow-slides::-webkit-scrollbar {
+      display: none;
+    }
+    media-gallery slideshow-slide {
       width: 100% !important;
+      flex: 0 0 100% !important;
+      scroll-snap-align: center !important;
+      display: block !important;
+    }
+  }
+
+  .view-product-title {
+    display: none;
+  }
+
+  /* ==========================================
+     FIX 2: จัดระเบียบกล่องข้อมูลสินค้า (ไม่ให้เละเทะ)
+     ========================================== */
+  .product-details {
+    display: flex;
+    align-self: start;
+    justify-content: center;
+  }
+
+  /* ล็อก Flex ชั้นนอกสุด และบังคับให้เรียงจากบนลงล่าง จะได้ไม่เบียดกันบนมือถือ */
+  .product-details > .group-block > .group-block-content.layout-panel-flex {
+    display: flex !important;
+    flex-direction: column !important; 
+    width: 100% !important; 
+  }
+
+  /* ==========================================
+     FIX 3: ปรับ Sticky บน Desktop แบบ Internal Scroll (ลื่น 100%)
+     ========================================== */
+  @media screen and (min-width: 750px) {
+    .product-details > .group-block {
+      height: min-content;
     }
 
-    /* ==========================================
-       FIX 3: ปรับ Sticky บน Desktop แบบ Internal Scroll (ลื่น 100%)
-       ========================================== */
-    @media screen and (min-width: 750px) {
-      .product-details > .group-block {
-        height: min-content;
-      }
+    .full-height--desktop {
+      height: 100%;
+      max-height: calc(100vh - var(--header-group-height, 0));
+      min-height: fit-content;
+    }
 
-      .full-height--desktop {
-        height: 100%;
-        max-height: calc(100vh - var(--header-group-height, 0));
-        min-height: fit-content;
-      }
+    .full-height--desktop .group-block {
+      align-self: var(--details-position, 'flex-start');
+    }
 
-      .full-height--desktop .group-block {
-        align-self: var(--details-position, 'flex-start');
-      }
-
-      .product-details.sticky-content--desktop {
+    .product-details.sticky-content--desktop {
   position: sticky;
   top: var(--sticky-header-offset, 24px);
   align-self: start;
@@ -115,45 +117,33 @@
 .product-details.sticky-content--desktop::-webkit-scrollbar {
   display: none;
 }
-    }
+  }
 {% endstylesheet %}
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  if (window.innerWidth < 750) return;
+  const detail = document.querySelector('.product-details.sticky-content--desktop');
+  if (!detail || window.innerWidth < 750) return;
 
-  const root = document.querySelector('.product-details.sticky-content--desktop');
-  if (!root) return;
-
-  function findActualScrollElement(el) {
-    const candidates = [el, ...el.querySelectorAll('*')];
-    for (const node of candidates) {
-      const style = window.getComputedStyle(node);
-      const overflowY = style.overflowY;
-      const isScrollable = (overflowY === 'auto' || overflowY === 'scroll') && node.scrollHeight > node.clientHeight;
-      if (isScrollable) return node;
-    }
-    return el;
-  }
-
-  let scrollEl = findActualScrollElement(root);
-  const EDGE = 2;
-
-  window.addEventListener('resize', () => {
-    scrollEl = findActualScrollElement(root);
-  });
-
-  scrollEl.addEventListener('wheel', (e) => {
+  detail.addEventListener('wheel', (e) => {
     const delta = e.deltaY;
-    const maxScroll = scrollEl.scrollHeight - scrollEl.clientHeight;
-    const currentScroll = scrollEl.scrollTop;
+    const scrollTop = detail.scrollTop;
+    const scrollHeight = detail.scrollHeight;
+    const clientHeight = detail.clientHeight;
 
-    const atTop = currentScroll <= EDGE;
-    const atBottom = currentScroll >= (maxScroll - EDGE);
+    const atTop = scrollTop <= 0;
+    const atBottom = scrollTop + clientHeight >= scrollHeight - 1;
 
-    if ((delta > 0 && atBottom) || (delta < 0 && atTop)) {
+    const scrollingDown = delta > 0;
+    const scrollingUp = delta < 0;
+
+    if ((scrollingDown && atBottom) || (scrollingUp && atTop)) {
       e.preventDefault();
-      window.scrollBy(0, delta);
+      window.scrollBy({
+        top: delta,
+        left: 0,
+        behavior: 'auto'
+      });
     }
   }, { passive: false });
 });
