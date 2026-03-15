@@ -103,52 +103,52 @@
       }
 
       .product-details.sticky-content--desktop {
-    position: sticky;
-    top: var(--sticky-header-offset, 24px);
-    align-self: start;
-    max-height: calc(100vh - var(--sticky-header-offset, 24px) - 24px);
-    overflow-y: auto;
-    overscroll-behavior: auto;
-    scrollbar-width: none;
-  }
+  position: sticky;
+  top: var(--sticky-header-offset, 24px);
+  align-self: start;
+  max-height: calc(100vh - var(--sticky-header-offset, 24px) - 24px);
+  overflow-y: auto;
+  overscroll-behavior: auto;
+  scrollbar-width: none;
+}
 
-  .product-details.sticky-content--desktop::-webkit-scrollbar {
-    display: none;
-  }
+.product-details.sticky-content--desktop::-webkit-scrollbar {
+  display: none;
+}
     }
 {% endstylesheet %}
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const detail = document.querySelector('.product-details.sticky-content--desktop');
-    if (!detail || window.innerWidth < 750) return;
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.innerWidth < 750) return;
 
-    detail.addEventListener(
-      'wheel',
-      (e) => {
-        const delta = e.deltaY;
-        const scrollTop = detail.scrollTop;
-        const scrollHeight = detail.scrollHeight;
-        const clientHeight = detail.clientHeight;
+  const detail = document.querySelector('.product-details.sticky-content--desktop');
+  if (!detail) return;
 
-        const atTop = scrollTop <= 0;
-        const atBottom = scrollTop + clientHeight >= scrollHeight - 1;
+  const EDGE = 2; // กันค่าคลาดเคลื่อนเวลาเช็กสุดบน/สุดล่าง
 
-        const scrollingDown = delta > 0;
-        const scrollingUp = delta < 0;
+  detail.addEventListener('wheel', (e) => {
+    const delta = e.deltaY;
+    const maxScroll = detail.scrollHeight - detail.clientHeight;
+    const currentScroll = detail.scrollTop;
 
-        if ((scrollingDown && atBottom) || (scrollingUp && atTop)) {
-          e.preventDefault();
-          window.scrollBy({
-            top: delta,
-            left: 0,
-            behavior: 'auto',
-          });
-        }
-      },
-      { passive: false }
-    );
-  });
+    const atTop = currentScroll <= EDGE;
+    const atBottom = currentScroll >= (maxScroll - EDGE);
+
+    const scrollingDown = delta > 0;
+    const scrollingUp = delta < 0;
+
+    /* 
+      ส่งต่อให้ page เฉพาะตอนชนขอบจริง ๆ เท่านั้น
+      - ลง: detail สุดล่างแล้วค่อยส่งต่อ
+      - ขึ้น: detail สุดบนแล้วค่อยส่งต่อ
+    */
+    if ((scrollingDown && atBottom) || (scrollingUp && atTop)) {
+      e.preventDefault();
+      window.scrollBy(0, delta);
+    }
+  }, { passive: false });
+});
 </script>
 
 {% schema %}
