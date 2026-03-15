@@ -199,13 +199,26 @@
                     "desktop_width_percent": 100
                   },
                   "blocks": {}
+                },
+                "divider_VWtJhL": {
+                  "type": "_divider",
+                  "name": "t:names.divider",
+                  "settings": {
+                    "thickness": 1,
+                    "corner_radius": "square",
+                    "width_percent": 100,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0
+                  },
+                  "blocks": {}
                 }
               },
               "block_order": [
                 "text_xrnftG",
                 "price_tVjtKg",
                 "text_tJAPKi",
-                "ai_gen_block_d819489_9JNN96"
+                "ai_gen_block_d819489_9JNN96",
+                "divider_VWtJhL"
               ]
             },
             "variant_picker_R3rGDr": {
