@@ -196,19 +196,21 @@
    §4  TYPOGRAPHY
    ============================================================ */
 
-
-/* ── Type Scale ── */
+/* ── Global Type Scale Override (Fluid Typography) ── */
 :root {
-  --oc-text-xs:    0.75rem;
-  --oc-text-sm:    0.8125rem;   /* 13px */
-  --oc-text-base:  0.9375rem;   /* 15px */
-  --oc-text-md:    1rem;
-  --oc-text-lg:    1.125rem;
-  --oc-text-h4:    clamp(1rem,    1.8vw, 1.25rem);
-  --oc-text-h3:    clamp(1.125rem, 2vw,  1.5rem);
-  --oc-text-h2:    clamp(1.25rem,  2.5vw, 2rem);
-  --oc-text-h1:    clamp(1.75rem,  4vw,  3.125rem);
-  --oc-text-hero:  clamp(2rem,     5vw,  4rem);
+  /* ขนาดข้อความทั่วไป */
+  --font-paragraph--size: 0.9375rem;  /* 15px (แทน --oc-text-base) */
+
+  /* ขนาด Headings (ระบบจะเอาไปกระจายใส่ h1-h6 ให้อัตโนมัติ) */
+  --font-h4--size: clamp(1rem, 1.8vw, 1.25rem);
+  --font-h3--size: clamp(1.125rem, 2vw, 1.5rem);
+  --font-h2--size: clamp(1.25rem, 2.5vw, 2rem);
+  --font-h1--size: clamp(1.75rem, 4vw, 3.125rem);
+
+  /* สำหรับขนาดที่ไม่มีในระบบ (เช่น Hero, xs, sm) ค่อยตั้งชื่อ custom ขึ้นมาเฉพาะจุดที่ต้องใช้จริง */
+  --font-hero--size: clamp(2rem, 5vw, 4rem);
+  --font-sm--size: 0.8125rem;
+  --font-xs--size: 0.75rem;
 }
 
 /* ── ลบออกแล้ว — ย้ายไปอยู่ใน §2 แล้ว ── */
