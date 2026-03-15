@@ -29,7 +29,7 @@
   {% render 'group', children: children, settings: block_settings, shopify_attributes: block.shopify_attributes %}
 </div>
 
-{% style %}
+{% stylesheet %}
   /* Clear padding on mobile, if not full-width */
   @media screen and (max-width: 749px) {
     .product-information.section--page-width .product-details > .group-block {
@@ -119,7 +119,7 @@
       display: none;
     }
   }
-{% endstyle %}
+{% endstylesheet %}
 
 
 {% schema %}
