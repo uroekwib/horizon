@@ -494,17 +494,11 @@ button.shopify-payment-button__button--unbranded:hover {
   transition: all .2s ease;
 }
 
-input[type="radio"]:checked + .variant-option__button-label,
-input[type="checkbox"]:checked + .variant-option__button-label,
-.variant-option__button-label.selected,
-.variant-option__button-label[aria-pressed="true"],
-.variant-option__button-label[aria-selected="true"],
-.variant-option__button-label.is-selected,
-.variant-option__button-label.is-active {
-  background: #fff !important;
+input[type="radio"]:checked + .variant-option__button-label {
+  background: #ffffff !important;
   color: #17a9bb !important;
   border: 1.5px solid #17a9bb !important;
-  box-shadow: 0 0 0 2px rgba(23,169,187,.10) !important;
+  box-shadow: 0 0 0 2px rgba(23,169,187,0.10);
 }
 
 .variant-option__button-label:hover {
