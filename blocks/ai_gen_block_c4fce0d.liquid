@@ -419,70 +419,46 @@
   </div>
 </div>
 
-{%- comment -%} Meta: price suffix per product {%- endcomment -%}
-<script id="ocf-meta-{{ ai_gen_id }}" type="application/json">
-{
-  {% for product in collection.products %}
-    "{{ product.handle }}": "{{ product.metafields.custom.product_price }}"
-    {% unless forloop.last %},{% endunless %}
-  {% endfor %}
-}
-</script>
-
-{%- comment -%} Count map: total products per collection/subcollection handle {%- endcomment -%}
-<script id="ocf-counts-{{ ai_gen_id }}" type="application/json">
-{
-  {% assign count_first = true %}
-  {% for i in (1..10) %}
-    {% assign col_key = 'collection_' | append: i %}
-    {% assign col_item = block.settings[col_key] %}
-    {% if col_item != blank %}
-      {% unless count_first %},{% endunless %}
-      {% assign count_first = false %}
-      "{{ col_item.handle }}": {{ col_item.products_count }}
-      {% if col_item.metafields.custom.subcollections.value != blank %}
-        {% for sub in col_item.metafields.custom.subcollections.value %}
-          ,"{{ sub.handle }}": {{ sub.products_count }}
-        {% endfor %}
-      {% endif %}
-    {% endif %}
-  {% endfor %}
-}
-</script>
-
 <script>
 (function () {
   var root = document.querySelector('.ocf-{{ ai_gen_id }}');
   if (!root) return;
 
-  var grid     = root.querySelector('[data-products-container]');
-  var sortEl   = root.querySelector('[data-sort]');
+  var grid = root.querySelector('[data-products-container]');
+  var sortEl = root.querySelector('[data-sort]');
   var viewBtns = root.querySelectorAll('[data-view]');
-  var counter  = root.querySelector('.ocf__counter-{{ ai_gen_id }}');
-  var perPage  = parseInt(root.dataset.productsPerPage) || 12;
-  var defCols  = parseInt(root.dataset.desktopCols) || 4;
+  var counter = root.querySelector('.ocf__counter-{{ ai_gen_id }}');
+  var perPage = parseInt(root.dataset.productsPerPage, 10) || 12;
+  var defCols = parseInt(root.dataset.desktopCols, 10) || 4;
 
   var metaMap = {};
   var metaEl = document.getElementById('ocf-meta-{{ ai_gen_id }}');
-  if (metaEl) { try { metaMap = JSON.parse(metaEl.textContent); } catch(e) {} }
+  if (metaEl) {
+    try { metaMap = JSON.parse(metaEl.textContent); } catch (e) {}
+  }
 
   var countMap = {};
   var countEl = document.getElementById('ocf-counts-{{ ai_gen_id }}');
-  if (countEl) { try { countMap = JSON.parse(countEl.textContent); } catch(e) {} }
+  if (countEl) {
+    try { countMap = JSON.parse(countEl.textContent); } catch (e) {}
+  }
 
-  var state = { handle: root.dataset.activeHandle || '', sort: 'default' };
+  var state = {
+    handle: root.dataset.activeHandle || '',
+    sort: 'default'
+  };
 
   var sortMap = {
-    'price-asc':    'price-ascending',
-    'price-desc':   'price-descending',
-    'title-asc':    'title-ascending',
-    'title-desc':   'title-descending',
+    'price-asc': 'price-ascending',
+    'price-desc': 'price-descending',
+    'title-asc': 'title-ascending',
+    'title-desc': 'title-descending',
     'created-desc': 'created-descending'
   };
 
-  var page      = 1;
+  var page = 1;
   var isLoading = false;
-  var hasMore   = true;
+  var hasMore = true;
 
   function updateCounter(handle) {
     if (!counter) return;
@@ -492,7 +468,7 @@
 
   function skeletonHTML() {
     var radius = {{ block.settings.product_image_radius }};
-    return Array(Math.min(perPage, 8)).fill(null).map(function() {
+    return Array(Math.min(perPage, 8)).fill(null).map(function () {
       return '<div style="display:flex;flex-direction:column;gap:10px;">'
         + '<div style="aspect-ratio:4/3;border-radius:' + radius + 'px;background:linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%);background-size:200% 100%;animation:ocf-shimmer 1.4s infinite;"></div>'
         + '<div style="height:13px;width:65%;border-radius:4px;background:linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%);background-size:200% 100%;animation:ocf-shimmer 1.4s infinite 0.1s;"></div>'
@@ -501,95 +477,131 @@
     }).join('');
   }
 
-
   function buildResponsiveImageUrl(url, width) {
-  if (!url) return '';
-  return url + (url.indexOf('?') > -1 ? '&' : '?') + 'width=' + width;
-}
+    if (!url) return '';
 
-  function cardHTML(p) {
-  var imgObj = p.featured_image || (p.images && p.images[0]) || null;
-  var img    = imgObj && imgObj.src ? imgObj.src : '';
-  var price  = p.variants && p.variants[0] ? parseFloat(p.variants[0].price) : 0;
-  var fmt    = new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB' }).format(price);
-  var suffix = metaMap[p.handle] ? ' / ' + metaMap[p.handle] : '';
-  var d      = document.createElement('div');
-  d.textContent = p.title;
-  var title  = d.innerHTML;
-
-  var imgHtml = '';
-  if (img) {
-    var src320 = buildResponsiveImageUrl(img, 320);
-    var src480 = buildResponsiveImageUrl(img, 480);
-    var src640 = buildResponsiveImageUrl(img, 640);
-    var src800 = buildResponsiveImageUrl(img, 800);
-
-    imgHtml =
-      '<div class="ocf__card-img-wrap-{{ ai_gen_id }}">' +
-        '<img ' +
-          'src="' + src640 + '" ' +
-          'srcset="' + src320 + ' 320w, ' + src480 + ' 480w, ' + src640 + ' 640w, ' + src800 + ' 800w" ' +
-          'sizes="(min-width: 1200px) 25vw, (min-width: 750px) 33vw, 50vw" ' +
-          'alt="' + title + '" ' +
-          'class="ocf__card-img-{{ ai_gen_id }}" ' +
-          'loading="lazy" ' +
-          'decoding="async"' +
-        '>' +
-      '</div>';
+    try {
+      var parsed = new URL(url, window.location.origin);
+      parsed.searchParams.set('width', width);
+      return parsed.toString();
+    } catch (e) {
+      var cleanUrl = url.replace(/([?&])width=\d+/g, '').replace(/[?&]$/, '');
+      return cleanUrl + (cleanUrl.indexOf('?') > -1 ? '&' : '?') + 'width=' + width;
+    }
   }
 
-  return '<a href="/products/' + p.handle + '" class="ocf__card-{{ ai_gen_id }}">'
-    + imgHtml
-    + '<div class="ocf__card-body-{{ ai_gen_id }}">'
-    + '<h3 class="ocf__card-title-{{ ai_gen_id }}">' + title + '</h3>'
-    + '<div class="ocf__card-price-{{ ai_gen_id }}">เริ่มจาก ' + fmt + suffix + '</div>'
-    + '</div></a>';
-}
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.textContent = str || '';
+    return div.innerHTML;
+  }
+
+  function getImageHtml(img, title) {
+    if (!img) return '';
+
+    var src240 = buildResponsiveImageUrl(img, 240);
+    var src320 = buildResponsiveImageUrl(img, 320);
+    var src400 = buildResponsiveImageUrl(img, 400);
+    var src560 = buildResponsiveImageUrl(img, 560);
+
+    return '<div class="ocf__card-img-wrap-{{ ai_gen_id }}">'
+      + '<img '
+      + 'src="' + src400 + '" '
+      + 'srcset="' + src240 + ' 240w, ' + src320 + ' 320w, ' + src400 + ' 400w, ' + src560 + ' 560w" '
+      + 'sizes="(min-width: 1200px) 260px, (min-width: 750px) 30vw, 45vw" '
+      + 'alt="' + title + '" '
+      + 'class="ocf__card-img-{{ ai_gen_id }}" '
+      + 'loading="lazy" '
+      + 'decoding="async" '
+      + 'width="560" '
+      + 'height="420">'
+      + '</div>';
+  }
+
+  function cardHTML(p) {
+    var imgObj = p.featured_image || (p.images && p.images[0]) || null;
+    var img = imgObj && imgObj.src ? imgObj.src : '';
+    var price = p.variants && p.variants[0] ? parseFloat(p.variants[0].price) : 0;
+    var fmt = new Intl.NumberFormat('th-TH', {
+      style: 'currency',
+      currency: 'THB'
+    }).format(price);
+    var suffix = metaMap[p.handle] ? ' / ' + metaMap[p.handle] : '';
+    var title = escapeHtml(p.title);
+
+    return '<a href="/products/' + p.handle + '" class="ocf__card-{{ ai_gen_id }}">'
+      + getImageHtml(img, title)
+      + '<div class="ocf__card-body-{{ ai_gen_id }}">'
+      + '<h3 class="ocf__card-title-{{ ai_gen_id }}">' + title + '</h3>'
+      + '<div class="ocf__card-price-{{ ai_gen_id }}">เริ่มจาก ' + fmt + suffix + '</div>'
+      + '</div>'
+      + '</a>';
+  }
 
   async function loadProducts(reset) {
     if (isLoading) return;
-    if (reset) { page = 1; hasMore = true; grid.innerHTML = ''; if (counter) counter.textContent = ''; }
+
+    if (reset) {
+      page = 1;
+      hasMore = true;
+      grid.innerHTML = '';
+      if (counter) counter.textContent = '';
+    }
+
     if (!state.handle || !hasMore) return;
 
     isLoading = true;
 
-    if (page === 1) grid.innerHTML = skeletonHTML();
+    if (page === 1) {
+      grid.innerHTML = skeletonHTML();
+    }
 
     var url = '/collections/' + state.handle + '/products.json?limit=' + perPage + '&page=' + page;
-    if (sortMap[state.sort]) url += '&sort_by=' + sortMap[state.sort];
+    if (sortMap[state.sort]) {
+      url += '&sort_by=' + sortMap[state.sort];
+    }
 
     try {
-      var res  = await fetch(url);
+      var res = await fetch(url, { credentials: 'same-origin' });
       var data = await res.json();
 
-      if (page === 1) grid.innerHTML = '';
+      if (page === 1) {
+        grid.innerHTML = '';
+      }
 
       if (!data.products || !data.products.length) {
-        if (page === 1) grid.innerHTML = '<div class="ocf__empty-{{ ai_gen_id }}">ไม่พบสินค้าในหมวดนี้</div>';
+        if (page === 1) {
+          grid.innerHTML = '<div class="ocf__empty-{{ ai_gen_id }}">ไม่พบสินค้าในหมวดนี้</div>';
+        }
         hasMore = false;
         isLoading = false;
         return;
       }
 
-      if (data.products.length < perPage) hasMore = false;
-      if (page === 1) updateCounter(state.handle);
+      if (data.products.length < perPage) {
+        hasMore = false;
+      }
+
+      if (page === 1) {
+        updateCounter(state.handle);
+      }
 
       grid.insertAdjacentHTML('beforeend', data.products.map(cardHTML).join(''));
-      page++;
-
-    } catch(e) {
-      if (page === 1) grid.innerHTML = '<div class="ocf__empty-{{ ai_gen_id }}">เกิดข้อผิดพลาด กรุณาลองใหม่</div>';
+      page += 1;
+    } catch (e) {
+      if (page === 1) {
+        grid.innerHTML = '<div class="ocf__empty-{{ ai_gen_id }}">เกิดข้อผิดพลาด กรุณาลองใหม่</div>';
+      }
     }
 
     isLoading = false;
   }
 
-  /* ── Infinite scroll sentinel ── */
   var sentinel = document.createElement('div');
   sentinel.style.height = '1px';
   grid.after(sentinel);
 
-  var observer = new IntersectionObserver(function(entries) {
+  var observer = new IntersectionObserver(function (entries) {
     if (entries[0].isIntersecting && !isLoading && hasMore) {
       loadProducts(false);
     }
@@ -597,36 +609,40 @@
 
   observer.observe(sentinel);
 
-  /* ── Parent pill → navigate ── */
   root.querySelectorAll('[data-col-index]').forEach(function (pill) {
-    pill.addEventListener('click', function () { window.location.href = pill.href; });
+    pill.addEventListener('click', function () {
+      window.location.href = pill.href;
+    });
   });
 
-  /* ── Sub pill → JS load ── */
   root.querySelectorAll('[data-sub-handle]').forEach(function (btn) {
     btn.addEventListener('click', function () {
-      root.querySelectorAll('[data-sub-handle]').forEach(function (b) { b.classList.remove('active'); });
+      root.querySelectorAll('[data-sub-handle]').forEach(function (b) {
+        b.classList.remove('active');
+      });
       btn.classList.add('active');
       state.handle = btn.dataset.subHandle;
       loadProducts(true);
     });
   });
 
-  /* ── Sort ── */
   if (sortEl) {
-    sortEl.addEventListener('change', function () { state.sort = sortEl.value; loadProducts(true); });
+    sortEl.addEventListener('change', function () {
+      state.sort = sortEl.value;
+      loadProducts(true);
+    });
   }
 
-  /* ── View toggle ── */
   viewBtns.forEach(function (btn) {
     btn.addEventListener('click', function () {
-      viewBtns.forEach(function (b) { b.classList.remove('active'); });
+      viewBtns.forEach(function (b) {
+        b.classList.remove('active');
+      });
       btn.classList.add('active');
       grid.style.setProperty('--ocf-cols', btn.dataset.view === 'small' ? defCols + 2 : defCols);
     });
   });
 
-  /* ── Init ── */
   loadProducts(true);
 })();
 </script>
