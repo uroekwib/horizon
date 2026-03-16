@@ -519,24 +519,25 @@
 
   var imgHtml = '';
   if (img) {
-    var src240 = buildResponsiveImageUrl(img, 240);
-var src320 = buildResponsiveImageUrl(img, 320);
-var src400 = buildResponsiveImageUrl(img, 400);
-var src560 = buildResponsiveImageUrl(img, 560);
+    var src320 = buildResponsiveImageUrl(img, 320);
+    var src480 = buildResponsiveImageUrl(img, 480);
+    var src640 = buildResponsiveImageUrl(img, 640);
+    var src800 = buildResponsiveImageUrl(img, 800);
 
-imgHtml =
-  '<div class="ocf__card-img-wrap-{{ ai_gen_id }}">' +
-    '<img ' +
-      'src="' + src400 + '" ' +
-      'srcset="' + src240 + ' 240w, ' + src320 + ' 320w, ' + src400 + ' 400w, ' + src560 + ' 560w" ' +
-      'sizes="(min-width: 1200px) 260px, (min-width: 750px) 30vw, 45vw" ' +
-      'alt="' + title + '" ' +
-      'class="ocf__card-img-{{ ai_gen_id }}" ' +
-      'loading="lazy" ' +
-      'decoding="async" ' +
-      'width="560" height="420"' +
-    '>' +
-  '</div>';
+    imgHtml =
+      '<div class="ocf__card-img-wrap-{{ ai_gen_id }}">' +
+        '<img ' +
+          'src="' + src640 + '" ' +
+          'srcset="' + src320 + ' 320w, ' + src480 + ' 480w, ' + src640 + ' 640w, ' + src800 + ' 800w" ' +
+          'sizes="(min-width: 1200px) 25vw, (min-width: 750px) 33vw, 50vw" ' +
+          'alt="' + title + '" ' +
+          'class="ocf__card-img-{{ ai_gen_id }}" ' +
+          'loading="lazy" ' +
+          'decoding="async"' +
+        '>' +
+      '</div>';
+  }
+
   return '<a href="/products/' + p.handle + '" class="ocf__card-{{ ai_gen_id }}">'
     + imgHtml
     + '<div class="ocf__card-body-{{ ai_gen_id }}">'
