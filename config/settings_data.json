@@ -93,8 +93,8 @@
         "type": "social-bar",
         "settings": {
           "marquee_text_1": "ทัก LINE ติดต่อสะดวก",
-          "marquee_text_2": "ทัก LINE สอบถามราคาได้เลย",
-          "marquee_text_3": "ทัก LINE สั่งซื้อได้เลย"
+          "marquee_text_2": "ติดต่อขอใบเสนอราคา",
+          "marquee_text_3": "สั่งทำตามสเปกที่ต้องการ"
         }
       }
     },
