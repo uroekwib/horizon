@@ -501,22 +501,49 @@
     }).join('');
   }
 
-  function cardHTML(p) {
-    var img    = (p.featured_image && p.featured_image.src) || (p.images && p.images[0] && p.images[0].src) || '';
-    var price  = p.variants && p.variants[0] ? parseFloat(p.variants[0].price) : 0;
-    var fmt    = new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB' }).format(price);
-    var suffix = metaMap[p.handle] ? ' / ' + metaMap[p.handle] : '';
-    var d      = document.createElement('div');
-    d.textContent = p.title;
-    var title  = d.innerHTML;
+function buildResponsiveImageUrl(url, width) {
+  if (!url) return '';
+  return url + (url.indexOf('?') > -1 ? '&' : '?') + 'width=' + width;
+}
 
-    return '<a href="/products/' + p.handle + '" class="ocf__card-{{ ai_gen_id }}">'
-      + (img ? '<div class="ocf__card-img-wrap-{{ ai_gen_id }}"><img src="' + img + '" alt="' + title + '" class="ocf__card-img-{{ ai_gen_id }}" loading="lazy"></div>' : '')
-      + '<div class="ocf__card-body-{{ ai_gen_id }}">'
-      + '<h3 class="ocf__card-title-{{ ai_gen_id }}">' + title + '</h3>'
-      + '<div class="ocf__card-price-{{ ai_gen_id }}">เริ่มจาก ' + fmt + suffix + '</div>'
-      + '</div></a>';
+  function cardHTML(p) {
+  var imgObj = p.featured_image || (p.images && p.images[0]) || null;
+  var img    = imgObj && imgObj.src ? imgObj.src : '';
+  var price  = p.variants && p.variants[0] ? parseFloat(p.variants[0].price) : 0;
+  var fmt    = new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB' }).format(price);
+  var suffix = metaMap[p.handle] ? ' / ' + metaMap[p.handle] : '';
+  var d      = document.createElement('div');
+  d.textContent = p.title;
+  var title  = d.innerHTML;
+
+  var imgHtml = '';
+  if (img) {
+    var src320 = buildResponsiveImageUrl(img, 320);
+    var src480 = buildResponsiveImageUrl(img, 480);
+    var src640 = buildResponsiveImageUrl(img, 640);
+    var src800 = buildResponsiveImageUrl(img, 800);
+
+    imgHtml =
+      '<div class="ocf__card-img-wrap-{{ ai_gen_id }}">' +
+        '<img ' +
+          'src="' + src640 + '" ' +
+          'srcset="' + src320 + ' 320w, ' + src480 + ' 480w, ' + src640 + ' 640w, ' + src800 + ' 800w" ' +
+          'sizes="(min-width: 1200px) 25vw, (min-width: 750px) 33vw, 50vw" ' +
+          'alt="' + title + '" ' +
+          'class="ocf__card-img-{{ ai_gen_id }}" ' +
+          'loading="lazy" ' +
+          'decoding="async"' +
+        '>' +
+      '</div>';
   }
+
+  return '<a href="/products/' + p.handle + '" class="ocf__card-{{ ai_gen_id }}">'
+    + imgHtml
+    + '<div class="ocf__card-body-{{ ai_gen_id }}">'
+    + '<h3 class="ocf__card-title-{{ ai_gen_id }}">' + title + '</h3>'
+    + '<div class="ocf__card-price-{{ ai_gen_id }}">เริ่มจาก ' + fmt + suffix + '</div>'
+    + '</div></a>';
+}
 
   async function loadProducts(reset) {
     if (isLoading) return;
