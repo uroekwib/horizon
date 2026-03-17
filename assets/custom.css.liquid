@@ -2018,6 +2018,71 @@ body.gm-menu-installed .gm-menu ul {
   }
 }
 
+/* ============================================================
+   HEADER LOGO STABILISER
+   แก้โลโก้โดนบีบช่วงรอยต่อ desktop โดยเฉพาะแถว 1136px
+   ============================================================ */
+
+@media screen and (min-width: 950px) {
+  /* ไม่ให้ logo ถูก flex/grid บีบ */
+  #header-component .header-logo,
+  #header-component .header-logo a {
+    flex: 0 0 auto !important;
+    flex-shrink: 0 !important;
+    min-width: max-content !important;
+  }
+
+  /* คุมขนาด logo desktop ให้คงที่ขึ้น */
+  #header-component .header-logo img,
+  #header-component .header-logo svg {
+    width: auto !important;
+    height: auto !important;
+    max-width: none !important;
+    max-height: 42px !important;
+  }
+
+  /* ตรงกลางให้เมนูยอมถูกตัดพื้นที่ก่อน logo */
+  #header-component .header__column--center {
+    min-width: 0 !important;
+    overflow: hidden !important;
+  }
+
+  #header-component .header-menu,
+  #header-component .header-menu .overflow-menu,
+  #header-component .header-menu .overflow-menu::part(list) {
+    min-width: 0 !important;
+  }
+}
+
+/* ช่วงปัญหาหนัก 1130–1180 */
+@media screen and (min-width: 1130px) and (max-width: 1180px) {
+  #header-component .header__columns {
+    grid-template-columns: max-content minmax(0, 1fr) max-content !important;
+  }
+
+  #header-component .header-logo img,
+  #header-component .header-logo svg {
+    max-height: 46px !important;
+  }
+
+  .oc-search-slot-wrap {
+    flex: 0 1 240px !important;
+    min-width: 220px !important;
+    max-width: 240px !important;
+  }
+
+  #header-component .header-menu .menu-list,
+  #header-component .header-menu .overflow-menu::part(list) {
+    gap: 12px !important;
+  }
+
+  #header-component .header-menu .menu-list__link,
+  #header-component .header-menu .header__menu-item,
+  #header-component .header-menu .menu__link {
+    font-size: 14px !important;
+  }
+}
+
 /* ── Header actions ── */
 #header-component header-actions {
   display: flex;
