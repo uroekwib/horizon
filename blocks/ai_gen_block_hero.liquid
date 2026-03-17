@@ -18,10 +18,10 @@
     min-height: 320px;
     position: relative;
     overflow: hidden;
-    /* ── break out of Horizon page-width container ── */
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
-    width: 100vw;
+    /* ── override Horizon narrow-page-width constraint
+       ถ้า parent ใช้ .page-width-narrow / .page-width-content
+       ให้ reset กลับเป็น full --page-width ── */
+    --page-content-width: var(--page-width);
   }
 
   .oc-hero-wrap-{{ ai_gen_id }} {
@@ -612,7 +612,7 @@
     },
     {
       "type": "header",
-      "content": "Bento Gallery"
+      "content": "Bento Hero"
     },
     {
       "type": "range",
