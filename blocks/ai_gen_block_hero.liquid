@@ -1,6 +1,6 @@
 {% doc %}
   @prompt SaaS-style hero section — Thai signage company.
-  Left: headline + buttons + stats. Right: auto-scrolling bento HERO.
+  Left: headline + buttons + stats. Right: auto-scrolling bento gallery.
   CSS ported to reference Octopus design system tokens / classes.
 {% enddoc %}
 {% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
@@ -18,10 +18,7 @@
     min-height: 320px;
     position: relative;
     overflow: hidden;
-    /* ── override Horizon narrow-page-width constraint
-       ถ้า parent ใช้ .page-width-narrow / .page-width-content
-       ให้ reset กลับเป็น full --page-width ── */
-    --page-content-width: var(--page-width);
+
   }
 
   .oc-hero-wrap-{{ ai_gen_id }} {
@@ -242,7 +239,7 @@
 {% endstyle %}
 
 
-<div class="oc-hero-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+<div class="oc-hero-{{ ai_gen_id }}{% if block.settings.section_width == 'full' %} section--full-width{% else %} page-width{% endif %}" {{ block.shopify_attributes }}>
   <div class="oc-hero-wrap-{{ ai_gen_id }}">
 
     {%- comment -%} LEFT COLUMN {%- endcomment -%}
@@ -525,6 +522,16 @@
   "name": "Hero — Bento Hero",
   "settings": [
     {
+      "type": "select",
+      "id": "section_width",
+      "label": "Width",
+      "options": [
+        { "value": "full",  "label": "Full width" },
+        { "value": "page",  "label": "Page width" }
+      ],
+      "default": "full"
+    },
+    {
       "type": "header",
       "content": "Heading"
     },
@@ -612,7 +619,7 @@
     },
     {
       "type": "header",
-      "content": "Bento Hero"
+      "content": "Bento Gallery"
     },
     {
       "type": "range",
