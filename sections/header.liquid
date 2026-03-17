@@ -1291,6 +1291,11 @@
 }
 
 @media screen and (min-width: 990px) {
+  /* force hide drawer_search ที่ desktop ไม่ว่า data-menu-style จะเป็นอะไร */
+  .search-action--hidden-on-menu {
+    display: none !important;
+  }
+
   .search-action:not(.search-action--hidden-on-menu) .oc-search-static {
     display: block;
     width: 100%;
