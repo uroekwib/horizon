@@ -436,7 +436,7 @@ body {
   display: none;
 }
 
-@media screen and (min-width: 750px) {
+@media screen and (min-width: 950px) {
   #header-component[data-menu-style='menu'] :is(.header-menu, .dropdown-localization) {
     display: flex;
   }
@@ -446,7 +446,7 @@ body {
   }
 }
 
-@media screen and (max-width: 749px) {
+@media screen and (max-width: 949px) {
   #header-component[data-menu-style='drawer'] .header__column {
     display: contents;
   }
@@ -644,7 +644,7 @@ body {
   border-bottom: var(--border-bottom-width) solid var(--color-border);
 }
 
-@media screen and (max-width: 749px) {
+@media screen and (max-width: 949px) {
   .header__row--top:not(.divider--page-width),
   .header__row--top.divider--page-width .header__columns {
     border-bottom-width: var(--border-bottom-width-mobile);
@@ -656,7 +656,7 @@ body {
   border-bottom-width: var(--border-bottom-width-mobile);
 }
 
-@media screen and (min-width: 750px) {
+@media screen and (min-width: 950px) {
   .header__row.divider--page-width:not(.section--page-width) .header__columns {
     padding-inline-start: 0;
     padding-inline-end: 0;
@@ -671,7 +671,7 @@ body {
   align-items: center;
 }
 
-@media screen and (max-width: 749px) {
+@media screen and (max-width: 949px) {
   .header__column {
     display: contents;
   }
@@ -721,7 +721,7 @@ body {
   --header-right: minmax(max-content, 1fr);
 }
 
-@media screen and (min-width: 750px) {
+@media screen and (min-width: 950px) {
   .header__columns:where(:not(:has(.header__column--center))) {
     --header-template-columns: var(--header-left) var(--header-right);
     grid-template-areas: 'left right';
@@ -846,7 +846,7 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) .s
 /* ════════════════════════════════════════
    MOBILE HEADER LAYOUT ONLY
    ════════════════════════════════════════ */
-@media screen and (max-width: 749px) {
+@media screen and (max-width: 949px) {
   .header-logo,
   .header-logo a,
   .header-logo img {
@@ -902,7 +902,7 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) .s
    SEARCH SLOT STRUCTURE ONLY
    visual styles moved to custom.css
    ════════════════════════════════════════ */
-@media screen and (min-width: 750px) {
+@media screen and (min-width: 950px) {
   .oc-search-action-wrap {
     display: none !important;
   }
@@ -916,7 +916,7 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) .s
   }
 }
 
-@media screen and (max-width: 749px) {
+@media screen and (max-width: 949px) {
   .oc-search-slot-wrap {
     display: none !important;
   }
@@ -1009,7 +1009,7 @@ dropdown-localization-component .localization-wrapper {
    DESKTOP HEADER FIX
    แก้ drawer mode ไม่ให้พังบน desktop
    ════════════════════════════════════════ */
-@media screen and (min-width: 750px) {
+@media screen and (min-width: 950px) {
   #header-component[data-menu-style='drawer'] .header__column,
   #header-component[data-menu-style='menu'] .header__column {
     display: flex !important;
