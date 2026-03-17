@@ -446,8 +446,10 @@ body {
   }
 }
 
-#header-component[data-menu-style='drawer'] .header__column {
-  display: contents;
+@media screen and (max-width: 749px) {
+  #header-component[data-menu-style='drawer'] .header__column {
+    display: contents;
+  }
 }
 
 /* ── Transparent header state ── */
