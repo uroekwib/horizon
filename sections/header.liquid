@@ -436,17 +436,6 @@ body {
   display: none;
 }
 
-@media screen and (min-width: 950px) {
-  #header-component[data-menu-style='menu'] :is(.header-menu, .dropdown-localization) {
-    display: flex;
-  }
-
-  #header-component[data-menu-style='menu'] .header__navigation-bar-row {
-    display: none;
-  }
-}
-
-
 
 
 /* ── Transparent header state ── */
@@ -1222,6 +1211,54 @@ header-actions,
     width: clamp(140px, 24vw, 180px) !important;
     min-width: clamp(140px, 24vw, 180px) !important;
     flex: 0 0 clamp(140px, 24vw, 180px) !important;
+  }
+}
+/* ============================================================
+   HEADER RANGE FIX
+   แก้ toggle ซ้ำ + menu หายช่วง 1110–1300
+   ============================================================ */
+
+/* desktop/tablet ใช้ desktop language toggle ตัวเดียว */
+@media screen and (min-width: 768px) {
+  .oc-lang-toggle.mobile\:hidden,
+  .oc-lang-toggle.mobile\\:hidden {
+    display: inline-flex !important;
+  }
+
+  .oc-lang-toggle--in-actions {
+    display: none !important;
+  }
+}
+
+/* mobile ใช้ mobile toggle ตัวเดียว */
+@media screen and (max-width: 767px) {
+  .oc-lang-toggle.mobile\:hidden,
+  .oc-lang-toggle.mobile\\:hidden {
+    display: none !important;
+  }
+
+  .oc-lang-toggle--in-actions {
+    display: inline-flex !important;
+  }
+}
+
+/* desktop/tablet ให้ menu list โชว์เสมอ ไม่ผูกกับ data-menu-style */
+@media screen and (min-width: 768px) {
+  #header-component .header-menu,
+  #header-component .dropdown-localization {
+    display: flex !important;
+  }
+
+  #header-component .header__navigation-bar-row {
+    display: none !important;
+  }
+}
+
+/* mobile ซ่อน menu list ปกติ */
+@media screen and (max-width: 767px) {
+  #header-component .header-menu,
+  #header-component .dropdown-localization {
+    display: none !important;
   }
 }
 
