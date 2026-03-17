@@ -1005,6 +1005,48 @@ dropdown-localization-component .localization-wrapper {
   font-size: var(--menu-localization-font-size);
 }
 
+/* ════════════════════════════════════════
+   DESKTOP HEADER FIX
+   แก้ drawer mode ไม่ให้พังบน desktop
+   ════════════════════════════════════════ */
+@media screen and (min-width: 750px) {
+  #header-component[data-menu-style='drawer'] .header__column,
+  #header-component[data-menu-style='menu'] .header__column {
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  #header-component[data-menu-style='drawer'] .header__column--left,
+  #header-component[data-menu-style='menu'] .header__column--left {
+    grid-area: left !important;
+  }
+
+  #header-component[data-menu-style='drawer'] .header__column--center,
+  #header-component[data-menu-style='menu'] .header__column--center {
+    grid-area: center !important;
+  }
+
+  #header-component[data-menu-style='drawer'] .header__column--right,
+  #header-component[data-menu-style='menu'] .header__column--right {
+    grid-area: right !important;
+  }
+
+  #header-component .header__columns {
+    grid-template-areas: 'left center right' !important;
+    grid-template-columns: minmax(max-content, 1fr) auto minmax(max-content, 1fr) !important;
+    align-items: center !important;
+  }
+
+  #header-component .header-logo,
+  #header-component .search-action,
+  #header-component header-actions,
+  #header-component .oc-lang-toggle--in-actions {
+    grid-area: auto !important;
+    justify-self: auto !important;
+    align-self: auto !important;
+  }
+}
+
 {% endstylesheet %}
 
 {% schema %}
