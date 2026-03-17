@@ -202,7 +202,7 @@
 
 {% capture localization_markup %}
   {% if show_language %}
-    <div class="oc-lang-toggle mobile:hidden">
+    <div class="oc-lang-toggle oc-lang-toggle--desktop">
       <div class="oc-lang-toggle__track"></div>
       {%- for language in localization.available_languages -%}
         {%- form 'localization', return_to: back -%}
