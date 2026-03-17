@@ -96,7 +96,35 @@
   endif
 
   capture search
+    echo '<div class="oc-search-slot-wrap">'
+    echo '  <form action="/search" method="get" class="oc-search-static" role="search">'
+    echo '    <div class="oc-search-static__rainbow"></div>'
+    echo '    <div class="oc-search-static__inner">'
+    echo '      <input'
+    echo '        type="search"'
+    echo '        name="q"'
+    echo '        class="oc-search-static__input"'
+    if localization.language.iso_code == 'th'
+      echo '        placeholder="ง่าย ๆ ค้นหาเลยที่นี่.."'
+    else
+      echo '        placeholder="Search products, signs, stickers, displays..."'
+    endif
+    echo '        autocomplete="off"'
+    echo '      >'
+    echo '      <button type="submit" class="oc-search-static__icon-btn" aria-label="Search">'
+    echo '        <span class="oc-search-static__icon-glow"></span>'
+    echo '        <svg class="oc-search-static__icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">'
+    echo '          <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2.2"></circle>'
+    echo '          <path d="M20 20L16.65 16.65" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></path>'
+    echo '        </svg>'
+    echo '      </button>'
+    echo '    </div>'
+    echo '  </form>'
+    echo '</div>'
+
+    echo '<div class="oc-search-action-wrap">'
     render 'search', style: search_style, class: search_class, display_style: section.settings.actions_display_style
+    echo '</div>'
   endcapture
 
   assign skip_drawer_search = false
@@ -116,7 +144,7 @@
     assign bottom_row_blocks = bottom_row_blocks | append: 'menu,'
   endif
 
-  if section.settings.search_style != 'none'
+  if search_style != 'none'
     if section.settings.search_row == 'bottom'
       assign bottom_row_blocks = bottom_row_blocks | append: 'search,'
     endif
@@ -751,6 +779,164 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
     justify-self: center;
     align-self: center;
   }
+}
+
+@media screen and (min-width: 750px) {
+  .oc-search-action-wrap {
+    display: none !important;
+  }
+
+  .oc-search-slot-wrap {
+    display: flex;
+    align-items: center;
+    min-width: 220px;
+    width: 220px;
+    flex: 0 0 220px;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .oc-search-slot-wrap {
+    display: none !important;
+  }
+}
+
+.oc-search-static {
+  position: relative;
+  width: 220px;
+  min-width: 220px;
+  display: block;
+}
+
+.oc-search-static__rainbow {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  border: 2.5px solid transparent;
+  background:
+    linear-gradient(#ffffff, #ffffff) padding-box,
+    linear-gradient(90deg, #14c9df 0%, #17a9bb 28%, #818CF8 56%, #A78BFA 82%, #14c9df 100%) border-box;
+  background-size: 250% 100%;
+  animation: oc-rainbow-move 4s linear infinite;
+}
+
+.oc-search-static__inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 4px 0 12px;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.oc-search-static__inner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    115deg,
+    transparent 0%,
+    transparent 38%,
+    rgba(20, 201, 223, 0.10) 48%,
+    rgba(167, 139, 250, 0.12) 52%,
+    transparent 62%,
+    transparent 100%
+  );
+  background-size: 220% 100%;
+  animation: oc-search-sheen 5s linear infinite;
+  pointer-events: none;
+}
+
+.oc-search-static__input {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #1a2332;
+  font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
+  font-size: 13px;
+  padding-right: 4px;
+  padding-top: 3px;
+  line-height: 1.5;
+}
+
+.oc-search-static__input::placeholder {
+  color: #4b5563;
+  opacity: 1;
+}
+
+.oc-search-static__icon-btn {
+  position: relative;
+  z-index: 1;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  border: 0;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #ffffff;
+  background: linear-gradient(135deg, #14c9df 0%, #17a9bb 35%, #818CF8 70%, #A78BFA 100%);
+  box-shadow: 0 6px 18px rgba(23, 169, 187, 0.28);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.oc-search-static__icon-btn:hover {
+  transform: scale(1.04);
+  box-shadow: 0 8px 22px rgba(23, 169, 187, 0.34);
+}
+
+.oc-search-static__icon-glow {
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255,255,255,0.32), transparent 55%);
+  pointer-events: none;
+}
+
+.oc-search-static__icon-svg {
+  position: relative;
+  z-index: 1;
+}
+
+/* mobile colourful search icon */
+@media screen and (max-width: 749px) {
+  .search-action .header-actions__action,
+  .search-action button,
+  .search-action a {
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #14c9df 0%, #17a9bb 35%, #818CF8 70%, #A78BFA 100%);
+    box-shadow: 0 6px 18px rgba(23, 169, 187, 0.24);
+  }
+
+  .search-action svg {
+    stroke: #fff !important;
+    color: #fff !important;
+  }
+}
+
+@keyframes oc-rainbow-move {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+@keyframes oc-search-sheen {
+  0% { background-position: 120% 0; }
+  100% { background-position: -120% 0; }
 }
 
 .oc-lang-toggle {
