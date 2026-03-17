@@ -447,6 +447,7 @@ button.shopify-payment-button__button--unbranded {
 }
 
 /* ── Utility gradient button ── */
+/* ── Utility gradient button ── */
 .oc-btn-grad {
   color: #fff;
   background: var(--oc-grad-btn);
@@ -1348,6 +1349,17 @@ input[type="checkbox"] {
    ปัจจุบันจำเป็นถ้ายังมี Dawn section อยู่ */
 .header__heading-link { padding: 0; }
 
+@media only screen and (max-width: 989px) {
+  .header__icon .icon { height: 18px; width: 18px; }
+  .search-modal__form  { display: none; }
+}
+.icon.icon-account        { height: 17px; width: 17px; }
+.header__icon--cart .icon { height: 36px; width: 36px; }
+
+@media screen and (min-width: 990px) {
+  .header { grid-template-columns: 3fr 11fr 10fr !important; }
+}
+
 
 /* [CLEANUP §10b] GrandMenu plugin CSS — ลบได้ถ้าเลิกใช้ GrandMenu
    ถ้ายังใช้อยู่ ให้ย้ายไปไว้ใน GrandMenu custom CSS แทน */
@@ -1612,6 +1624,16 @@ body.gm-menu-installed .gm-menu ul {
    §11 HORIZON NATIVE OVERRIDES
    ============================================================ */
 
+/* ── Header Glassmorphism ── */
+.shopify-section-group-header-group .header {
+  backdrop-filter: var(--oc-blur);
+  -webkit-backdrop-filter: var(--oc-blur);
+  background: var(--oc-glass) !important;
+  border-bottom: 1px solid var(--oc-glass-border-subtle);
+  box-shadow: 0 2px 20px rgba(100, 120, 200, 0.08),
+              inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
 /* ── Inputs ── */
 .field__input,
 .select__select {
@@ -1622,6 +1644,11 @@ body.gm-menu-installed .gm-menu ul {
 
 /* ── Facets ── */
 .facets__heading { font-family: var(--font-body--family); }
+
+/* ── Hide desktop header icons (GrandMenu handles nav) ── */
+@media screen and (min-width: 990px) {
+  .header__icon { display: none; }
+}
 
 /* ── z-index fix ── */
 .link.animate-arrow { z-index: 9999; }
@@ -1656,464 +1683,6 @@ body.gm-menu-installed .gm-menu ul {
   background: linear-gradient(135deg, #14c9df, #17a9bb);
   color: #fff;
   box-shadow: 0 2px 8px rgba(20,201,223,0.28);
-}
-
-
-/* ============================================================
-   §11b HEADER SKIN — CLEAN VERSION
-   ใช้คู่กับ header.liquid เวอร์ชันรื้อโครงสร้างใหม่
-   มีเฉพาะ visual / skin / smooth responsive
-   ไม่มี layout hack
-   ============================================================ */
-
-/* ── Header glass ── */
-.shopify-section-group-header-group .header {
-  backdrop-filter: var(--oc-blur);
-  -webkit-backdrop-filter: var(--oc-blur);
-  background: var(--oc-glass) !important;
-  border-bottom: 1px solid var(--oc-glass-border-subtle);
-  box-shadow:
-    0 2px 20px rgba(100, 120, 200, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
-}
-
-/* กัน element ข้างในหด/เบียดผิดรูป */
-#header-component .header-logo,
-#header-component .header-menu,
-#header-component .oc-search-slot-wrap,
-#header-component header-actions,
-#header-component .oc-lang-toggle {
-  min-width: 0;
-}
-
-/* ── Logo ── */
-#header-component .header-logo {
-  flex: 0 0 auto;
-}
-
-#header-component .header-logo img,
-#header-component .header-logo svg {
-  display: block;
-  height: auto;
-  max-height: 42px;
-  width: auto;
-}
-
-/* ── Menu list visual ── */
-#header-component .header-menu {
-  min-width: 0;
-}
-
-#header-component .header-menu .menu-list,
-#header-component .header-menu .overflow-menu::part(list) {
-  display: flex;
-  align-items: center;
-  gap: clamp(10px, 1.4vw, 24px);
-  flex-wrap: nowrap;
-}
-
-#header-component .header-menu .menu-list__link,
-#header-component .header-menu .header__menu-item,
-#header-component .header-menu .menu__link {
-  position: relative;
-  white-space: nowrap;
-  font-family: var(--font-body--family);
-  font-size: clamp(14px, 0.95vw, 16px);
-  font-weight: 700;
-  color: var(--oc-ink);
-  transition: color var(--oc-dur-fast) ease;
-}
-
-#header-component .header-menu .menu-list__link::after,
-#header-component .header-menu .header__menu-item::after,
-#header-component .header-menu .menu__link::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  bottom: -4px;
-  width: 0;
-  height: 2px;
-  border-radius: 2px;
-  background: var(--oc-cyan-vv);
-  transform: translateX(-50%);
-  transition: width var(--oc-dur-base) var(--oc-ease-expo);
-}
-
-#header-component .header-menu .menu-list__link:hover::after,
-#header-component .header-menu .menu-list__link[aria-current='page']::after,
-#header-component .header-menu .header__menu-item:hover::after,
-#header-component .header-menu .header__menu-item[aria-current='page']::after,
-#header-component .header-menu .menu__link:hover::after {
-  width: 80%;
-}
-
-#header-component .header-menu .menu-list__link:hover,
-#header-component .header-menu .header__menu-item:hover,
-#header-component .header-menu .menu__link:hover {
-  color: var(--oc-cyan-d) !important;
-}
-
-/* ── Desktop search ── */
-.oc-search-slot-wrap {
-  flex: 1 1 clamp(220px, 24vw, 360px);
-  min-width: clamp(220px, 18vw, 260px);
-  max-width: 360px;
-}
-
-.oc-search-static {
-  position: relative;
-  width: 100%;
-  min-width: 0;
-  display: block;
-}
-
-.oc-search-static__rainbow {
-  position: absolute;
-  inset: 0;
-  border-radius: 999px;
-  border: 2px solid transparent;
-  background:
-    linear-gradient(#ffffff, #ffffff) padding-box,
-    linear-gradient(90deg, #14c9df 0%, #17a9bb 28%, #818CF8 56%, #A78BFA 82%, #14c9df 100%) border-box;
-  background-size: 250% 100%;
-  animation: oc-rainbow-move 4s linear infinite;
-}
-
-.oc-search-static__inner {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  height: 44px;
-  padding: 0 5px 0 14px;
-  border-radius: 999px;
-  overflow: hidden;
-  transition:
-    box-shadow 0.22s ease,
-    transform 0.22s ease,
-    background 0.22s ease;
-}
-
-.oc-search-static:hover .oc-search-static__inner,
-.oc-search-static:focus-within .oc-search-static__inner {
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,0.65) inset,
-    0 0 0 2px rgba(20, 201, 223, 0.10),
-    0 0 5px rgba(20, 201, 223, 0.18),
-    0 0 8px rgba(129, 140, 248, 0.16),
-    0 0 10px rgba(167, 139, 250, 0.14);
-}
-
-.oc-search-static__inner::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(
-    115deg,
-    transparent 0%,
-    transparent 38%,
-    rgba(20, 201, 223, 0.10) 48%,
-    rgba(167, 139, 250, 0.12) 52%,
-    transparent 62%,
-    transparent 100%
-  );
-  background-size: 220% 100%;
-  animation: oc-search-sheen 5s linear infinite;
-  pointer-events: none;
-}
-
-.oc-search-static__input {
-  position: relative;
-  z-index: 1;
-  flex: 1 1 auto;
-  min-width: 0;
-  width: 100%;
-  border: 0;
-  outline: 0;
-  background: transparent;
-  color: #1a2332;
-  font-family: var(--font-body--family);
-  font-size: 14px;
-  line-height: 1.45;
-  padding: 2px 4px 0 0;
-}
-
-.oc-search-static__input::placeholder {
-  color: #4b5563;
-  opacity: 1;
-}
-
-.oc-search-static__icon-btn {
-  position: relative;
-  z-index: 1;
-  width: 33px;
-  height: 33px;
-  min-width: 33px;
-  border: 0;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: #ffffff;
-  background: linear-gradient(135deg, #14c9df 0%, #17a9bb 35%, #818CF8 70%, #A78BFA 100%);
-  box-shadow: 0 6px 18px rgba(23, 169, 187, 0.28);
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
-  flex: 0 0 auto;
-}
-
-.oc-search-static__icon-btn:hover {
-  transform: scale(1.04);
-  box-shadow: 0 8px 22px rgba(23, 169, 187, 0.34);
-}
-
-.oc-search-static__icon-glow {
-  position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-  background: linear-gradient(135deg, rgba(255,255,255,0.32), transparent 55%);
-  pointer-events: none;
-}
-
-.oc-search-static__icon-svg {
-  position: relative;
-  z-index: 1;
-}
-
-/* ── Language toggle ── */
-.oc-lang-toggle {
-  display: inline-flex;
-  align-items: center;
-  flex: 0 0 auto;
-  background: rgba(0, 0, 0, 0.08);
-  border-radius: 999px;
-  padding: 3px;
-  position: relative;
-  gap: 0;
-}
-
-.header[transparent] .oc-lang-toggle {
-  background: rgba(255,255,255,0.15);
-}
-
-.oc-lang-toggle__track {
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  height: calc(100% - 6px);
-  width: 44px;
-  background: linear-gradient(90deg, #14c9df, #17a9bb);
-  border-radius: 999px;
-  box-shadow: 0 2px 8px rgba(20,201,223,0.4);
-  transition:
-    transform 0.25s cubic-bezier(0.34,1.56,0.64,1),
-    width 0.25s cubic-bezier(0.34,1.56,0.64,1);
-  pointer-events: none;
-}
-
-.oc-lang-toggle__btn {
-  position: relative;
-  z-index: 1;
-  padding: 6px 16px;
-  min-width: 44px;
-  border-radius: 999px;
-  color: var(--color-foreground);
-  opacity: 0.5;
-  cursor: pointer;
-  font-family: var(--font-body--family);
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  transition: opacity 0.2s ease, color 0.2s ease;
-  white-space: nowrap;
-  -webkit-appearance: none;
-  appearance: none;
-  background: transparent !important;
-  border: 0 !important;
-  outline: 0 !important;
-  box-shadow: none !important;
-  line-height: 1 !important;
-}
-
-.oc-lang-toggle__btn.active {
-  color: #fff;
-  opacity: 1;
-  cursor: default;
-  pointer-events: none;
-}
-
-.oc-lang-toggle form {
-  display: contents;
-}
-
-.oc-lang-toggle form,
-.oc-lang-toggle form * {
-  margin: 0 !important;
-}
-
-/* ── Mobile lang toggle ── */
-.oc-lang-toggle--in-actions {
-  display: none;
-}
-
-@media screen and (max-width: 949px) {
-  .oc-lang-toggle--in-actions {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0,0,0,0.08);
-    border-radius: 999px;
-    padding: 2px;
-    position: relative;
-    gap: 0;
-    border: none !important;
-    box-shadow: none !important;
-    margin-right: 8px;
-  }
-
-  .header[transparent] .oc-lang-toggle--in-actions {
-    background: rgba(255,255,255,0.15);
-  }
-
-  .oc-lang-toggle--in-actions .oc-lang-toggle__track {
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    height: calc(100% - 4px);
-    width: 36px;
-    border-radius: 999px;
-  }
-
-  .oc-lang-toggle--in-actions .oc-lang-toggle__btn {
-    all: unset;
-    position: relative;
-    z-index: 1;
-    display: inline-block;
-    padding: 4px 10px;
-    min-width: 36px;
-    border-radius: 999px;
-    color: var(--color-foreground);
-    opacity: 0.55;
-    cursor: pointer;
-    font-family: var(--font-body--family);
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    line-height: 1;
-    white-space: nowrap;
-    text-align: center;
-  }
-
-  .oc-lang-toggle--in-actions .oc-lang-toggle__btn.active {
-    color: #fff;
-    opacity: 1;
-    cursor: default;
-    pointer-events: none;
-  }
-
-  .oc-lang-toggle--in-actions form {
-    display: contents;
-  }
-}
-
-/* ── Header actions ── */
-#header-component header-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: clamp(8px, 1vw, 14px);
-  flex: 0 0 auto;
-}
-
-.header-actions__action {
-  border-radius: 999px;
-  transition:
-    transform var(--oc-dur-fast) ease,
-    box-shadow var(--oc-dur-base) ease,
-    color var(--oc-dur-fast) ease;
-}
-
-.header-actions__action:hover {
-  transform: translateY(-1px);
-}
-
-.header-actions__action:focus-visible {
-  outline: 3px solid transparent;
-  outline-offset: 3px;
-  box-shadow:
-    0 0 0 3px var(--oc-cyan-vv),
-    var(--oc-shadow-glow-cyan);
-}
-
-/* ── Mobile search action ── */
-@media screen and (max-width: 949px) {
-  .search-action .header-actions__action,
-  .search-action button,
-  .search-action a {
-    width: 38px;
-    height: 38px;
-    border-radius: 999px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #14c9df 0%, #17a9bb 35%, #818CF8 70%, #A78BFA 100%);
-    box-shadow: 0 6px 18px rgba(23, 169, 187, 0.24);
-  }
-
-  .search-action svg {
-    stroke: #fff !important;
-    color: #fff !important;
-  }
-}
-
-/* ── Smooth desktop tightening ── */
-@media screen and (min-width: 950px) and (max-width: 1199px) {
-  #header-component .header-logo img,
-  #header-component .header-logo svg {
-    max-height: 36px;
-  }
-
-  #header-component .header-menu .menu-list,
-  #header-component .header-menu .overflow-menu::part(list) {
-    gap: 14px;
-  }
-
-  #header-component .header-menu .menu-list__link,
-  #header-component .header-menu .header__menu-item,
-  #header-component .header-menu .menu__link {
-    font-size: 14px;
-  }
-
-  .oc-search-slot-wrap {
-    flex-basis: clamp(220px, 22vw, 280px);
-    max-width: 280px;
-  }
-
-  .oc-search-static__inner {
-    height: 42px;
-  }
-
-  .oc-search-static__input {
-    font-size: 13px;
-  }
-
-  .oc-lang-toggle__btn {
-    padding-inline: 14px;
-  }
-}
-
-@media screen and (min-width: 1200px) {
-  .oc-search-slot-wrap {
-    max-width: 360px;
-  }
-}
-
-/* ── Keyframes ── */
-@keyframes oc-search-sheen {
-  0% { background-position: 120% 0; }
-  100% { background-position: -120% 0; }
 }
 
 
@@ -2533,4 +2102,68 @@ button.shopify-payment-button__button--unbranded:hover {
   box-shadow:
     0 0 0 2px #fff,
     0 0 0 4px var(--oc-cyan-d);
+}
+
+
+/* ── §16f Mobile Language Toggle ── */
+@media screen and (max-width: 749px) {
+  header-actions shopify-account,
+  header-actions .account-button { display: none !important; }
+
+  .oc-lang-toggle--in-actions {
+    grid-area: rightA !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: rgba(0, 0, 0, 0.08) !important;
+    border-radius: 999px !important;
+    padding: 2px !important;
+    position: relative !important;
+    gap: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin-right: 8px;
+  }
+
+  .oc-lang-toggle--in-actions .oc-lang-toggle__track {
+    position: absolute !important;
+    top: 2px !important; left: 2px !important;
+    height: calc(100% - 4px) !important;
+    width: 36px !important;
+    background: linear-gradient(90deg, #14c9df, #17a9bb) !important;
+    border-radius: 999px !important;
+    box-shadow: 0 2px 8px rgba(20, 201, 223, 0.35) !important;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+                width 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+    pointer-events: none !important;
+  }
+
+  .oc-lang-toggle--in-actions .oc-lang-toggle__btn {
+    all: unset !important;
+    position: relative !important;
+    z-index: 1 !important;
+    display: inline-block !important;
+    padding: 4px 10px !important;
+    border-radius: 999px !important;
+    color: var(--color-foreground) !important;
+    opacity: 0.55 !important;
+    cursor: pointer !important;
+    font-family: var(--font-body--family) !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.04em !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+
+  .oc-lang-toggle--in-actions .oc-lang-toggle__btn.active {
+    color: #fff !important;
+    opacity: 1 !important;
+    cursor: default !important;
+    pointer-events: none !important;
+  }
+
+  .oc-lang-toggle--in-actions form {
+    display: contents !important;
+  }
 }
