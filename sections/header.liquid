@@ -127,10 +127,7 @@
     echo '</div>'
   endcapture
 
-  assign skip_drawer_search = false
-  if shop.customer_accounts_enabled == false and section.settings.search_position == 'left' and search_style != 'none'
-    assign skip_drawer_search = true
-  endif
+  assign drawer_search = ''
 
   if section.settings.search_row == 'bottom' or search_style != 'none' and skip_drawer_search == false
     capture drawer_search
