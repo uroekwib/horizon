@@ -1349,12 +1349,7 @@ input[type="checkbox"] {
    ปัจจุบันจำเป็นถ้ายังมี Dawn section อยู่ */
 .header__heading-link { padding: 0; }
 
-@media only screen and (max-width: 989px) {
-  .header__icon .icon { height: 18px; width: 18px; }
-  .search-modal__form  { display: none; }
-}
-.icon.icon-account        { height: 17px; width: 17px; }
-.header__icon--cart .icon { height: 36px; width: 36px; }
+
 
 
 
@@ -1978,52 +1973,149 @@ body.gm-menu-installed .gm-menu ul {
     display: contents;
   }
 }
+
 /* ============================================================
-   HEADER DESKTOP RESET FIX
-   แก้ state ค้างจาก mobile/legacy เมื่อ viewport กว้างขึ้น
+   HEADER DESKTOP HARD RESET
+   ใช้แทนบล็อก reset เดิม
    ============================================================ */
 @media screen and (min-width: 990px) {
+  /* คืน layout หลักของ desktop */
   .header__columns,
-  #header-component[data-menu-style='drawer'] .header__columns {
+  #header-component[data-menu-style='drawer'] .header__columns,
+  #header-component[data-menu-style='menu'] .header__columns {
+    display: grid !important;
     grid-template-areas: 'left center right' !important;
-    grid-template-columns: minmax(max-content, 1fr) auto minmax(max-content, 1fr) !important;
+    grid-template-columns: auto minmax(0, 1fr) auto !important;
+    column-gap: 20px !important;
     align-items: center !important;
     padding-block: 0 !important;
     padding-inline: 0 !important;
   }
 
-  .header-logo {
+  /* คืน column จาก mobile state */
+  .header__column {
+    display: flex !important;
+    align-items: center !important;
+    min-width: 0 !important;
+  }
+
+  .header__column--left {
+    grid-area: left !important;
+    gap: 16px !important;
+    min-width: 0 !important;
+  }
+
+  .header__column--center {
     grid-area: center !important;
-    justify-self: center !important;
+    gap: 16px !important;
+    justify-content: flex-start !important;
+    min-width: 0 !important;
+    overflow: visible !important;
   }
 
-  .search-action {
-    grid-area: unset !important;
-  }
-
-  header-actions {
+  .header__column--right {
     grid-area: right !important;
-    justify-self: end !important;
+    gap: 16px !important;
+    justify-content: flex-end !important;
+    min-width: max-content !important;
   }
 
+  /* ล้าง grid-area ที่ถูก assign แบบ mobile */
+  .header-logo,
+  .header-logo a,
+  .header-logo img,
+  .search-action,
+  header-actions,
   .oc-lang-toggle--in-actions {
+    grid-area: auto !important;
+    justify-self: auto !important;
+    align-self: auto !important;
+  }
+
+  /* desktop ใช้ search slot ไม่ใช้ search icon */
+  .search-action,
+  .oc-search-action-wrap {
     display: none !important;
   }
 
   .oc-search-slot-wrap {
     display: flex !important;
     align-items: center !important;
+    width: 220px !important;
+    min-width: 220px !important;
+    flex: 0 0 220px !important;
   }
 
-  .oc-search-action-wrap {
+  /* ซ่อน mobile language toggle */
+  .oc-lang-toggle--in-actions {
     display: none !important;
+  }
+
+  /* คืน account/cart ฝั่งขวา */
+  header-actions {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
   }
 
   header-actions shopify-account,
   header-actions .account-button {
     display: inline-flex !important;
   }
+
+  /* กัน logo / search / menu บีบกัน */
+  .header__column--center > *,
+  .header__column--left > *,
+  .header__column--right > * {
+    min-width: 0 !important;
+  }
+
+  .header-logo {
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+  }
+
+  .header-logo a {
+    margin: 0 !important;
+  }
+
+  .header-menu {
+    min-width: 0 !important;
+  }
+
+  /* กัน search box ถูก stretch แปลก ๆ */
+  .oc-search-static {
+    width: 220px !important;
+    min-width: 220px !important;
+    max-width: 220px !important;
+  }
 }
+
+/* ============================================================
+   HEADER LARGE DESKTOP STABILIZER
+   สำหรับช่วงที่เริ่มเละราว 1100px+
+   ============================================================ */
+@media screen and (min-width: 1100px) {
+  .header__columns,
+  #header-component[data-menu-style='drawer'] .header__columns,
+  #header-component[data-menu-style='menu'] .header__columns {
+    grid-template-columns: minmax(260px, auto) minmax(0, 1fr) auto !important;
+    column-gap: 24px !important;
+  }
+
+  .header__column--left {
+    min-width: 260px !important;
+  }
+
+  .header__column--center {
+    min-width: 0 !important;
+  }
+
+  .header__column--right {
+    min-width: max-content !important;
+  }
+}
+
 /* ── Header actions visual polish ── */
 .header-actions__action {
   border-radius: 999px;
