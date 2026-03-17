@@ -747,6 +747,18 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) .s
    MOBILE/TABLET <= 1139
    ============================================================ */
 @media screen and (max-width: 1139px) {
+
+.oc-lang-toggle--desktop {
+  display: none !important;
+}
+
+.oc-lang-toggle--in-actions {
+  display: inline-flex !important;
+  grid-area: rightA;
+  justify-self: center;
+  align-self: center;
+}
+
   #header-component .header-menu,
   #header-component .dropdown-localization {
     display: none !important;
@@ -824,6 +836,16 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) .s
    ใช้ flex 3 ฝั่ง ไม่ใช้ mobile grid logic
    ============================================================ */
 @media screen and (min-width: 1140px) {
+
+.oc-lang-toggle--desktop {
+  display: inline-flex !important;
+  flex: 0 0 auto;
+}
+
+.oc-lang-toggle--in-actions {
+  display: none !important;
+}
+
   /* menu desktop show always */
   #header-component .header-menu,
   #header-component .dropdown-localization {
