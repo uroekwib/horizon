@@ -1,93 +1,117 @@
 {% doc %}
-  @prompt SaaS-style hero section — Thai signage company.
-  Left: headline + buttons + stats. Right: auto-scrolling bento gallery.
-  CSS ported to reference Octopus design system tokens / classes.
+  Clean Bento Hero
+  - respects base.css section grid
+  - supports full width / page width properly
+  - no hard-coded max-width
 {% enddoc %}
+
 {% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
 
+{%- liquid
+  assign section_mode = 'section--full-width'
+  if block.settings.section_width == 'page'
+    assign section_mode = 'section--page-width'
+  endif
+
+  assign page_width_class = 'page-width-wide'
+  case block.settings.page_width_preset
+    when 'normal'
+      assign page_width_class = 'page-width-normal'
+    when 'narrow'
+      assign page_width_class = 'page-width-narrow'
+    when 'content'
+      assign page_width_class = 'page-width-content'
+    else
+      assign page_width_class = 'page-width-wide'
+  endcase
+-%}
 
 {% style %}
-  /* ─────────────────────────────────────────────
-     LAYOUT — section-specific only
-     Tokens & typography borrowed from custom_css
-  ───────────────────────────────────────────── */
-
   .oc-hero-{{ ai_gen_id }} {
-    display: block;
-    width: 100%;
-    min-height: 320px;
     position: relative;
-    overflow: hidden;
-
+    min-height: 320px;
+    overflow: clip;
   }
 
-  .oc-hero-wrap-{{ ai_gen_id }} {
+  .oc-hero-inner-{{ ai_gen_id }} {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .oc-hero-grid-{{ ai_gen_id }} {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 60px;
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: {{ block.settings.padding_top }}px 40px {{ block.settings.padding_bottom }}px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: center;
+    gap: 60px;
+    width: 100%;
+    min-width: 0;
+    padding:
+      {{ block.settings.padding_top }}px
+      0
+      {{ block.settings.padding_bottom }}px;
   }
 
-  /* ── Left ── */
   .oc-hero-left-{{ ai_gen_id }} {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    min-width: 0;
+    position: relative;
     z-index: 2;
   }
 
-  /* heading size driven by Liquid setting — all other type tokens from custom_css */
   .oc-hero-h1-{{ ai_gen_id }} {
+    margin: 0;
     font-size: {{ block.settings.heading_size }}px;
     line-height: 1.1;
     font-weight: 700;
     color: var(--oc-ink);
-    margin: 0;
     font-family: var(--oc-font-display);
-    /* em → rainbow: handled globally by custom_css em,i rule */
   }
 
-  /* Divider */
+  .oc-hero-actions-{{ ai_gen_id }} {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
   .oc-hero-divider-{{ ai_gen_id }} {
     width: 100%;
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--oc-ink-15), transparent);
   }
 
-  /* Stats row */
   .oc-hero-stats-{{ ai_gen_id }} {
     display: flex;
-    gap: 25px;
     flex-wrap: wrap;
+    gap: 25px;
   }
 
   .oc-hero-stat-{{ ai_gen_id }} {
     display: flex;
     flex-direction: column;
     gap: 4px;
+    min-width: 0;
   }
 
-  /* stat number size is Liquid-driven — font-family & color from tokens */
   .oc-hero-stat-num-{{ ai_gen_id }} {
     font-family: var(--oc-font-display);
     font-size: {{ block.settings.stat_number_size }}px;
     font-weight: 700;
     color: var(--oc-ink);
+    line-height: 1;
   }
 
   .oc-hero-stat-lbl-{{ ai_gen_id }} {
     font-family: var(--font-body--family);
     font-size: var(--font-sm--size);
     color: var(--oc-ink-40);
+    line-height: 1.4;
   }
 
-  /* ── Right — bento gallery ── */
   .oc-hero-right-{{ ai_gen_id }} {
     position: relative;
-    height: 100%;
+    min-width: 0;
     min-height: 320px;
     display: flex;
     align-items: center;
@@ -97,16 +121,17 @@
   .oc-hero-bento-{{ ai_gen_id }} {
     position: relative;
     width: 100%;
-    height: 100%;
+    min-width: 0;
     mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
     -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
   }
 
-  /* scroll speed is Liquid-driven */
   .oc-hero-scroll-{{ ai_gen_id }} {
     display: flex;
     gap: 16px;
+    width: max-content;
     animation: oc-bento-scroll-{{ ai_gen_id }} {{ block.settings.scroll_speed }}s linear infinite;
+    will-change: transform;
   }
 
   .oc-hero-bento-{{ ai_gen_id }}:hover .oc-hero-scroll-{{ ai_gen_id }} {
@@ -114,28 +139,29 @@
   }
 
   @keyframes oc-bento-scroll-{{ ai_gen_id }} {
-    0%   { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
   }
 
   .oc-hero-col-{{ ai_gen_id }} {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    flex-shrink: 0;
+    flex: 0 0 auto;
   }
 
-  /* card base — glass style uses oc-glass tokens, radius from --oc-radius-lg */
   .oc-hero-card-{{ ai_gen_id }} {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--oc-radius-lg);
+    border: 1px solid var(--oc-glass-border-subtle);
     background: var(--oc-glass);
     backdrop-filter: var(--oc-blur);
     -webkit-backdrop-filter: var(--oc-blur);
-    border: 1px solid var(--oc-glass-border-subtle);
-    border-radius: var(--oc-radius-lg);
     box-shadow: var(--oc-shadow-sm);
-    overflow: hidden;
-    position: relative;
-    transition: transform var(--oc-dur-base) var(--oc-ease-expo);
+    transition:
+      transform var(--oc-dur-base) var(--oc-ease-expo),
+      box-shadow var(--oc-dur-base) var(--oc-ease-expo);
   }
 
   .oc-hero-card-{{ ai_gen_id }}:hover {
@@ -143,7 +169,6 @@
     box-shadow: var(--oc-shadow-md);
   }
 
-  /* card sizes are Liquid-driven */
   .oc-hero-card-tall-{{ ai_gen_id }} {
     width: 180px;
     height: {{ block.settings.card_tall_height }}px;
@@ -158,7 +183,7 @@
     display: block;
     width: 100%;
     height: 100%;
-    position: relative;
+    color: inherit;
     text-decoration: none;
   }
 
@@ -168,12 +193,13 @@
     object-fit: cover;
   }
 
-  /* hover overlay */
   .oc-hero-card-overlay-{{ ai_gen_id }} {
     position: absolute;
-    bottom: 0; left: 0; right: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.80), transparent);
+    right: 0;
+    bottom: 0;
+    left: 0;
     padding: 16px 12px 12px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
     transform: translateY(100%);
     transition: transform var(--oc-dur-base) var(--oc-ease-expo);
   }
@@ -183,42 +209,46 @@
   }
 
   .oc-hero-card-title-{{ ai_gen_id }} {
-    font-family: var(--font-body--family);
+    margin: 0;
     font-size: 14px;
     font-weight: 600;
-    color: #ffffff;
-    margin: 0;
     line-height: 1.3;
+    color: #fff;
+    font-family: var(--font-body--family);
   }
 
-  /* placeholder when no image set */
   .oc-hero-placeholder-{{ ai_gen_id }} {
     width: 100%;
     height: 100%;
-    background: var(--oc-ink-05);
     display: flex;
     align-items: center;
     justify-content: center;
+    background: var(--oc-ink-05);
   }
+
   .oc-hero-placeholder-{{ ai_gen_id }} svg {
     width: 60%;
     height: 60%;
     opacity: 0.2;
   }
 
-  /* ── Responsive ── */
   @media screen and (max-width: 989px) {
-    .oc-hero-wrap-{{ ai_gen_id }} {
+    .oc-hero-grid-{{ ai_gen_id }} {
       grid-template-columns: 1fr;
       gap: 40px;
-      padding: {{ block.settings.padding_top_mobile }}px 24px {{ block.settings.padding_bottom_mobile }}px;
+      padding:
+        {{ block.settings.padding_top_mobile }}px
+        0
+        {{ block.settings.padding_bottom_mobile }}px;
     }
 
     .oc-hero-h1-{{ ai_gen_id }} {
       font-size: {{ block.settings.heading_size_mobile }}px;
     }
 
-    .oc-hero-right-{{ ai_gen_id }} { min-height: 280px; }
+    .oc-hero-right-{{ ai_gen_id }} {
+      min-height: 280px;
+    }
 
     .oc-hero-card-tall-{{ ai_gen_id }} {
       width: 140px;
@@ -234,288 +264,253 @@
       font-size: {{ block.settings.stat_number_size_mobile }}px;
     }
 
-    .oc-hero-card-title-{{ ai_gen_id }} { font-size: 12px; }
+    .oc-hero-card-title-{{ ai_gen_id }} {
+      font-size: 12px;
+    }
   }
 {% endstyle %}
 
+<div
+  class="section {{ section_mode }} {{ page_width_class }} oc-hero-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="oc-hero-inner-{{ ai_gen_id }}">
+    <div class="oc-hero-grid-{{ ai_gen_id }}">
 
-<div class="oc-hero-{{ ai_gen_id }}{% if block.settings.section_width == 'full' %} section--full-width{% else %} page-width{% endif %}" {{ block.shopify_attributes }}>
-  <div class="oc-hero-wrap-{{ ai_gen_id }}">
-
-    {%- comment -%} LEFT COLUMN {%- endcomment -%}
-    <div class="oc-hero-left-{{ ai_gen_id }}">
-
-      {%- if block.settings.heading != blank -%}
-        <h1 class="oc-hero-h1-{{ ai_gen_id }}">{{ block.settings.heading }}</h1>
-        {%- comment -%}
-          <em> ใน heading จะได้ rainbow animation จาก global rule:
-          em, i { background: var(--oc-rainbow); animation: oc-rainbow-text; }
-          ใน custom_css_optimized.liquid §4 — ไม่ต้อง re-declare
-        {%- endcomment -%}
-      {%- endif -%}
-
-      {%- comment -%} Buttons — ใช้ .btn-p / .btn-g จาก §9h custom_css {%- endcomment -%}
-      <div style="display:flex;gap:16px;flex-wrap:wrap">
-        {%- if block.settings.button_primary_text != blank -%}
-          <a href="{{ block.settings.button_primary_link }}" class="btn-p">
-            {{ block.settings.button_primary_text }}
-          </a>
+      <div class="oc-hero-left-{{ ai_gen_id }}">
+        {%- if block.settings.heading != blank -%}
+          <div class="oc-hero-h1-{{ ai_gen_id }}">
+            {{ block.settings.heading }}
+          </div>
         {%- endif -%}
 
-        {%- if block.settings.button_secondary_text != blank -%}
-          <a href="{{ block.settings.button_secondary_link }}" class="btn-g">
-            {{ block.settings.button_secondary_text }}
-          </a>
-        {%- endif -%}
+        <div class="oc-hero-actions-{{ ai_gen_id }}">
+          {%- if block.settings.button_primary_text != blank -%}
+            <a href="{{ block.settings.button_primary_link }}" class="btn-p">
+              {{ block.settings.button_primary_text }}
+            </a>
+          {%- endif -%}
+
+          {%- if block.settings.button_secondary_text != blank -%}
+            <a href="{{ block.settings.button_secondary_link }}" class="btn-g">
+              {{ block.settings.button_secondary_text }}
+            </a>
+          {%- endif -%}
+        </div>
+
+        <div class="oc-hero-divider-{{ ai_gen_id }}"></div>
+
+        <div class="oc-hero-stats-{{ ai_gen_id }}">
+          {%- if block.settings.stat_1_number != blank -%}
+            <div class="oc-hero-stat-{{ ai_gen_id }}">
+              <div class="oc-hero-stat-num-{{ ai_gen_id }}">{{ block.settings.stat_1_number }}</div>
+              <div class="oc-hero-stat-lbl-{{ ai_gen_id }}">{{ block.settings.stat_1_label }}</div>
+            </div>
+          {%- endif -%}
+
+          {%- if block.settings.stat_2_number != blank -%}
+            <div class="oc-hero-stat-{{ ai_gen_id }}">
+              <div class="oc-hero-stat-num-{{ ai_gen_id }}">{{ block.settings.stat_2_number }}</div>
+              <div class="oc-hero-stat-lbl-{{ ai_gen_id }}">{{ block.settings.stat_2_label }}</div>
+            </div>
+          {%- endif -%}
+
+          {%- if block.settings.stat_3_number != blank -%}
+            <div class="oc-hero-stat-{{ ai_gen_id }}">
+              <div class="oc-hero-stat-num-{{ ai_gen_id }}">{{ block.settings.stat_3_number }}</div>
+              <div class="oc-hero-stat-lbl-{{ ai_gen_id }}">{{ block.settings.stat_3_label }}</div>
+            </div>
+          {%- endif -%}
+        </div>
       </div>
 
-      <div class="oc-hero-divider-{{ ai_gen_id }}"></div>
+      <div class="oc-hero-right-{{ ai_gen_id }}">
+        <div class="oc-hero-bento-{{ ai_gen_id }}">
+          <div class="oc-hero-scroll-{{ ai_gen_id }}">
 
-      {%- comment -%} Stats {%- endcomment -%}
-      <div class="oc-hero-stats-{{ ai_gen_id }}">
-        {%- if block.settings.stat_1_number != blank -%}
-          <div class="oc-hero-stat-{{ ai_gen_id }}">
-            <div class="oc-hero-stat-num-{{ ai_gen_id }}">{{ block.settings.stat_1_number }}</div>
-            <div class="oc-hero-stat-lbl-{{ ai_gen_id }}">{{ block.settings.stat_1_label }}</div>
+            {%- for i in (1..2) -%}
+
+              <div class="oc-hero-col-{{ ai_gen_id }}">
+                <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-tall-{{ ai_gen_id }}">
+                  {%- if block.settings.card_1_link != blank -%}<a href="{{ block.settings.card_1_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
+                  {%- if block.settings.card_1_image -%}
+                    <img src="{{ block.settings.card_1_image | image_url: width: 400 }}" alt="{{ block.settings.card_1_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_tall_height }}">
+                  {%- else -%}
+                    <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
+                  {%- endif -%}
+                  {%- if block.settings.card_1_title != blank -%}
+                    <div class="oc-hero-card-overlay-{{ ai_gen_id }}"><p class="oc-hero-card-title-{{ ai_gen_id }}">{{ block.settings.card_1_title }}</p></div>
+                  {%- endif -%}
+                  {%- if block.settings.card_1_link != blank -%}</a>{%- endif -%}
+                </div>
+              </div>
+
+              <div class="oc-hero-col-{{ ai_gen_id }}">
+                <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-half-{{ ai_gen_id }}">
+                  {%- if block.settings.card_2_link != blank -%}<a href="{{ block.settings.card_2_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
+                  {%- if block.settings.card_2_image -%}
+                    <img src="{{ block.settings.card_2_image | image_url: width: 400 }}" alt="{{ block.settings.card_2_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_half_height }}">
+                  {%- else -%}
+                    <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
+                  {%- endif -%}
+                  {%- if block.settings.card_2_title != blank -%}
+                    <div class="oc-hero-card-overlay-{{ ai_gen_id }}"><p class="oc-hero-card-title-{{ ai_gen_id }}">{{ block.settings.card_2_title }}</p></div>
+                  {%- endif -%}
+                  {%- if block.settings.card_2_link != blank -%}</a>{%- endif -%}
+                </div>
+
+                <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-half-{{ ai_gen_id }}">
+                  {%- if block.settings.card_3_link != blank -%}<a href="{{ block.settings.card_3_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
+                  {%- if block.settings.card_3_image -%}
+                    <img src="{{ block.settings.card_3_image | image_url: width: 400 }}" alt="{{ block.settings.card_3_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_half_height }}">
+                  {%- else -%}
+                    <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
+                  {%- endif -%}
+                  {%- if block.settings.card_3_title != blank -%}
+                    <div class="oc-hero-card-overlay-{{ ai_gen_id }}"><p class="oc-hero-card-title-{{ ai_gen_id }}">{{ block.settings.card_3_title }}</p></div>
+                  {%- endif -%}
+                  {%- if block.settings.card_3_link != blank -%}</a>{%- endif -%}
+                </div>
+              </div>
+
+              <div class="oc-hero-col-{{ ai_gen_id }}">
+                <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-tall-{{ ai_gen_id }}">
+                  {%- if block.settings.card_4_link != blank -%}<a href="{{ block.settings.card_4_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
+                  {%- if block.settings.card_4_image -%}
+                    <img src="{{ block.settings.card_4_image | image_url: width: 400 }}" alt="{{ block.settings.card_4_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_tall_height }}">
+                  {%- else -%}
+                    <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
+                  {%- endif -%}
+                  {%- if block.settings.card_4_title != blank -%}
+                    <div class="oc-hero-card-overlay-{{ ai_gen_id }}"><p class="oc-hero-card-title-{{ ai_gen_id }}">{{ block.settings.card_4_title }}</p></div>
+                  {%- endif -%}
+                  {%- if block.settings.card_4_link != blank -%}</a>{%- endif -%}
+                </div>
+              </div>
+
+              <div class="oc-hero-col-{{ ai_gen_id }}">
+                <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-half-{{ ai_gen_id }}">
+                  {%- if block.settings.card_5_link != blank -%}<a href="{{ block.settings.card_5_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
+                  {%- if block.settings.card_5_image -%}
+                    <img src="{{ block.settings.card_5_image | image_url: width: 400 }}" alt="{{ block.settings.card_5_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_half_height }}">
+                  {%- else -%}
+                    <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
+                  {%- endif -%}
+                  {%- if block.settings.card_5_title != blank -%}
+                    <div class="oc-hero-card-overlay-{{ ai_gen_id }}"><p class="oc-hero-card-title-{{ ai_gen_id }}">{{ block.settings.card_5_title }}</p></div>
+                  {%- endif -%}
+                  {%- if block.settings.card_5_link != blank -%}</a>{%- endif -%}
+                </div>
+
+                <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-half-{{ ai_gen_id }}">
+                  {%- if block.settings.card_6_link != blank -%}<a href="{{ block.settings.card_6_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
+                  {%- if block.settings.card_6_image -%}
+                    <img src="{{ block.settings.card_6_image | image_url: width: 400 }}" alt="{{ block.settings.card_6_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_half_height }}">
+                  {%- else -%}
+                    <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
+                  {%- endif -%}
+                  {%- if block.settings.card_6_title != blank -%}
+                    <div class="oc-hero-card-overlay-{{ ai_gen_id }}"><p class="oc-hero-card-title-{{ ai_gen_id }}">{{ block.settings.card_6_title }}</p></div>
+                  {%- endif -%}
+                  {%- if block.settings.card_6_link != blank -%}</a>{%- endif -%}
+                </div>
+              </div>
+
+              <div class="oc-hero-col-{{ ai_gen_id }}">
+                <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-tall-{{ ai_gen_id }}">
+                  {%- if block.settings.card_7_link != blank -%}<a href="{{ block.settings.card_7_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
+                  {%- if block.settings.card_7_image -%}
+                    <img src="{{ block.settings.card_7_image | image_url: width: 400 }}" alt="{{ block.settings.card_7_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_tall_height }}">
+                  {%- else -%}
+                    <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
+                  {%- endif -%}
+                  {%- if block.settings.card_7_title != blank -%}
+                    <div class="oc-hero-card-overlay-{{ ai_gen_id }}"><p class="oc-hero-card-title-{{ ai_gen_id }}">{{ block.settings.card_7_title }}</p></div>
+                  {%- endif -%}
+                  {%- if block.settings.card_7_link != blank -%}</a>{%- endif -%}
+                </div>
+              </div>
+
+              <div class="oc-hero-col-{{ ai_gen_id }}">
+                <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-half-{{ ai_gen_id }}">
+                  {%- if block.settings.card_8_link != blank -%}<a href="{{ block.settings.card_8_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
+                  {%- if block.settings.card_8_image -%}
+                    <img src="{{ block.settings.card_8_image | image_url: width: 400 }}" alt="{{ block.settings.card_8_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_half_height }}">
+                  {%- else -%}
+                    <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
+                  {%- endif -%}
+                  {%- if block.settings.card_8_title != blank -%}
+                    <div class="oc-hero-card-overlay-{{ ai_gen_id }}"><p class="oc-hero-card-title-{{ ai_gen_id }}">{{ block.settings.card_8_title }}</p></div>
+                  {%- endif -%}
+                  {%- if block.settings.card_8_link != blank -%}</a>{%- endif -%}
+                </div>
+
+                <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-half-{{ ai_gen_id }}">
+                  {%- if block.settings.card_9_link != blank -%}<a href="{{ block.settings.card_9_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
+                  {%- if block.settings.card_9_image -%}
+                    <img src="{{ block.settings.card_9_image | image_url: width: 400 }}" alt="{{ block.settings.card_9_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_half_height }}">
+                  {%- else -%}
+                    <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
+                  {%- endif -%}
+                  {%- if block.settings.card_9_title != blank -%}
+                    <div class="oc-hero-card-overlay-{{ ai_gen_id }}"><p class="oc-hero-card-title-{{ ai_gen_id }}">{{ block.settings.card_9_title }}</p></div>
+                  {%- endif -%}
+                  {%- if block.settings.card_9_link != blank -%}</a>{%- endif -%}
+                </div>
+              </div>
+
+              <div class="oc-hero-col-{{ ai_gen_id }}">
+                <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-tall-{{ ai_gen_id }}">
+                  {%- if block.settings.card_10_link != blank -%}<a href="{{ block.settings.card_10_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
+                  {%- if block.settings.card_10_image -%}
+                    <img src="{{ block.settings.card_10_image | image_url: width: 400 }}" alt="{{ block.settings.card_10_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_tall_height }}">
+                  {%- else -%}
+                    <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
+                  {%- endif -%}
+                  {%- if block.settings.card_10_title != blank -%}
+                    <div class="oc-hero-card-overlay-{{ ai_gen_id }}"><p class="oc-hero-card-title-{{ ai_gen_id }}">{{ block.settings.card_10_title }}</p></div>
+                  {%- endif -%}
+                  {%- if block.settings.card_10_link != blank -%}</a>{%- endif -%}
+                </div>
+              </div>
+
+              <div class="oc-hero-col-{{ ai_gen_id }}">
+                <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-half-{{ ai_gen_id }}">
+                  {%- if block.settings.card_11_link != blank -%}<a href="{{ block.settings.card_11_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
+                  {%- if block.settings.card_11_image -%}
+                    <img src="{{ block.settings.card_11_image | image_url: width: 400 }}" alt="{{ block.settings.card_11_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_half_height }}">
+                  {%- else -%}
+                    <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
+                  {%- endif -%}
+                  {%- if block.settings.card_11_title != blank -%}
+                    <div class="oc-hero-card-overlay-{{ ai_gen_id }}"><p class="oc-hero-card-title-{{ ai_gen_id }}">{{ block.settings.card_11_title }}</p></div>
+                  {%- endif -%}
+                  {%- if block.settings.card_11_link != blank -%}</a>{%- endif -%}
+                </div>
+
+                <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-half-{{ ai_gen_id }}">
+                  {%- if block.settings.card_12_link != blank -%}<a href="{{ block.settings.card_12_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
+                  {%- if block.settings.card_12_image -%}
+                    <img src="{{ block.settings.card_12_image | image_url: width: 400 }}" alt="{{ block.settings.card_12_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_half_height }}">
+                  {%- else -%}
+                    <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
+                  {%- endif -%}
+                  {%- if block.settings.card_12_title != blank -%}
+                    <div class="oc-hero-card-overlay-{{ ai_gen_id }}"><p class="oc-hero-card-title-{{ ai_gen_id }}">{{ block.settings.card_12_title }}</p></div>
+                  {%- endif -%}
+                  {%- if block.settings.card_12_link != blank -%}</a>{%- endif -%}
+                </div>
+              </div>
+
+            {%- endfor -%}
+
           </div>
-        {%- endif -%}
-        {%- if block.settings.stat_2_number != blank -%}
-          <div class="oc-hero-stat-{{ ai_gen_id }}">
-            <div class="oc-hero-stat-num-{{ ai_gen_id }}">{{ block.settings.stat_2_number }}</div>
-            <div class="oc-hero-stat-lbl-{{ ai_gen_id }}">{{ block.settings.stat_2_label }}</div>
-          </div>
-        {%- endif -%}
-        {%- if block.settings.stat_3_number != blank -%}
-          <div class="oc-hero-stat-{{ ai_gen_id }}">
-            <div class="oc-hero-stat-num-{{ ai_gen_id }}">{{ block.settings.stat_3_number }}</div>
-            <div class="oc-hero-stat-lbl-{{ ai_gen_id }}">{{ block.settings.stat_3_label }}</div>
-          </div>
-        {%- endif -%}
+        </div>
       </div>
 
-    </div>{%- comment -%} /left {%- endcomment -%}
-
-
-    {%- comment -%} RIGHT COLUMN — bento scroll {%- endcomment -%}
-    <div class="oc-hero-right-{{ ai_gen_id }}">
-      <div class="oc-hero-bento-{{ ai_gen_id }}">
-        <div class="oc-hero-scroll-{{ ai_gen_id }}">
-
-          {%- comment -%} Duplicate set × 2 for seamless loop {%- endcomment -%}
-          {%- for i in (1..2) -%}
-
-            {%- comment -%} Pattern: tall | half+half | tall | half+half | tall | half+half {%- endcomment -%}
-
-            {%- comment -%} Col 1 — tall {%- endcomment -%}
-            <div class="oc-hero-col-{{ ai_gen_id }}">
-              <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-tall-{{ ai_gen_id }}">
-              {%- if block.settings.card_1_link != blank -%}<a href="{{ block.settings.card_1_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
-              {%- if block.settings.card_1_image -%}
-                <img src="{{ block.settings.card_1_image | image_url: width: 400 }}" alt="{{ block.settings.card_1_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_tall_height }}">
-              {%- else -%}
-                <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
-              {%- endif -%}
-              {%- if block.settings.card_1_title != blank -%}
-                <div class="oc-hero-card-overlay-{{ ai_gen_id }}"><p class="oc-hero-card-title-{{ ai_gen_id }}">{{ block.settings.card_1_title }}</p></div>
-              {%- endif -%}
-              {%- if block.settings.card_1_link != blank -%}</a>{%- endif -%}
-            </div>
-            </div>
-
-            {%- comment -%} Col 2 — half pair {%- endcomment -%}
-            <div class="oc-hero-col-{{ ai_gen_id }}">
-              <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-half-{{ ai_gen_id }}">
-              {%- if block.settings.card_2_link != blank -%}<a href="{{ block.settings.card_2_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
-              {%- if block.settings.card_2_image -%}
-                <img src="{{ block.settings.card_2_image | image_url: width: 400 }}" alt="{{ block.settings.card_2_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_half_height }}">
-              {%- else -%}
-                <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
-              {%- endif -%}
-              {%- if block.settings.card_2_title != blank -%}
-                <div class="oc-hero-card-overlay-{{ ai_gen_id }}"><p class="oc-hero-card-title-{{ ai_gen_id }}">{{ block.settings.card_2_title }}</p></div>
-              {%- endif -%}
-              {%- if block.settings.card_2_link != blank -%}</a>{%- endif -%}
-            </div>
-              <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-half-{{ ai_gen_id }}">
-              {%- if block.settings.card_3_link != blank -%}<a href="{{ block.settings.card_3_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
-              {%- if block.settings.card_3_image -%}
-                <img src="{{ block.settings.card_3_image | image_url: width: 400 }}" alt="{{ block.settings.card_3_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_half_height }}">
-              {%- else -%}
-                <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
-              {%- endif -%}
-              {%- if block.settings.card_3_title != blank -%}
-                <div class="oc-hero-card-overlay-{{ ai_gen_id }}"><p class="oc-hero-card-title-{{ ai_gen_id }}">{{ block.settings.card_3_title }}</p></div>
-              {%- endif -%}
-              {%- if block.settings.card_3_link != blank -%}</a>{%- endif -%}
-            </div>
-            </div>
-
-            {%- comment -%} Col 3 — tall {%- endcomment -%}
-            <div class="oc-hero-col-{{ ai_gen_id }}">
-              <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-tall-{{ ai_gen_id }}">
-              {%- if block.settings.card_4_link != blank -%}<a href="{{ block.settings.card_4_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
-              {%- if block.settings.card_4_image -%}
-                <img src="{{ block.settings.card_4_image | image_url: width: 400 }}" alt="{{ block.settings.card_4_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_tall_height }}">
-              {%- else -%}
-                <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
-              {%- endif -%}
-              {%- if block.settings.card_4_title != blank -%}
-                <div class="oc-hero-card-overlay-{{ ai_gen_id }}"><p class="oc-hero-card-title-{{ ai_gen_id }}">{{ block.settings.card_4_title }}</p></div>
-              {%- endif -%}
-              {%- if block.settings.card_4_link != blank -%}</a>{%- endif -%}
-            </div>
-            </div>
-
-            {%- comment -%} Col 4 — half pair {%- endcomment -%}
-            <div class="oc-hero-col-{{ ai_gen_id }}">
-              <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-half-{{ ai_gen_id }}">
-              {%- if block.settings.card_5_link != blank -%}<a href="{{ block.settings.card_5_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
-              {%- if block.settings.card_5_image -%}
-                <img src="{{ block.settings.card_5_image | image_url: width: 400 }}" alt="{{ block.settings.card_5_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_half_height }}">
-              {%- else -%}
-                <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
-              {%- endif -%}
-              {%- if block.settings.card_5_title != blank -%}
-                <div class="oc-hero-card-overlay-{{ ai_gen_id }}"><p class="oc-hero-card-title-{{ ai_gen_id }}">{{ block.settings.card_5_title }}</p></div>
-              {%- endif -%}
-              {%- if block.settings.card_5_link != blank -%}</a>{%- endif -%}
-            </div>
-              <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-half-{{ ai_gen_id }}">
-              {%- if block.settings.card_6_link != blank -%}<a href="{{ block.settings.card_6_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
-              {%- if block.settings.card_6_image -%}
-                <img src="{{ block.settings.card_6_image | image_url: width: 400 }}" alt="{{ block.settings.card_6_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_half_height }}">
-              {%- else -%}
-                <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
-              {%- endif -%}
-              {%- if block.settings.card_6_title != blank -%}
-                <div class="oc-hero-card-overlay-{{ ai_gen_id }}"><p class="oc-hero-card-title-{{ ai_gen_id }}">{{ block.settings.card_6_title }}</p></div>
-              {%- endif -%}
-              {%- if block.settings.card_6_link != blank -%}</a>{%- endif -%}
-            </div>
-            </div>
-
-            {%- comment -%} Col 5 — tall {%- endcomment -%}
-            <div class="oc-hero-col-{{ ai_gen_id }}">
-              <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-tall-{{ ai_gen_id }}">
-              {%- if block.settings.card_7_link != blank -%}<a href="{{ block.settings.card_7_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
-              {%- if block.settings.card_7_image -%}
-                <img src="{{ block.settings.card_7_image | image_url: width: 400 }}" alt="{{ block.settings.card_7_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_tall_height }}">
-              {%- else -%}
-                <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
-              {%- endif -%}
-              {%- if block.settings.card_7_title != blank -%}
-                <div class="oc-hero-card-overlay-{{ ai_gen_id }}"><p class="oc-hero-card-title-{{ ai_gen_id }}">{{ block.settings.card_7_title }}</p></div>
-              {%- endif -%}
-              {%- if block.settings.card_7_link != blank -%}</a>{%- endif -%}
-            </div>
-            </div>
-
-            {%- comment -%} Col 6 — half pair {%- endcomment -%}
-            <div class="oc-hero-col-{{ ai_gen_id }}">
-              <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-half-{{ ai_gen_id }}">
-              {%- if block.settings.card_8_link != blank -%}<a href="{{ block.settings.card_8_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
-              {%- if block.settings.card_8_image -%}
-                <img src="{{ block.settings.card_8_image | image_url: width: 400 }}" alt="{{ block.settings.card_8_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_half_height }}">
-              {%- else -%}
-                <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
-              {%- endif -%}
-              {%- if block.settings.card_8_title != blank -%}
-                <div class="oc-hero-card-overlay-{{ ai_gen_id }}"><p class="oc-hero-card-title-{{ ai_gen_id }}">{{ block.settings.card_8_title }}</p></div>
-              {%- endif -%}
-              {%- if block.settings.card_8_link != blank -%}</a>{%- endif -%}
-            </div>
-              <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-half-{{ ai_gen_id }}">
-              {%- if block.settings.card_9_link != blank -%}<a href="{{ block.settings.card_9_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
-              {%- if block.settings.card_9_image -%}
-                <img src="{{ block.settings.card_9_image | image_url: width: 400 }}" alt="{{ block.settings.card_9_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_half_height }}">
-              {%- else -%}
-                <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
-              {%- endif -%}
-              {%- if block.settings.card_9_title != blank -%}
-                <div class="oc-hero-card-overlay-{{ ai_gen_id }}"><p class="oc-hero-card-title-{{ ai_gen_id }}">{{ block.settings.card_9_title }}</p></div>
-              {%- endif -%}
-              {%- if block.settings.card_9_link != blank -%}</a>{%- endif -%}
-            </div>
-            </div>
-
-            {%- comment -%} Col 7 — tall {%- endcomment -%}
-            <div class="oc-hero-col-{{ ai_gen_id }}">
-              <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-tall-{{ ai_gen_id }}">
-              {%- if block.settings.card_10_link != blank -%}<a href="{{ block.settings.card_10_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
-              {%- if block.settings.card_10_image -%}
-                <img src="{{ block.settings.card_10_image | image_url: width: 400 }}" alt="{{ block.settings.card_10_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_tall_height }}">
-              {%- else -%}
-                <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
-              {%- endif -%}
-              {%- if block.settings.card_10_title != blank -%}
-                <div class="oc-hero-card-overlay-{{ ai_gen_id }}"><p class="oc-hero-card-title-{{ ai_gen_id }}">{{ block.settings.card_10_title }}</p></div>
-              {%- endif -%}
-              {%- if block.settings.card_10_link != blank -%}</a>{%- endif -%}
-            </div>
-            </div>
-
-            {%- comment -%} Col 8 — half pair {%- endcomment -%}
-            <div class="oc-hero-col-{{ ai_gen_id }}">
-              <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-half-{{ ai_gen_id }}">
-              {%- if block.settings.card_11_link != blank -%}<a href="{{ block.settings.card_11_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
-              {%- if block.settings.card_11_image -%}
-                <img src="{{ block.settings.card_11_image | image_url: width: 400 }}" alt="{{ block.settings.card_11_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_half_height }}">
-              {%- else -%}
-                <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
-              {%- endif -%}
-              {%- if block.settings.card_11_title != blank -%}
-                <div class="oc-hero-card-overlay-{{ ai_gen_id }}"><p class="oc-hero-card-title-{{ ai_gen_id }}">{{ block.settings.card_11_title }}</p></div>
-              {%- endif -%}
-              {%- if block.settings.card_11_link != blank -%}</a>{%- endif -%}
-            </div>
-              <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-half-{{ ai_gen_id }}">
-              {%- if block.settings.card_12_link != blank -%}<a href="{{ block.settings.card_12_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
-              {%- if block.settings.card_12_image -%}
-                <img src="{{ block.settings.card_12_image | image_url: width: 400 }}" alt="{{ block.settings.card_12_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_half_height }}">
-              {%- else -%}
-                <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
-              {%- endif -%}
-              {%- if block.settings.card_12_title != blank -%}
-                <div class="oc-hero-card-overlay-{{ ai_gen_id }}"><p class="oc-hero-card-title-{{ ai_gen_id }}">{{ block.settings.card_12_title }}</p></div>
-              {%- endif -%}
-              {%- if block.settings.card_12_link != blank -%}</a>{%- endif -%}
-            </div>
-            </div>
-
-          {%- endfor -%}
-
-        </div>{%- comment -%} /scroll {%- endcomment -%}
-      </div>{%- comment -%} /bento {%- endcomment -%}
-    </div>{%- comment -%} /right {%- endcomment -%}
-
-  </div>{%- comment -%} /wrap {%- endcomment -%}
+    </div>
+  </div>
 </div>
-
-
-<script>
-  (function() {
-    // Wrap Thai characters with Noto Sans Thai font-family
-    // (Google Sans handles Latin, Noto handles Thai U+0E00-U+0E7F)
-    var heading = document.querySelector('.oc-hero-h1-{{ ai_gen_id }}');
-    if (!heading) return;
-    var thaiRe = /[\u0E00-\u0E7F]+/g;
-    heading.childNodes.forEach(function(node) {
-      if (node.nodeType !== 3) return; // text nodes only
-      var t = node.textContent;
-      if (!thaiRe.test(t)) return;
-      thaiRe.lastIndex = 0;
-      var span = document.createElement('span');
-      span.innerHTML = t.replace(thaiRe, function(m) {
-        return '<span style="font-family:var(--font-body--family)">' + m + '</span>';
-      });
-      node.replaceWith(span);
-    });
-  })();
-</script>
-
-
-
-
 
 {% schema %}
 {
@@ -524,12 +519,24 @@
     {
       "type": "select",
       "id": "section_width",
-      "label": "Width",
+      "label": "Section mode",
       "options": [
-        { "value": "full",  "label": "Full width" },
-        { "value": "page",  "label": "Page width" }
+        { "value": "full", "label": "Full width" },
+        { "value": "page", "label": "Page width" }
       ],
       "default": "full"
+    },
+    {
+      "type": "select",
+      "id": "page_width_preset",
+      "label": "Page width preset",
+      "options": [
+        { "value": "wide", "label": "Wide" },
+        { "value": "normal", "label": "Normal" },
+        { "value": "narrow", "label": "Narrow" },
+        { "value": "content", "label": "Content" }
+      ],
+      "default": "wide"
     },
     {
       "type": "header",
@@ -538,20 +545,20 @@
     {
       "type": "richtext",
       "id": "heading",
-      "label": "Heading (ใช้ <em> เพื่อ rainbow text)",
+      "label": "Heading",
       "default": "<p>สร้างสรรค์ <em>ป้ายสวยงาม</em> ด้วยเทคโนโลยี <em>ระดับโลก</em></p>"
     },
     {
       "type": "range",
       "id": "heading_size",
-      "label": "Desktop heading size (px)",
+      "label": "Desktop heading size",
       "min": 24, "max": 80, "step": 2, "unit": "px",
       "default": 48
     },
     {
       "type": "range",
       "id": "heading_size_mobile",
-      "label": "Mobile heading size (px)",
+      "label": "Mobile heading size",
       "min": 20, "max": 60, "step": 2, "unit": "px",
       "default": 32
     },
@@ -562,24 +569,24 @@
     {
       "type": "text",
       "id": "button_primary_text",
-      "label": "Primary button (ใช้ .btn-p)",
+      "label": "Primary button text",
       "default": "เริ่มต้นใช้งาน"
     },
     {
       "type": "url",
       "id": "button_primary_link",
-      "label": "Primary link"
+      "label": "Primary button link"
     },
     {
       "type": "text",
       "id": "button_secondary_text",
-      "label": "Secondary button (ใช้ .btn-g)",
+      "label": "Secondary button text",
       "default": "ดูผลงาน"
     },
     {
       "type": "url",
       "id": "button_secondary_link",
-      "label": "Secondary link"
+      "label": "Secondary button link"
     },
     {
       "type": "header",
@@ -588,35 +595,24 @@
     {
       "type": "range",
       "id": "stat_number_size",
-      "label": "Desktop number size (px)",
+      "label": "Desktop number size",
       "min": 20, "max": 72, "step": 2, "unit": "px",
       "default": 40
     },
     {
       "type": "range",
       "id": "stat_number_size_mobile",
-      "label": "Mobile number size (px)",
+      "label": "Mobile number size",
       "min": 18, "max": 48, "step": 2, "unit": "px",
       "default": 32
     },
-    {
-      "type": "text", "id": "stat_1_number", "label": "Stat 1 number", "default": "500+"
-    },
-    {
-      "type": "text", "id": "stat_1_label",  "label": "Stat 1 label",  "default": "ลูกค้าทั่วประเทศ"
-    },
-    {
-      "type": "text", "id": "stat_2_number", "label": "Stat 2 number", "default": "2,000+"
-    },
-    {
-      "type": "text", "id": "stat_2_label",  "label": "Stat 2 label",  "default": "โปรเจกต์สำเร็จ"
-    },
-    {
-      "type": "text", "id": "stat_3_number", "label": "Stat 3 number", "default": "98%"
-    },
-    {
-      "type": "text", "id": "stat_3_label",  "label": "Stat 3 label",  "default": "ความพึงพอใจ"
-    },
+    { "type": "text", "id": "stat_1_number", "label": "Stat 1 number", "default": "500+" },
+    { "type": "text", "id": "stat_1_label", "label": "Stat 1 label", "default": "ลูกค้าทั่วประเทศ" },
+    { "type": "text", "id": "stat_2_number", "label": "Stat 2 number", "default": "2,000+" },
+    { "type": "text", "id": "stat_2_label", "label": "Stat 2 label", "default": "โปรเจกต์สำเร็จ" },
+    { "type": "text", "id": "stat_3_number", "label": "Stat 3 number", "default": "98%" },
+    { "type": "text", "id": "stat_3_label", "label": "Stat 3 label", "default": "ความพึงพอใจ" },
+
     {
       "type": "header",
       "content": "Bento Gallery"
@@ -624,168 +620,85 @@
     {
       "type": "range",
       "id": "scroll_speed",
-      "label": "Scroll speed (วินาที — น้อย = เร็ว)",
+      "label": "Scroll speed",
       "min": 10, "max": 60, "step": 5, "unit": "s",
       "default": 30
     },
     {
       "type": "range",
       "id": "card_tall_height",
-      "label": "Tall card height (px)",
+      "label": "Tall card height",
       "min": 200, "max": 500, "step": 10, "unit": "px",
       "default": 320
     },
     {
       "type": "range",
       "id": "card_half_height",
-      "label": "Half card height (px)",
+      "label": "Half card height",
       "min": 100, "max": 260, "step": 10, "unit": "px",
       "default": 150
     },
-    {
-      "type": "header", "content": "Card 1"
-    },
-    {
-      "type": "image_picker", "id": "card_1_image", "label": "Image"
-    },
-    {
-      "type": "text", "id": "card_1_title", "label": "Title (hover overlay)"
-    },
-    {
-      "type": "url", "id": "card_1_link", "label": "Link"
-    },
-    {
-      "type": "header", "content": "Card 2"
-    },
-    {
-      "type": "image_picker", "id": "card_2_image", "label": "Image"
-    },
-    {
-      "type": "text", "id": "card_2_title", "label": "Title"
-    },
-    {
-      "type": "url", "id": "card_2_link", "label": "Link"
-    },
-    {
-      "type": "header", "content": "Card 3"
-    },
-    {
-      "type": "image_picker", "id": "card_3_image", "label": "Image"
-    },
-    {
-      "type": "text", "id": "card_3_title", "label": "Title"
-    },
-    {
-      "type": "url", "id": "card_3_link", "label": "Link"
-    },
-    {
-      "type": "header", "content": "Card 4"
-    },
-    {
-      "type": "image_picker", "id": "card_4_image", "label": "Image"
-    },
-    {
-      "type": "text", "id": "card_4_title", "label": "Title"
-    },
-    {
-      "type": "url", "id": "card_4_link", "label": "Link"
-    },
-    {
-      "type": "header", "content": "Card 5"
-    },
-    {
-      "type": "image_picker", "id": "card_5_image", "label": "Image"
-    },
-    {
-      "type": "text", "id": "card_5_title", "label": "Title"
-    },
-    {
-      "type": "url", "id": "card_5_link", "label": "Link"
-    },
-    {
-      "type": "header", "content": "Card 6"
-    },
-    {
-      "type": "image_picker", "id": "card_6_image", "label": "Image"
-    },
-    {
-      "type": "text", "id": "card_6_title", "label": "Title"
-    },
-    {
-      "type": "url", "id": "card_6_link", "label": "Link"
-    },
-    {
-      "type": "header", "content": "Card 7"
-    },
-    {
-      "type": "image_picker", "id": "card_7_image", "label": "Image"
-    },
-    {
-      "type": "text", "id": "card_7_title", "label": "Title"
-    },
-    {
-      "type": "url", "id": "card_7_link", "label": "Link"
-    },
-    {
-      "type": "header", "content": "Card 8"
-    },
-    {
-      "type": "image_picker", "id": "card_8_image", "label": "Image"
-    },
-    {
-      "type": "text", "id": "card_8_title", "label": "Title"
-    },
-    {
-      "type": "url", "id": "card_8_link", "label": "Link"
-    },
-    {
-      "type": "header", "content": "Card 9"
-    },
-    {
-      "type": "image_picker", "id": "card_9_image", "label": "Image"
-    },
-    {
-      "type": "text", "id": "card_9_title", "label": "Title"
-    },
-    {
-      "type": "url", "id": "card_9_link", "label": "Link"
-    },
-    {
-      "type": "header", "content": "Card 10"
-    },
-    {
-      "type": "image_picker", "id": "card_10_image", "label": "Image"
-    },
-    {
-      "type": "text", "id": "card_10_title", "label": "Title"
-    },
-    {
-      "type": "url", "id": "card_10_link", "label": "Link"
-    },
-    {
-      "type": "header", "content": "Card 11"
-    },
-    {
-      "type": "image_picker", "id": "card_11_image", "label": "Image"
-    },
-    {
-      "type": "text", "id": "card_11_title", "label": "Title"
-    },
-    {
-      "type": "url", "id": "card_11_link", "label": "Link"
-    },
-    {
-      "type": "header", "content": "Card 12"
-    },
-    {
-      "type": "image_picker", "id": "card_12_image", "label": "Image"
-    },
-    {
-      "type": "text", "id": "card_12_title", "label": "Title"
-    },
-    {
-      "type": "url", "id": "card_12_link", "label": "Link"
-    },
+
+    { "type": "header", "content": "Card 1" },
+    { "type": "image_picker", "id": "card_1_image", "label": "Image" },
+    { "type": "text", "id": "card_1_title", "label": "Title" },
+    { "type": "url", "id": "card_1_link", "label": "Link" },
+
+    { "type": "header", "content": "Card 2" },
+    { "type": "image_picker", "id": "card_2_image", "label": "Image" },
+    { "type": "text", "id": "card_2_title", "label": "Title" },
+    { "type": "url", "id": "card_2_link", "label": "Link" },
+
+    { "type": "header", "content": "Card 3" },
+    { "type": "image_picker", "id": "card_3_image", "label": "Image" },
+    { "type": "text", "id": "card_3_title", "label": "Title" },
+    { "type": "url", "id": "card_3_link", "label": "Link" },
+
+    { "type": "header", "content": "Card 4" },
+    { "type": "image_picker", "id": "card_4_image", "label": "Image" },
+    { "type": "text", "id": "card_4_title", "label": "Title" },
+    { "type": "url", "id": "card_4_link", "label": "Link" },
+
+    { "type": "header", "content": "Card 5" },
+    { "type": "image_picker", "id": "card_5_image", "label": "Image" },
+    { "type": "text", "id": "card_5_title", "label": "Title" },
+    { "type": "url", "id": "card_5_link", "label": "Link" },
+
+    { "type": "header", "content": "Card 6" },
+    { "type": "image_picker", "id": "card_6_image", "label": "Image" },
+    { "type": "text", "id": "card_6_title", "label": "Title" },
+    { "type": "url", "id": "card_6_link", "label": "Link" },
+
+    { "type": "header", "content": "Card 7" },
+    { "type": "image_picker", "id": "card_7_image", "label": "Image" },
+    { "type": "text", "id": "card_7_title", "label": "Title" },
+    { "type": "url", "id": "card_7_link", "label": "Link" },
+
+    { "type": "header", "content": "Card 8" },
+    { "type": "image_picker", "id": "card_8_image", "label": "Image" },
+    { "type": "text", "id": "card_8_title", "label": "Title" },
+    { "type": "url", "id": "card_8_link", "label": "Link" },
+
+    { "type": "header", "content": "Card 9" },
+    { "type": "image_picker", "id": "card_9_image", "label": "Image" },
+    { "type": "text", "id": "card_9_title", "label": "Title" },
+    { "type": "url", "id": "card_9_link", "label": "Link" },
+
+    { "type": "header", "content": "Card 10" },
+    { "type": "image_picker", "id": "card_10_image", "label": "Image" },
+    { "type": "text", "id": "card_10_title", "label": "Title" },
+    { "type": "url", "id": "card_10_link", "label": "Link" },
+
+    { "type": "header", "content": "Card 11" },
+    { "type": "image_picker", "id": "card_11_image", "label": "Image" },
+    { "type": "text", "id": "card_11_title", "label": "Title" },
+    { "type": "url", "id": "card_11_link", "label": "Link" },
+
+    { "type": "header", "content": "Card 12" },
+    { "type": "image_picker", "id": "card_12_image", "label": "Image" },
+    { "type": "text", "id": "card_12_title", "label": "Title" },
+    { "type": "url", "id": "card_12_link", "label": "Link" },
+
     {
       "type": "header",
       "content": "Spacing"
