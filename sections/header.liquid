@@ -446,11 +446,8 @@ body {
   }
 }
 
-@media screen and (max-width: 949px) {
-  #header-component[data-menu-style='drawer'] .header__column {
-    display: contents;
-  }
-}
+
+
 
 /* ── Transparent header state ── */
 .header[transparent] {
@@ -671,11 +668,6 @@ body {
   align-items: center;
 }
 
-@media screen and (max-width: 949px) {
-  .header__column {
-    display: contents;
-  }
-}
 
 .header__column--left,
 .header__column--center {
@@ -843,84 +835,7 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) .s
   content-visibility: visible;
 }
 
-/* ════════════════════════════════════════
-   MOBILE HEADER LAYOUT ONLY
-   ════════════════════════════════════════ */
-@media screen and (max-width: 949px) {
-  .header-logo,
-  .header-logo a,
-  .header-logo img {
-    display: block;
-    margin-inline: auto;
-  }
 
-  .header__columns,
-  #header-component[data-menu-style='drawer'] .header__columns {
-    --header-template-columns: 44px 44px 1fr 65px 44px;
-    grid-template-areas: 'leftA leftB center rightA rightB';
-    grid-column: span 3;
-    column-gap: 0;
-    align-items: center;
-    padding-block: 0;
-    padding-inline: 0 var(--padding-3xs);
-  }
-
-  .header-logo {
-    grid-area: center;
-  }
-
-  .search-action {
-    grid-area: leftB;
-  }
-
-  .header__columns:not(:has(header-actions)) .search-action {
-    grid-area: leftB;
-  }
-
-  .header__columns:not(:has(shopify-account)) .search-action {
-    grid-area: rightA;
-  }
-
-  header-actions {
-    grid-area: rightB;
-  }
-
-  /* structural visibility only */
-  header-actions shopify-account,
-  header-actions .account-button {
-    display: none !important;
-  }
-
-  .oc-lang-toggle--in-actions {
-    grid-area: rightA;
-    justify-self: center;
-    align-self: center;
-  }
-}
-
-/* ════════════════════════════════════════
-   SEARCH SLOT STRUCTURE ONLY
-   visual styles moved to custom.css
-   ════════════════════════════════════════ */
-@media screen and (min-width: 950px) {
-  .oc-search-action-wrap {
-    display: none !important;
-  }
-
-  .oc-search-slot-wrap {
-    display: flex;
-    align-items: center;
-    min-width: 220px;
-    width: 220px;
-    flex: 0 0 220px;
-  }
-}
-
-@media screen and (max-width: 949px) {
-  .oc-search-slot-wrap {
-    display: none !important;
-  }
-}
 
 /* ════════════════════════════════════════
    LOCALIZATION STRUCTURE
@@ -1005,47 +920,6 @@ dropdown-localization-component .localization-wrapper {
   font-size: var(--menu-localization-font-size);
 }
 
-/* ════════════════════════════════════════
-   DESKTOP HEADER FIX
-   แก้ drawer mode ไม่ให้พังบน desktop
-   ════════════════════════════════════════ */
-@media screen and (min-width: 950px) {
-  #header-component[data-menu-style='drawer'] .header__column,
-  #header-component[data-menu-style='menu'] .header__column {
-    display: flex !important;
-    align-items: center !important;
-  }
-
-  #header-component[data-menu-style='drawer'] .header__column--left,
-  #header-component[data-menu-style='menu'] .header__column--left {
-    grid-area: left !important;
-  }
-
-  #header-component[data-menu-style='drawer'] .header__column--center,
-  #header-component[data-menu-style='menu'] .header__column--center {
-    grid-area: center !important;
-  }
-
-  #header-component[data-menu-style='drawer'] .header__column--right,
-  #header-component[data-menu-style='menu'] .header__column--right {
-    grid-area: right !important;
-  }
-
-  #header-component .header__columns {
-    grid-template-areas: 'left center right' !important;
-    grid-template-columns: minmax(max-content, 1fr) auto minmax(max-content, 1fr) !important;
-    align-items: center !important;
-  }
-
-  #header-component .header-logo,
-  #header-component .search-action,
-  #header-component header-actions,
-  #header-component .oc-lang-toggle--in-actions {
-    grid-area: auto !important;
-    justify-self: auto !important;
-    align-self: auto !important;
-  }
-}
 
 @media screen and (min-width: 950px) and (max-width: 1199px) {
 
@@ -1110,6 +984,245 @@ dropdown-localization-component .localization-wrapper {
   transition: 
     grid-template-columns 0.25s ease,
     column-gap 0.25s ease;
+}
+
+/* ════════════════════════════════════════
+   OCTOPUS HEADER — CLEAN RESPONSIVE LAYOUT
+   2 modes only:
+   - mobile <= 767
+   - tablet/desktop >= 768 (dynamic)
+   ════════════════════════════════════════ */
+
+/* ---------- shared safe reset ---------- */
+.header__columns,
+.header__column,
+.header-logo,
+.header-logo a,
+.header-logo img,
+.search-action,
+header-actions,
+.oc-search-slot-wrap,
+.oc-search-static {
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.header-logo img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+}
+
+/* ---------- mobile only ---------- */
+@media screen and (max-width: 767px) {
+  #header-component[data-menu-style='drawer'] .header__column,
+  .header__column {
+    display: contents;
+  }
+
+  .header-logo,
+  .header-logo a,
+  .header-logo img {
+    display: block;
+    margin-inline: auto;
+  }
+
+  .header__columns,
+  #header-component[data-menu-style='drawer'] .header__columns {
+    display: grid !important;
+    grid-template-columns: 44px 44px minmax(0, 1fr) auto 44px;
+    grid-template-areas: 'leftA leftB center rightA rightB';
+    column-gap: 0;
+    align-items: center;
+    padding-block: 0;
+    padding-inline: 0 var(--padding-3xs);
+  }
+
+  .header-logo { grid-area: center; }
+
+  .search-action { grid-area: leftB; }
+
+  .header__columns:not(:has(header-actions)) .search-action {
+    grid-area: leftB;
+  }
+
+  .header__columns:not(:has(shopify-account)) .search-action {
+    grid-area: rightA;
+  }
+
+  header-actions {
+    grid-area: rightB;
+  }
+
+  header-actions shopify-account,
+  header-actions .account-button {
+    display: none !important;
+  }
+
+  .oc-lang-toggle--in-actions {
+    display: inline-flex !important;
+    grid-area: rightA;
+    justify-self: center;
+    align-self: center;
+  }
+
+  .oc-search-slot-wrap {
+    display: none !important;
+  }
+
+  .oc-search-action-wrap {
+    display: block !important;
+  }
+
+  .header-logo img {
+    max-height: 34px;
+  }
+}
+
+/* ---------- tablet + desktop dynamic ---------- */
+@media screen and (min-width: 768px) {
+  #header-component[data-menu-style='drawer'] .header__column,
+  #header-component[data-menu-style='menu'] .header__column,
+  .header__column {
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .header__column--left {
+    grid-area: left !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: clamp(10px, 1.5vw, 20px) !important;
+    min-width: 0 !important;
+  }
+
+  .header__column--center {
+    grid-area: center !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: clamp(10px, 1.5vw, 20px) !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .header__column--right {
+    grid-area: right !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: clamp(10px, 1.2vw, 18px) !important;
+    min-width: max-content !important;
+  }
+
+  .header__columns,
+  #header-component[data-menu-style='drawer'] .header__columns,
+  #header-component[data-menu-style='menu'] .header__columns {
+    display: grid !important;
+    grid-template-areas: 'left center right' !important;
+    grid-template-columns:
+      minmax(clamp(150px, 22vw, 240px), 1fr)
+      auto
+      minmax(max-content, auto) !important;
+    column-gap: clamp(10px, 1.6vw, 24px) !important;
+    align-items: center !important;
+    padding-inline: 0 !important;
+    transition:
+      grid-template-columns 0.22s ease,
+      column-gap 0.22s ease;
+  }
+
+  /* clear mobile-assigned areas */
+  .header-logo,
+  .header-logo a,
+  .header-logo img,
+  .search-action,
+  header-actions,
+  .oc-lang-toggle--in-actions {
+    grid-area: auto !important;
+    justify-self: auto !important;
+    align-self: auto !important;
+  }
+
+  .oc-lang-toggle--in-actions {
+    display: none !important;
+  }
+
+  .oc-search-action-wrap {
+    display: none !important;
+  }
+
+  .oc-search-slot-wrap {
+    display: flex !important;
+    align-items: center !important;
+    width: clamp(150px, 22vw, 220px) !important;
+    min-width: clamp(150px, 22vw, 220px) !important;
+    flex: 0 0 clamp(150px, 22vw, 220px) !important;
+  }
+
+  .oc-search-static {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+
+  .header-logo {
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+  }
+
+  .header-logo a {
+    margin: 0 !important;
+  }
+
+  .header-logo img {
+    max-height: clamp(30px, 3vw, 42px);
+    width: auto;
+  }
+
+  .header-menu {
+    min-width: 0 !important;
+    overflow: hidden !important;
+  }
+
+  header-actions {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+  }
+
+  header-actions shopify-account,
+  header-actions .account-button {
+    display: inline-flex !important;
+  }
+
+  /* hide desktop lang toggle automatically if space is too tight on smaller tablets */
+  .oc-lang-toggle.mobile\:hidden {
+    flex: 0 0 auto;
+  }
+}
+
+/* ---------- optional tighter tablet polish ---------- */
+@media screen and (min-width: 768px) and (max-width: 900px) {
+  .header__columns,
+  #header-component[data-menu-style='drawer'] .header__columns,
+  #header-component[data-menu-style='menu'] .header__columns {
+    grid-template-columns:
+      minmax(clamp(140px, 24vw, 190px), 1fr)
+      auto
+      max-content !important;
+  }
+
+  .header-logo img {
+    max-height: 32px;
+  }
+
+  .oc-search-slot-wrap {
+    width: clamp(140px, 24vw, 180px) !important;
+    min-width: clamp(140px, 24vw, 180px) !important;
+    flex: 0 0 clamp(140px, 24vw, 180px) !important;
+  }
 }
 
 {% endstylesheet %}
