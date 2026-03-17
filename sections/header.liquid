@@ -613,7 +613,7 @@ body {
   border-bottom: var(--border-bottom-width) solid var(--color-border);
 }
 
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 1139px) {
   .header__row--top:not(.divider--page-width),
   .header__row--top.divider--page-width .header__columns {
     border-bottom-width: var(--border-bottom-width-mobile);
@@ -625,7 +625,7 @@ body {
   border-bottom-width: var(--border-bottom-width-mobile);
 }
 
-@media screen and (min-width: 768px) {
+@media screen and (min-width: 1140px) {
   .header__row.divider--page-width:not(.section--page-width) .header__columns {
     padding-inline-start: 0;
     padding-inline-end: 0;
@@ -744,9 +744,9 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) .s
 }
 
 /* ============================================================
-   MOBILE <= 767
+   MOBILE/TABLET <= 1139
    ============================================================ */
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 1139px) {
   #header-component .header-menu,
   #header-component .dropdown-localization {
     display: none !important;
@@ -823,10 +823,10 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) .s
 }
 
 /* ============================================================
-   TABLET + DESKTOP >= 768
+   TABLET + DESKTOP >= 1140
    ใช้ flex 3 ฝั่ง ไม่ใช้ mobile grid logic
    ============================================================ */
-@media screen and (min-width: 768px) {
+@media screen and (min-width: 1140px) {
   /* menu desktop show always */
   #header-component .header-menu,
   #header-component .dropdown-localization {
@@ -897,11 +897,11 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) .s
   }
 
   .oc-search-slot-wrap {
-    display: flex !important;
-    align-items: center !important;
-    width: clamp(160px, 19vw, 260px) !important;
-    min-width: clamp(160px, 19vw, 260px) !important;
-    flex: 0 0 clamp(160px, 19vw, 260px) !important;
+  display: flex !important;
+  align-items: center !important;
+  width: clamp(220px, 24vw, 360px) !important;
+  min-width: clamp(220px, 24vw, 360px) !important;
+  flex: 0 0 clamp(220px, 24vw, 360px) !important;
   }
 
   .oc-search-static {
@@ -911,8 +911,9 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) .s
   }
 
   .header-logo {
-    flex: 0 0 auto;
-    margin: 0 !important;
+  flex: 0 0 auto;
+  margin: 0 !important;
+  min-width: max-content !important;
   }
 
   .header-logo a {
@@ -921,14 +922,28 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) .s
   }
 
   .header-logo img {
-    max-height: clamp(30px, 2.5vw, 42px);
-    width: auto;
-    margin: 0 !important;
+  max-height: clamp(34px, 2.7vw, 46px);
+  width: auto;
+  margin: 0 !important;
   }
 
   .header-menu {
     min-width: 0;
   }
+
+  .header-menu .menu-list,
+.header-menu .overflow-menu::part(list) {
+  display: flex !important;
+  align-items: center !important;
+  gap: clamp(12px, 1.1vw, 22px) !important;
+  flex-wrap: nowrap !important;
+}
+
+.header-menu .menu-list__link,
+.header-menu summary,
+.header-menu a {
+  white-space: nowrap !important;
+}
 
   .header-menu .overflow-menu,
   .header-menu .menu-list,
