@@ -1356,9 +1356,7 @@ input[type="checkbox"] {
 .icon.icon-account        { height: 17px; width: 17px; }
 .header__icon--cart .icon { height: 36px; width: 36px; }
 
-@media screen and (min-width: 990px) {
-  .header { grid-template-columns: 3fr 11fr 10fr !important; }
-}
+
 
 
 /* [CLEANUP §10b] GrandMenu plugin CSS — ลบได้ถ้าเลิกใช้ GrandMenu
@@ -1980,7 +1978,52 @@ body.gm-menu-installed .gm-menu ul {
     display: contents;
   }
 }
+/* ============================================================
+   HEADER DESKTOP RESET FIX
+   แก้ state ค้างจาก mobile/legacy เมื่อ viewport กว้างขึ้น
+   ============================================================ */
+@media screen and (min-width: 990px) {
+  .header__columns,
+  #header-component[data-menu-style='drawer'] .header__columns {
+    grid-template-areas: 'left center right' !important;
+    grid-template-columns: minmax(max-content, 1fr) auto minmax(max-content, 1fr) !important;
+    align-items: center !important;
+    padding-block: 0 !important;
+    padding-inline: 0 !important;
+  }
 
+  .header-logo {
+    grid-area: center !important;
+    justify-self: center !important;
+  }
+
+  .search-action {
+    grid-area: unset !important;
+  }
+
+  header-actions {
+    grid-area: right !important;
+    justify-self: end !important;
+  }
+
+  .oc-lang-toggle--in-actions {
+    display: none !important;
+  }
+
+  .oc-search-slot-wrap {
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .oc-search-action-wrap {
+    display: none !important;
+  }
+
+  header-actions shopify-account,
+  header-actions .account-button {
+    display: inline-flex !important;
+  }
+}
 /* ── Header actions visual polish ── */
 .header-actions__action {
   border-radius: 999px;
