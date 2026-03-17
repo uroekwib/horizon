@@ -1269,6 +1269,31 @@
   100% { background-position: -120% 0; }
 }
 
+/* Pill: ซ่อนปกติ แสดงเฉพาะ desktop menu mode */
+.oc-search-static {
+  display: none;
+}
+
+#header-component[data-menu-style='menu']
+.search-action:not(.search-action--hidden-on-menu)
+.oc-search-static {
+  display: block;
+  width: 100%;
+}
+
+#header-component[data-menu-style='menu']
+.search-action:not(.search-action--hidden-on-menu)
+.search-action__icon-btn {
+  display: none;
+}
+
+#header-component[data-menu-style='menu']
+.search-action:not(.search-action--hidden-on-menu) {
+  flex: 1 1 clamp(180px, 22vw, 460px);
+  min-width: 0;
+  display: flex;
+}
+
 /******* end of search input********/
 
 {% endstylesheet %}
