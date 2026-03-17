@@ -1290,28 +1290,6 @@
   display: flex;
 }
 
-@media screen and (min-width: 990px) {
-  /* force hide drawer_search ที่ desktop ไม่ว่า data-menu-style จะเป็นอะไร */
-  .search-action--hidden-on-menu {
-    display: none !important;
-  }
-
-  .search-action:not(.search-action--hidden-on-menu) .oc-search-static {
-    display: block;
-    width: 100%;
-  }
-
-  .search-action:not(.search-action--hidden-on-menu) .search-action__icon-btn {
-    display: none;
-  }
-
-  .search-action:not(.search-action--hidden-on-menu) {
-    flex: 1 1 clamp(180px, 22vw, 460px);
-    min-width: 0;
-    display: flex;
-  }
-}
-
 /******* end of search input********/
 
 {% endstylesheet %}
