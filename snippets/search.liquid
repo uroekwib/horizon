@@ -13,20 +13,45 @@
   <search-button
     class="search-action{% if display_style == 'text' %} search-action--text{% endif %}{% if class != blank %} {{ class | strip }}{% endif %}"
   >
+    {%- comment -%} Icon button — ซ่อนตอน desktop menu mode {%- endcomment -%}
     <button
       on:click="#search-modal/showDialog"
-      class="button-unstyled header-actions__action{% if display_style == 'text' %} header-actions__text-style{% endif %}"
+      class="button-unstyled header-actions__action search-action__icon-btn{% if display_style == 'text' %} header-actions__text-style{% endif %}"
       aria-label="{{ 'content.search_input_label' | t }}"
       aria-haspopup="dialog"
     >
       <span class="{% if display_style == 'icon' %}hidden{% else %}mobile:hidden{% endif %}">
         {{ 'content.search' | t }}
       </span>
-
       <span class="svg-wrapper {% if display_style != 'icon' %}desktop:hidden{% endif %}">
         {{ 'icon-search.svg' | inline_asset_content }}
       </span>
     </button>
+
+    {%- comment -%} Pill input — แสดงเฉพาะ desktop menu mode {%- endcomment -%}
+    <form action="/search" method="get" class="oc-search-static" role="search">
+      <div class="oc-search-static__rainbow" aria-hidden="true"></div>
+      <div class="oc-search-static__inner">
+        <input
+          type="search"
+          name="q"
+          class="oc-search-static__input"
+          placeholder="{{ 'content.search_input_label' | t }}"
+          aria-label="{{ 'content.search_input_label' | t }}"
+          autocomplete="off"
+        >
+        <button
+          type="submit"
+          class="oc-search-static__icon-btn"
+          aria-label="{{ 'content.search_input_label' | t }}"
+        >
+          <span class="oc-search-static__icon-glow" aria-hidden="true"></span>
+          <span class="oc-search-static__icon-svg">
+            {{ 'icon-search.svg' | inline_asset_content }}
+          </span>
+        </button>
+      </div>
+    </form>
   </search-button>
 {% endunless %}
 
