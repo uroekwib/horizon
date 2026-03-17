@@ -1,5 +1,5 @@
 {% doc %}
-  @prompt Global css already SaaS-style hero section — Thai signage company.
+  @prompt BENTP HERO SaaS-style hero section — Thai signage company.
   Left: headline + buttons + stats. Right: auto-scrolling bento gallery.
   CSS ported to reference Octopus design system tokens / classes.
 {% enddoc %}
@@ -310,7 +310,7 @@
               <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-tall-{{ ai_gen_id }}">
               {%- if block.settings.card_1_link != blank -%}<a href="{{ block.settings.card_1_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
               {%- if block.settings.card_1_image -%}
-                <img src="{{ block.settings.card_1_image | image_url: width: 400 }}" alt="{{ block.settings.card_1_image.alt | escape }}" loading="lazy" width="180">
+                <img src="{{ block.settings.card_1_image | image_url: width: 400 }}" alt="{{ block.settings.card_1_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_tall_height }}">
               {%- else -%}
                 <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
               {%- endif -%}
@@ -326,7 +326,7 @@
               <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-half-{{ ai_gen_id }}">
               {%- if block.settings.card_2_link != blank -%}<a href="{{ block.settings.card_2_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
               {%- if block.settings.card_2_image -%}
-                <img src="{{ block.settings.card_2_image | image_url: width: 400 }}" alt="{{ block.settings.card_2_image.alt | escape }}" loading="lazy" width="180">
+                <img src="{{ block.settings.card_2_image | image_url: width: 400 }}" alt="{{ block.settings.card_2_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_half_height }}">
               {%- else -%}
                 <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
               {%- endif -%}
@@ -338,7 +338,7 @@
               <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-half-{{ ai_gen_id }}">
               {%- if block.settings.card_3_link != blank -%}<a href="{{ block.settings.card_3_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
               {%- if block.settings.card_3_image -%}
-                <img src="{{ block.settings.card_3_image | image_url: width: 400 }}" alt="{{ block.settings.card_3_image.alt | escape }}" loading="lazy" width="180">
+                <img src="{{ block.settings.card_3_image | image_url: width: 400 }}" alt="{{ block.settings.card_3_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_half_height }}">
               {%- else -%}
                 <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
               {%- endif -%}
@@ -354,7 +354,7 @@
               <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-tall-{{ ai_gen_id }}">
               {%- if block.settings.card_4_link != blank -%}<a href="{{ block.settings.card_4_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
               {%- if block.settings.card_4_image -%}
-                <img src="{{ block.settings.card_4_image | image_url: width: 400 }}" alt="{{ block.settings.card_4_image.alt | escape }}" loading="lazy" width="180">
+                <img src="{{ block.settings.card_4_image | image_url: width: 400 }}" alt="{{ block.settings.card_4_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_tall_height }}">
               {%- else -%}
                 <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
               {%- endif -%}
@@ -370,7 +370,7 @@
               <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-half-{{ ai_gen_id }}">
               {%- if block.settings.card_5_link != blank -%}<a href="{{ block.settings.card_5_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
               {%- if block.settings.card_5_image -%}
-                <img src="{{ block.settings.card_5_image | image_url: width: 400 }}" alt="{{ block.settings.card_5_image.alt | escape }}" loading="lazy" width="180">
+                <img src="{{ block.settings.card_5_image | image_url: width: 400 }}" alt="{{ block.settings.card_5_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_half_height }}">
               {%- else -%}
                 <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
               {%- endif -%}
@@ -382,7 +382,7 @@
               <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-half-{{ ai_gen_id }}">
               {%- if block.settings.card_6_link != blank -%}<a href="{{ block.settings.card_6_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
               {%- if block.settings.card_6_image -%}
-                <img src="{{ block.settings.card_6_image | image_url: width: 400 }}" alt="{{ block.settings.card_6_image.alt | escape }}" loading="lazy" width="180">
+                <img src="{{ block.settings.card_6_image | image_url: width: 400 }}" alt="{{ block.settings.card_6_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_half_height }}">
               {%- else -%}
                 <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
               {%- endif -%}
@@ -398,7 +398,7 @@
               <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-tall-{{ ai_gen_id }}">
               {%- if block.settings.card_7_link != blank -%}<a href="{{ block.settings.card_7_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
               {%- if block.settings.card_7_image -%}
-                <img src="{{ block.settings.card_7_image | image_url: width: 400 }}" alt="{{ block.settings.card_7_image.alt | escape }}" loading="lazy" width="180">
+                <img src="{{ block.settings.card_7_image | image_url: width: 400 }}" alt="{{ block.settings.card_7_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_tall_height }}">
               {%- else -%}
                 <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
               {%- endif -%}
@@ -414,7 +414,7 @@
               <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-half-{{ ai_gen_id }}">
               {%- if block.settings.card_8_link != blank -%}<a href="{{ block.settings.card_8_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
               {%- if block.settings.card_8_image -%}
-                <img src="{{ block.settings.card_8_image | image_url: width: 400 }}" alt="{{ block.settings.card_8_image.alt | escape }}" loading="lazy" width="180">
+                <img src="{{ block.settings.card_8_image | image_url: width: 400 }}" alt="{{ block.settings.card_8_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_half_height }}">
               {%- else -%}
                 <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
               {%- endif -%}
@@ -426,7 +426,7 @@
               <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-half-{{ ai_gen_id }}">
               {%- if block.settings.card_9_link != blank -%}<a href="{{ block.settings.card_9_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
               {%- if block.settings.card_9_image -%}
-                <img src="{{ block.settings.card_9_image | image_url: width: 400 }}" alt="{{ block.settings.card_9_image.alt | escape }}" loading="lazy" width="180">
+                <img src="{{ block.settings.card_9_image | image_url: width: 400 }}" alt="{{ block.settings.card_9_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_half_height }}">
               {%- else -%}
                 <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
               {%- endif -%}
@@ -442,7 +442,7 @@
               <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-tall-{{ ai_gen_id }}">
               {%- if block.settings.card_10_link != blank -%}<a href="{{ block.settings.card_10_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
               {%- if block.settings.card_10_image -%}
-                <img src="{{ block.settings.card_10_image | image_url: width: 400 }}" alt="{{ block.settings.card_10_image.alt | escape }}" loading="lazy" width="180">
+                <img src="{{ block.settings.card_10_image | image_url: width: 400 }}" alt="{{ block.settings.card_10_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_tall_height }}">
               {%- else -%}
                 <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
               {%- endif -%}
@@ -458,7 +458,7 @@
               <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-half-{{ ai_gen_id }}">
               {%- if block.settings.card_11_link != blank -%}<a href="{{ block.settings.card_11_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
               {%- if block.settings.card_11_image -%}
-                <img src="{{ block.settings.card_11_image | image_url: width: 400 }}" alt="{{ block.settings.card_11_image.alt | escape }}" loading="lazy" width="180">
+                <img src="{{ block.settings.card_11_image | image_url: width: 400 }}" alt="{{ block.settings.card_11_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_half_height }}">
               {%- else -%}
                 <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
               {%- endif -%}
@@ -470,7 +470,7 @@
               <div class="oc-hero-card-{{ ai_gen_id }} oc-hero-card-half-{{ ai_gen_id }}">
               {%- if block.settings.card_12_link != blank -%}<a href="{{ block.settings.card_12_link }}" class="oc-hero-card-link-{{ ai_gen_id }}" target="_blank" rel="noopener">{%- endif -%}
               {%- if block.settings.card_12_image -%}
-                <img src="{{ block.settings.card_12_image | image_url: width: 400 }}" alt="{{ block.settings.card_12_image.alt | escape }}" loading="lazy" width="180">
+                <img src="{{ block.settings.card_12_image | image_url: width: 400 }}" alt="{{ block.settings.card_12_image.alt | escape }}" loading="lazy" width="180" height="{{ block.settings.card_half_height }}">
               {%- else -%}
                 <div class="oc-hero-placeholder-{{ ai_gen_id }}">{{ 'product-1' | placeholder_svg_tag }}</div>
               {%- endif -%}
@@ -806,7 +806,7 @@
   ],
   "presets": [
     {
-      "name": "Hero — Bento Gallery"
+      "name": "Hero — Bento Hero"
     }
   ]
 }
