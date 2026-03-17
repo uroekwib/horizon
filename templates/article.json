@@ -49,7 +49,7 @@
             "type_preset": "",
             "alignment": "center",
             "show_alignment": true,
-            "padding-block-start": 24,
+            "padding-block-start": 10,
             "padding-block-end": 0
           },
           "blocks": {}
@@ -84,10 +84,10 @@
       },
       "settings": {
         "content_direction": "column",
-        "gap": 32,
+        "gap": 15,
         "color_scheme": "scheme-2",
         "padding-block-start": 40,
-        "padding-block-end": 80
+        "padding-block-end": 40
       }
     }
   },
