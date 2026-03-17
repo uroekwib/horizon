@@ -1,6 +1,6 @@
 {% doc %}
-  @prompt BENTP HERO SaaS-style hero section — Thai signage company.
-  Left: headline + buttons + stats. Right: auto-scrolling bento gallery.
+  @prompt SaaS-style hero section — Thai signage company.
+  Left: headline + buttons + stats. Right: auto-scrolling bento HERO.
   CSS ported to reference Octopus design system tokens / classes.
 {% enddoc %}
 {% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
@@ -18,6 +18,10 @@
     min-height: 320px;
     position: relative;
     overflow: hidden;
+    /* ── break out of Horizon page-width container ── */
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    width: 100vw;
   }
 
   .oc-hero-wrap-{{ ai_gen_id }} {
