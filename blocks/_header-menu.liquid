@@ -366,7 +366,11 @@ function resizeImg(src, width, height) {
           this.productPanel = panel.querySelector('.oc-mega__product-panel');
           this.thumbCount = parseInt(this.productPanel.dataset.thumbCount || 4, 10);
           this.productLimit = parseInt(this.productPanel.dataset.productLimit || 8, 10);
-          this.thumbSize = parseInt(getComputedStyle(this.panel).getPropertyValue('--oc-thumb-size') || 160, 10);
+          var styles = getComputedStyle(this.panel);
+this.thumbHeight = parseInt(styles.getPropertyValue('--oc-thumb-height') || 90, 10);
+this.thumbRenderWidth = Math.round(this.thumbHeight * 4 / 3);
+this.thumbImageWidth = parseInt(styles.getPropertyValue('--oc-thumb-image-width') || 500, 10);
+this.thumbImageHeight = Math.round(this.thumbImageWidth * 3 / 4);
           this.activeHandle = null;
           this.booted = false;
           this.bind();
