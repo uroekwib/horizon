@@ -333,116 +333,80 @@
   src="{{ 'header.js' | asset_url }}"
   type="module"
 ></script>
-
 {% stylesheet %}
-    body {
-      --header-height: 60px;
-      --header-group-height: var(--header-height);
-      --transparent-header-offset-boolean: 0; /* stylelint-disable-line declaration-property-value-disallowed-list */
+  body {
+    --header-height: 60px;
+    --header-group-height: var(--header-height);
+    --transparent-header-offset-boolean: 0;
+  }
+
+  .header {
+    --header-padding: var(--padding-sm);
+    --font-paragraph--line-height: 1;
+    --header-content-transition-timing: 0s;
+    display: block;
+    contain: layout style;
+    background: transparent;
+
+    a,
+    .button,
+    .button-secondary,
+    .header-actions__action {
+      transition: color var(--header-content-transition-timing), border-color var(--header-content-transition-timing);
+    }
+  }
+
+  #header-component {
+    --submenu-height: 0px;
+    --full-open-header-height: 0px;
+  }
+
+  #header-component :is(.header-menu, .dropdown-localization) {
+    display: none;
+  }
+
+  @media screen and (min-width: 750px) {
+    #header-component[data-menu-style='menu'] :is(.header-menu, .dropdown-localization) {
+      display: flex;
     }
 
-    .header {
-      /* Set header paddings based on height setting */
-      --header-padding: var(--padding-sm);
-      --font-paragraph--line-height: 1;
-      --header-content-transition-timing: 0s;
-
-      display: block;
-      contain: layout style;
-      background: transparent;
-
-      a,
-      .button,
-      .button-secondary,
-      .header-actions__action {
-        /* reset style from base.css */
-        transition: color var(--header-content-transition-timing), border-color var(--header-content-transition-timing);
-      }
-    }
-
-    #header-component :is(.header-menu, .dropdown-localization) {
+    #header-component[data-menu-style='menu'] .header__navigation-bar-row {
       display: none;
     }
+  }
 
-    @media screen and (min-width: 750px) {
-      #header-component[data-menu-style='menu'] :is(.header-menu, .dropdown-localization) {
-        display: flex;
-      }
+  #header-component[data-menu-style='drawer'] .header__column {
+    display: contents;
+  }
+
+  .header[transparent] {
+    --language-button-background-color: transparent;
+    --language-button-border-color: transparent;
+    --header-content-transition-timing: calc(var(--submenu-animation-speed) - var(--animation-speed-fast))
+      var(--animation-speed-fast) var(--ease-out-cubic);
+    --closed-underlay-height: 0px;
+    --header-logo-display: none;
+    --header-logo-inverse-display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--layer-overlay);
+
+    &[transparent='not-sticky'][data-sticky-state='active'],
+    &:has(.menu-list__link:not([aria-haspopup]):hover) {
+      --header-logo-display: unset;
+      --header-logo-inverse-display: unset;
+      --color-foreground: inherit;
+      --color-foreground-rgb: inherit;
+      --color-background: inherit;
+      --color-background-rgb: inherit;
+      --color-border: inherit;
+      --color-border-rgb: inherit;
+      --closed-underlay-height: 100%;
     }
 
-    #header-component[data-menu-style='drawer'] .header__column {
-      display: contents;
-    }
-
-    @media screen and (min-width: 750px) {
-      #header-component[data-menu-style='menu'] .header__navigation-bar-row {
-        display: none;
-      }
-    }
-
-    .header[transparent] {
-      --language-button-background-color: transparent;
-      --language-button-border-color: transparent;
-      --header-content-transition-timing: calc(var(--submenu-animation-speed) - var(--animation-speed-fast))
-        var(--animation-speed-fast) var(--ease-out-cubic);
-
-      --closed-underlay-height: 0px;
-
-      /* used to display the appropriate logo based on transparency state */
-      --header-logo-display: none;
-      --header-logo-inverse-display: block;
-
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-
-      z-index: var(--layer-overlay);
-
-      &[transparent='not-sticky'][data-sticky-state='active'],
-      &:has(.menu-list__link:not([aria-haspopup]):hover) {
-        --header-logo-display: unset;
-        --header-logo-inverse-display: unset;
-        --color-foreground: inherit;
-        --color-foreground-rgb: inherit;
-        --color-background: inherit;
-        --color-background-rgb: inherit;
-        --color-border: inherit;
-        --color-border-rgb: inherit;
-        --closed-underlay-height: 100%;
-      }
-
-      /** For transparent header, apply inherit to rows when menu is not hovered */
-      &:not([data-sticky-state='active']):not(:has(.menu-list__link:is(:hover, [aria-expanded='true']))) .header__row {
-        --color-foreground: inherit;
-        --color-foreground-rgb: inherit;
-        --color-border: inherit;
-        --color-border-rgb: inherit;
-        --color-primary-button-background: inherit;
-        --color-primary-button-text: inherit;
-      }
-
-      /* Multiple selectors for performance: each simple :has() check is faster than one complex selector with multiple conditions */
-      &:has(.mega-menu__list:hover),
-      &:has(.menu-list__link:is(:hover, [aria-expanded='true'])),
-      &:has(.menu-list__list-item[slot='overflow'] .menu-list__link:is(:hover, [aria-expanded='true'])) {
-        --header-logo-display: unset;
-        --header-logo-inverse-display: unset;
-        --color-foreground: inherit;
-        --color-foreground-rgb: inherit;
-        --color-background: inherit;
-        --color-background-rgb: inherit;
-        --color-border: inherit;
-        --color-border-rgb: inherit;
-        --header-content-transition-timing: var(--submenu-animation-speed) var(--ease-out-cubic);
-      }
-    }
-
-    /* When top row has transparent background, make it inherit colors from header component */
-    [data-transparent-color-scheme='top']:hover .header__row--top,
-    [data-transparent-color-scheme='top']:focus-within .header__row--top,
-    [data-transparent-color-scheme='both']:hover .header__row--top,
-    [data-transparent-color-scheme='both']:focus-within .header__row--top {
+    &:not([data-sticky-state='active']):not(:has(.menu-list__link:is(:hover, [aria-expanded='true']))) .header__row {
       --color-foreground: inherit;
       --color-foreground-rgb: inherit;
       --color-border: inherit;
@@ -451,785 +415,725 @@
       --color-primary-button-text: inherit;
     }
 
-    /* When bottom row has transparent background, make it inherit colors from header component */
-    [data-transparent-color-scheme='bottom']:hover .header__row--bottom,
-    [data-transparent-color-scheme='bottom']:focus-within .header__row--bottom,
-    [data-transparent-color-scheme='both']:hover .header__row--bottom,
-    [data-transparent-color-scheme='both']:focus-within .header__row--bottom {
+    &:has(.mega-menu__list:hover),
+    &:has(.menu-list__link:is(:hover, [aria-expanded='true'])),
+    &:has(.menu-list__list-item[slot='overflow'] .menu-list__link:is(:hover, [aria-expanded='true'])) {
+      --header-logo-display: unset;
+      --header-logo-inverse-display: unset;
       --color-foreground: inherit;
       --color-foreground-rgb: inherit;
+      --color-background: inherit;
+      --color-background-rgb: inherit;
       --color-border: inherit;
       --color-border-rgb: inherit;
-      --color-primary-button-background: inherit;
-      --color-primary-button-text: inherit;
+      --header-content-transition-timing: var(--submenu-animation-speed) var(--ease-out-cubic);
+    }
+  }
+
+  [data-transparent-color-scheme='top']:hover .header__row--top,
+  [data-transparent-color-scheme='top']:focus-within .header__row--top,
+  [data-transparent-color-scheme='both']:hover .header__row--top,
+  [data-transparent-color-scheme='both']:focus-within .header__row--top,
+  [data-transparent-color-scheme='bottom']:hover .header__row--bottom,
+  [data-transparent-color-scheme='bottom']:focus-within .header__row--bottom,
+  [data-transparent-color-scheme='both']:hover .header__row--bottom,
+  [data-transparent-color-scheme='both']:focus-within .header__row--bottom {
+    --color-foreground: inherit;
+    --color-foreground-rgb: inherit;
+    --color-border: inherit;
+    --color-border-rgb: inherit;
+    --color-primary-button-background: inherit;
+    --color-primary-button-text: inherit;
+  }
+
+  .header-section {
+    position: relative;
+    z-index: var(--layer-heightened);
+  }
+
+  #header-group:has(#header-component[sticky]) {
+    display: contents;
+  }
+
+  .header-section:has(> #header-component[sticky='always']),
+  .header-section:has(> #header-component[sticky='scroll-up'][data-sticky-state='active']) {
+    position: sticky;
+    top: -1px;
+    z-index: var(--layer-sticky);
+  }
+
+  .header[data-sticky-state] {
+    transition: opacity var(--animation-speed) var(--animation-easing);
+    opacity: 1;
+  }
+
+  .header[data-sticky-state='active'] {
+    view-transition-name: sticky-header;
+  }
+
+  :active-view-transition-type(empty-cart-drawer) {
+    .header[data-sticky-state='active'] {
+      view-transition-name: none;
+    }
+  }
+
+  .header[data-sticky-state='idle'] {
+    opacity: 0;
+  }
+
+  .header__underlay {
+    position: absolute;
+    inset: 0;
+  }
+
+  .header__underlay-closed {
+    height: var(--closed-underlay-height, 100%);
+    z-index: var(--layer-lowest);
+    background: linear-gradient(
+      var(--color-scheme-top-row) 0 var(--top-row-height),
+      var(--color-scheme-bottom-row) var(--top-row-height) var(--header-height)
+    );
+    transition: height var(--animation-speed-slow) var(--ease-out-cubic);
+  }
+
+  .header__underlay-open {
+    height: var(--full-open-header-height);
+    background: linear-gradient(
+      var(--color-scheme-top-row) 0 var(--top-row-height),
+      var(--color-scheme-bottom-row) var(--top-row-height) var(--header-height),
+      var(--color-submenu) var(--header-height) 100%
+    );
+    transition: height var(--submenu-animation-speed) var(--ease-out-cubic);
+  }
+
+  .header__underlay-open::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    box-shadow: var(--shadow-popover);
+    clip-path: inset(var(--header-height) 0 -100px 0);
+    transition: height var(--submenu-animation-speed) var(--ease-out-cubic);
+  }
+
+  [data-transparent-color-scheme='top']:hover,
+  [data-transparent-color-scheme='top']:focus-within,
+  [data-transparent-color-scheme='both']:hover,
+  [data-transparent-color-scheme='both']:focus-within {
+    :is(.header__underlay-open, .header__underlay-closed) {
+      --color-scheme-top-row: var(--color-background);
+    }
+  }
+
+  [data-transparent-color-scheme='bottom']:hover,
+  [data-transparent-color-scheme='bottom']:focus-within,
+  [data-transparent-color-scheme='both']:hover,
+  [data-transparent-color-scheme='both']:focus-within {
+    :is(.header__underlay-open, .header__underlay-closed) {
+      --color-scheme-bottom-row: var(--color-background);
+    }
+  }
+
+  [data-submenu-overlap-bottom-row] {
+    .header__underlay-open {
+      background: linear-gradient(
+        var(--color-scheme-top-row) 0 var(--top-row-height),
+        var(--color-submenu) var(--top-row-height) 100%
+      );
     }
 
-    .header-section {
-      position: relative;
+    .header__row--bottom {
+      z-index: var(--layer-lowest);
+    }
+  }
+
+  .header__row {
+    --color-account-icon: var(--color-foreground);
+    position: relative;
+    background-color: transparent;
+
+    &:has(.mega-menu__list:hover),
+    &:has(.menu-list__link[aria-haspopup]:is(:hover, [aria-expanded='true'])),
+    &:has(.menu-list__list-item[slot='overflow'] .menu-list__link:is(:hover, [aria-expanded='true'])) {
       z-index: var(--layer-heightened);
     }
+  }
 
-    /* need default values for non-flash transitions on first overflow menu open */
-    #header-component {
-      --submenu-height: 0px;
-      --full-open-header-height: 0px;
+  .header__row--top:not(.divider--page-width),
+  .header__row--top.divider--page-width .header__columns,
+  .header__row--bottom {
+    border-bottom: var(--border-bottom-width) solid var(--color-border);
+  }
+
+  @media screen and (max-width: 749px) {
+    .header__row--top:not(.divider--page-width),
+    .header__row--top.divider--page-width .header__columns {
+      border-bottom-width: var(--border-bottom-width-mobile);
     }
+  }
 
-    #header-group:has(#header-component[sticky]) {
+  #header-component[data-menu-style='drawer'] .header__row--top:not(.divider--page-width),
+  #header-component[data-menu-style='drawer'] .header__row--top.divider--page-width .header__columns {
+    border-bottom-width: var(--border-bottom-width-mobile);
+  }
+
+  .header__row.divider--page-width:not(.section--page-width) .header__columns {
+    @media screen and (min-width: 750px) {
+      padding-inline-start: 0;
+      padding-inline-end: 0;
+      margin-inline-start: var(--page-margin);
+      margin-inline-end: var(--page-margin);
+    }
+  }
+
+  .header__column {
+    display: flex;
+    align-items: center;
+
+    @media screen and (max-width: 749px) {
       display: contents;
     }
+  }
 
-    .header-section:has(> #header-component[sticky='always']),
-    .header-section:has(> #header-component[sticky='scroll-up'][data-sticky-state='active']) {
-      position: sticky;
+  .header__column--left,
+  .header__column--center {
+    gap: var(--gap-xl);
+    grid-area: left;
+  }
 
-      /* Use -1 instead of 0 so intersection observer can track sticky state */
-      top: -1px;
-      z-index: var(--layer-sticky);
+  .header__column--center {
+    justify-content: center;
+    grid-area: center;
+
+    header-menu:only-child .overflow-menu::part(list) {
+      justify-content: center;
+    }
+  }
+
+  .header__column--right {
+    gap: var(--gap-xs);
+    justify-content: flex-end;
+    grid-area: right;
+
+    .overflow-menu::part(list) {
+      justify-content: flex-end;
+    }
+  }
+
+  .header__columns {
+    --header-left: 1fr;
+    --header-center: auto;
+    --header-right: 1fr;
+    --header-template-columns: var(--header-left) var(--header-center) var(--header-right);
+    --header-mobile-bookend: 44px;
+
+    display: grid;
+    grid-template-areas: 'left center right';
+    grid-gap: var(--gap-xl);
+    grid-template-columns: var(--header-template-columns);
+
+    &:has(.header__column--center header-menu) {
+      --header-center: auto;
+      --header-left: minmax(max-content, 1fr);
+      --header-right: minmax(max-content, 1fr);
     }
 
-    .header[data-sticky-state] {
-      transition: opacity var(--animation-speed) var(--animation-easing);
-      opacity: 1;
-    }
-
-    .header[data-sticky-state='active'] {
-      view-transition-name: sticky-header;
-    }
-
-    :active-view-transition-type(empty-cart-drawer) {
-      .header[data-sticky-state='active'] {
-        view-transition-name: none;
-      }
-    }
-
-    .header[data-sticky-state='idle'] {
-      opacity: 0;
-    }
-
-    /* ================================
-       * Underlays
-       * ================================ */
-    .header__underlay {
-      position: absolute;
-      inset: 0;
-    }
-
-    .header__underlay-closed {
-      height: var(--closed-underlay-height, 100%);
-      z-index: var(--layer-lowest);
-      background: linear-gradient(
-        var(--color-scheme-top-row) 0 var(--top-row-height),
-        var(--color-scheme-bottom-row) var(--top-row-height) var(--header-height)
-      );
-      transition: height var(--animation-speed-slow) var(--ease-out-cubic);
-    }
-
-    .header__underlay-open {
-      height: var(--full-open-header-height);
-      background: linear-gradient(
-        var(--color-scheme-top-row) 0 var(--top-row-height),
-        var(--color-scheme-bottom-row) var(--top-row-height) var(--header-height),
-        var(--color-submenu) var(--header-height) 100%
-      );
-      /* header-height is updated via js, the transition works automagically */
-      transition: height var(--submenu-animation-speed) var(--ease-out-cubic);
-    }
-
-    .header__underlay-open::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      box-shadow: var(--shadow-popover);
-      clip-path: inset(var(--header-height) 0 -100px 0); /* stylelint-disable-line */
-      transition: height var(--submenu-animation-speed) var(--ease-out-cubic);
-    }
-
-    /* When top row has transparent background, make underlay inherit colors from header component */
-    [data-transparent-color-scheme='top']:hover,
-    [data-transparent-color-scheme='top']:focus-within,
-    [data-transparent-color-scheme='both']:hover,
-    [data-transparent-color-scheme='both']:focus-within {
-      :is(.header__underlay-open, .header__underlay-closed) {
-        --color-scheme-top-row: var(--color-background);
-      }
-    }
-
-    /* When bottom row has transparent background, make underlay inherit colors from header component */
-    [data-transparent-color-scheme='bottom']:hover,
-    [data-transparent-color-scheme='bottom']:focus-within,
-    [data-transparent-color-scheme='both']:hover,
-    [data-transparent-color-scheme='both']:focus-within {
-      :is(.header__underlay-open, .header__underlay-closed) {
-        --color-scheme-bottom-row: var(--color-background);
-      }
-    }
-
-    [data-submenu-overlap-bottom-row] {
-      .header__underlay-open {
-        background: linear-gradient(
-          var(--color-scheme-top-row) 0 var(--top-row-height),
-          var(--color-submenu) var(--top-row-height) 100%
-        );
+    &:where(:not(:has(.header__column--center))) {
+      @media screen and (min-width: 750px) {
+        --header-template-columns: var(--header-left) var(--header-right);
+        grid-template-areas: 'left right';
       }
 
-      .header__row--bottom {
-        z-index: var(--layer-lowest);
+      &:has(.header__column--right header-menu) {
+        --header-right: auto;
+        --header-left: minmax(max-content, 1fr);
       }
 
-
-    }
-
-    /* End Underlays ================ */
-
-    .header__row {
-      /* The account component uses a different color scheme, but we need to override it to inherit the color of the header row */
-      --color-account-icon: var(--color-foreground);
-
-      position: relative;
-
-      /* Overwrite color from color scheme, background is controlled by the underlays */
-      background-color: transparent;
-
-      &:has(.mega-menu__list:hover),
-      &:has(.menu-list__link[aria-haspopup]:is(:hover, [aria-expanded='true'])),
-      &:has(.menu-list__list-item[slot='overflow'] .menu-list__link:is(:hover, [aria-expanded='true'])) {
-        /* Only elevate the row when the submenu is open to avoid overlapping other elevated content */
-        z-index: var(--layer-heightened);
+      &:has(.header__column--left header-menu) {
+        --header-left: auto;
+        --header-right: minmax(max-content, 1fr);
       }
-    }
-
-    .header__row--top:not(.divider--page-width),
-    .header__row--top.divider--page-width .header__columns,
-    .header__row--bottom {
-      border-bottom: var(--border-bottom-width) solid var(--color-border);
     }
 
     @media screen and (max-width: 749px) {
-      .header__row--top:not(.divider--page-width),
-      .header__row--top.divider--page-width .header__columns {
-        border-bottom-width: var(--border-bottom-width-mobile);
-      }
-    }
-
-    #header-component[data-menu-style='drawer'] .header__row--top:not(.divider--page-width),
-    #header-component[data-menu-style='drawer'] .header__row--top.divider--page-width .header__columns {
-      border-bottom-width: var(--border-bottom-width-mobile);
-    }
-
-    .header__row.divider--page-width:not(.section--page-width) .header__columns {
-      @media screen and (min-width: 750px) {
-        padding-inline-start: 0;
-        padding-inline-end: 0;
-        margin-inline-start: var(--page-margin);
-        margin-inline-end: var(--page-margin);
-      }
-    }
-
-    .header__column {
-      display: flex;
+      --header-template-columns: 40px 40px 1fr 42px 24px 24px;
+      grid-template-areas: 'leftA leftB center rightLg rightA rightB';
+      grid-column: span 3;
+      column-gap: 0;
       align-items: center;
+      padding-block: 0;
+      padding-inline: 0 var(--padding-3xs);
 
-      /* on mobile, header__column nodes are ignored to create a new grid-template-area based on all visible content */
-      @media screen and (max-width: 749px) {
-        display: contents;
-      }
-    }
-
-    .header__column--left,
-    .header__column--center {
-      gap: var(--gap-xl);
-      grid-area: left;
-    }
-
-    .header__column--center {
-      justify-content: center;
-      grid-area: center;
-
-      header-menu:only-child .overflow-menu::part(list) {
-        justify-content: center;
-      }
-    }
-
-    .header__column--right {
-      gap: var(--gap-xs);
-      justify-content: flex-end;
-      grid-area: right;
-
-      .overflow-menu::part(list) {
-        justify-content: flex-end;
-      }
-    }
-
-    .header__columns {
-      /* Three column layout */
-      --header-left: 1fr;
-      --header-center: auto;
-      --header-right: 1fr;
-      --header-template-columns: var(--header-left) var(--header-center) var(--header-right);
-
-      /* Mobile layout */
-      --header-mobile-bookend: 44px;
-
-      display: grid;
-      grid-template-areas: 'left center right';
-      grid-gap: var(--gap-xl);
-      grid-template-columns: var(--header-template-columns);
-
-      /* If menu is in center column */
-      &:has(.header__column--center header-menu) {
-        --header-center: auto;
-        --header-left: minmax(max-content, 1fr);
-        --header-right: minmax(max-content, 1fr);
+      .header-logo {
+        grid-area: center;
       }
 
-      /* If there is no center column, make the column the menu is in grow eagerly */
-      &:where(:not(:has(.header__column--center))) {
-        @media screen and (min-width: 750px) {
-          --header-template-columns: var(--header-left) var(--header-right);
-
-          grid-template-areas: 'left right';
-        }
-
-        /* If the header-menu is in the right column */
-        &:has(.header__column--right header-menu) {
-          --header-right: auto;
-          --header-left: minmax(max-content, 1fr);
-        }
-
-        /* If the header-menu is in the left column */
-        &:has(.header__column--left header-menu) {
-          --header-left: auto;
-          --header-right: minmax(max-content, 1fr);
-        }
+      .search-action {
+        grid-area: leftB;
       }
 
-      @media screen and (max-width: 749px) {
-        --header-template-columns:
-        var(--header-mobile-bookend)
-        var(--header-mobile-bookend)
-        1fr
-        var(--header-mobile-bookend)
-        var(--header-mobile-bookend)
-        var(--header-mobile-bookend);
-
-        grid-template-areas: 'leftA leftB center rightLg rightA rightB';
-        grid-column: span 3;
-        column-gap: 0;
-        align-items: center;
-        padding-block: 0;
-        padding-inline: 0 var(--padding-3xs);
-
-        .header-logo {
-          grid-area: center;
-        }
-
-        &:not(:has(header-actions)) .search-action {
-          grid-area: leftB;
-        }
-
-        &:not(:has(shopify-account)) .search-action {
-          grid-area: rightA;
-        }
-
-        .search-action {
-          grid-area: leftB;
-        }
-
-        header-actions {
-          grid-area: rightB;
-        }
+      header-actions {
+        grid-area: rightB;
       }
     }
+  }
 
-    /* not ideal but we need to duplicate these styles for when touch comes into play
-      We could avoid the duplication using js to set the data-menu-style attribute on small screens instead of using @media queries */
+  #header-component[data-menu-style='drawer'] .header__columns {
+    --header-template-columns: 40px 40px 1fr 42px 24px 24px;
+    grid-template-areas: 'leftA leftB center rightLg rightA rightB';
+    grid-column: span 3;
+    column-gap: 0;
+    align-items: center;
+    padding-block: 0;
+    padding-inline: 0 var(--padding-3xs);
+  }
 
-    #header-component[data-menu-style='drawer'] .header__columns {
-  --header-template-columns: 40px 40px 1fr 46px 26px 26px;
-  grid-template-areas: 'leftA leftB center rightLg rightA rightB';
-  grid-column: span 3;
-  column-gap: 0;
-  align-items: center;
-  padding-block: 0;
-  padding-inline: 0 var(--padding-3xs);
-}
+  #header-component[data-menu-style='drawer'] .header__columns .header-logo {
+    grid-area: center;
+  }
 
-#header-component[data-menu-style='drawer'] .header__columns .header-logo {
-  grid-area: center;
-}
+  #header-component[data-menu-style='drawer'] .header__columns .search-action {
+    grid-area: leftB;
+  }
 
-#header-component[data-menu-style='drawer'] .header__columns .search-action {
-  grid-area: leftB;
-}
+  #header-component[data-menu-style='drawer'] .header__columns header-actions {
+    grid-area: rightB;
+  }
 
-#header-component[data-menu-style='drawer'] .header__columns header-actions {
-  grid-area: rightB;
-}
-    
+  .header__columns:not(:has(.header__column)) {
+    grid-template-columns: 1fr;
+  }
 
-
-    /* Single column layout if there are no columns within */
-    .header__columns:not(:has(.header__column)) {
-      grid-template-columns: 1fr;
-    }
-
-    /* Check for hover support to avoid unnecessary expensive recalculations when tapping on mobile */
-    @media (hover: hover) {
-      /* Column-specific dimming effect when any interactive element is hovered
-          Multiple selectors for performance: each simple :has() check is faster than one complex selector with multiple conditions */
-      .header__column:has(header-menu:hover),
-      .header__column:has(.header-actions__action:hover),
-      .header__column:has(.header__icon--menu:hover) {
-        header-menu:not(:hover),
-        .header-actions__action:not(:hover),
-        .header__icon--menu:not(:hover) {
-          opacity: var(--opacity-subdued-text);
-          transition: opacity var(--animation-speed) var(--animation-easing);
-        }
+  @media (hover: hover) {
+    .header__column:has(header-menu:hover),
+    .header__column:has(.header-actions__action:hover),
+    .header__column:has(.header__icon--menu:hover) {
+      header-menu:not(:hover),
+      .header-actions__action:not(:hover),
+      .header__icon--menu:not(:hover) {
+        opacity: var(--opacity-subdued-text);
+        transition: opacity var(--animation-speed) var(--animation-easing);
       }
     }
+  }
 
-    /* Ensure smooth transitions for all interactive elements */
-    header-menu,
-    .header-actions__action,
-    .header__icon--menu {
-      transition: opacity var(--animation-speed) var(--animation-easing);
-    }
+  header-menu,
+  .header-actions__action,
+  .header__icon--menu {
+    transition: opacity var(--animation-speed) var(--animation-easing);
+  }
 
-    /* Header action button styles */
-    .header-actions__action {
+  .header-actions__action {
+    --button-color: var(--color-foreground);
+    color: var(--button-color);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+
+    &:hover {
       --button-color: var(--color-foreground);
-      color: var(--button-color);
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
+    }
+  }
 
-      &:hover {
-        --button-color: var(--color-foreground);
+  .header-actions__action:not(.account-button) .svg-wrapper {
+    height: var(--button-size);
+    width: var(--button-size);
+  }
+
+  .header-actions__action:not(.account-button) svg {
+    width: var(--icon-size-md);
+    height: var(--icon-size-md);
+  }
+
+  .header:has(#Details-menu-drawer-container[open]) {
+    contain: style;
+  }
+
+  .header.header--compact {
+    --header-padding: var(--padding-2xs);
+  }
+
+  .header__columns {
+    --padding-block-start: var(--header-padding);
+    --padding-block-end: var(--header-padding);
+  }
+
+  .header:not(.header--compact) .header__row--bottom {
+    --header-padding: var(--padding-xs);
+  }
+
+  .header--collapse-row-paddings {
+    .header__row--top .header__columns {
+      --padding-block-end: 0px;
+    }
+
+    .header__row--bottom .header__columns {
+      --padding-block-start: 0px;
+    }
+  }
+
+  .header-section:has(.header[transparent]) + .shopify-section {
+    margin-top: var(--header-height);
+  }
+
+  main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
+    &.spacing-style,
+    .spacing-style {
+      --section-top-offset: calc(var(--header-height) * var(--transparent-header-offset-boolean));
+
+      :is(.spacing-style, .inherit-spacing) {
+        --section-top-offset: 0px;
       }
     }
 
-    .header-actions__action:not(.account-button) .svg-wrapper {
-      height: var(--button-size);
-      width: var(--button-size);
+    .sticky-content {
+      margin-top: calc(var(--header-height) * var(--transparent-header-offset-boolean) * -1);
     }
+  }
 
-    .header-actions__action:not(.account-button) svg {
-      width: var(--icon-size-md);
-      height: var(--icon-size-md);
-    }
+  .header-menu .menu-list__submenu {
+    content-visibility: auto;
+    contain-intrinsic-size: 0px 500px;
+  }
 
-    .header:has(#Details-menu-drawer-container[open]) {
-      contain: style;
-    }
+  .header-menu details[open] .menu-list__submenu,
+  .header-menu .menu-list__submenu[data-active],
+  .header-menu .menu-list__list-item[slot='overflow'] .menu-list__submenu {
+    content-visibility: visible;
+  }
 
-    .header.header--compact {
-      --header-padding: var(--padding-2xs);
-    }
+  .dropdown-localization__button {
+    display: flex;
+    position: relative;
+    align-items: center;
+    gap: 4px;
+    font-family: var(--menu-localization-font);
+    font-size: var(--menu-localization-font-size);
+    font-weight: var(--menu-top-level-font-weight);
+    padding-inline: var(--padding-2xs);
+    margin-inline: calc(-1 * var(--padding-2xs));
+  }
 
-    .header__columns {
-      --padding-block-start: var(--header-padding);
-      --padding-block-end: var(--header-padding);
-    }
+  .dropdown-localization__button .svg-wrapper.icon-caret {
+    height: var(--icon-size-xs);
+    width: var(--icon-size-xs);
+    right: var(--margin-xs);
+    top: calc(50% - var(--padding-2xs));
+    flex-shrink: 0;
+    transition: transform var(--animation-speed) var(--animation-easing);
+  }
 
-    .header:not(.header--compact) .header__row--bottom {
-      --header-padding: var(--padding-xs);
-    }
+  .dropdown-localization__button .icon-flag {
+    width: var(--menu-localization-font-size, var(--icon-size-sm));
+    height: var(--menu-localization-font-size, var(--icon-size-sm));
+    clip-path: circle(50%);
+    background-position: center;
+    background-size: cover;
+    margin-inline-end: 4px;
+    position: relative;
+  }
 
-    .header--collapse-row-paddings {
-      .header__row--top .header__columns {
-        --padding-block-end: 0px;
-      }
+  .dropdown-localization__button .icon-flag::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    box-shadow: inset 0 0 var(--size-shadow) var(--color-shadow);
+    border-radius: 50%;
+  }
 
-      .header__row--bottom .header__columns {
-        --padding-block-start: 0px;
-      }
-    }
+  .dropdown-localization__button[aria-expanded='true'] .icon-caret svg {
+    transform: rotate(180deg);
+  }
 
-    /* When the header is transparent, add a margin to a potential header-section below it */
-    .header-section:has(.header[transparent]) + .shopify-section {
-      margin-top: var(--header-height);
-    }
+  .dropdown-localization__button,
+  .dropdown-localization__button:hover {
+    box-shadow: none;
+    background-color: transparent;
+    border-color: transparent;
+  }
 
-    /* When the header is transparent, and when there is no header-section below it, offset the first main-section with
-       * the height of the header
-       */
+  dropdown-localization-component .localization-form__list {
+    max-height: 20.5rem;
+  }
 
-    main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
-      &.spacing-style,
-      .spacing-style {
-        --section-top-offset: calc(var(--header-height) * var(--transparent-header-offset-boolean));
+  .localization-wrapper {
+    position: fixed;
+    z-index: var(--layer-raised);
+    border-radius: var(--style-border-radius-popover);
+    transition-property: display, opacity, translate;
+    transition-duration: 0.3s;
+    transition-timing-function: var(--ease-out-quad);
+    transition-behavior: allow-discrete;
+    translate: 0 20px;
+    opacity: 0;
+  }
 
-        /* Any nested sections should not be offset */
-        :is(.spacing-style, .inherit-spacing) {
-          --section-top-offset: 0px;
-        }
-      }
+  .localization-wrapper:not([hidden]) {
+    translate: 0 0;
+    opacity: 1;
+  }
 
-      /* Make sticky content immediately stick to the top of the page */
-      .sticky-content {
-        margin-top: calc(var(--header-height) * var(--transparent-header-offset-boolean) * -1);
-      }
-    }
-
-    /* Optimize layout performance for hidden menus */
-    .header-menu .menu-list__submenu {
-      content-visibility: auto;
-      contain-intrinsic-size: 0px 500px;
-    }
-
-    /* Force visibility when open/animating and in overflow submenu to prevent layout issues */
-    .header-menu details[open] .menu-list__submenu,
-    .header-menu .menu-list__submenu[data-active],
-    .header-menu .menu-list__list-item[slot='overflow'] .menu-list__submenu {
-      content-visibility: visible;
-    }
-
-    /* Dropdown Localization Styles */
-    .dropdown-localization__button {
-      display: flex;
-      position: relative;
-      align-items: center;
-      gap: 4px;
-      font-family: var(--menu-localization-font);
-      font-size: var(--menu-localization-font-size);
-      font-weight: var(--menu-top-level-font-weight);
-      padding-inline: var(--padding-2xs);
-      margin-inline: calc(-1 * var(--padding-2xs));
-    }
-
-    .dropdown-localization__button .svg-wrapper.icon-caret {
-      height: var(--icon-size-xs);
-      width: var(--icon-size-xs);
-      right: var(--margin-xs);
-      top: calc(50% - var(--padding-2xs));
-      flex-shrink: 0;
-      transition: transform var(--animation-speed) var(--animation-easing);
-    }
-
-    .dropdown-localization__button .icon-flag {
-      width: var(--menu-localization-font-size, var(--icon-size-sm));
-      height: var(--menu-localization-font-size, var(--icon-size-sm));
-      clip-path: circle(50%); /* stylelint-disable-line */
-      background-position: center;
-      background-size: cover;
-      margin-inline-end: 4px;
-      position: relative;
-    }
-
-    .dropdown-localization__button .icon-flag::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      box-shadow: inset 0 0 var(--size-shadow) var(--color-shadow);
-      border-radius: 50%;
-    }
-
-    .dropdown-localization__button[aria-expanded='true'] .icon-caret svg {
-      transform: rotate(180deg);
-    }
-
-    .dropdown-localization__button,
-    .dropdown-localization__button:hover {
-      box-shadow: none;
-      background-color: transparent;
-      border-color: transparent;
-    }
-
-    dropdown-localization-component .localization-form__list {
-      max-height: 20.5rem;
-    }
-
-    .localization-wrapper {
-      position: fixed;
-      z-index: var(--layer-raised);
-      border-radius: var(--style-border-radius-popover);
-      transition-property: display, opacity, translate;
-      transition-duration: 0.3s;
-      transition-timing-function: var(--ease-out-quad);
-      transition-behavior: allow-discrete;
+  @starting-style {
+    .localization-wrapper:not([hidden]) {
       translate: 0 20px;
       opacity: 0;
     }
+  }
 
-    .localization-wrapper:not([hidden]) {
-      translate: 0 0;
-      opacity: 1;
-    }
+  dropdown-localization-component {
+    position: relative;
+    background-color: transparent;
+  }
 
-    @starting-style {
-      .localization-wrapper:not([hidden]) {
-        translate: 0 20px;
-        opacity: 0;
-      }
-    }
+  dropdown-localization-component .country-filter {
+    position: relative;
+    padding: 8px;
+  }
 
-    dropdown-localization-component {
-      position: relative;
-      background-color: transparent;
-    }
+  dropdown-localization-component .country-filter__input {
+    border: none;
+  }
 
-    dropdown-localization-component .country-filter {
-      position: relative;
-      padding: 8px;
-    }
+  dropdown-localization-component .localization-form__list-item {
+    margin-inline: 8px;
+  }
 
-    dropdown-localization-component .country-filter__input {
-      border: none;
-    }
+  dropdown-localization-component .localization-wrapper {
+    box-shadow: var(--shadow-popover);
+    border: var(--style-border-popover);
+    background-color: var(--color-background);
+    max-height: 27.5rem;
+    position: absolute;
+    top: calc(100% + 10px);
+    z-index: calc(var(--layer-header-menu) + 1);
+  }
 
-    dropdown-localization-component .localization-form__list-item {
-      margin-inline: 8px;
-    }
+  dropdown-localization-component .localization-wrapper.right-bound {
+    right: 0;
+    left: unset;
+  }
 
-    dropdown-localization-component .localization-wrapper {
-      box-shadow: var(--shadow-popover);
-      border: var(--style-border-popover);
-      background-color: var(--color-background);
-      max-height: 27.5rem;
-      position: absolute;
-      top: calc(100% + 10px);
-      z-index: calc(var(--layer-header-menu) + 1);
-    }
+  dropdown-localization-component .localization-wrapper.left-bound {
+    left: -8px;
+    right: unset;
+  }
 
-    dropdown-localization-component .localization-wrapper.right-bound {
-      right: 0;
-      left: unset;
-    }
+  dropdown-localization-component .language-selector.language-selector {
+    padding: 10px 8px 10px 16px;
+  }
 
-    dropdown-localization-component .localization-wrapper.left-bound {
-      left: -8px;
-      right: unset;
-    }
+  dropdown-localization-component .localization-form__currency {
+    width: max-content;
+    opacity: 0;
+    visibility: hidden;
+    transition: none;
+  }
 
-    /* Additional specificity due to dropdown-localization-component getting a low score */
-    dropdown-localization-component .language-selector.language-selector {
-      padding: 10px 8px 10px 16px;
-    }
+  dropdown-localization-component .localization-form__select:hover {
+    background-color: rgb(var(--color-primary-hover-rgb) / var(--opacity-8));
+  }
 
-    dropdown-localization-component .localization-form__currency {
-      width: max-content;
-      opacity: 0;
-      visibility: hidden;
-      transition: none;
-    }
+  dropdown-localization-component
+    :is(
+      .localization-form__list-item:hover,
+      .localization-form__list-item[aria-selected='true'],
+      .localization-form__list-item[aria-current='true']
+    )
+    .localization-form__currency {
+    opacity: 1;
+    color: var(--color-foreground-muted);
+    transition: opacity var(--animation-speed-slow) var(--animation-easing);
+    visibility: visible;
+  }
 
-    dropdown-localization-component .localization-form__select:hover {
-      background-color: rgb(var(--color-primary-hover-rgb) / var(--opacity-8));
-    }
+  .dropdown-localization .language-selector:where(:not(.top-shadow)) {
+    font-weight: var(--menu-top-level-font-weight);
+  }
 
-    dropdown-localization-component
-      :is(
-        .localization-form__list-item:hover,
-        .localization-form__list-item[aria-selected='true'],
-        .localization-form__list-item[aria-current='true']
-      )
-      .localization-form__currency {
-      opacity: 1;
-      color: var(--color-foreground-muted);
-      transition: opacity var(--animation-speed-slow) var(--animation-easing);
-      visibility: visible;
-    }
+  .dropdown-localization:not(dropdown-localization-component) .language-selector {
+    font-family: var(--menu-localization-font);
+    font-size: var(--menu-localization-font-size);
+  }
 
-    .dropdown-localization .language-selector:where(:not(.top-shadow)) {
-      font-weight: var(--menu-top-level-font-weight);
-    }
-
-    .dropdown-localization:not(dropdown-localization-component) .language-selector {
-      font-family: var(--menu-localization-font);
-      font-size: var(--menu-localization-font-size);
-    }
-
-  /* ── แก้ปัญหาเรื่อง responsive พัง ยืดกลับ ── */
   @media screen and (min-width: 750px) {
-  #header-component[data-menu-style='menu'] .header__columns {
-    grid-template-columns: auto minmax(max-content, 1fr) auto !important;
-    column-gap: var(--gap-xl);
-    padding-inline: initial;
+    #header-component[data-menu-style='menu'] .header__columns {
+      grid-template-columns: auto minmax(max-content, 1fr) auto !important;
+      column-gap: var(--gap-xl);
+      padding-inline: initial;
+    }
+
+    .header__column--right .search-action {
+      margin-inline: 0 !important;
+      min-width: 0;
+      justify-self: end;
+    }
+
+    #header-component .header__column {
+      display: flex;
+      align-items: center;
+    }
+
+    #header-component .header__column--right {
+      gap: 4px;
+    }
+
+    #Details-menu-drawer-container,
+    .header__icon--menu {
+      display: none !important;
+    }
+
+    #header-component[data-menu-style='menu'] .header-menu {
+      display: flex;
+    }
+
+    .search-action--hidden-on-menu {
+      display: none !important;
+    }
   }
 
-   .header__column--right .search-action {
-    margin-inline: 0 !important;
-    min-width: 0;
-    justify-self: end;
+  @media screen and (min-width: 950px) {
+    .search-action__icon-btn {
+      display: none !important;
+    }
+
+    .oc-search-static {
+      display: block;
+    }
   }
 
-  #header-component .header__column {
-    display: flex;
+  /* ── Language pill toggle ───────────────────────── */
+
+  #header-component .oc-lang-toggle {
+    display: inline-flex;
     align-items: center;
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 999px;
+    padding: 3px;
+    position: relative;
+    gap: 0;
   }
 
-  #header-component .header__column--right {
-    gap: 4px;
-  }
-
-  /* ซ่อน mobile drawer */
-  #Details-menu-drawer-container,
-  .header__icon--menu {
-    display: none !important;
-  }
-
-  /* ให้ desktop menu กลับมา */
-  #header-component[data-menu-style='menu'] .header-menu {
-    display: flex;
-  }
-
-  /* ซ่อน drawer search */
-  .search-action--hidden-on-menu {
-    display: none !important;
-  }
-}
-
-@media screen and (min-width: 950px) {
-  .search-action__icon-btn {
-    display: none !important;
-  }
-
-  .oc-search-static {
-    display: block;
-  }
-}
-
-/* ── แก้ปัญหาเรื่อง responsive พัง ยืดกลับ ── */
-
-/* ── Language pill toggle ───────────────────────── */
-
-#header-component .oc-lang-toggle {
-  display: inline-flex;
-  align-items: center;
-  background: rgba(0, 0, 0, 0.08);
-  border-radius: 999px;
-  padding: 3px;
-  position: relative;
-  gap: 0;
-}
-
-#header-component .oc-lang-toggle--desktop {
-  display: inline-flex;
-}
-
-#header-component .oc-lang-toggle--mobile {
-  display: none !important;
-}
-
-.header[transparent] .oc-lang-toggle {
-  background: rgba(255, 255, 255, 0.15);
-}
-
-#header-component .oc-lang-toggle__track {
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  height: calc(100% - 6px);
-  width: 44px;
-  background: linear-gradient(90deg, #14c9df, #17a9bb);
-  border-radius: 999px;
-  box-shadow: 0 2px 8px rgba(20, 201, 223, 0.4);
-  transition:
-    transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
-    width 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-  pointer-events: none;
-}
-
-#header-component .oc-lang-toggle__btn {
-  position: relative;
-  z-index: 1;
-  padding: 5px 16px;
-  border-radius: 999px;
-  color: var(--color-foreground);
-  opacity: 0.5;
-  cursor: pointer;
-  font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  transition: opacity 0.2s ease, color 0.2s ease;
-  white-space: nowrap;
-  -webkit-appearance: none;
-  appearance: none;
-  background: transparent !important;
-  border: 0 !important;
-  outline: 0 !important;
-  box-shadow: none !important;
-  line-height: 1 !important;
-}
-
-#header-component .oc-lang-toggle__btn.active {
-  color: #fff;
-  opacity: 1;
-  cursor: default;
-  pointer-events: none;
-}
-
-#header-component .oc-lang-toggle form {
-  display: contents;
-}
-
-#header-component .oc-lang-toggle form,
-#header-component .oc-lang-toggle form * {
-  margin: 0 !important;
-}
-
-@media screen and (max-width: 749px) {
   #header-component .oc-lang-toggle--desktop {
-    display: none !important;
+    display: inline-flex;
   }
 
   #header-component .oc-lang-toggle--mobile {
-    display: inline-flex !important;
-    grid-area: rightLg;
-    justify-self: center;
-    align-self: center;
-    margin-right: 2px;
-    transform: scale(0.88);
-    transform-origin: center;
+    display: none !important;
   }
 
-  #header-component .oc-lang-toggle--mobile .oc-lang-toggle__btn {
-    padding: 2px 4px;
-    font-size: 10px;
+  .header[transparent] .oc-lang-toggle {
+    background: rgba(255, 255, 255, 0.15);
   }
 
-  #header-component .oc-lang-toggle--mobile .oc-lang-toggle__track {
-    top: 1px;
-    left: 1px;
-    height: calc(100% - 2px);
+  #header-component .oc-lang-toggle__track {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    height: calc(100% - 6px);
+    width: 44px;
+    background: linear-gradient(90deg, #14c9df, #17a9bb);
+    border-radius: 999px;
+    box-shadow: 0 2px 8px rgba(20, 201, 223, 0.4);
+    transition:
+      transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+      width 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
   }
+
+  #header-component .oc-lang-toggle__btn {
+    position: relative;
+    z-index: 1;
+    padding: 5px 14px;
+    border-radius: 999px;
+    color: var(--color-foreground);
+    opacity: 0.5;
+    cursor: pointer;
+    font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    transition: opacity 0.2s ease, color 0.2s ease;
+    white-space: nowrap;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent !important;
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+    line-height: 1 !important;
+  }
+
+  #header-component .oc-lang-toggle__btn.active {
+    color: #fff;
+    opacity: 1;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  #header-component .oc-lang-toggle form {
+    display: contents;
+  }
+
+  #header-component .oc-lang-toggle form,
+  #header-component .oc-lang-toggle form * {
+    margin: 0 !important;
+  }
+
+  @media screen and (max-width: 749px) {
+    #header-component .oc-lang-toggle--desktop {
+      display: none !important;
+    }
+
+    #header-component .oc-lang-toggle--mobile {
+      display: inline-flex !important;
+      grid-area: rightLg;
+      justify-self: center;
+      align-self: center;
+      transform: scale(0.80);
+      transform-origin: center;
+      margin-right: 1px;
+      padding: 1px;
+    }
+
+    #header-component .oc-lang-toggle--mobile .oc-lang-toggle__btn {
+      padding: 2px 4px;
+      font-size: 9px;
+    }
+
+    #header-component .oc-lang-toggle--mobile .oc-lang-toggle__track {
+      top: 1px;
+      left: 1px;
+      height: calc(100% - 2px);
+    }
+
+    #header-component .header__column--right {
+      gap: 2px;
+    }
+
     #header-component header-actions {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 2px;
-    min-width: 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0;
+      min-width: 0;
+    }
+
+    #header-component header-actions .header-actions__action,
+    #header-component header-actions .account-button {
+      width: 24px;
+      min-width: 24px;
+      height: 24px;
+      padding: 0;
+    }
+
+    #header-component .header-actions__action .svg-wrapper,
+    #header-component .account-button .svg-wrapper {
+      width: 17px;
+      height: 17px;
+    }
   }
 
-  #header-component header-actions .header-actions__action,
-  #header-component header-actions .account-button {
-    width: 26px;
-    min-width: 26px;
-    padding-inline: 0;
-  }
+  /* ── Search input ───────────────────────── */
 
-  #header-component .header-actions__action .svg-wrapper,
-  #header-component .account-button .svg-wrapper {
-    width: 18px;
-    height: 18px;
-  }
-}
-
-  /*************** search input *****************/
-  /* ============================================================
-     OCTOPUS — oc-header-search.css.liquid
-     Header Search Input + Magnifier Icon Button
-
-     Extracted from custom.css.liquid §11b
-     Load order: after custom.css.liquid
-     ============================================================ */
-
-
-  /* ── Search Slot Wrapper (flex child in header) ── */
-  /* fluid: ~190px @ 950px → ~300px @ 1400px → ~460px @ 2100px+ */
   .oc-search-slot-wrap {
     width: 100%;
     min-width: 0;
@@ -1237,8 +1141,6 @@
     flex: 1 1 auto;
   }
 
-
-  /* ── Static Pill Search Container ── */
   .oc-search-static {
     position: relative;
     width: 100%;
@@ -1246,7 +1148,6 @@
     display: block;
   }
 
-  /* Animated rainbow border */
   .oc-search-static__rainbow {
     position: absolute;
     inset: 0;
@@ -1259,7 +1160,6 @@
     animation: oc-rainbow-move 4s linear infinite;
   }
 
-  /* Inner row */
   .oc-search-static__inner {
     position: relative;
     z-index: 1;
@@ -1272,7 +1172,7 @@
     overflow: hidden;
     transition:
       box-shadow 0.22s ease,
-      transform  0.22s ease,
+      transform 0.22s ease,
       background 0.22s ease;
   }
 
@@ -1281,12 +1181,11 @@
     box-shadow:
       0 0 0 1px rgba(255,255,255,0.65) inset,
       0 0 0 2px rgba(20, 201, 223, 0.10),
-      0 0 5px  rgba(20, 201, 223, 0.18),
-      0 0 8px  rgba(129, 140, 248, 0.16),
+      0 0 5px rgba(20, 201, 223, 0.18),
+      0 0 8px rgba(129, 140, 248, 0.16),
       0 0 10px rgba(167, 139, 250, 0.14);
   }
 
-  /* Sheen sweep overlay */
   .oc-search-static__inner::before {
     content: '';
     position: absolute;
@@ -1296,7 +1195,7 @@
       115deg,
       transparent 0%,
       transparent 38%,
-      rgba(20, 201, 223, 0.10)  48%,
+      rgba(20, 201, 223, 0.10) 48%,
       rgba(167, 139, 250, 0.12) 52%,
       transparent 62%,
       transparent 100%
@@ -1306,7 +1205,6 @@
     pointer-events: none;
   }
 
-  /* Text input */
   .oc-search-static__input {
     position: relative;
     z-index: 1;
@@ -1328,8 +1226,6 @@
     opacity: 1;
   }
 
-
-  /* ── Magnifier Icon Button ── */
   .oc-search-static__icon-btn {
     position: relative;
     z-index: 1;
@@ -1354,12 +1250,6 @@
     box-shadow: 0 8px 22px rgba(23, 169, 187, 0.34);
   }
 
-  .oc-search-static__icon-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-
   .oc-search-static__icon-btn svg,
   .oc-search-static__icon-svg {
     display: block;
@@ -1369,7 +1259,6 @@
     stroke: currentColor;
   }
 
-  /* Gloss overlay on button */
   .oc-search-static__icon-glow {
     position: absolute;
     inset: -1px;
@@ -1383,8 +1272,6 @@
     z-index: 1;
   }
 
-
-  /* ── Mobile Search Action (header-actions icon) ── */
   @media screen and (max-width: 949px) {
     .search-action .header-actions__action,
     .search-action button,
@@ -1401,14 +1288,10 @@
 
     .search-action svg {
       stroke: #fff !important;
-      color: #fff  !important;
+      color: #fff !important;
     }
   }
 
-
-  /* ── Responsive Overrides ── */
-
-  /* Mid desktop: slightly tighter inner height + smaller font */
   @media screen and (min-width: 950px) and (max-width: 1199px) {
     .oc-search-static__inner {
       height: 42px;
@@ -1419,14 +1302,11 @@
     }
   }
 
-
-  /* ── Keyframe: sheen sweep ── */
   @keyframes oc-search-sheen {
-    0%   { background-position:  120% 0; }
+    0% { background-position: 120% 0; }
     100% { background-position: -120% 0; }
   }
 
-  /* Pill: ซ่อนปกติ แสดงเฉพาะ desktop menu mode */
   .oc-search-static {
     display: none;
   }
@@ -1449,8 +1329,6 @@
     justify-self: end;
     width: clamp(150px, 22vw, 520px);
   }
-
-  /******* end of search input********/
 {% endstylesheet %}
 
 {% unless request.design_mode %}
