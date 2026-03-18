@@ -1152,7 +1152,7 @@
   }
 
   @media screen and (max-width: 749px) {
-  .oc-lang-toggle--desktop {
+   .oc-lang-toggle--desktop {
     display: none !important;
   }
 
@@ -1161,6 +1161,13 @@
     grid-area: rightLg;
     align-items: center;
     justify-self: center;
+    white-space: nowrap;
+    gap: 2px;
+    font-size: 12px;
+  }
+
+  .oc-lang-toggle--mobile .oc-lang-toggle__btn {
+    padding: 3px 8px;
   }
   }
 
