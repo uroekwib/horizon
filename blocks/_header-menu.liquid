@@ -130,7 +130,7 @@
                     <div class="oc-mega__col-hd">{{ link.title }}</div>
                     <ul class="oc-mega__l0-list list-unstyled" role="listbox">
                       {% for l0 in link.links %}
-                        {%- assign l0_handle = l0.url | split: '/collections/' | last | split: '?' | first -%}
+                        {%- assign l0_handle = l0.url | split: '?' | first | split: '/' | last -%}
                         <li
                           class="oc-mega__l0-item{% if forloop.first %} on{% endif %}"
                           data-grp="{{ forloop.index0 }}"
@@ -145,24 +145,45 @@
                     </ul>
                   </div>
 
-                  {%- comment -%} COL 1 — subcollections from metafield custom.subcollections
-                      Type: Collection (List) — pre-rendered in Liquid, toggled by JS.
-                      Fallback: if metafield is empty, use l0.links from nav as-is.
-                  {%- endcomment -%}
+                  {%- comment -%} COL 1 — subcollections from metafield custom.subcollections {%- endcomment -%}
                   <div class="oc-mega__col1">
                     {% for l0 in link.links %}
                       {%- liquid
-                        assign l0_handle  = l0.url | split: '/collections/' | last | split: '?' | first
-                        assign l0_coll    = collections[l0_handle]
-                        assign subcols    = l0_coll.metafields.custom.subcollections.value
-                        assign has_meta   = false
+                        comment
+                          Extract handle from the last path segment — works with
+                          localized URLs (/th/collections/signage), trailing slashes,
+                          and query strings alike.
+                        endcomment
+
+                        assign l0_url_clean  = l0.url | split: '?' | first | strip
+                        assign l0_url_parts  = l0_url_clean | split: '/'
+                        assign l0_handle     = l0_url_parts | last
+
+                        comment
+                          Lookup collection object — metafields accessible on
+                          collection objects from global collections[] drop.
+                        endcomment
+                        assign l0_coll  = collections[l0_handle]
+                        assign subcols  = l0_coll.metafields.custom.subcollections.value
+
+                        assign has_meta = false
                         if subcols != blank and subcols.size > 0
                           assign has_meta = true
                         endif
                       -%}
+
+                      {%- comment -%}
+                        DEBUG — ลบ comment block นี้ออกหลัง verify แล้ว:
+                        handle={{ l0_handle }}
+                        coll={{ l0_coll.title }}
+                        has_meta={{ has_meta }}
+                        subcols.size={{ subcols.size }}
+                      {%- endcomment -%}
+
                       <div
                         class="oc-mega__l1-group{% unless forloop.first %} oc-hidden{% endunless %}"
                         data-grp="{{ forloop.index0 }}"
+                        data-handle="{{ l0_handle }}"
                         role="listbox"
                         aria-label="{{ l0.title | escape }}"
                       >
@@ -170,7 +191,6 @@
                         <ul class="oc-mega__l1-list list-unstyled">
 
                           {%- if has_meta -%}
-                            {%- comment -%} From metafield: Collection (List) objects {%- endcomment -%}
                             {% for subcol in subcols %}
                               <li
                                 class="oc-mega__l1-item{% if forloop.first and forloop.parentloop.first %} on{% endif %}"
@@ -185,9 +205,10 @@
                             {% endfor %}
 
                           {%- else -%}
-                            {%- comment -%} Fallback: use nav children (l0.links) if no metafield {%- endcomment -%}
+                            {%- comment -%} Fallback — nav children ถ้า metafield ยังไม่ได้ set {%- endcomment -%}
                             {% for l1 in l0.links %}
-                              {%- assign l1_handle = l1.url | split: '/collections/' | last | split: '?' | first -%}
+                              {%- assign l1_parts  = l1.url | split: '?' | first | split: '/' -%}
+                              {%- assign l1_handle = l1_parts | last -%}
                               <li
                                 class="oc-mega__l1-item{% if forloop.first and forloop.parentloop.first %} on{% endif %}"
                                 data-coll="{{ l1_handle }}"
@@ -306,9 +327,39 @@
         this.thumbCount    = parseInt(this.productPanel.dataset.thumbCount || 4, 10);
         this.activeHandle  = null;
         this._delegated    = false;
+        this._booted       = false;
         this._attach();
-        this._boot();
+        this._watchOpen();   /* defer _boot until first open */
       }
+
+      /* Watch the trigger <a aria-expanded> — boot only on first open */
+      OcMega.prototype._watchOpen = function () {
+        var self = this;
+        /* The trigger is the <a aria-haspopup> that precedes our submenu */
+        var submenu = this.panel.closest('.menu-list__submenu');
+        var trigger = submenu
+          ? submenu.closest('.menu-list__list-item')
+              && submenu.closest('.menu-list__list-item').querySelector('[aria-haspopup]')
+          : null;
+
+        if (!trigger) {
+          /* Fallback: boot immediately if we can't find trigger */
+          this._boot();
+          return;
+        }
+
+        var mo = new MutationObserver(function (mutations) {
+          mutations.forEach(function (m) {
+            if (m.attributeName === 'aria-expanded' &&
+                trigger.getAttribute('aria-expanded') === 'true' &&
+                !self._booted) {
+              self._boot();
+              mo.disconnect();
+            }
+          });
+        });
+        mo.observe(trigger, { attributes: true, attributeFilter: ['aria-expanded'] });
+      };
 
       /* Single delegated listener on the panel — survives DOM mutations */
       OcMega.prototype._attach = function () {
@@ -353,11 +404,11 @@
         });
       };
 
-      /* Boot: activate first L0 + first L1 so col2 is never empty on open */
+      /* Boot: activate first L0 + first L1 — called only on first open */
       OcMega.prototype._boot = function () {
+        this._booted = true;
         var firstL0 = this.panel.querySelector('.oc-mega__l0-item');
         if (firstL0) this._selectL0(0, firstL0);
-        /* _selectL0 will activate first L1 group; then load its first item */
         var firstL1 = this.panel.querySelector('.oc-mega__l1-group:not(.oc-hidden) .oc-mega__l1-item');
         if (firstL1) {
           firstL1.classList.add('on');
@@ -458,12 +509,12 @@
         var thumbs = products.slice(0, tc);
         var rest   = products.slice(tc);
 
-        /* Mini thumbnails — 4 fixed flex items, size controlled by CSS */
+        /* Mini thumbnails — rendered only after menu opens, lazy is safe here */
         var html = '<div class="oc-mega__thumbs">';
         thumbs.forEach(function (p) {
-          var src    = p.featured_image ? resizeImg(p.featured_image.src, '100x100') : null;
+          var src    = p.featured_image ? resizeImg(p.featured_image.src, '160x160') : null;
           var imgTag = src
-            ? '<img src="' + esc(src) + '" alt="' + esc(p.title) + '" loading="lazy" width="100" height="100">'
+            ? '<img src="' + esc(src) + '" alt="' + esc(p.title) + '" loading="lazy" width="160" height="160">'
             : '<div class="oc-mega__thumb-ph"></div>';
           html += '<a href="/products/' + esc(p.handle) + '" class="oc-mega__thumb">' +
                   imgTag + '<span class="oc-mega__thumb-nm">' + esc(p.title) + '</span></a>';
