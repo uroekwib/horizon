@@ -1,15 +1,14 @@
 {%- doc -%}
-  Renders the Octopus Media header menu block.
+  Octopus Media header menu block
 
   Variants:
-   - 'mobile'           → mobile drawer (Horizon native, unchanged)
-   - 'navigation_bar'   → horizontal scroll bar (Horizon native, unchanged)
-   - (default)          → desktop nav + optional 3-column mega drawer
+   - 'mobile'           → mobile drawer (Horizon native)
+   - 'navigation_bar'   → horizontal scroll bar (Horizon native)
+   - default            → desktop nav + 3-column mega drawer
 
   Mega drawer:
-   - Top nav link with children = trigger mega drawer
    - Col 0 = parent collections from menu children
-   - Col 1 = subcollections from collection metafield: custom.subcollections
+   - Col 1 = subcollections from metafield custom.subcollections
    - Col 2 = products loaded by AJAX from selected subcollection
 {%- enddoc -%}
 
@@ -33,36 +32,32 @@
     </div>
 
   {% when 'navigation_bar' %}
-    {% if block_settings.navigation_bar == true %}
-      <div
-        class="menu-list menu-list--mobile{% if transparent == blank %} color-{{ block_settings.color_scheme_navigation_bar }}{% endif %}"
-        style="--menu-horizontal-gap: 15px; --mobile-nav-margin: auto;"
-        data-hydration-key="header-menu-mobile-navigation-bar"
-      >
-        <div class="menu-list__scroll-container">
-          <ul class="menu-list__list list-unstyled" role="list">
-            {% for link in block_settings.menu.links %}
-              <li>
-                <a
-                  href="{{ link.url }}"
-                  id="MenuItem-{{ link.handle }}"
-                  class="menu-list__item"
-                  {% if link.current %}aria-current="page"{% endif %}
-                >
-                  {{- link.title -}}
-                </a>
-              </li>
-            {% endfor %}
-          </ul>
-        </div>
+    <div
+      class="menu-list menu-list--mobile"
+      style="--menu-horizontal-gap: 15px; --mobile-nav-margin: auto;"
+      data-hydration-key="header-menu-mobile-navigation-bar"
+    >
+      <div class="menu-list__scroll-container">
+        <ul class="menu-list__list list-unstyled" role="list">
+          {% for link in block_settings.menu.links %}
+            <li>
+              <a
+                href="{{ link.url }}"
+                id="MenuItem-{{ link.handle }}"
+                class="menu-list__item"
+                {% if link.current %}aria-current="page"{% endif %}
+              >
+                {{- link.title -}}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
       </div>
-    {% endif %}
+    </div>
 
   {% else %}
 
     {% liquid
-      assign mega_thumbs = block_settings.mega_thumb_count | default: 4
-
       assign color_scheme_classes = ''
       assign cs_key = 'color_scheme_' | append: section.settings.menu_row
       assign current_cs = block_settings.color_scheme
@@ -108,7 +103,18 @@
                 class="menu-list__submenu-inner oc-mega-inner"
                 style="{% render 'submenu-font-styles', settings: block_settings %}"
               >
-                <div class="oc-mega-panel">
+                <div
+                  class="oc-mega-panel"
+                  style="
+                    --oc-col0-width: {{ block_settings.col0_width }}px;
+                    --oc-col1-width: {{ block_settings.col1_width }}px;
+                    --oc-l0-font-size: {{ block_settings.l0_font_size }}px;
+                    --oc-l1-font-size: {{ block_settings.l1_font_size }}px;
+                    --oc-thumb-title-font-size: {{ block_settings.thumb_title_font_size }}px;
+                    --oc-thumb-height: {{ block_settings.thumb_height }}px;
+                    --oc-thumb-image-width: {{ block_settings.thumb_image_width }}px;
+                  "
+                >
                   <div class="oc-mega__col0">
                     <div class="oc-mega__col-hd">{{ link.title }}</div>
                     <ul class="oc-mega__l0-list list-unstyled" role="listbox">
@@ -120,7 +126,6 @@
                             assign l0_handle = l0_coll.handle
                           endif
                         -%}
-
                         <li
                           class="oc-mega__l0-item{% if forloop.first %} on{% endif %}"
                           data-grp="{{ forloop.index0 }}"
@@ -185,7 +190,6 @@
                                   assign l1_handle = l1_coll.handle
                                 endif
                               -%}
-
                               <li
                                 class="oc-mega__l1-item{% if forloop.first and forloop.parentloop.first %} on{% endif %}"
                                 data-coll="{{ l1_handle }}"
@@ -206,7 +210,8 @@
                   <div class="oc-mega__col2">
                     <div
                       class="oc-mega__product-panel"
-                      data-thumb-count="{{ mega_thumbs }}"
+                      data-thumb-count="{{ block_settings.mega_thumb_count }}"
+                      data-product-limit="{{ block_settings.product_limit }}"
                       aria-live="polite"
                       aria-busy="false"
                     ></div>
@@ -243,7 +248,10 @@
         <nav
           class="menu-list"
           aria-label="{{ 'accessibility.header_navigation_label' | t }}"
-          style="{% render 'menu-font-styles', settings: block_settings %}"
+          style="
+            {% render 'menu-font-styles', settings: block_settings %}
+            --oc-top-menu-font-size: {{ block_settings.top_menu_font_size }}px;
+          "
         >
           {% assign overflow_class = 'overflow-menu' | append: color_scheme_classes %}
           {% render 'overflow-list',
@@ -282,35 +290,27 @@
           if (!src) return null;
           src = String(src);
 
-          if (src.indexOf('//') === 0) {
-            src = window.location.protocol + src;
-          }
+          if (src.indexOf('//') === 0) src = window.location.protocol + src;
 
           if (src.indexOf('http') !== 0 && src.indexOf('//') !== 0) {
-            if (src.indexOf('/') === 0) {
-              src = window.location.origin + src;
-            } else {
-              src = window.location.origin + '/' + src;
-            }
+            src = src.indexOf('/') === 0 ? window.location.origin + src : window.location.origin + '/' + src;
           }
 
           return src;
         }
 
-        function resizeImg(src, size) {
+        function resizeImg(src, width, height) {
           src = normalizeShopifyImage(src);
           if (!src) return null;
 
           src = src.replace(/_(pico|icon|thumb|small|compact|medium|large|grande|original|\d+x\d*)(?=\.[a-zA-Z]{3,4}(\?[^.]*)?$)/, '');
-          return src.replace(/(\.[a-zA-Z]{3,4})(\?[^.]*)?$/, '_' + size + '$1$2');
+          return src.replace(/(\.[a-zA-Z]{3,4})(\?[^.]*)?$/, '_' + width + 'x' + height + '$1$2');
         }
 
         function getProductImage(product) {
           if (!product) return null;
 
-          if (typeof product.featured_image === 'string' && product.featured_image) {
-            return product.featured_image;
-          }
+          if (typeof product.featured_image === 'string' && product.featured_image) return product.featured_image;
 
           if (product.featured_image && typeof product.featured_image === 'object') {
             if (product.featured_image.src) return product.featured_image.src;
@@ -329,18 +329,20 @@
           return null;
         }
 
-        function fetchProducts(handle) {
+        function fetchProducts(handle, limit) {
           if (!handle) return Promise.resolve([]);
 
-          if (Array.isArray(_cache[handle])) {
-            return Promise.resolve(_cache[handle]);
+          var cacheKey = handle + '::' + limit;
+
+          if (Array.isArray(_cache[cacheKey])) {
+            return Promise.resolve(_cache[cacheKey]);
           }
 
-          if (_cache[handle] && typeof _cache[handle].then === 'function') {
-            return _cache[handle];
+          if (_cache[cacheKey] && typeof _cache[cacheKey].then === 'function') {
+            return _cache[cacheKey];
           }
 
-          _cache[handle] = fetch('/collections/' + encodeURIComponent(handle) + '/products.json?limit=8', {
+          _cache[cacheKey] = fetch('/collections/' + encodeURIComponent(handle) + '/products.json?limit=' + encodeURIComponent(limit), {
             credentials: 'same-origin'
           })
             .then(function (res) {
@@ -349,21 +351,29 @@
             })
             .then(function (data) {
               var products = Array.isArray(data.products) ? data.products : [];
-              _cache[handle] = products;
+              _cache[cacheKey] = products;
               return products;
             })
             .catch(function () {
-              _cache[handle] = [];
+              _cache[cacheKey] = [];
               return [];
             });
 
-          return _cache[handle];
+          return _cache[cacheKey];
         }
 
         function OcMega(panel) {
           this.panel = panel;
           this.productPanel = panel.querySelector('.oc-mega__product-panel');
           this.thumbCount = parseInt(this.productPanel.dataset.thumbCount || 4, 10);
+          this.productLimit = parseInt(this.productPanel.dataset.productLimit || 8, 10);
+
+          var styles = getComputedStyle(this.panel);
+          this.thumbHeight = parseInt(styles.getPropertyValue('--oc-thumb-height') || 72, 10);
+          this.thumbRenderWidth = Math.round(this.thumbHeight * 4 / 3);
+          this.thumbImageWidth = parseInt(styles.getPropertyValue('--oc-thumb-image-width') || 500, 10);
+          this.thumbImageHeight = Math.round(this.thumbImageWidth * 3 / 4);
+
           this.activeHandle = null;
           this.booted = false;
           this.bind();
@@ -512,7 +522,7 @@
 
         OcMega.prototype.prefetch = function (handle) {
           if (!handle) return;
-          fetchProducts(handle);
+          fetchProducts(handle, this.productLimit);
         };
 
         OcMega.prototype.loadProducts = function (handle, collUrl) {
@@ -531,7 +541,7 @@
           self.productPanel.setAttribute('aria-busy', 'true');
           self.productPanel.innerHTML = '<p class="oc-mega__loading">กำลังโหลด…</p>';
 
-          fetchProducts(handle).then(function (products) {
+          fetchProducts(handle, self.productLimit).then(function (products) {
             if (self.activeHandle !== handle) return;
             self.render(products, handle, collUrl);
           });
@@ -540,6 +550,10 @@
         OcMega.prototype.render = function (products, handle, collUrl) {
           var pp = this.productPanel;
           var tc = this.thumbCount;
+          var thumbHeight = this.thumbHeight;
+          var thumbRenderWidth = this.thumbRenderWidth;
+          var thumbImageWidth = this.thumbImageWidth;
+          var thumbImageHeight = this.thumbImageHeight;
           var url = collUrl || (handle ? '/collections/' + handle : '#');
 
           pp.setAttribute('aria-busy', 'false');
@@ -560,17 +574,19 @@
 
           thumbs.forEach(function (p) {
             var rawImg = getProductImage(p);
-            var src = rawImg ? resizeImg(rawImg, '160x160') : null;
+            var src = rawImg ? resizeImg(rawImg, thumbImageWidth, thumbImageHeight) : null;
             var productUrl = '/products/' + esc(p.handle);
 
             html += '<a href="' + productUrl + '" class="oc-mega__thumb">';
+            html += '<div class="oc-mega__thumb-media">';
 
             if (src) {
-              html += '<img src="' + esc(src) + '" alt="' + esc(p.title) + '" loading="lazy" width="160" height="160">';
+              html += '<img src="' + esc(src) + '" alt="' + esc(p.title) + '" loading="lazy" width="' + thumbRenderWidth + '" height="' + thumbHeight + '">';
             } else {
               html += '<div class="oc-mega__thumb-ph"></div>';
             }
 
+            html += '</div>';
             html += '<span class="oc-mega__thumb-nm">' + esc(p.title) + '</span>';
             html += '</a>';
           });
@@ -638,10 +654,6 @@
 {% endstyle %}
 
 {% stylesheet %}
-/* ═══════════════════════════════════════════════════════════
-   HORIZON NATIVE MENU STYLES
-═══════════════════════════════════════════════════════════ */
-
 .header__drawer {
   --header-drawer-min-height: 60px;
   display: flex;
@@ -709,7 +721,7 @@
   font-family: var(--menu-top-level-font-family);
   font-style: var(--menu-top-level-font-style);
   font-weight: var(--menu-top-level-font-weight);
-  font-size: var(--menu-top-level-font-size);
+  font-size: var(--oc-top-menu-font-size, var(--menu-top-level-font-size));
   line-height: var(--menu-top-level-font-line-height);
   text-transform: var(--menu-top-level-font-case);
   color: var(--menu-top-level-font-color);
@@ -725,9 +737,11 @@
   &:focus {
     color: var(--menu-top-level-font-color);
   }
+}
 
-  @media screen and (min-width: 750px) {
-    font-size: var(--menu-top-level-font-size-desktop);
+@media screen and (min-width: 750px) {
+  .menu-list__link {
+    font-size: var(--oc-top-menu-font-size, var(--menu-top-level-font-size-desktop));
   }
 }
 
@@ -798,7 +812,6 @@
 .overflow-menu::part(overflow) {
   --submenu-content-opacity: 0;
   --submenu-content-animation: opacity calc(var(--submenu-animation-speed) * 0.75) var(--animation-easing);
-
   visibility: hidden;
   position: absolute;
   width: 100%;
@@ -900,10 +913,6 @@
   scrollbar-color: rgb(var(--color-foreground-rgb) / var(--opacity-40)) transparent;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   OC MEGA MENU
-═══════════════════════════════════════════════════════════ */
-
 .oc-mega-inner {
   padding: 0 !important;
   overflow: hidden !important;
@@ -927,14 +936,14 @@
 }
 
 .oc-mega__col0 {
-  width: 230px;
+  width: var(--oc-col0-width, 230px);
   flex-shrink: 0;
   border-right: 1px solid var(--oc-ink-15);
   padding: 0 6px 12px;
 }
 
 .oc-mega__col1 {
-  width: 230px;
+  width: var(--oc-col1-width, 230px);
   flex-shrink: 0;
   border-right: 1px solid var(--oc-ink-15);
   padding: 0 6px 12px;
@@ -981,7 +990,6 @@
 .oc-mega__l1-item {
   padding: 7px 8px;
   border-radius: var(--oc-radius-sm);
-  font-size: 12.5px;
   line-height: 1.45;
   cursor: pointer;
   display: flex;
@@ -995,6 +1003,14 @@
   transition:
     background var(--oc-dur-fast) ease,
     color var(--oc-dur-fast) ease;
+}
+
+.oc-mega__l0-item {
+  font-size: var(--oc-l0-font-size, 13px);
+}
+
+.oc-mega__l1-item {
+  font-size: var(--oc-l1-font-size, 13px);
 }
 
 .oc-mega__l0-item::after {
@@ -1040,7 +1056,6 @@
 .oc-mega__thumb {
   flex: 1 1 0;
   min-width: 0;
-  max-width: 90px;
   display: flex;
   flex-direction: column;
   border: 1px solid var(--oc-ink-15);
@@ -1057,26 +1072,29 @@
   box-shadow: 0 0 0 2px var(--oc-cyan-l);
 }
 
-.oc-mega__thumb img {
+.oc-mega__thumb-media {
+  position: relative;
   width: 100%;
-  height: 72px;
-  object-fit: cover;
-  display: block;
+  aspect-ratio: 4 / 3;
+  background: var(--oc-ink-05);
+  overflow: hidden;
   flex-shrink: 0;
 }
 
+.oc-mega__thumb img,
 .oc-mega__thumb-ph {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  height: 72px;
-  background: var(--oc-ink-05);
+  height: 100%;
+  object-fit: cover;
   display: block;
-  flex-shrink: 0;
 }
 
 .oc-mega__thumb-nm {
   display: block;
-  padding: 3px 5px 4px;
-  font-size: 10px;
+  padding: 4px 6px 5px;
+  font-size: var(--oc-thumb-title-font-size, 10px);
   color: var(--oc-ink-40);
   white-space: nowrap;
   overflow: hidden;
@@ -1137,17 +1155,18 @@
 }
 
 @media screen and (max-width: 1199px) {
-  .oc-mega__col0 { width: 200px; }
-  .oc-mega__col1 { width: 200px; }
-  .oc-mega__thumb { max-width: 76px; }
-  .oc-mega__thumb img,
-  .oc-mega__thumb-ph { height: 60px; }
+  .oc-mega__col0 { width: min(var(--oc-col0-width, 230px), 200px); }
+  .oc-mega__col1 { width: min(var(--oc-col1-width, 230px), 200px); }
 }
 
 @media screen and (max-width: 989px) {
   .oc-mega-panel { flex-direction: column; max-height: none; }
   .oc-mega__col0,
-  .oc-mega__col1 { width: 100%; border-right: none; border-bottom: 1px solid var(--oc-ink-15); }
+  .oc-mega__col1 {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--oc-ink-15);
+  }
   .oc-mega__col0 { max-height: 160px; }
   .oc-mega__col1 { max-height: 200px; }
 }
@@ -1170,114 +1189,124 @@
     {
       "type": "link_list",
       "id": "menu",
-      "label": "t:settings.menu",
-      "info": "เมนูหลัก — ลิงก์ที่มี children จะแสดง 3-col mega panel อัตโนมัติ",
+      "label": "Menu",
       "default": "main-menu"
     },
     {
       "type": "header",
-      "content": "Mega Menu"
+      "content": "Mega menu content"
     },
     {
       "type": "range",
       "id": "mega_thumb_count",
-      "label": "จำนวน thumbnail สินค้า (col 3)",
-      "min": 2,
-      "max": 6,
+      "label": "Thumbnail images shown",
+      "min": 1,
+      "max": 8,
       "step": 1,
-      "default": 4,
-      "info": "สินค้าที่เหลือแสดงเป็น text tag · โหลดผ่าน AJAX จาก subcollection ที่เลือก"
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "product_limit",
+      "label": "Total products loaded",
+      "min": 4,
+      "max": 20,
+      "step": 1,
+      "default": 8
     },
     {
       "type": "header",
-      "content": "t:content.typography"
+      "content": "Thumbnail image"
+    },
+    {
+      "type": "range",
+      "id": "thumb_height",
+      "label": "Thumbnail card height (px)",
+      "min": 48,
+      "max": 160,
+      "step": 4,
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "thumb_image_width",
+      "label": "Thumbnail image intrinsic width (px)",
+      "min": 160,
+      "max": 800,
+      "step": 20,
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "thumb_title_font_size",
+      "label": "Thumbnail title font size (px)",
+      "min": 9,
+      "max": 16,
+      "step": 1,
+      "default": 10
+    },
+    {
+      "type": "header",
+      "content": "Column width"
+    },
+    {
+      "type": "range",
+      "id": "col0_width",
+      "label": "Left column width (px)",
+      "min": 160,
+      "max": 320,
+      "step": 10,
+      "default": 230
+    },
+    {
+      "type": "range",
+      "id": "col1_width",
+      "label": "Middle column width (px)",
+      "min": 160,
+      "max": 320,
+      "step": 10,
+      "default": 230
+    },
+    {
+      "type": "header",
+      "content": "Font size"
+    },
+    {
+      "type": "range",
+      "id": "top_menu_font_size",
+      "label": "Top menu font size (px)",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "l0_font_size",
+      "label": "Left column font size (px)",
+      "min": 11,
+      "max": 20,
+      "step": 1,
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "l1_font_size",
+      "label": "Middle column font size (px)",
+      "min": 11,
+      "max": 20,
+      "step": 1,
+      "default": 13
+    },
+    {
+      "type": "header",
+      "content": "Theme colour"
     },
     {
       "type": "color_scheme",
       "id": "color_scheme",
-      "label": "t:settings.color_scheme",
+      "label": "Color scheme",
       "default": "primary"
-    },
-    {
-      "type": "select",
-      "id": "type_font_primary_size",
-      "label": "t:settings.top_level_size",
-      "options": [
-        { "value": "0.625rem", "label": "10px" },
-        { "value": "0.75rem",  "label": "12px" },
-        { "value": "0.875rem", "label": "14px" },
-        { "value": "1rem",     "label": "16px" },
-        { "value": "1.125rem", "label": "18px" }
-      ],
-      "default": "1rem"
-    },
-    {
-      "type": "select",
-      "id": "menu_font_style",
-      "label": "t:settings.submenu_size",
-      "options": [
-        { "value": "regular",       "label": "t:options.small"  },
-        { "value": "inverse",       "label": "t:options.medium" },
-        { "value": "inverse_large", "label": "t:options.large"  }
-      ],
-      "default": "inverse"
-    },
-    {
-      "type": "select",
-      "id": "type_font_primary_link",
-      "label": "t:settings.font",
-      "options": [
-        { "value": "body",       "label": "t:options.body"       },
-        { "value": "subheading", "label": "t:options.subheading" },
-        { "value": "heading",    "label": "t:options.heading"    },
-        { "value": "accent",     "label": "t:options.accent"     }
-      ],
-      "default": "heading"
-    },
-    {
-      "type": "select",
-      "id": "type_case_primary_link",
-      "label": "t:settings.text_case",
-      "options": [
-        { "value": "none",      "label": "t:options.default"   },
-        { "value": "uppercase", "label": "t:options.uppercase" }
-      ],
-      "default": "none"
-    },
-    {
-      "type": "header",
-      "content": "t:content.mobile_layout"
-    },
-    {
-      "type": "checkbox",
-      "id": "navigation_bar",
-      "label": "t:settings.navigation_bar"
-    },
-    {
-      "type": "color_scheme",
-      "id": "color_scheme_navigation_bar",
-      "label": "t:settings.navigation_bar_color_scheme",
-      "default": "primary",
-      "visible_if": "{{ block.settings.navigation_bar }}"
-    },
-    {
-      "type": "checkbox",
-      "id": "drawer_accordion",
-      "label": "t:settings.accordion",
-      "default": false
-    },
-    {
-      "type": "checkbox",
-      "id": "drawer_accordion_expand_first",
-      "label": "t:settings.expand_first_group",
-      "default": false,
-      "visible_if": "{{ block.settings.drawer_accordion == true }}"
-    },
-    {
-      "type": "checkbox",
-      "id": "drawer_dividers",
-      "label": "t:settings.dividers",
-      "default": false
     }
   ]
 }
