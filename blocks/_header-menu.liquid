@@ -298,13 +298,13 @@
           return src;
         }
 
-        function resizeImg(src, size) {
-          src = normalizeShopifyImage(src);
-          if (!src) return null;
+function resizeImg(src, width, height) {
+  src = normalizeShopifyImage(src);
+  if (!src) return null;
 
-          src = src.replace(/_(pico|icon|thumb|small|compact|medium|large|grande|original|\d+x\d*)(?=\.[a-zA-Z]{3,4}(\?[^.]*)?$)/, '');
-          return src.replace(/(\.[a-zA-Z]{3,4})(\?[^.]*)?$/, '_' + size + 'x' + size + '$1$2');
-        }
+  src = src.replace(/_(pico|icon|thumb|small|compact|medium|large|grande|original|\d+x\d*)(?=\.[a-zA-Z]{3,4}(\?[^.]*)?$)/, '');
+  return src.replace(/(\.[a-zA-Z]{3,4})(\?[^.]*)?$/, '_' + width + 'x' + height + '$1$2');
+}
 
         function getProductImage(product) {
           if (!product) return null;
