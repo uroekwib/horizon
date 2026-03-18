@@ -1105,6 +1105,9 @@
 
 
   /* ── Language pill toggle รอลบ ถ้ามีตัวทดแทน── */
+  .oc-lang-toggle--mobile {
+  display: none;
+  }
   .oc-lang-toggle {
   display: inline-flex;
   align-items: center;
@@ -1113,7 +1116,7 @@
   padding: 3px;
   position: relative;
   gap: 0;
-}
+  }
 
 .header[transparent] .oc-lang-toggle {
   background: rgba(255, 255, 255, 0.15);
@@ -1180,13 +1183,7 @@
   }
 
   .oc-lang-toggle--mobile {
-    display: flex;
-    grid-area: rightLg;
-    align-items: center;
-    justify-self: center;
-    white-space: nowrap;
-    font-size: 11px;
-    gap: 1px;
+    display: inline-flex;
   }
 
   .oc-lang-toggle--mobile .oc-lang-toggle__btn {
