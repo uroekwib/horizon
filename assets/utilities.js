@@ -706,11 +706,8 @@ export function setHeaderMenuStyle() {
   const headerComponent = /** @type {HTMLElement} | null */ (document.querySelector('#header-component'));
   if (headerComponent) {
     window.requestAnimationFrame(() => {
-      const overflowList = headerComponent?.querySelector('overflow-list');
-      const hasReachedMinimum = overflowList && overflowList.hasAttribute('minimum-reached');
       const isDesktop = window.matchMedia('(min-width: 750px)').matches;
-
-      headerComponent.dataset.menuStyle = !isDesktop || hasReachedMinimum ? 'drawer' : 'menu';
+      headerComponent.dataset.menuStyle = isDesktop ? 'menu' : 'drawer';
     });
   }
 }

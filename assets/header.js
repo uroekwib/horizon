@@ -182,6 +182,10 @@ class HeaderComponent extends Component {
     this.#lastScrollTop = scrollTop;
   };
 
+/**
+ * Sets the menuStyle dataset attribute on the header component element. PEAR AMENDS FOR RESPONSIVE HEADER 18/3/2026
+ */
+
   connectedCallback() {
     super.connectedCallback();
     this.#resizeObserver.observe(this);
