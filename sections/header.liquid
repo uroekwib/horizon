@@ -736,9 +736,30 @@
           grid-area: leftB;
         }
 
-        header-actions {
-          grid-area: rightB;
-        }
+         header-actions {
+    gap: 6px !important;
+  }
+
+  header-actions .header-actions__action,
+  header-actions .account-button {
+    width: 34px !important;
+    min-width: 34px !important;
+    height: 34px !important;
+    padding: 0 !important;
+  }
+
+  header-actions .header-actions__action .svg-wrapper,
+  header-actions .account-button .svg-wrapper,
+  header-actions .header-actions__action svg,
+  header-actions .account-button svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  #header-component .oc-lang-toggle--mobile {
+    transform: scale(0.82);
+    transform-origin: center;
+  }
       }
     }
 
@@ -746,14 +767,40 @@
       We could avoid the duplication using js to set the data-menu-style attribute on small screens instead of using @media queries */
 
     #header-component[data-menu-style='drawer'] .header__columns {
-        --header-template-columns: 40px 40px 1fr 46px 30px 30px;
-    grid-template-areas: 'leftA leftB center rightLg rightA rightB';
-    grid-column: span 3;
-    column-gap: 0;
-    align-items: center;
-    padding-block: 0;
-    padding-inline: 0 var(--padding-3xs);
-  }
+        --header-template-columns:
+      var(--header-mobile-bookend)
+      var(--header-mobile-bookend)
+      1fr
+      auto
+      var(--header-mobile-bookend)
+      var(--header-mobile-bookend);
+
+      grid-template-areas: 'leftA leftB center rightLg rightA rightB';
+      grid-column: span 3;
+      column-gap: 0;
+      align-items: center;
+      padding-block: 0;
+      padding-inline: 0 var(--padding-3xs);
+
+      .header-logo {
+        grid-area: center;
+      }
+
+      &:not(:has(header-actions)) .search-action {
+        grid-area: leftB;
+      }
+
+      &:not(:has(shopify-account)) .search-action {
+        grid-area: rightA;
+      }
+
+      .search-action {
+        grid-area: leftB;
+      }
+
+      header-actions {
+        grid-area: rightB;
+      }
     }
 
 
