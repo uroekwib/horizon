@@ -736,9 +736,30 @@
           grid-area: leftB;
         }
 
-        header-actions {
-          grid-area: rightB;
-        }
+         header-actions {
+    gap: 6px !important;
+  }
+
+  header-actions .header-actions__action,
+  header-actions .account-button {
+    width: 34px !important;
+    min-width: 34px !important;
+    height: 34px !important;
+    padding: 0 !important;
+  }
+
+  header-actions .header-actions__action .svg-wrapper,
+  header-actions .account-button .svg-wrapper,
+  header-actions .header-actions__action svg,
+  header-actions .account-button svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  #header-component .oc-lang-toggle--mobile {
+    transform: scale(0.82);
+    transform-origin: center;
+  }
       }
     }
 
