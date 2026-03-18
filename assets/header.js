@@ -187,6 +187,8 @@ class HeaderComponent extends Component {
     this.#resizeObserver.observe(this);
     this.addEventListener('overflowMinimum', this.#handleOverflowMinimum);
 
+     window.addEventListener('resize', () => setHeaderMenuStyle());
+
     const stickyMode = this.getAttribute('sticky');
     if (stickyMode) {
       this.#observeStickyPosition(stickyMode === 'always');
