@@ -1141,7 +1141,23 @@
     font-size: 12px;
     pointer-events: none;
   }
+  
+  .oc-lang-toggle--mobile {
+  display: none;
+  }
 
+  @media screen and (max-width: 749px) {
+  .oc-lang-toggle--desktop {
+    display: none !important;
+  }
+
+  .oc-lang-toggle--mobile {
+    display: flex;
+    grid-area: rightLg;
+    align-items: center;
+    justify-self: center;
+  }
+  }
 
   /*************** search input *****************/
   /* ============================================================
