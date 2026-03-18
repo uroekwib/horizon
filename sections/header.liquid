@@ -746,7 +746,7 @@
       We could avoid the duplication using js to set the data-menu-style attribute on small screens instead of using @media queries */
 
     #header-component[data-menu-style='drawer'] .header__columns {
-        --header-template-columns: 40px 40px 1fr 46px 30px 30px;
+         --header-template-columns: 40px 40px 1fr 46px 30px 30px;
     grid-template-areas: 'leftA leftB center rightLg rightA rightB';
     grid-column: span 3;
     column-gap: 0;
@@ -754,7 +754,27 @@
     padding-block: 0;
     padding-inline: 0 var(--padding-3xs);
   }
-    }
+
+      .header-logo {
+        grid-area: center;
+      }
+
+      &:not(:has(header-actions)) .search-action {
+        grid-area: leftB;
+      }
+
+      &:not(:has(shopify-account)) .search-action {
+        grid-area: rightA;
+      }
+
+      .search-action {
+        grid-area: leftB;
+      }
+
+      header-actions {
+        grid-area: rightB;
+      }
+    
 
 
     /* Single column layout if there are no columns within */
