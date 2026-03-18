@@ -746,10 +746,15 @@
       We could avoid the duplication using js to set the data-menu-style attribute on small screens instead of using @media queries */
 
     #header-component[data-menu-style='drawer'] .header__columns {
-      --header-template-columns: var(--header-mobile-bookend) var(--header-mobile-bookend) 1fr
-        var(--header-mobile-bookend) var(--header-mobile-bookend);
+        --header-template-columns:
+      var(--header-mobile-bookend)
+      var(--header-mobile-bookend)
+      1fr
+      auto
+      var(--header-mobile-bookend)
+      var(--header-mobile-bookend);
 
-      grid-template-areas: 'leftA leftB center rightA rightB';
+      grid-template-areas: 'leftA leftB center rightLg rightA rightB';
       grid-column: span 3;
       column-gap: 0;
       align-items: center;
