@@ -1132,10 +1132,10 @@
   /* ── Search Slot Wrapper (flex child in header) ── */
   /* fluid: ~190px @ 950px → ~300px @ 1400px → ~460px @ 2100px+ */
   .oc-search-slot-wrap {
-    flex: 1 1 auto;
-    min-width: 120px;
     width: 100%;
+    min-width: 0;
     max-width: none;
+    flex: 1 1 auto;
   }
 
 
@@ -1347,10 +1347,8 @@
 
   #header-component[data-menu-style='menu']
   .search-action:not(.search-action--hidden-on-menu) {
-    flex: 1 1 280px;
-    min-width: 120px;
-    width: 100%;
-    max-width: min(28vw, 480px);
+    justify-self: end;
+    width: clamp(180px, 22vw, 520px);
   }
 
   /******* end of search input********/
