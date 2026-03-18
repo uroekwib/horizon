@@ -7,16 +7,10 @@
    - (default)          → desktop nav + optional 3-column mega drawer
 
   Mega drawer:
-   - Triggered by a configurable label button (e.g. "สินค้าและบริการ")
-   - Reads from a dedicated link_list: mega_menu
-     · Level 0 = top-level links  (e.g. ป้าย, สติ๊กเกอร์)
-     · Level 1 = children of each (e.g. อักษรโลหะ, กัดกรด)
-   - Products loaded via AJAX from /collections/{handle}/products.json
-   - No icons — text only for collection items
-   - CSS tokens: uses --oc-* from custom.css.liquid; no new colour declarations
-
-  @param {string} [variant]     - 'mobile' | 'navigation_bar' | default desktop
-  @param {string} [transparent] - transparent header flag
+   - Top nav link with children = trigger mega drawer
+   - Col 0 = parent collections from menu children
+   - Col 1 = subcollections from collection metafield: custom.subcollections
+   - Col 2 = products loaded by AJAX from selected subcollection
 {%- enddoc -%}
 
 {% liquid
@@ -25,7 +19,6 @@
 
 {% case variant %}
 
-  {%- comment -%} MOBILE DRAWER  (Horizon native — unchanged) {%- endcomment -%}
   {% when 'mobile' %}
     <div
       class="header__drawer"
@@ -39,7 +32,6 @@
       %}
     </div>
 
-  {%- comment -%} NAVIGATION BAR  (mobile scroll bar — Horizon native, unchanged) {%- endcomment -%}
   {% when 'navigation_bar' %}
     {% if block_settings.navigation_bar == true %}
       <div
@@ -66,17 +58,15 @@
       </div>
     {% endif %}
 
-  {%- comment -%} DESKTOP NAV  (default — mega drawer + regular links) {%- endcomment -%}
   {% else %}
 
-    {%- comment -%} resolve colour scheme classes (same logic as Horizon native) {%- endcomment -%}
     {% liquid
       assign mega_thumbs = block_settings.mega_thumb_count | default: 4
 
       assign color_scheme_classes = ''
-      assign cs_key               = 'color_scheme_' | append: section.settings.menu_row
-      assign current_cs           = block_settings.color_scheme
-      assign parent_cs            = section.settings[cs_key]
+      assign cs_key = 'color_scheme_' | append: section.settings.menu_row
+      assign current_cs = block_settings.color_scheme
+      assign parent_cs = section.settings[cs_key]
 
       if parent_cs.id != current_cs.id
         assign color_scheme_classes = ' color-' | append: current_cs
@@ -87,11 +77,6 @@
     %}
 
     {% capture children %}
-
-      {%- comment -%} Loop every top-level nav link.
-          Links WITH children → 3-col mega panel (our custom submenu).
-          Links WITHOUT children → plain nav link (Horizon native).
-      {%- endcomment -%}
       {% for link in block_settings.menu.links %}
         <li
           class="menu-list__list-item"
@@ -105,18 +90,18 @@
             href="{{ link.url }}"
             data-skip-node-update="true"
             class="menu-list__link{% if link.active %} menu-list__link--active{% endif %}"
-            {%- if link.links != blank -%}
+            {% if link.links != blank %}
               aria-controls="submenu-{{ forloop.index }}"
               aria-haspopup="true"
               aria-expanded="false"
-            {%- endif -%}
+            {% endif %}
             {% if link.current %}aria-current="page"{% endif %}
             ref="menuitem"
           >
             <span class="menu-list__link-title">{{- link.title -}}</span>
           </a>
 
-          {%- if link.links != blank -%}
+          {% if link.links != blank %}
             <div class="menu-list__submenu{{ color_scheme_classes }}" ref="submenu[]">
               <div
                 id="submenu-{{ forloop.index }}"
@@ -124,17 +109,23 @@
                 style="{% render 'submenu-font-styles', settings: block_settings %}"
               >
                 <div class="oc-mega-panel">
-
-                  {%- comment -%} COL 0 — top-level children = main collections {%- endcomment -%}
                   <div class="oc-mega__col0">
                     <div class="oc-mega__col-hd">{{ link.title }}</div>
                     <ul class="oc-mega__l0-list list-unstyled" role="listbox">
                       {% for l0 in link.links %}
-                        {%- assign l0_handle = l0.url | split: '?' | first | split: '/' | last -%}
+                        {%- liquid
+                          assign l0_coll = l0.object
+                          assign l0_handle = ''
+                          if l0_coll != blank
+                            assign l0_handle = l0_coll.handle
+                          endif
+                        -%}
+
                         <li
                           class="oc-mega__l0-item{% if forloop.first %} on{% endif %}"
                           data-grp="{{ forloop.index0 }}"
                           data-coll="{{ l0_handle }}"
+                          data-url="{{ l0.url }}"
                           role="option"
                           aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
                           tabindex="0"
@@ -145,40 +136,23 @@
                     </ul>
                   </div>
 
-                  {%- comment -%} COL 1 — subcollections from metafield custom.subcollections {%- endcomment -%}
                   <div class="oc-mega__col1">
                     {% for l0 in link.links %}
                       {%- liquid
-                        comment
-                          Extract handle from the last path segment — works with
-                          localized URLs (/th/collections/signage), trailing slashes,
-                          and query strings alike.
-                        endcomment
-
-                        assign l0_url_clean  = l0.url | split: '?' | first | strip
-                        assign l0_url_parts  = l0_url_clean | split: '/'
-                        assign l0_handle     = l0_url_parts | last
-
-                        comment
-                          Lookup collection object — metafields accessible on
-                          collection objects from global collections[] drop.
-                        endcomment
-                        assign l0_coll  = collections[l0_handle]
-                        assign subcols  = l0_coll.metafields.custom.subcollections.value
-
+                        assign l0_coll = l0.object
+                        assign l0_handle = ''
+                        assign subcols = blank
                         assign has_meta = false
+
+                        if l0_coll != blank
+                          assign l0_handle = l0_coll.handle
+                          assign subcols = l0_coll.metafields.custom.subcollections.value
+                        endif
+
                         if subcols != blank and subcols.size > 0
                           assign has_meta = true
                         endif
                       -%}
-
-                      {%- comment -%}
-                        DEBUG — ลบ comment block นี้ออกหลัง verify แล้ว:
-                        handle={{ l0_handle }}
-                        coll={{ l0_coll.title }}
-                        has_meta={{ has_meta }}
-                        subcols.size={{ subcols.size }}
-                      {%- endcomment -%}
 
                       <div
                         class="oc-mega__l1-group{% unless forloop.first %} oc-hidden{% endunless %}"
@@ -189,8 +163,7 @@
                       >
                         <div class="oc-mega__col-hd">{{ l0.title }}</div>
                         <ul class="oc-mega__l1-list list-unstyled">
-
-                          {%- if has_meta -%}
+                          {% if has_meta %}
                             {% for subcol in subcols %}
                               <li
                                 class="oc-mega__l1-item{% if forloop.first and forloop.parentloop.first %} on{% endif %}"
@@ -203,12 +176,16 @@
                                 {{- subcol.title -}}
                               </li>
                             {% endfor %}
-
-                          {%- else -%}
-                            {%- comment -%} Fallback — nav children ถ้า metafield ยังไม่ได้ set {%- endcomment -%}
+                          {% else %}
                             {% for l1 in l0.links %}
-                              {%- assign l1_parts  = l1.url | split: '?' | first | split: '/' -%}
-                              {%- assign l1_handle = l1_parts | last -%}
+                              {%- liquid
+                                assign l1_coll = l1.object
+                                assign l1_handle = ''
+                                if l1_coll != blank
+                                  assign l1_handle = l1_coll.handle
+                                endif
+                              -%}
+
                               <li
                                 class="oc-mega__l1-item{% if forloop.first and forloop.parentloop.first %} on{% endif %}"
                                 data-coll="{{ l1_handle }}"
@@ -220,14 +197,12 @@
                                 {{- l1.title -}}
                               </li>
                             {% endfor %}
-                          {%- endif -%}
-
+                          {% endif %}
                         </ul>
                       </div>
                     {% endfor %}
                   </div>
 
-                  {%- comment -%} COL 2 — products via AJAX, rendered by JS {%- endcomment -%}
                   <div class="oc-mega__col2">
                     <div
                       class="oc-mega__product-panel"
@@ -236,15 +211,13 @@
                       aria-busy="false"
                     ></div>
                   </div>
-
                 </div>
               </div>
             </div>
-          {%- endif -%}
+          {% endif %}
         </li>
       {% endfor %}
 
-      {%- comment -%} OVERFLOW "MORE" BUTTON {%- endcomment -%}
       <li
         class="menu-list__list-item"
         role="presentation"
@@ -258,7 +231,6 @@
           <span class="menu-list__link-title">{{ 'actions.more' | t }}</span>
         </button>
       </li>
-
     {% endcapture %}
 
     <header-menu
@@ -292,288 +264,373 @@
       ></script>
     </header-menu>
 
-    {%- comment -%} MEGA MENU JAVASCRIPT {%- endcomment -%}
     <script>
-    (function () {
-      'use strict';
+      (function () {
+        'use strict';
 
-      /* ── Product cache shared across all instances & open/close cycles ── */
-      var _cache = {};
+        var _cache = {};
 
-      /* ── HTML-escape helper ── */
-      function esc(s) {
-        return String(s)
-          .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-          .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-      }
-
-      /* ── Shopify CDN image resize — strips existing size suffix first ── */
-      function resizeImg(src, size) {
-        if (!src) return null;
-        /* Remove existing Shopify size suffixes like _1024x1024, _grande, _original etc. */
-        var clean = src.replace(/_(pico|icon|thumb|small|compact|medium|large|grande|original|\d+x\d*)(?=\.[a-z]{3,4})/i, '');
-        /* Inject new size before extension */
-        return clean.replace(/(\.[a-z]{3,4})(\?.*)?$/i, '_' + size + '$1$2');
-      }
-
-      /* ════════════════════════════════════════════════════════
-         OcMega — one instance per .oc-mega-panel
-         Uses EVENT DELEGATION on the panel root so it survives
-         Horizon re-hydration without re-binding.
-      ════════════════════════════════════════════════════════ */
-      function OcMega(panel) {
-        this.panel         = panel;
-        this.productPanel  = panel.querySelector('.oc-mega__product-panel');
-        this.thumbCount    = parseInt(this.productPanel.dataset.thumbCount || 4, 10);
-        this.activeHandle  = null;
-        this._delegated    = false;
-        this._booted       = false;
-        this._attach();
-        this._watchOpen();   /* defer _boot until first open */
-      }
-
-      /* Watch the trigger <a aria-expanded> — boot only on first open */
-      OcMega.prototype._watchOpen = function () {
-        var self = this;
-        /* The trigger is the <a aria-haspopup> that precedes our submenu */
-        var submenu = this.panel.closest('.menu-list__submenu');
-        var trigger = submenu
-          ? submenu.closest('.menu-list__list-item')
-              && submenu.closest('.menu-list__list-item').querySelector('[aria-haspopup]')
-          : null;
-
-        if (!trigger) {
-          /* Fallback: boot immediately if we can't find trigger */
-          this._boot();
-          return;
+        function esc(s) {
+          return String(s || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
         }
 
-        var mo = new MutationObserver(function (mutations) {
-          mutations.forEach(function (m) {
-            if (m.attributeName === 'aria-expanded' &&
+        function normalizeShopifyImage(src) {
+          if (!src) return null;
+          src = String(src);
+
+          if (src.indexOf('//') === 0) {
+            src = window.location.protocol + src;
+          }
+
+          if (src.indexOf('http') !== 0 && src.indexOf('//') !== 0) {
+            if (src.indexOf('/') === 0) {
+              src = window.location.origin + src;
+            } else {
+              src = window.location.origin + '/' + src;
+            }
+          }
+
+          return src;
+        }
+
+        function resizeImg(src, size) {
+          src = normalizeShopifyImage(src);
+          if (!src) return null;
+
+          src = src.replace(/_(pico|icon|thumb|small|compact|medium|large|grande|original|\d+x\d*)(?=\.[a-zA-Z]{3,4}(\?[^.]*)?$)/, '');
+          return src.replace(/(\.[a-zA-Z]{3,4})(\?[^.]*)?$/, '_' + size + '$1$2');
+        }
+
+        function getProductImage(product) {
+          if (!product) return null;
+
+          if (typeof product.featured_image === 'string' && product.featured_image) {
+            return product.featured_image;
+          }
+
+          if (product.featured_image && typeof product.featured_image === 'object') {
+            if (product.featured_image.src) return product.featured_image.src;
+            if (product.featured_image.url) return product.featured_image.url;
+          }
+
+          if (Array.isArray(product.images) && product.images.length) {
+            var first = product.images[0];
+            if (typeof first === 'string') return first;
+            if (first && first.src) return first.src;
+            if (first && first.url) return first.url;
+          }
+
+          if (product.image && product.image.src) return product.image.src;
+
+          return null;
+        }
+
+        function fetchProducts(handle) {
+          if (!handle) return Promise.resolve([]);
+
+          if (Array.isArray(_cache[handle])) {
+            return Promise.resolve(_cache[handle]);
+          }
+
+          if (_cache[handle] && typeof _cache[handle].then === 'function') {
+            return _cache[handle];
+          }
+
+          _cache[handle] = fetch('/collections/' + encodeURIComponent(handle) + '/products.json?limit=8', {
+            credentials: 'same-origin'
+          })
+            .then(function (res) {
+              if (!res.ok) throw new Error('Fetch failed: ' + res.status);
+              return res.json();
+            })
+            .then(function (data) {
+              var products = Array.isArray(data.products) ? data.products : [];
+              _cache[handle] = products;
+              return products;
+            })
+            .catch(function () {
+              _cache[handle] = [];
+              return [];
+            });
+
+          return _cache[handle];
+        }
+
+        function OcMega(panel) {
+          this.panel = panel;
+          this.productPanel = panel.querySelector('.oc-mega__product-panel');
+          this.thumbCount = parseInt(this.productPanel.dataset.thumbCount || 4, 10);
+          this.activeHandle = null;
+          this.booted = false;
+          this.bind();
+          this.watchOpen();
+        }
+
+        OcMega.prototype.watchOpen = function () {
+          var self = this;
+          var submenu = this.panel.closest('.menu-list__submenu');
+          var menuItem = submenu ? submenu.closest('.menu-list__list-item') : null;
+          var trigger = menuItem ? menuItem.querySelector('[aria-haspopup]') : null;
+
+          if (!trigger) {
+            self.boot();
+            return;
+          }
+
+          var mo = new MutationObserver(function (mutations) {
+            mutations.forEach(function (m) {
+              if (
+                m.attributeName === 'aria-expanded' &&
                 trigger.getAttribute('aria-expanded') === 'true' &&
-                !self._booted) {
-              self._boot();
-              mo.disconnect();
+                !self.booted
+              ) {
+                self.boot();
+                mo.disconnect();
+              }
+            });
+          });
+
+          mo.observe(trigger, {
+            attributes: true,
+            attributeFilter: ['aria-expanded']
+          });
+        };
+
+        OcMega.prototype.bind = function () {
+          var self = this;
+
+          this.panel.addEventListener('mouseenter', function (e) {
+            var l0 = e.target.closest('.oc-mega__l0-item');
+            var l1 = e.target.closest('.oc-mega__l1-item');
+
+            if (l0) self.selectL0(Number(l0.dataset.grp), l0);
+            if (l1 && l1.dataset.coll) self.prefetch(l1.dataset.coll);
+          }, true);
+
+          this.panel.addEventListener('click', function (e) {
+            var l0 = e.target.closest('.oc-mega__l0-item');
+            var l1 = e.target.closest('.oc-mega__l1-item');
+
+            if (l0) {
+              e.preventDefault();
+              self.selectL0(Number(l0.dataset.grp), l0);
+            }
+
+            if (l1) {
+              e.preventDefault();
+              self.selectL1(l1);
             }
           });
-        });
-        mo.observe(trigger, { attributes: true, attributeFilter: ['aria-expanded'] });
-      };
 
-      /* Single delegated listener on the panel — survives DOM mutations */
-      OcMega.prototype._attach = function () {
-        if (this._delegated) return;
-        this._delegated = true;
-        var self = this;
+          this.panel.addEventListener('focusin', function (e) {
+            var l0 = e.target.closest('.oc-mega__l0-item');
+            var l1 = e.target.closest('.oc-mega__l1-item');
 
-        this.panel.addEventListener('mouseenter', function (e) {
-          var l0 = e.target.closest('.oc-mega__l0-item');
-          var l1 = e.target.closest('.oc-mega__l1-item');
-          if (l0) self._selectL0(+l0.dataset.grp, l0);
-          if (l1) self._prefetch(l1.dataset.coll);
-        }, true); /* capture so it fires even if child stops bubbling */
-
-        this.panel.addEventListener('click', function (e) {
-          var l0 = e.target.closest('.oc-mega__l0-item');
-          var l1 = e.target.closest('.oc-mega__l1-item');
-          if (l0) { e.preventDefault(); self._selectL0(+l0.dataset.grp, l0); }
-          if (l1) { e.preventDefault(); self._selectL1(l1); }
-        });
-
-        this.panel.addEventListener('focusin', function (e) {
-          var l0 = e.target.closest('.oc-mega__l0-item');
-          var l1 = e.target.closest('.oc-mega__l1-item');
-          if (l0) self._selectL0(+l0.dataset.grp, l0);
-          if (l1) self._selectL1(l1);
-        });
-
-        this.panel.addEventListener('keydown', function (e) {
-          var l1 = e.target.closest('.oc-mega__l1-item');
-          if (!l1) return;
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            self._selectL1(l1);
-          }
-          if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-            e.preventDefault();
-            var all  = Array.from(l1.closest('.oc-mega__l1-list').querySelectorAll('.oc-mega__l1-item'));
-            var next = all[all.indexOf(l1) + (e.key === 'ArrowDown' ? 1 : -1)];
-            if (next) next.focus();
-          }
-        });
-      };
-
-      /* Boot: activate first L0 + first L1 — called only on first open */
-      OcMega.prototype._boot = function () {
-        this._booted = true;
-        var firstL0 = this.panel.querySelector('.oc-mega__l0-item');
-        if (firstL0) this._selectL0(0, firstL0);
-        var firstL1 = this.panel.querySelector('.oc-mega__l1-group:not(.oc-hidden) .oc-mega__l1-item');
-        if (firstL1) {
-          firstL1.classList.add('on');
-          this._loadProducts(firstL1.dataset.coll, firstL1.dataset.url);
-        }
-      };
-
-      OcMega.prototype._selectL0 = function (grp, activeEl) {
-        var self = this;
-        this.panel.querySelectorAll('.oc-mega__l0-item').forEach(function (el) {
-          var on = el === activeEl || +el.dataset.grp === grp;
-          el.classList.toggle('on', on);
-          el.setAttribute('aria-selected', on ? 'true' : 'false');
-        });
-        this.panel.querySelectorAll('.oc-mega__l1-group').forEach(function (el) {
-          el.classList.toggle('oc-hidden', +el.dataset.grp !== grp);
-        });
-
-        /* Auto-select first L1 in newly shown group if nothing active */
-        var group   = this.panel.querySelector('.oc-mega__l1-group[data-grp="' + grp + '"]');
-        var current = group && group.querySelector('.oc-mega__l1-item.on');
-        if (!current) {
-          var first = group && group.querySelector('.oc-mega__l1-item');
-          if (first) { first.classList.add('on'); self._loadProducts(first.dataset.coll, first.dataset.url); }
-        }
-      };
-
-      OcMega.prototype._selectL1 = function (item) {
-        this.panel.querySelectorAll('.oc-mega__l1-item').forEach(function (el) {
-          el.classList.toggle('on', el === item);
-          el.setAttribute('aria-selected', el === item ? 'true' : 'false');
-        });
-        this._loadProducts(item.dataset.coll, item.dataset.url);
-      };
-
-      OcMega.prototype._prefetch = function (handle) {
-        if (!handle || handle in _cache) return;
-        _cache[handle] = null; /* mark in-flight */
-        fetch('/collections/' + handle + '/products.json?limit=8')
-          .then(function (r) { return r.json(); })
-          .then(function (d) { _cache[handle] = d.products || []; })
-          .catch(function ()  { _cache[handle] = []; });
-      };
-
-      OcMega.prototype._loadProducts = function (handle, collUrl) {
-        if (!handle || this.activeHandle === handle) return;
-        this.activeHandle = handle;
-
-        var self = this;
-        var pp   = this.productPanel;
-        pp.setAttribute('aria-busy', 'true');
-
-        if (_cache[handle] && _cache[handle].length !== undefined && _cache[handle] !== null) {
-          /* Already cached — render immediately */
-          self._render(_cache[handle], handle, collUrl);
-          return;
-        }
-
-        pp.innerHTML = '<p class="oc-mega__loading">กำลังโหลด…</p>';
-        this._prefetch(handle);
-
-        /* Poll for in-flight prefetch (max ~2 s) then fetch again if needed */
-        var attempts = 0;
-        var tid = setInterval(function () {
-          attempts++;
-          if (_cache[handle] !== null && _cache[handle] !== undefined) {
-            clearInterval(tid);
-            if (self.activeHandle === handle) self._render(_cache[handle], handle, collUrl);
-          } else if (attempts > 20) {
-            clearInterval(tid);
-            /* Fallback direct fetch */
-            fetch('/collections/' + handle + '/products.json?limit=8')
-              .then(function (r) { return r.json(); })
-              .then(function (d) {
-                _cache[handle] = d.products || [];
-                if (self.activeHandle === handle) self._render(_cache[handle], handle, collUrl);
-              }).catch(function () {
-                _cache[handle] = [];
-                if (self.activeHandle === handle) self._render([], handle, collUrl);
-              });
-          }
-        }, 100);
-      };
-
-      OcMega.prototype._render = function (products, handle, collUrl) {
-        var pp  = this.productPanel;
-        pp.setAttribute('aria-busy', 'false');
-        var tc  = this.thumbCount;
-        var url = collUrl || ('/collections/' + handle);
-
-        if (!products || !products.length) {
-          pp.innerHTML =
-            '<p class="oc-mega__empty">ไม่พบสินค้าในหมวดนี้</p>' +
-            '<a href="' + esc(url) + '" class="btn-g oc-mega__viewall">ดูทั้งหมด →</a>';
-          return;
-        }
-
-        var thumbs = products.slice(0, tc);
-        var rest   = products.slice(tc);
-
-        /* Mini thumbnails — rendered only after menu opens, lazy is safe here */
-        var html = '<div class="oc-mega__thumbs">';
-        thumbs.forEach(function (p) {
-          var src    = p.featured_image ? resizeImg(p.featured_image.src, '160x160') : null;
-          var imgTag = src
-            ? '<img src="' + esc(src) + '" alt="' + esc(p.title) + '" loading="lazy" width="160" height="160">'
-            : '<div class="oc-mega__thumb-ph"></div>';
-          html += '<a href="/products/' + esc(p.handle) + '" class="oc-mega__thumb">' +
-                  imgTag + '<span class="oc-mega__thumb-nm">' + esc(p.title) + '</span></a>';
-        });
-        html += '</div>';
-
-        if (rest.length) {
-          html += '<p class="oc-mega__tags-hd">สินค้าอื่นๆ ในหมวดนี้</p><div class="oc-mega__tags">';
-          rest.forEach(function (p) {
-            html += '<a href="/products/' + esc(p.handle) + '" class="oc-mega__tag">' + esc(p.title) + '</a>';
+            if (l0) self.selectL0(Number(l0.dataset.grp), l0);
+            if (l1) self.selectL1(l1);
           });
+
+          this.panel.addEventListener('keydown', function (e) {
+            var l1 = e.target.closest('.oc-mega__l1-item');
+            if (!l1) return;
+
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              self.selectL1(l1);
+            }
+
+            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+              e.preventDefault();
+              var items = Array.from(l1.closest('.oc-mega__l1-list').querySelectorAll('.oc-mega__l1-item'));
+              var index = items.indexOf(l1);
+              var next = items[index + (e.key === 'ArrowDown' ? 1 : -1)];
+              if (next) next.focus();
+            }
+          });
+        };
+
+        OcMega.prototype.boot = function () {
+          if (this.booted) return;
+          this.booted = true;
+
+          var firstL0 = this.panel.querySelector('.oc-mega__l0-item');
+          if (firstL0) {
+            this.selectL0(Number(firstL0.dataset.grp || 0), firstL0);
+            return;
+          }
+
+          this.render([], '', '');
+        };
+
+        OcMega.prototype.selectL0 = function (grp, activeEl) {
+          var self = this;
+
+          this.panel.querySelectorAll('.oc-mega__l0-item').forEach(function (el) {
+            var on = el === activeEl;
+            el.classList.toggle('on', on);
+            el.setAttribute('aria-selected', on ? 'true' : 'false');
+          });
+
+          this.panel.querySelectorAll('.oc-mega__l1-group').forEach(function (group) {
+            var show = Number(group.dataset.grp) === grp;
+            group.classList.toggle('oc-hidden', !show);
+          });
+
+          var activeGroup = this.panel.querySelector('.oc-mega__l1-group[data-grp="' + grp + '"]');
+          if (!activeGroup) {
+            this.render([], '', activeEl ? activeEl.dataset.url : '');
+            return;
+          }
+
+          var firstL1 = activeGroup.querySelector('.oc-mega__l1-item');
+          this.panel.querySelectorAll('.oc-mega__l1-item').forEach(function (el) {
+            var on = el === firstL1;
+            el.classList.toggle('on', on);
+            el.setAttribute('aria-selected', on ? 'true' : 'false');
+          });
+
+          if (firstL1) {
+            self.loadProducts(firstL1.dataset.coll, firstL1.dataset.url);
+          } else {
+            self.render([], '', activeEl ? activeEl.dataset.url : '');
+          }
+        };
+
+        OcMega.prototype.selectL1 = function (item) {
+          this.panel.querySelectorAll('.oc-mega__l1-item').forEach(function (el) {
+            var on = el === item;
+            el.classList.toggle('on', on);
+            el.setAttribute('aria-selected', on ? 'true' : 'false');
+          });
+
+          this.loadProducts(item.dataset.coll, item.dataset.url);
+        };
+
+        OcMega.prototype.prefetch = function (handle) {
+          if (!handle) return;
+          fetchProducts(handle);
+        };
+
+        OcMega.prototype.loadProducts = function (handle, collUrl) {
+          var self = this;
+
+          if (!handle) {
+            self.render([], handle, collUrl);
+            return;
+          }
+
+          if (self.activeHandle === handle && self.productPanel.innerHTML.trim() !== '') {
+            return;
+          }
+
+          self.activeHandle = handle;
+          self.productPanel.setAttribute('aria-busy', 'true');
+          self.productPanel.innerHTML = '<p class="oc-mega__loading">กำลังโหลด…</p>';
+
+          fetchProducts(handle).then(function (products) {
+            if (self.activeHandle !== handle) return;
+            self.render(products, handle, collUrl);
+          });
+        };
+
+        OcMega.prototype.render = function (products, handle, collUrl) {
+          var pp = this.productPanel;
+          var tc = this.thumbCount;
+          var url = collUrl || (handle ? '/collections/' + handle : '#');
+
+          pp.setAttribute('aria-busy', 'false');
+
+          if (!products || !products.length) {
+            pp.innerHTML =
+              '<p class="oc-mega__empty">ไม่พบสินค้าในหมวดนี้</p>' +
+              (url !== '#'
+                ? '<a href="' + esc(url) + '" class="btn-g oc-mega__viewall">ดูทั้งหมด →</a>'
+                : '');
+            return;
+          }
+
+          var thumbs = products.slice(0, tc);
+          var rest = products.slice(tc);
+
+          var html = '<div class="oc-mega__thumbs">';
+
+          thumbs.forEach(function (p) {
+            var rawImg = getProductImage(p);
+            var src = rawImg ? resizeImg(rawImg, '160x160') : null;
+            var productUrl = '/products/' + esc(p.handle);
+
+            html += '<a href="' + productUrl + '" class="oc-mega__thumb">';
+
+            if (src) {
+              html += '<img src="' + esc(src) + '" alt="' + esc(p.title) + '" loading="lazy" width="160" height="160">';
+            } else {
+              html += '<div class="oc-mega__thumb-ph"></div>';
+            }
+
+            html += '<span class="oc-mega__thumb-nm">' + esc(p.title) + '</span>';
+            html += '</a>';
+          });
+
           html += '</div>';
+
+          if (rest.length) {
+            html += '<p class="oc-mega__tags-hd">สินค้าอื่นๆ ในหมวดนี้</p>';
+            html += '<div class="oc-mega__tags">';
+            rest.forEach(function (p) {
+              html += '<a href="/products/' + esc(p.handle) + '" class="oc-mega__tag">' + esc(p.title) + '</a>';
+            });
+            html += '</div>';
+          }
+
+          html += '<a href="' + esc(url) + '" class="btn-g oc-mega__viewall">ดูทั้งหมด →</a>';
+          pp.innerHTML = html;
+        };
+
+        function tryInit() {
+          document.querySelectorAll('.oc-mega-panel').forEach(function (panel) {
+            if (!panel._ocMega) {
+              panel._ocMega = new OcMega(panel);
+            }
+          });
         }
 
-        html += '<a href="' + esc(url) + '" class="btn-g oc-mega__viewall">ดูทั้งหมด →</a>';
-        pp.innerHTML = html;
-      };
+        tryInit();
 
-      /* ════════════════════════════════════════════════════════
-         Bootstrap — MutationObserver waits for Horizon hydration
-         before attaching. Handles lazy / deferred rendering.
-      ════════════════════════════════════════════════════════ */
-      function tryInit() {
-        document.querySelectorAll('.oc-mega-panel').forEach(function (panel) {
-          if (!panel._ocMega) panel._ocMega = new OcMega(panel);
-        });
-      }
-
-      /* Run immediately + watch for panels added later by Horizon hydration */
-      tryInit();
-
-      var obs = new MutationObserver(function (mutations) {
-        var found = mutations.some(function (m) {
-          return Array.from(m.addedNodes).some(function (n) {
-            return n.nodeType === 1 && (n.matches('.oc-mega-panel') || n.querySelector('.oc-mega-panel'));
+        var obs = new MutationObserver(function (mutations) {
+          var found = mutations.some(function (m) {
+            return Array.from(m.addedNodes).some(function (n) {
+              return n.nodeType === 1 && (
+                n.matches('.oc-mega-panel') ||
+                (n.querySelector && n.querySelector('.oc-mega-panel'))
+              );
+            });
           });
+
+          if (found) tryInit();
         });
-        if (found) tryInit();
-      });
 
-      obs.observe(document.body, { childList: true, subtree: true });
+        obs.observe(document.body, { childList: true, subtree: true });
 
-      /* Also fire after DOMContentLoaded and after small delay (Horizon late hydration) */
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function () {
-          tryInit();
-          setTimeout(tryInit, 800);
-        });
-      } else {
-        setTimeout(tryInit, 100);
-        setTimeout(tryInit, 800);
-      }
-
-    })();
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', function () {
+            tryInit();
+            setTimeout(tryInit, 500);
+            setTimeout(tryInit, 1200);
+          });
+        } else {
+          setTimeout(tryInit, 100);
+          setTimeout(tryInit, 500);
+          setTimeout(tryInit, 1200);
+        }
+      })();
     </script>
 
 {% endcase %}
 
-{%- comment -%} colour underlay variable (Horizon requirement) {%- endcomment -%}
 {% style %}
   .header__underlay {
     --color-submenu: rgb({{ block_settings.color_scheme.settings.background.rgba }});
@@ -582,7 +639,7 @@
 
 {% stylesheet %}
 /* ═══════════════════════════════════════════════════════════
-   HORIZON NATIVE MENU STYLES  (unchanged from original block)
+   HORIZON NATIVE MENU STYLES
 ═══════════════════════════════════════════════════════════ */
 
 .header__drawer {
@@ -613,7 +670,7 @@
   & .menu-list__list { width: max-content; margin-inline: auto; gap: var(--menu-horizontal-gap); }
   & li { width: max-content; padding-block: var(--padding-sm); }
   & li:first-of-type { padding-inline-start: var(--menu-horizontal-gap); }
-  & li:last-of-type  { padding-inline-end:   var(--menu-horizontal-gap); }
+  & li:last-of-type { padding-inline-end: var(--menu-horizontal-gap); }
   & a { color: var(--color-foreground); }
 }
 
@@ -626,7 +683,7 @@
 
 .menu-list {
   --menu-horizontal-gap: var(--gap-xl);
-  --menu-vertical-gap:   var(--gap-xl);
+  --menu-vertical-gap: var(--gap-xl);
   display: flex;
   height: 100%;
 }
@@ -644,16 +701,18 @@
   height: 100%;
 }
 
-.menu-list__list-item[aria-hidden='true'] { visibility: hidden; }
+.menu-list__list-item[aria-hidden='true'] {
+  visibility: hidden;
+}
 
 .menu-list__link {
-  font-family:    var(--menu-top-level-font-family);
-  font-style:     var(--menu-top-level-font-style);
-  font-weight:    var(--menu-top-level-font-weight);
-  font-size:      var(--menu-top-level-font-size);
-  line-height:    var(--menu-top-level-font-line-height);
+  font-family: var(--menu-top-level-font-family);
+  font-style: var(--menu-top-level-font-style);
+  font-weight: var(--menu-top-level-font-weight);
+  font-size: var(--menu-top-level-font-size);
+  line-height: var(--menu-top-level-font-line-height);
   text-transform: var(--menu-top-level-font-case);
-  color:          var(--menu-top-level-font-color);
+  color: var(--menu-top-level-font-color);
   text-decoration: none;
   display: flex;
   flex-direction: column;
@@ -662,32 +721,47 @@
   height: 100%;
   margin-block: 0;
 
-  &:hover, &:focus { color: var(--menu-top-level-font-color); }
+  &:hover,
+  &:focus {
+    color: var(--menu-top-level-font-color);
+  }
 
   @media screen and (min-width: 750px) {
     font-size: var(--menu-top-level-font-size-desktop);
   }
 }
 
-.menu-list__link-title { padding-inline: calc(var(--gap-xl) / 2); }
-[slot='overflow'] .menu-list__link-title { padding-inline: 0; }
+.menu-list__link-title {
+  padding-inline: calc(var(--gap-xl) / 2);
+}
 
-.menu-list__list-item:not([slot='overflow']) { flex-direction: column; }
+[slot='overflow'] .menu-list__link-title {
+  padding-inline: 0;
+}
+
+.menu-list__list-item:not([slot='overflow']) {
+  flex-direction: column;
+}
+
 .menu-list__list-item:not([slot='overflow'])::after {
   content: '';
   width: 100%;
   height: var(--header-padding);
   margin-bottom: calc(-1 * var(--header-padding));
 }
-[slot='overflow'] > .menu-list__link::after { content: none; }
+
+[slot='overflow'] > .menu-list__link::after {
+  content: none;
+}
 
 .menu-list:where(:has(.menu-list__list-item:hover)),
 .menu-list:where(:has(.menu-list__list-item:focus-within)),
 .menu-list:where(:has(.menu-list__list-item:not([aria-hidden='true']) .menu-list__link--active)) {
-  .menu-list__link { color: rgb(var(--menu-top-level-font-color-rgb) / var(--opacity-subdued-text)); }
+  .menu-list__link {
+    color: rgb(var(--menu-top-level-font-color-rgb) / var(--opacity-subdued-text));
+  }
 }
 
-/* stylelint-disable-next-line selector-max-specificity */
 .menu-list:not(:has(.menu-list__list-item:hover)) .menu-list__link--active,
 .menu-list .menu-list__list-item:where(:hover, :focus-within) .menu-list__link,
 .menu-list .menu-list__list-item[slot='overflow'] .menu-list__link[aria-expanded='true'] {
@@ -709,7 +783,7 @@
 .menu-list__submenu,
 .overflow-menu::part(overflow) {
   --submenu-padding-block-start: var(--padding-3xl);
-  --submenu-padding-block-end:   var(--padding-3xl);
+  --submenu-padding-block-end: var(--padding-3xl);
   background-color: transparent;
 }
 
@@ -732,14 +806,14 @@
   top: calc(100% - 1px + var(--border-bottom-width) - (var(--full-open-header-height) - var(--submenu-height)));
   z-index: var(--layer-header-menu);
   padding-inline: var(--padding-inline);
-  clip-path: rect(var(--header-height) 100% var(--full-open-header-height) 0); /* stylelint-disable-line */
-  transition: clip-path var(--submenu-animation-speed) var(--ease-out-cubic); /* stylelint-disable-line */
+  clip-path: rect(var(--header-height) 100% var(--full-open-header-height) 0);
+  transition: clip-path var(--submenu-animation-speed) var(--ease-out-cubic);
 }
 
 [data-submenu-overlap-bottom-row] {
   .menu-list__list-item:where(:not([slot='overflow'])) > .menu-list__submenu,
   .overflow-menu::part(overflow) {
-    clip-path: rect(var(--top-row-height) 100% var(--full-open-header-height) 0); /* stylelint-disable-line */
+    clip-path: rect(var(--top-row-height) 100% var(--full-open-header-height) 0);
   }
 }
 
@@ -768,9 +842,8 @@
 }
 
 .menu-list__list-item:is([slot='overflow']) {
-  --menu-top-level-font-color:     var(--color-foreground);
+  --menu-top-level-font-color: var(--color-foreground);
   --menu-top-level-font-color-rgb: var(--color-foreground-rgb);
-
   display: contents;
   white-space: normal;
 
@@ -796,10 +869,14 @@
     padding-block: 0;
   }
 
-  .menu-list__link[aria-expanded='true'] + .menu-list__submenu { visibility: visible; }
+  .menu-list__link[aria-expanded='true'] + .menu-list__submenu {
+    visibility: visible;
+  }
 }
 
-.header-menu { height: 100%; }
+.header-menu {
+  height: 100%;
+}
 
 .menu-list__submenu-inner {
   position: relative;
@@ -811,7 +888,7 @@
 .menu-list__submenu-inner,
 .overflow-menu::part(overflow-list) {
   padding-block-start: var(--submenu-padding-block-start);
-  padding-block-end:   var(--submenu-padding-block-end);
+  padding-block-end: var(--submenu-padding-block-end);
   padding-inline: var(--section-padding-inline);
   opacity: var(--submenu-content-opacity);
   transition: var(--submenu-content-animation);
@@ -823,75 +900,16 @@
   scrollbar-color: rgb(var(--color-foreground-rgb) / var(--opacity-40)) transparent;
 }
 
-.mega-menu__link {
-  font-family:    var(--menu-child-font-family);
-  font-style:     var(--menu-child-font-style);
-  font-weight:    var(--menu-child-font-weight);
-  font-size:      var(--menu-child-font-size);
-  line-height:    var(--menu-child-font-line-height);
-  text-transform: var(--menu-child-font-case);
-  color: var(--menu-child-font-color);
-  white-space: normal;
-  text-decoration: none;
-  display: inline-flex;
-  padding: var(--padding-2xs) 0;
-  &:hover { color: var(--menu-child-active-font-color); }
-}
-
-.mega-menu__link--parent {
-  font-family:    var(--menu-parent-font-family);
-  font-style:     var(--menu-parent-font-style);
-  font-weight:    var(--menu-parent-font-weight);
-  font-size:      var(--menu-parent-font-size);
-  line-height:    var(--menu-parent-font-line-height);
-  text-transform: var(--menu-parent-font-case);
-  color: var(--menu-parent-font-color);
-  &:hover { color: var(--menu-parent-active-font-color); }
-}
-
-@media screen and (max-width: 989px) {
-  .mega-menu__content-list-item--hidden-tablet { display: none; }
-}
-
-.mega-menu__grid {
-  display: grid;
-  grid-template-columns: repeat(var(--menu-columns-tablet), minmax(0, 1fr));
-  gap: var(--menu-vertical-gap) var(--menu-horizontal-gap);
-  width: 100%;
-
-  @media screen and (min-width: 990px) {
-    grid-template-columns: repeat(var(--menu-columns-desktop), minmax(0, 1fr));
-  }
-}
-
-.mega-menu__list {
-  display: grid;
-  grid-template-columns: subgrid;
-  grid-column: span var(--menu-columns-tablet);
-  gap: var(--menu-vertical-gap) var(--menu-horizontal-gap);
-
-  @media screen and (min-width: 990px) {
-    grid-column: span var(--menu-columns-desktop);
-  }
-}
-
-.mega-menu__submenu { display: contents; }
-
-
 /* ═══════════════════════════════════════════════════════════
-   OC MEGA MENU — 3-COLUMN DRAWER
-   Uses --oc-* tokens declared in custom.css.liquid exclusively.
-   No new colour values.
+   OC MEGA MENU
 ═══════════════════════════════════════════════════════════ */
 
-/* ── Override submenu-inner padding for our panel ── */
 .oc-mega-inner {
   padding: 0 !important;
   overflow: hidden !important;
   flex-wrap: nowrap !important;
 }
 
-/* ── Outer panel: 3 flex columns ── */
 .oc-mega-panel {
   display: flex;
   width: 100%;
@@ -899,7 +917,6 @@
   max-height: calc(80vh - var(--header-height, 64px));
 }
 
-/* ── Shared column resets ── */
 .oc-mega__col0,
 .oc-mega__col1,
 .oc-mega__col2 {
@@ -909,7 +926,6 @@
   scrollbar-color: var(--oc-ink-15) transparent;
 }
 
-/* ── COL 0 — main collections (wider to prevent text clip) ── */
 .oc-mega__col0 {
   width: 230px;
   flex-shrink: 0;
@@ -917,7 +933,6 @@
   padding: 0 6px 12px;
 }
 
-/* ── COL 1 — sub-collections ── */
 .oc-mega__col1 {
   width: 230px;
   flex-shrink: 0;
@@ -926,14 +941,12 @@
   background: var(--oc-ink-05);
 }
 
-/* ── COL 2 — products ── */
 .oc-mega__col2 {
   flex: 1;
   padding: 12px 16px 16px;
   min-width: 0;
 }
 
-/* ── Column header (sticky) ── */
 .oc-mega__col-hd {
   font-size: 10px;
   font-weight: 700;
@@ -952,11 +965,11 @@
 .oc-mega__col0 .oc-mega__col-hd {
   background: rgb(var(--color-background, 255 255 255));
 }
+
 .oc-mega__col1 .oc-mega__col-hd {
   background: var(--oc-ink-05);
 }
 
-/* ── List resets ── */
 .oc-mega__l0-list,
 .oc-mega__l1-list {
   list-style: none;
@@ -964,7 +977,6 @@
   margin: 0;
 }
 
-/* ── L0 / L1 items — text wraps, no clip ── */
 .oc-mega__l0-item,
 .oc-mega__l1-item {
   padding: 7px 8px;
@@ -974,15 +986,15 @@
   cursor: pointer;
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;   /* top-align for wrapped text */
+  align-items: flex-start;
   gap: 6px;
   margin-bottom: 1px;
   color: var(--oc-ink-70, #374151);
-  white-space: normal;       /* allow wrapping */
+  white-space: normal;
   word-break: break-word;
   transition:
     background var(--oc-dur-fast) ease,
-    color      var(--oc-dur-fast) ease;
+    color var(--oc-dur-fast) ease;
 }
 
 .oc-mega__l0-item::after {
@@ -999,7 +1011,10 @@
   background: var(--oc-cyan-l);
   color: var(--oc-cyan);
 }
-.oc-mega__l0-item.on::after { color: var(--oc-cyan); }
+
+.oc-mega__l0-item.on::after {
+  color: var(--oc-cyan);
+}
 
 .oc-mega__l1-item:hover,
 .oc-mega__l1-item.on {
@@ -1007,20 +1022,23 @@
   color: var(--oc-purple-d);
 }
 
-/* ── L1 group visibility ── */
-.oc-mega__l1-group           { display: block; }
-.oc-mega__l1-group.oc-hidden { display: none;  }
+.oc-mega__l1-group {
+  display: block;
+}
 
-/* ── Mini thumbnail row — 4 fixed-size squares in one row ── */
+.oc-mega__l1-group.oc-hidden {
+  display: none;
+}
+
 .oc-mega__thumbs {
-  display: flex;           /* flex row, not grid — exact 4-up */
+  display: flex;
   flex-wrap: nowrap;
   gap: 8px;
   margin-bottom: 12px;
 }
 
 .oc-mega__thumb {
-  flex: 1 1 0;             /* equal width, never wraps */
+  flex: 1 1 0;
   min-width: 0;
   max-width: 90px;
   display: flex;
@@ -1029,15 +1047,16 @@
   border-radius: 7px;
   overflow: hidden;
   text-decoration: none;
-  transition: border-color var(--oc-dur-fast) ease,
-              box-shadow   var(--oc-dur-fast) ease;
+  transition:
+    border-color var(--oc-dur-fast) ease,
+    box-shadow var(--oc-dur-fast) ease;
 }
+
 .oc-mega__thumb:hover {
   border-color: var(--oc-cyan);
   box-shadow: 0 0 0 2px var(--oc-cyan-l);
 }
 
-/* Fixed 72×72 image area */
 .oc-mega__thumb img {
   width: 100%;
   height: 72px;
@@ -1045,6 +1064,7 @@
   display: block;
   flex-shrink: 0;
 }
+
 .oc-mega__thumb-ph {
   width: 100%;
   height: 72px;
@@ -1065,7 +1085,6 @@
   line-height: 1.35;
 }
 
-/* ── Remaining products as text tags ── */
 .oc-mega__tags-hd {
   font-size: 9px;
   font-weight: 700;
@@ -1094,20 +1113,21 @@
   text-decoration: none;
   white-space: nowrap;
   transition:
-    background   var(--oc-dur-fast) ease,
+    background var(--oc-dur-fast) ease,
     border-color var(--oc-dur-fast) ease,
-    color        var(--oc-dur-fast) ease;
+    color var(--oc-dur-fast) ease;
 }
+
 .oc-mega__tag:hover {
   background: var(--oc-cyan-l);
   border-color: var(--oc-cyan);
   color: var(--oc-cyan);
 }
 
-/* ── View all button — reuses .btn-g from custom.css ── */
-.oc-mega__viewall { margin-top: 6px; }
+.oc-mega__viewall {
+  margin-top: 6px;
+}
 
-/* ── States ── */
 .oc-mega__loading,
 .oc-mega__empty {
   font-size: 12px;
@@ -1116,7 +1136,6 @@
   margin: 0;
 }
 
-/* ── Responsive ── */
 @media screen and (max-width: 1199px) {
   .oc-mega__col0 { width: 200px; }
   .oc-mega__col1 { width: 200px; }
@@ -1137,7 +1156,9 @@
   .oc-mega__l0-item,
   .oc-mega__l1-item,
   .oc-mega__thumb,
-  .oc-mega__tag { transition: none !important; }
+  .oc-mega__tag {
+    transition: none !important;
+  }
 }
 {% endstylesheet %}
 
