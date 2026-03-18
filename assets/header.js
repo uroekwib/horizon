@@ -188,6 +188,10 @@ class HeaderComponent extends Component {
     this.addEventListener('overflowMinimum', this.#handleOverflowMinimum);
 
      window.addEventListener('resize', () => setHeaderMenuStyle());
+     const drawer = document.querySelector('#Details-menu-drawer-container');
+      if (window.matchMedia('(min-width: 750px)').matches && drawer?.hasAttribute('open')) {
+      drawer.removeAttribute('open'); // 👈 ปิด drawer ค้าง
+     }
 
     const stickyMode = this.getAttribute('sticky');
     if (stickyMode) {
