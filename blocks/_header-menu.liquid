@@ -1,9 +1,12 @@
-
 {%- doc -%}
   Renders a header menu block.
 
   @param {string} [variant] - What version of the menu to render. Defaults to header menu.
   @param {string} [transparent] - Show a transparent menu
+
+  OC MODIFIED: Two-panel mega menu (sidebar + image grid)
+  Octopus Media Solutions · octopus.co.th
+  CI: #17a9bb (anchor) · #14c9df (vivid)
 {%- enddoc -%}
 
 {% liquid
@@ -103,37 +106,160 @@
           >
             <span class="menu-list__link-title">{{- link.title -}}</span>
           </a>
+
           {%- if link.links != blank -%}
+            {%- comment -%} ════════════════════════════════════════════
+              OC MEGA MENU — two-panel layout
+              Left  : All top-level nav links as category sidebar
+              Right : Current category's subcategories / product images
+              No extra JS or network requests required.
+            ════════════════════════════════════════════ {%- endcomment -%}
             <div class="menu-list__submenu{{ color_scheme_classes }}" ref="submenu[]">
               <div
                 id="submenu-{{ forloop.index }}"
-                class="menu-list__submenu-inner"
+                class="menu-list__submenu-inner oc-mega-panel"
                 style="{% render 'submenu-font-styles', settings: block_settings %}"
               >
-                {% assign list_id = 'MegaMenuList-' | append: forloop.index %}
-                <div class="mega-menu section section--full-width-margin section--{{ section.settings.section_width }}">
-                  <div
-                    class="mega-menu__grid"
-                    data-menu-grid-id="{{ list_id }}"
-                  >
-                    {% render 'mega-menu-list',
-                      parent_link: link,
-                      id: list_id,
-                      section: section,
-                      grid_columns_count: 6,
-                      grid_columns_count_tablet: 4,
-                      grid_columns_count_collection_images: 8,
-                      menu_content_type: menu_content_type,
-                      content_aspect_ratio: ratio,
-                      image_border_radius: image_border_radius
-                    %}
-                  </div>
-                </div>
-              </div>
-            </div>
+                <div class="oc-mega">
+
+                  {%- comment -%} ── LEFT: Category sidebar ── {%- endcomment -%}
+                  <aside class="oc-mega__sidebar" aria-label="หมวดหมู่สินค้า">
+                    <p class="oc-mega__sidebar-heading">หมวดหมู่สินค้า</p>
+                    {%- for nav_link in block_settings.menu.links -%}
+                      <a
+                        href="{{ nav_link.url }}"
+                        class="oc-mega__nav-item{%- if nav_link.handle == link.handle %} oc-mega__nav-item--active{%- endif -%}"
+                      >
+                        <span class="oc-mega__nav-label">{{ nav_link.title }}</span>
+                        {%- if nav_link.links != blank -%}
+                          <svg class="oc-mega__nav-arrow" aria-hidden="true" focusable="false" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 18 15 12 9 6"/>
+                          </svg>
+                        {%- endif -%}
+                      </a>
+                    {%- endfor -%}
+                  </aside>
+
+                  {%- comment -%} ── RIGHT: Thumbnail grid + mega-menu-list ── {%- endcomment -%}
+                  <div class="oc-mega__body">
+                    <div class="oc-mega__body-header">
+                      <a href="{{ link.url }}" class="oc-mega__body-title">{{ link.title }}</a>
+                      <a href="{{ link.url }}" class="oc-mega__see-all">
+                        ดูสินค้าทั้งหมด
+                        <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="9 18 15 12 9 6"/>
+                        </svg>
+                      </a>
+                    </div>
+
+                    {%- comment -%}
+                      OC THUMBNAIL GRID — static Liquid render (no AJAX)
+                      Pulls featured_image from each child link's collection object.
+                      Images served at width=160 from Shopify CDN — very lightweight.
+                      Controlled by: show_thumb_grid, thumb_max_items, thumb_cols
+                    {%- endcomment -%}
+                    {%- if block_settings.show_thumb_grid and link.links != blank -%}
+                      {%- assign thumb_max = block_settings.thumb_max_items | default: 6 -%}
+                      {%- assign thumb_count = 0 -%}
+                      {%- assign has_any_image = false -%}
+
+                      {%- comment -%} Pre-check: at least one child has a collection image {%- endcomment -%}
+                      {%- for child in link.links -%}
+                        {%- assign _c = collections[child.handle] -%}
+                        {%- if _c.featured_image != blank -%}
+                          {%- assign has_any_image = true -%}
+                          {%- break -%}
+                        {%- endif -%}
+                      {%- endfor -%}
+
+                      {%- if has_any_image -%}
+                        <div
+                          class="oc-mega__thumbs"
+                          style="--oc-thumb-cols: {{ block_settings.thumb_cols | default: 4 }};"
+                        >
+                          {%- for child in link.links -%}
+                            {%- if thumb_count >= thumb_max -%}{%- break -%}{%- endif -%}
+                            {%- assign child_col = collections[child.handle] -%}
+                            <a
+                              href="{{ child.url }}"
+                              class="oc-thumb{% if child_col.handle == collection.handle %} oc-thumb--active{% endif %}"
+                            >
+                              <div class="oc-thumb__img-wrap">
+                                {%- if child_col.featured_image != blank -%}
+                                  <img
+                                    src="{{ child_col.featured_image | image_url: width: 160 }}"
+                                    srcset="
+                                      {{ child_col.featured_image | image_url: width: 120 }} 120w,
+                                      {{ child_col.featured_image | image_url: width: 160 }} 160w,
+                                      {{ child_col.featured_image | image_url: width: 240 }} 240w
+                                    "
+                                    sizes="(min-width: 990px) 160px, 120px"
+                                    alt="{{ child_col.featured_image.alt | default: child.title | escape }}"
+                                    width="160"
+                                    height="120"
+                                    loading="lazy"
+                                    decoding="async"
+                                    class="oc-thumb__img"
+                                  >
+                                {%- else -%}
+                                  <div class="oc-thumb__placeholder">
+                                    <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3">
+                                      <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+                                    </svg>
+                                  </div>
+                                {%- endif -%}
+                              </div>
+                              <span class="oc-thumb__label">{{ child.title }}</span>
+                            </a>
+                            {%- assign thumb_count = thumb_count | plus: 1 -%}
+                          {%- endfor -%}
+
+                          {%- comment -%} "ดูทั้งหมด" tile if items were truncated {%- endcomment -%}
+                          {%- if link.links.size > thumb_max -%}
+                            <a href="{{ link.url }}" class="oc-thumb oc-thumb--more">
+                              <div class="oc-thumb__img-wrap oc-thumb__more-wrap">
+                                <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                                  <circle cx="12" cy="12" r="9"/><polyline points="12 8 16 12 12 16"/><line x1="8" y1="12" x2="16" y2="12"/>
+                                </svg>
+                              </div>
+                              <span class="oc-thumb__label">ดูทั้งหมด</span>
+                            </a>
+                          {%- endif -%}
+                        </div>
+                      {%- endif -%}
+                    {%- endif -%}
+
+                    {%- comment -%} Fallback / additional: Horizon mega-menu-list (text or featured modes) {%- endcomment -%}
+                    {%- unless block_settings.show_thumb_grid and block_settings.thumb_hide_list -%}
+                      {% assign list_id = 'MegaMenuList-' | append: forloop.index %}
+                      <div class="mega-menu section section--full-width-margin section--{{ section.settings.section_width }}">
+                        <div
+                          class="mega-menu__grid"
+                          data-menu-grid-id="{{ list_id }}"
+                        >
+                          {% render 'mega-menu-list',
+                            parent_link: link,
+                            id: list_id,
+                            section: section,
+                            grid_columns_count: 6,
+                            grid_columns_count_tablet: 4,
+                            grid_columns_count_collection_images: 8,
+                            menu_content_type: menu_content_type,
+                            content_aspect_ratio: ratio,
+                            image_border_radius: image_border_radius
+                          %}
+                        </div>
+                      </div>
+                    {%- endunless -%}
+                  </div><!-- /.oc-mega__body -->
+
+                </div><!-- /.oc-mega -->
+              </div><!-- /.menu-list__submenu-inner -->
+            </div><!-- /.menu-list__submenu -->
           {%- endif -%}
         </li>
       {% endfor %}
+
       <li
         class="menu-list__list-item"
         role="presentation"
@@ -186,7 +312,12 @@
     --color-submenu: rgb({{ block_settings.color_scheme.settings.background.rgba }});
   }
 {% endstyle %}
+
 {% stylesheet %}
+  /* ─────────────────────────────────────────────────────────────────
+     HORIZON CORE — unchanged from theme source
+  ───────────────────────────────────────────────────────────────── */
+
   .header__drawer {
     --header-drawer-min-height: 60px;
     display: flex;
@@ -318,10 +449,6 @@
     content: none;
   }
 
-  /*
-    High specificity selectors to subdue non-hovered links without javascript.
-    If the need for js-generated `hovered` and `focused` classes arises for another reason we can simplify these.
-  */
   .menu-list:where(:has(.menu-list__list-item:hover)),
   .menu-list:where(:has(.menu-list__list-item:focus-within)),
   .menu-list:where(:has(.menu-list__list-item:not([aria-hidden='true']) .menu-list__link--active)) {
@@ -338,7 +465,6 @@
   }
 
   .overflow-menu::part(list) {
-    /* Make sure focus outline is not cut off by overflow hidden */
     --focus-outline-size: calc(var(--focus-outline-offset) + var(--focus-outline-width));
 
     gap: 0;
@@ -351,7 +477,6 @@
     margin: calc(-1 * var(--focus-outline-size));
   }
 
-  /** mega menu **/
   .menu-list__submenu,
   .overflow-menu::part(overflow) {
     --submenu-padding-block-start: var(--padding-3xl);
@@ -379,7 +504,6 @@
     top: calc(100% - 1px + var(--border-bottom-width) - (var(--full-open-header-height) - var(--submenu-height)));
     z-index: var(--layer-header-menu);
     padding-inline: var(--padding-inline);
-    /* Clip path starts at header height so it doesn't mess with the pointer events in the header */
     clip-path: rect(var(--header-height) 100% var(--full-open-header-height) 0); /* stylelint-disable-line */
     transition: clip-path var(--submenu-animation-speed) var(--ease-out-cubic); /* stylelint-disable-line */
   }
@@ -391,11 +515,8 @@
     }
   }
 
-  /* Show the submenus on hover */
   .menu-list__list-item:has([aria-expanded='true']) > .menu-list__submenu,
-  /* Show the overflow menu when a menu item is hovered */
   .overflow-menu:has([slot="overflow"] [aria-expanded='true'])::part(overflow-list),
-  /* Keep the submenus open when they are hovered */
   .menu-list__submenu:is(:hover),
   .overflow-menu::part(overflow):hover {
     --submenu-content-opacity: 1;
@@ -474,7 +595,6 @@
     transition: var(--submenu-content-animation);
     transform: translateY(calc(var(--full-open-header-height) - var(--submenu-height)));
 
-    /* Make overflow menu scrollable when content exceeds viewport */
     max-height: calc(80vh - var(--header-height));
     overflow-y: auto;
     overflow-x: hidden;
@@ -536,9 +656,6 @@
     border-radius: var(--menu-image-border-radius);
   }
 
-  /* Fix alignment for collection image mode links without images */
-
-  /* Target only top-level links (direct children of column > div) in collection image mode */
   .mega-menu__grid:has(.mega-menu__link-image)
     .mega-menu__column
     > div
@@ -655,7 +772,6 @@
     white-space: normal;
   }
 
-  /* mega more menu */
   .mega-menu__more-list {
     --menu-child-font-size: var(--font-size--xl);
 
@@ -663,8 +779,375 @@
   }
 
   .mega-menu__submenu {
-    /* preserves the inherited grid layout when this submenu wrapper is used */
     display: contents;
+  }
+
+
+
+  /* ═══════════════════════════════════════════════════════════════
+     OC MEGA MENU — Two-Panel Layout
+     Octopus Media Solutions · octopus.co.th
+     CI cyan: #17a9bb (anchor) · #14c9df (vivid)
+     Added: glassmorphism panel, sidebar, image card hover effects,
+            animated top-nav underline.
+     Zero extra JS or network requests.
+  ═══════════════════════════════════════════════════════════════ */
+
+  /* 1 ── Submenu panel: glass + CI cyan accent border ── */
+  .menu-list__submenu {
+    border-top: 3px solid #14c9df !important;
+    background: rgba(248, 252, 253, 0.97) !important;
+    backdrop-filter: blur(20px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(150%) !important;
+    box-shadow: 0 24px 64px rgba(80, 90, 160, 0.16) !important;
+  }
+
+  /* 2 ── Override submenu-inner to host two-panel layout ── */
+  .menu-list__submenu-inner.oc-mega-panel {
+    /* Keep Horizon's opacity/transform animation — only change layout */
+    display: block !important;
+    padding: 0 !important;
+    overflow: hidden !important; /* let child panels scroll independently */
+    max-height: 72vh !important;
+  }
+
+  /* 3 ── Two-panel flex wrapper ── */
+  .oc-mega {
+    display: flex;
+    flex-direction: row;
+    min-height: 340px;
+    max-height: 72vh;
+  }
+
+  /* 4 ── LEFT SIDEBAR ── */
+  .oc-mega__sidebar {
+    /* layout */
+    width: 210px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 22px 14px 22px 20px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(20, 201, 223, 0.25) transparent;
+
+    /* visual */
+    background: linear-gradient(
+      160deg,
+      rgba(227, 248, 251, 0.88) 0%,
+      rgba(243, 240, 255, 0.65) 100%
+    );
+    border-right: 1px solid rgba(20, 201, 223, 0.22);
+  }
+
+  .oc-mega__sidebar-heading {
+    margin: 0 0 8px 0;
+    padding: 0 8px 10px 8px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #17a9bb;
+    border-bottom: 1px solid rgba(20, 201, 223, 0.28);
+  }
+
+  .oc-mega__nav-item {
+    /* layout */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    padding: 9px 10px;
+
+    /* typography */
+    font-size: 13.5px;
+    font-weight: 500;
+    line-height: 1.35;
+    color: #374151;
+    text-decoration: none;
+
+    /* shape & motion */
+    border-radius: 10px;
+    transition: background 0.18s ease, color 0.18s ease;
+  }
+
+  .oc-mega__nav-label {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .oc-mega__nav-arrow {
+    flex-shrink: 0;
+    opacity: 0.28;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+
+  .oc-mega__nav-item:hover {
+    background: rgba(20, 201, 223, 0.1);
+    color: #17a9bb;
+  }
+
+  .oc-mega__nav-item:hover .oc-mega__nav-arrow {
+    opacity: 0.75;
+    transform: translateX(2px);
+  }
+
+  /* Active: the category whose submenu is currently open */
+  .oc-mega__nav-item--active {
+    background: linear-gradient(
+      to right,
+      rgba(20, 201, 223, 0.18),
+      rgba(129, 140, 248, 0.11)
+    );
+    color: #17a9bb;
+    font-weight: 700;
+  }
+
+  .oc-mega__nav-item--active .oc-mega__nav-arrow {
+    opacity: 1;
+    color: #17a9bb;
+  }
+
+  /* 5 ── RIGHT BODY ── */
+  .oc-mega__body {
+    flex: 1;
+    min-width: 0;
+    padding: 22px 32px 24px 28px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(20, 201, 223, 0.25) transparent;
+  }
+
+  .oc-mega__body-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(20, 201, 223, 0.18);
+  }
+
+  /* Category title — gradient text */
+  .oc-mega__body-title {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+    background: linear-gradient(to right, #17a9bb 0%, #818CF8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* "ดูสินค้าทั้งหมด" pill CTA */
+  .oc-mega__see-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #17a9bb;
+    text-decoration: none;
+    border-radius: 999px;
+    border: 1.5px solid rgba(23, 169, 187, 0.45);
+    white-space: nowrap;
+    transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+  }
+
+  .oc-mega__see-all:hover {
+    background: linear-gradient(to right, #14c9df, #17a9bb);
+    border-color: #14c9df;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff;
+  }
+
+  /* Remove section padding that Horizon injects inside the body */
+  .oc-mega__body .mega-menu.section {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100%;
+  }
+
+  /* 6 ── Image card hover effects inside body ── */
+  .oc-mega__body .mega-menu__link {
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.22s ease, box-shadow 0.22s ease;
+  }
+
+  .oc-mega__body .mega-menu__link:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 28px rgba(20, 201, 223, 0.22);
+    color: #17a9bb !important;
+  }
+
+  .oc-mega__body .mega-menu__link-image {
+    border-radius: 8px !important;
+    transition: transform 0.3s ease;
+  }
+
+  .oc-mega__body .mega-menu__link:hover .mega-menu__link-image {
+    transform: scale(1.05);
+  }
+
+  /* Child link text — subtle cyan on hover */
+  .oc-mega__body .mega-menu__link:hover .mega-menu__link--parent,
+  .oc-mega__body .mega-menu__link--parent:hover {
+    color: #17a9bb !important;
+  }
+
+  /* 7 ── OC Thumbnail Grid ── */
+
+  .oc-mega__thumbs {
+    display: grid;
+    grid-template-columns: repeat(var(--oc-thumb-cols, 4), minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 18px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid rgba(20, 201, 223, 0.14);
+  }
+
+  .oc-thumb {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-decoration: none;
+    color: inherit;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1.5px solid transparent;
+    background: rgba(243, 247, 250, 0.7);
+    transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+    cursor: pointer;
+  }
+
+  .oc-thumb:hover {
+    border-color: rgba(20, 201, 223, 0.45);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(20, 201, 223, 0.18);
+  }
+
+  .oc-thumb--active {
+    border-color: #17a9bb;
+    background: rgba(20, 201, 223, 0.06);
+  }
+
+  .oc-thumb__img-wrap {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: #e8f4f6;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .oc-thumb__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.28s ease;
+  }
+
+  .oc-thumb:hover .oc-thumb__img {
+    transform: scale(1.07);
+  }
+
+  .oc-thumb__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #e3f8fb 0%, #f3f0ff 100%);
+  }
+
+  .oc-thumb__label {
+    font-size: 11.5px;
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--color-foreground);
+    padding: 0 8px 8px;
+    text-align: center;
+    white-space: normal;
+    word-break: break-word;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .oc-thumb:hover .oc-thumb__label {
+    color: #17a9bb;
+  }
+
+  .oc-thumb--active .oc-thumb__label {
+    color: #17a9bb;
+  }
+
+  /* "ดูทั้งหมด" tile */
+  .oc-thumb--more .oc-thumb__img-wrap {
+    background: linear-gradient(135deg, rgba(20, 201, 223, 0.1), rgba(129, 140, 248, 0.1));
+  }
+
+  .oc-thumb__more-wrap {
+    color: #17a9bb;
+  }
+
+  .oc-thumb--more .oc-thumb__label {
+    color: #17a9bb;
+  }
+
+  /* When thumb grid hides mega-menu-list, remove bottom spacing */
+  .oc-mega__body .mega-menu.section:not(:only-child) {
+    margin-top: 0 !important;
+  }
+
+  /* 8 ── Top nav link: animated gradient underline ── */
+  .menu-list__list-item:not([slot='overflow']) .menu-list__link-title {
+    position: relative;
+  }
+
+  .menu-list__list-item:not([slot='overflow']) .menu-list__link-title::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 50%;
+    right: 50%;
+    height: 2px;
+    background: linear-gradient(to right, #14c9df, #818CF8);
+    border-radius: 1px;
+    transition: left 0.25s ease, right 0.25s ease;
+  }
+
+  .menu-list__list-item:not([slot='overflow']):where(:hover, :focus-within)
+    .menu-list__link-title::after,
+  .menu-list__list-item:not([slot='overflow'])
+    .menu-list__link--active
+    .menu-list__link-title::after {
+    left: 0;
+    right: 0;
+  }
+
+  /* 9 ── Reduced motion ── */
+  @media (prefers-reduced-motion: reduce) {
+    .oc-mega__nav-item,
+    .oc-mega__nav-arrow,
+    .oc-mega__see-all,
+    .oc-mega__body .mega-menu__link,
+    .oc-mega__body .mega-menu__link-image,
+    .oc-thumb,
+    .oc-thumb__img,
+    .menu-list__link-title::after {
+      transition: none !important;
+      animation: none !important;
+    }
   }
 {% endstylesheet %}
 
@@ -858,6 +1341,46 @@
       "unit": "px",
       "default": 0,
       "visible_if": "{{ block.settings.menu_style != 'text' }}"
+    },
+    {
+      "type": "header",
+      "content": "OC Thumbnail Grid"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_thumb_grid",
+      "label": "แสดง thumbnail grid",
+      "info": "ดึง featured image จาก collection ของแต่ละ submenu link มาแสดงเป็น thumbnail การ์ด (ไม่มี AJAX — เบาและเร็ว)",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "thumb_hide_list",
+      "label": "ซ่อน mega-menu-list เดิม (โชว์แค่ thumbnail)",
+      "info": "ถ้าติ๊กจะซ่อน mega-menu-list snippet เดิม เหลือแค่ thumbnail grid อย่างเดียว",
+      "default": false,
+      "visible_if": "{{ block.settings.show_thumb_grid }}"
+    },
+    {
+      "type": "range",
+      "id": "thumb_max_items",
+      "label": "จำนวน thumbnail สูงสุด",
+      "info": "จำกัดจำนวนการ์ดที่โชว์ ถ้ามีมากกว่านี้จะมีปุ่ม 'ดูทั้งหมด'",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 6,
+      "visible_if": "{{ block.settings.show_thumb_grid }}"
+    },
+    {
+      "type": "range",
+      "id": "thumb_cols",
+      "label": "จำนวนคอลัมน์ thumbnail",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4,
+      "visible_if": "{{ block.settings.show_thumb_grid }}"
     },
     {
       "type": "header",
