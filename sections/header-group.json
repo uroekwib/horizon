@@ -80,15 +80,15 @@
           "static": true,
           "settings": {
             "menu": "main-menu",
-            "mega_thumb_count": 6,
-            "product_limit": 12,
-            "thumb_size": 100,
-            "thumb_title_font_size": 12,
-            "col0_width": 250,
-            "col1_width": 250,
+            "mega_thumb_count": 4,
+            "product_limit": 8,
+            "thumb_size": 72,
+            "thumb_title_font_size": 10,
+            "col0_width": 230,
+            "col1_width": 230,
             "top_menu_font_size": 16,
-            "l0_font_size": 14,
-            "l1_font_size": 14,
+            "l0_font_size": 13,
+            "l1_font_size": 13,
             "color_scheme": "scheme-2"
           },
           "blocks": {}
@@ -125,12 +125,12 @@
         "actions_text_case": "none",
         "color_scheme_top": "scheme-2",
         "color_scheme_bottom": "",
-        "color_scheme_transparent": "scheme-6",
-        "enable_transparent_header_home": false,
+        "color_scheme_transparent": "scheme-2",
+        "enable_transparent_header_home": true,
         "home_color_scheme": "inverse",
         "enable_transparent_header_product": false,
         "product_color_scheme": "default",
-        "enable_transparent_header_collection": true,
+        "enable_transparent_header_collection": false,
         "collection_color_scheme": "default"
       }
     }
