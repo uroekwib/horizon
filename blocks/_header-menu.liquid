@@ -110,8 +110,9 @@
           {%- if link.links != blank -%}
             {%- comment -%} ════════════════════════════════════════════
               OC MEGA MENU — collection-filter style
-              Full-width: pill row (children) + thumbnail grid
-              Static Liquid render · no AJAX · no sidebar
+              Pill row (subcollections) + AJAX top-5 product row
+              Pills: preventDefault → load products inline, no page change
+              Only product card / "ดูสินค้าทั้งหมด" navigates
             ════════════════════════════════════════════ {%- endcomment -%}
             <div class="menu-list__submenu{{ color_scheme_classes }}" ref="submenu[]">
               <div
@@ -119,9 +120,14 @@
                 class="menu-list__submenu-inner oc-mega-panel"
                 style="{% render 'submenu-font-styles', settings: block_settings %}"
               >
-                <div class="oc-mega">
+                {%- comment -%} First child handle for JS auto-load on open {%- endcomment -%}
+                {%- assign _first_child = link.links | first -%}
+                <div
+                  class="oc-mega"
+                  data-first-handle="{{ _first_child.handle }}"
+                >
 
-                  {%- comment -%} ── Header row ── {%- endcomment -%}
+                  {%- comment -%} ── Header ── {%- endcomment -%}
                   <div class="oc-mega__header">
                     <a href="{{ link.url }}" class="oc-mega__body-title">{{ link.title }}</a>
                     <a href="{{ link.url }}" class="oc-mega__see-all">
@@ -132,33 +138,29 @@
                     </a>
                   </div>
 
-                  {%- comment -%} ── Pill row: direct children (เหมือน row 1 ของ collection filter) ── {%- endcomment -%}
+                  {%- comment -%} ── Pill row: subcollections — click stays in menu ── {%- endcomment -%}
                   {%- if link.links.size > 0 -%}
                     <div class="oc-mega__pills" role="list">
                       {%- for child in link.links -%}
                         {%- assign child_col = collections[child.handle] -%}
-                        {%- assign pill_active = false -%}
+                        {%- assign pill_active = forloop.first -%}
                         {%- if child_col.handle == collection.handle -%}
                           {%- assign pill_active = true -%}
                         {%- endif -%}
-                        {%- comment -%} Also mark active if current collection is a grandchild of this pill {%- endcomment -%}
-                        {%- for grandchild in child.links -%}
-                          {%- if grandchild.handle == collection.handle -%}
-                            {%- assign pill_active = true -%}
-                          {%- endif -%}
-                        {%- endfor -%}
                         <a
                           href="{{ child.url }}"
                           role="listitem"
                           class="oc-mega__pill{%- if pill_active %} oc-mega__pill--active{%- endif -%}"
+                          data-handle="{{ child.handle }}"
+                          data-col-url="{{ child.url }}"
                         >
                           {%- if child_col.featured_image != blank -%}
                             <img
                               src="{{ child_col.featured_image | image_url: width: 48 }}"
                               alt=""
                               aria-hidden="true"
-                              width="24"
-                              height="24"
+                              width="20"
+                              height="20"
                               loading="lazy"
                               decoding="async"
                               class="oc-mega__pill-icon"
@@ -170,65 +172,8 @@
                     </div>
                   {%- endif -%}
 
-                  {%- comment -%} ── Thumbnail grid ── {%- endcomment -%}
-                  {%- assign thumb_max = block_settings.thumb_max_items | default: 8 -%}
-                  {%- assign thumb_count = 0 -%}
-                  <div
-                    class="oc-mega__thumbs"
-                    style="--oc-thumb-cols: {{ block_settings.thumb_cols | default: 5 }};"
-                  >
-                    {%- for child in link.links -%}
-                      {%- if thumb_count >= thumb_max -%}{%- break -%}{%- endif -%}
-                      {%- assign child_col = collections[child.handle] -%}
-                      <a
-                        href="{{ child.url }}"
-                        class="oc-thumb{%- if child_col.handle == collection.handle %} oc-thumb--active{%- endif -%}"
-                      >
-                        <div class="oc-thumb__img-wrap">
-                          {%- if child_col.featured_image != blank -%}
-                            <img
-                              src="{{ child_col.featured_image | image_url: width: 200 }}"
-                              srcset="
-                                {{ child_col.featured_image | image_url: width: 140 }} 140w,
-                                {{ child_col.featured_image | image_url: width: 200 }} 200w,
-                                {{ child_col.featured_image | image_url: width: 280 }} 280w
-                              "
-                              sizes="(min-width: 990px) 180px, 130px"
-                              alt="{{ child_col.featured_image.alt | default: child.title | escape }}"
-                              width="200"
-                              height="150"
-                              loading="lazy"
-                              decoding="async"
-                              class="oc-thumb__img"
-                            >
-                          {%- else -%}
-                            <div class="oc-thumb__placeholder">
-                              <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.25">
-                                <rect x="3" y="3" width="18" height="18" rx="2"/>
-                                <circle cx="8.5" cy="8.5" r="1.5"/>
-                                <polyline points="21 15 16 10 5 21"/>
-                              </svg>
-                            </div>
-                          {%- endif -%}
-                        </div>
-                        <span class="oc-thumb__label">{{ child.title }}</span>
-                      </a>
-                      {%- assign thumb_count = thumb_count | plus: 1 -%}
-                    {%- endfor -%}
-
-                    {%- if link.links.size > thumb_max -%}
-                      <a href="{{ link.url }}" class="oc-thumb oc-thumb--more">
-                        <div class="oc-thumb__img-wrap oc-thumb__more-wrap">
-                          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
-                            <circle cx="12" cy="12" r="9"/>
-                            <polyline points="12 8 16 12 12 16"/>
-                            <line x1="8" y1="12" x2="16" y2="12"/>
-                          </svg>
-                        </div>
-                        <span class="oc-thumb__label">+{{ link.links.size | minus: thumb_max }} อีก</span>
-                      </a>
-                    {%- endif -%}
-                  </div><!-- /.oc-mega__thumbs -->
+                  {%- comment -%} ── Product row: filled by JS on pill click / open ── {%- endcomment -%}
+                  <div class="oc-mega__products" data-products-container data-limit="{{ block_settings.thumb_max_items | default: 5 }}"></div>
 
                 </div><!-- /.oc-mega -->
               </div><!-- /.menu-list__submenu-inner -->
@@ -281,6 +226,123 @@
         type="module"
         fetchpriority="low"
       ></script>
+
+      {%- comment -%} OC Mega Menu — AJAX product loader · runs once per page {%- endcomment -%}
+      <script>
+      (function () {
+        if (window.__ocMega) return;
+        window.__ocMega = true;
+
+        var cache = {};
+
+        function imgUrl(src, w) {
+          if (!src) return '';
+          try {
+            var u = new URL(src);
+            u.searchParams.set('width', w);
+            return u.toString();
+          } catch (e) { return src; }
+        }
+
+        function fmtPrice(p) {
+          return new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB', maximumFractionDigits: 0 }).format(parseFloat(p) || 0);
+        }
+
+        function skeletonHTML(n) {
+          var s = '';
+          for (var i = 0; i < n; i++) {
+            s += '<div class="oc-pc oc-pc--skel">'
+              + '<div class="oc-pc__img-wrap"></div>'
+              + '<div class="oc-pc__body">'
+              + '<div class="oc-pc__skel-line" style="width:75%"></div>'
+              + '<div class="oc-pc__skel-line" style="width:45%;margin-top:5px"></div>'
+              + '</div></div>';
+          }
+          return s;
+        }
+
+        function cardHTML(p) {
+          var imgObj = p.featured_image || (p.images && p.images[0]);
+          var src = imgObj && imgObj.src ? imgUrl(imgObj.src, 260) : '';
+          var srcset = src
+            ? imgUrl(imgObj.src, 180) + ' 180w, ' + imgUrl(imgObj.src, 260) + ' 260w, ' + imgUrl(imgObj.src, 360) + ' 360w'
+            : '';
+          var price = p.variants && p.variants[0] ? fmtPrice(p.variants[0].price) : '';
+          var title = (p.title || '').replace(/</g, '&lt;');
+          return '<a href="/products/' + p.handle + '" class="oc-pc">'
+            + '<div class="oc-pc__img-wrap">'
+            + (src
+              ? '<img src="' + src + '" srcset="' + srcset + '" sizes="180px" alt="' + title + '" width="260" height="195" loading="lazy" decoding="async" class="oc-pc__img">'
+              : '<div class="oc-pc__img-wrap oc-pc__no-img"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.25"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>'
+              )
+            + '</div>'
+            + '<div class="oc-pc__body">'
+            + '<p class="oc-pc__title">' + title + '</p>'
+            + (price ? '<p class="oc-pc__price">เริ่ม ' + price + '</p>' : '')
+            + '</div></a>';
+        }
+
+        function loadProducts(handle, container) {
+          var limit = parseInt(container.dataset.limit, 10) || 5;
+          if (cache[handle] !== undefined) {
+            container.innerHTML = cache[handle].length
+              ? cache[handle].map(cardHTML).join('')
+              : '<p class="oc-pc-empty">ไม่พบสินค้าในหมวดนี้</p>';
+            return;
+          }
+          container.innerHTML = skeletonHTML(limit);
+          fetch('/collections/' + handle + '/products.json?limit=' + limit, { credentials: 'same-origin' })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+              cache[handle] = data.products || [];
+              container.innerHTML = cache[handle].length
+                ? cache[handle].map(cardHTML).join('')
+                : '<p class="oc-pc-empty">ไม่พบสินค้าในหมวดนี้</p>';
+            })
+            .catch(function () {
+              container.innerHTML = '<p class="oc-pc-empty">โหลดไม่ได้ ลองรีเฟรชหน้า</p>';
+            });
+        }
+
+        function initMega(mega) {
+          if (mega.__ocReady) return;
+          mega.__ocReady = true;
+
+          var pills = mega.querySelectorAll('.oc-mega__pill[data-handle]');
+          var container = mega.querySelector('[data-products-container]');
+          if (!container) return;
+
+          function activatePill(pill) {
+            pills.forEach(function (p) { p.classList.remove('oc-mega__pill--active'); });
+            pill.classList.add('oc-mega__pill--active');
+            loadProducts(pill.dataset.handle, container);
+          }
+
+          pills.forEach(function (pill) {
+            pill.addEventListener('click', function (e) {
+              e.preventDefault();
+              activatePill(pill);
+            });
+          });
+
+          /* Auto-load: active pill first, else first pill */
+          var first = mega.querySelector('.oc-mega__pill--active[data-handle]') || pills[0];
+          if (first) activatePill(first);
+        }
+
+        /* Watch aria-expanded on each nav link that controls a submenu */
+        document.querySelectorAll('.menu-list__link[aria-haspopup="true"]').forEach(function (link) {
+          var li = link.closest('.menu-list__list-item');
+          if (!li) return;
+          new MutationObserver(function () {
+            if (link.getAttribute('aria-expanded') === 'true') {
+              var mega = li.querySelector('.oc-mega');
+              if (mega) initMega(mega);
+            }
+          }).observe(link, { attributes: true, attributeFilter: ['aria-expanded'] });
+        });
+      })();
+      </script>
     </header-menu>
 {% endcase %}
 
@@ -892,17 +954,18 @@
     flex-shrink: 0;
   }
 
-  /* 6 ── Thumbnail grid ── */
-  .oc-mega__thumbs {
+  /* 6 ── Product row (AJAX-filled) ── */
+  .oc-mega__products {
     display: grid;
-    grid-template-columns: repeat(var(--oc-thumb-cols, 5), minmax(0, 1fr));
+    grid-template-columns: repeat(var(--oc-prod-cols, 5), minmax(0, 1fr));
     gap: 10px;
+    min-height: 160px;
   }
 
-  .oc-thumb {
+  /* Product card */
+  .oc-pc {
     display: flex;
     flex-direction: column;
-    gap: 0;
     text-decoration: none;
     color: inherit;
     border-radius: 10px;
@@ -910,31 +973,25 @@
     border: 1.5px solid transparent;
     background: var(--color-background, #f3f7fa);
     transition: border-color 0.18s ease, transform 0.2s ease, box-shadow 0.2s ease;
-    cursor: pointer;
   }
 
-  .oc-thumb:hover {
+  .oc-pc:hover {
     border-color: rgba(20, 201, 223, 0.5);
     transform: translateY(-3px);
     box-shadow: 0 8px 22px rgba(20, 201, 223, 0.18);
   }
 
-  .oc-thumb--active {
-    border-color: #17a9bb;
-    box-shadow: 0 4px 12px rgba(20, 201, 223, 0.2);
-  }
-
-  .oc-thumb__img-wrap {
+  .oc-pc__img-wrap {
     aspect-ratio: 4 / 3;
     overflow: hidden;
-    position: relative;
+    background: linear-gradient(135deg, #e3f8fb, #eef2ff);
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #e3f8fb 0%, #eef2ff 100%);
+    flex-shrink: 0;
   }
 
-  .oc-thumb__img {
+  .oc-pc__img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -942,49 +999,83 @@
     transition: transform 0.28s ease;
   }
 
-  .oc-thumb:hover .oc-thumb__img {
+  .oc-pc:hover .oc-pc__img {
     transform: scale(1.07);
   }
 
-  .oc-thumb__placeholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .oc-pc__no-img {
+    color: #17a9bb;
+    opacity: 0.4;
   }
 
-  .oc-thumb__label {
+  .oc-pc__body {
+    padding: 8px 10px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .oc-pc__title {
     font-size: 12px;
     font-weight: 600;
     line-height: 1.35;
+    margin: 0;
     color: var(--color-foreground);
-    padding: 7px 8px 9px;
-    text-align: center;
-    white-space: normal;
-    word-break: break-word;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
 
-  .oc-thumb:hover .oc-thumb__label,
-  .oc-thumb--active .oc-thumb__label {
+  .oc-pc:hover .oc-pc__title {
     color: #17a9bb;
   }
 
-  /* "ดูทั้งหมด" tile */
-  .oc-thumb--more .oc-thumb__img-wrap {
-    background: linear-gradient(135deg, rgba(20, 201, 223, 0.1), rgba(129, 140, 248, 0.1));
+  .oc-pc__price {
+    font-size: 11.5px;
+    font-weight: 400;
     color: #17a9bb;
+    margin: 0;
   }
 
-  .oc-thumb--more .oc-thumb__label {
-    color: #17a9bb;
+  /* Skeleton shimmer */
+  .oc-pc--skel {
+    pointer-events: none;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    transform: none !important;
   }
 
-  /* 7 ── Top nav link: animated gradient underline ── */
+  .oc-pc--skel .oc-pc__img-wrap {
+    background: linear-gradient(90deg, #eff2f5 25%, #e4e8ec 50%, #eff2f5 75%);
+    background-size: 200% 100%;
+    animation: oc-shimmer 1.4s ease infinite;
+  }
+
+  .oc-pc__skel-line {
+    height: 11px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #eff2f5 25%, #e4e8ec 50%, #eff2f5 75%);
+    background-size: 200% 100%;
+    animation: oc-shimmer 1.4s ease infinite;
+  }
+
+  @keyframes oc-shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  .oc-pc-empty {
+    grid-column: 1 / -1;
+    font-size: 13px;
+    color: var(--color-foreground);
+    opacity: 0.45;
+    text-align: center;
+    padding: 28px 0;
+    margin: 0;
+  }
+
+  /* 7 ── Top nav: animated gradient underline ── */
   .menu-list__list-item:not([slot='overflow']) .menu-list__link-title {
     position: relative;
   }
@@ -1014,8 +1105,10 @@
   @media (prefers-reduced-motion: reduce) {
     .oc-mega__pill,
     .oc-mega__see-all,
-    .oc-thumb,
-    .oc-thumb__img,
+    .oc-pc,
+    .oc-pc__img,
+    .oc-pc--skel .oc-pc__img-wrap,
+    .oc-pc__skel-line,
     .menu-list__link-title::after {
       transition: none !important;
       animation: none !important;
@@ -1216,24 +1309,15 @@
     },
     {
       "type": "header",
-      "content": "OC Thumbnail Grid"
+      "content": "OC Mega Menu Products"
     },
     {
       "type": "range",
       "id": "thumb_max_items",
-      "label": "จำนวน thumbnail สูงสุด",
-      "info": "ถ้ามีมากกว่านี้จะมีปุ่ม '+N อีก' ต่อท้าย",
-      "min": 2,
-      "max": 12,
-      "step": 1,
-      "default": 8
-    },
-    {
-      "type": "range",
-      "id": "thumb_cols",
-      "label": "จำนวนคอลัมน์ thumbnail",
-      "min": 2,
-      "max": 7,
+      "label": "จำนวนสินค้าที่โชว์ต่อหมวด",
+      "info": "โหลดผ่าน AJAX เมื่อเปิดเมนู — แนะนำ 5",
+      "min": 3,
+      "max": 8,
       "step": 1,
       "default": 5
     },
