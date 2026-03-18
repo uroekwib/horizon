@@ -728,7 +728,7 @@
 
   /* not ideal but we need to duplicate these styles for when touch comes into play
     We could avoid the duplication using js to set the data-menu-style attribute on small screens instead of using @media queries */
-  @media screen and (max-width: 749px) {
+  
   #header-component[data-menu-style='drawer'] .header__columns {
     --header-template-columns: var(--header-mobile-bookend) var(--header-mobile-bookend) 1fr
       var(--header-mobile-bookend) var(--header-mobile-bookend);
@@ -760,7 +760,7 @@
       grid-area: rightB;
     }
   }
-  }
+  
 
   /* Single column layout if there are no columns within */
   .header__columns:not(:has(.header__column)) {
