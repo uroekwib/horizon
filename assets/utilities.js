@@ -700,7 +700,7 @@ export class ResizeNotifier extends ResizeObserver {
 }
 
 /**
- * Sets the menuStyle dataset attribute on the header component element.
+ * Sets the menuStyle dataset attribute on the header component element. PEAR AMENDS FOR RESPONSIVE HEADER 18/3/2026
  */
 export function setHeaderMenuStyle() {
   const headerComponent = /** @type {HTMLElement} | null */ (document.querySelector('#header-component'));
@@ -708,7 +708,9 @@ export function setHeaderMenuStyle() {
     window.requestAnimationFrame(() => {
       const overflowList = headerComponent?.querySelector('overflow-list');
       const hasReachedMinimum = overflowList && overflowList.hasAttribute('minimum-reached');
-      headerComponent.dataset.menuStyle = isTouchDevice() || hasReachedMinimum ? 'drawer' : 'menu';
+      const isDesktop = window.matchMedia('(min-width: 750px)').matches;
+
+      headerComponent.dataset.menuStyle = !isDesktop || hasReachedMinimum ? 'drawer' : 'menu';
     });
   }
 }
