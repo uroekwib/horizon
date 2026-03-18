@@ -556,11 +556,18 @@ var thumbImageHeight = this.thumbImageHeight;
 var src = rawImg ? resizeImg(rawImg, thumbImageWidth, thumbImageHeight) : null;
 ...
 html += '<img src="' + esc(src) + '" alt="' + esc(p.title) + '" loading="lazy" width="' + thumbRenderWidth + '" height="' + thumbHeight + '">';            } else {
-              html += '<div class="oc-mega__thumb-ph"></div>';
-            }
+            html += '<a href="' + productUrl + '" class="oc-mega__thumb">';
+html += '<div class="oc-mega__thumb-media">';
 
-            html += '<span class="oc-mega__thumb-nm">' + esc(p.title) + '</span>';
-            html += '</a>';
+if (src) {
+  html += '<img src="' + esc(src) + '" alt="' + esc(p.title) + '" loading="lazy" width="' + thumbRenderWidth + '" height="' + thumbHeight + '">';
+} else {
+  html += '<div class="oc-mega__thumb-ph"></div>';
+}
+
+html += '</div>';
+html += '<span class="oc-mega__thumb-nm">' + esc(p.title) + '</span>';
+html += '</a>';
           });
 
           html += '</div>';
