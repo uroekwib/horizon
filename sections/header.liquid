@@ -183,7 +183,20 @@
 
 {% capture localization_markup %}
   {% if show_language %}
-    <div class="oc-lang-toggle mobile:hidden">
+    <div class="oc-lang-toggle oc-lang-toggle--desktop">
+      {%- for language in localization.available_languages -%}
+        {%- form 'localization', return_to: back -%}
+          <input type="hidden" name="language_code" value="{{ language.iso_code }}">
+          <button
+            type="submit"
+            class="oc-lang-toggle__btn{% if language.iso_code == localization.language.iso_code %} active{% endif %}"
+          >{{ language.iso_code | upcase }}</button>
+        {%- endform -%}
+        {%- unless forloop.last -%}<span class="oc-lang-toggle__sep">/</span>{%- endunless -%}
+      {%- endfor -%}
+    </div>
+
+    <div class="oc-lang-toggle oc-lang-toggle--mobile">
       {%- for language in localization.available_languages -%}
         {%- form 'localization', return_to: back -%}
           <input type="hidden" name="language_code" value="{{ language.iso_code }}">
@@ -692,10 +705,15 @@
       }
 
       @media screen and (max-width: 749px) {
-        --header-template-columns: var(--header-mobile-bookend) var(--header-mobile-bookend) 1fr
-          var(--header-mobile-bookend) var(--header-mobile-bookend);
+        --header-template-columns:
+        var(--header-mobile-bookend)
+        var(--header-mobile-bookend)
+        1fr
+        auto
+        var(--header-mobile-bookend)
+        var(--header-mobile-bookend);
 
-        grid-template-areas: 'leftA leftB center rightA rightB';
+        grid-template-areas: 'leftA leftB center rightLg rightA rightB';
         grid-column: span 3;
         column-gap: 0;
         align-items: center;
@@ -1045,7 +1063,7 @@
     min-width: 0;
     justify-self: end;
   }
-  
+
   #header-component .header__column {
     display: flex;
     align-items: center;
