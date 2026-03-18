@@ -1132,8 +1132,10 @@
   /* ── Search Slot Wrapper (flex child in header) ── */
   /* fluid: ~190px @ 950px → ~300px @ 1400px → ~460px @ 2100px+ */
   .oc-search-slot-wrap {
-    flex: 0 1 clamp(180px, 16vw, 520px);
-    width: clamp(180px, 16vw, 520px);
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    flex: 1 1 auto;
   }
 
 
@@ -1345,8 +1347,10 @@
 
   #header-component[data-menu-style='menu']
   .search-action:not(.search-action--hidden-on-menu) {
-    flex: 0 1 clamp(180px, 16vw, 520px);
-    width: clamp(180px, 16vw, 520px);
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 180px;
+    max-width: 520px;
   }
 
   /******* end of search input********/
