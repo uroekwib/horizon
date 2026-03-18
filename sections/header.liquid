@@ -652,7 +652,7 @@
     }
 
     .header__column--right {
-      gap: var(--gap-xs);
+      gap: var(--gap-xl);
       justify-content: flex-end;
       grid-area: right;
 
@@ -737,27 +737,8 @@
         }
 
         header-actions {
-    gap: 4px !important;
-  }
-
-  header-actions .header-actions__action,
-  header-actions .account-button {
-    width: 30px !important;
-    min-width: 30px !important;
-    padding-inline: 0 !important;
-  }
-
-  header-actions .header-actions__action .svg-wrapper,
-  header-actions .account-button .svg-wrapper {
-    width: 18px !important;
-    height: 18px !important;
-  }
-
-  header-actions .header-actions__action svg,
-  header-actions .account-button svg {
-    width: 18px !important;
-    height: 18px !important;
-  }
+          grid-area: rightB;
+        }
       }
     }
 
@@ -801,6 +782,10 @@
       }
     }
 
+    #header-component header-actions .account-button,
+    #header-component header-actions .header-actions__action.account-button,
+    #header-component header-actions .account-button.header-actions__action {
+    inline-size: 35px !important;
 
     /* Single column layout if there are no columns within */
     .header__columns:not(:has(.header__column)) {
