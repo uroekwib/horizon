@@ -1103,12 +1103,9 @@
 
 /* ── แก้ปัญหาเรื่อง responsive พัง ยืดกลับ ── */
 
+/* ── Language pill toggle ───────────────────────── */
 
-  /* ── Language pill toggle รอลบ ถ้ามีตัวทดแทน── */
-  .oc-lang-toggle--mobile {
-  display: none;
-  }
-  .oc-lang-toggle {
+#header-component .oc-lang-toggle {
   display: inline-flex;
   align-items: center;
   background: rgba(0, 0, 0, 0.08);
@@ -1116,13 +1113,21 @@
   padding: 3px;
   position: relative;
   gap: 0;
-  }
+}
+
+#header-component .oc-lang-toggle--desktop {
+  display: inline-flex;
+}
+
+#header-component .oc-lang-toggle--mobile {
+  display: none !important;
+}
 
 .header[transparent] .oc-lang-toggle {
   background: rgba(255, 255, 255, 0.15);
 }
 
-.oc-lang-toggle__track {
+#header-component .oc-lang-toggle__track {
   position: absolute;
   top: 3px;
   left: 3px;
@@ -1137,7 +1142,7 @@
   pointer-events: none;
 }
 
-.oc-lang-toggle__btn {
+#header-component .oc-lang-toggle__btn {
   position: relative;
   z-index: 1;
   padding: 5px 16px;
@@ -1160,36 +1165,35 @@
   line-height: 1 !important;
 }
 
-.oc-lang-toggle__btn.active {
+#header-component .oc-lang-toggle__btn.active {
   color: #fff;
   opacity: 1;
   cursor: default;
   pointer-events: none;
 }
 
-.oc-lang-toggle form {
+#header-component .oc-lang-toggle form {
   display: contents;
 }
 
-.oc-lang-toggle form,
-.oc-lang-toggle form * {
+#header-component .oc-lang-toggle form,
+#header-component .oc-lang-toggle form * {
   margin: 0 !important;
 }
 
-
 @media screen and (max-width: 749px) {
-  .oc-lang-toggle--desktop {
+  #header-component .oc-lang-toggle--desktop {
     display: none !important;
   }
 
-  .oc-lang-toggle--mobile {
-    display: inline-flex;
+  #header-component .oc-lang-toggle--mobile {
+    display: inline-flex !important;
     grid-area: rightLg;
     justify-self: center;
     align-self: center;
   }
 
-  .oc-lang-toggle--mobile .oc-lang-toggle__btn {
+  #header-component .oc-lang-toggle--mobile .oc-lang-toggle__btn {
     padding: 2px 6px;
   }
 }
