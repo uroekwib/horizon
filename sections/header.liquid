@@ -1149,14 +1149,17 @@
   
   .oc-lang-toggle--mobile {
   display: none;
-  }
+}
 
-  @media screen and (max-width: 749px) {
-   .oc-lang-toggle--desktop {
+@media screen and (max-width: 749px) {
+  .oc-lang-toggle--desktop {
     display: none !important;
   }
 
   .oc-lang-toggle--mobile {
+    display: flex;
+    grid-area: rightLg;
+    align-items: center;
     justify-self: center;
     white-space: nowrap;
     font-size: 11px;
@@ -1166,7 +1169,7 @@
   .oc-lang-toggle--mobile .oc-lang-toggle__btn {
     padding: 2px 6px;
   }
-  }
+}
 
   /*************** search input *****************/
   /* ============================================================
