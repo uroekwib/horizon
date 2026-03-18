@@ -1044,20 +1044,37 @@ html += '<img src="' + esc(src) + '" alt="' + esc(p.title) + '" loading="lazy" w
   box-shadow: 0 0 0 2px var(--oc-cyan-l);
 }
 
-.oc-mega__thumb img {
+.oc-mega__thumb {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--oc-ink-15);
+  border-radius: 7px;
+  overflow: hidden;
+  text-decoration: none;
+  transition:
+    border-color var(--oc-dur-fast) ease,
+    box-shadow var(--oc-dur-fast) ease;
+}
+
+.oc-mega__thumb-media {
+  position: relative;
   width: 100%;
-  height: var(--oc-thumb-size, 72px);
-  object-fit: cover;
-  display: block;
+  aspect-ratio: 4 / 3;
+  background: var(--oc-ink-05);
+  overflow: hidden;
   flex-shrink: 0;
 }
 
+.oc-mega__thumb img,
 .oc-mega__thumb-ph {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  height: var(--oc-thumb-size, 72px);
-  background: var(--oc-ink-05);
+  height: 100%;
+  object-fit: cover;
   display: block;
-  flex-shrink: 0;
 }
 
 .oc-mega__thumb-nm {
@@ -1191,10 +1208,10 @@ html += '<img src="' + esc(src) + '" alt="' + esc(p.title) + '" loading="lazy" w
       "type": "range",
       "id": "thumb_size",
       "label": "Thumbnail image size (px)",
-      "min": 48,
-      "max": 160,
-      "step": 4,
-      "default": 72
+      "min": 80,
+      "max": 360,
+      "step": 20,
+      "default": 120
     },
     {
       "type": "range",
