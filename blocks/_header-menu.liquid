@@ -1,14 +1,11 @@
 {%- doc -%}
   Renders a header menu block.
 
-  @param {string} [variant] - What version of the menu to render. Defaults to header menu.
-  @param {string} [transparent] - Show a transparent menu
-
-  OC MODIFIED: Collection-first mega menu
-  - Top row = parent collections
-  - Second row = subcollections
-  - Third row = 6 AJAX-loaded products
-  - "See all" updates by active collection / subcollection
+  Correct hierarchy:
+  - Top navigation item = parent collection
+  - Mega panel shows only that parent's subcollections
+  - AJAX loads 6 products from active subcollection (or parent if no subcollections)
+  - "See all" points to parent collection
 {%- enddoc -%}
 
 {% liquid
@@ -56,11 +53,9 @@
 
   {% else %}
     {% liquid
-      assign menu_content_type = block_settings.menu_style | default: 'text'
-      assign image_border_radius = block_settings.image_border_radius
       assign color_scheme_classes = ''
       assign color_scheme_setting_id = 'color_scheme_' | append: section.settings.menu_row
-      assign current_color_scheme = block_settings.color_scheme
+      assign current_color_scheme = block.settings.color_scheme
       assign parent_color_scheme = section.settings[color_scheme_setting_id]
 
       if parent_color_scheme.id != current_color_scheme.id
@@ -74,7 +69,23 @@
 
     {% capture children %}
       {% for link in block_settings.menu.links %}
-        {%- assign parent_handle = link.url | split: '/collections/' | last | split: '?' | first | split: '#' | first | split: '/' | first -%}
+        {%- assign parent_handle = '' -%}
+        {%- assign parent_collection = blank -%}
+        {%- assign has_subcollections = false -%}
+
+        {%- if link.type == 'collection_link' and link.object != blank -%}
+          {%- assign parent_handle = link.object.handle -%}
+          {%- assign parent_collection = link.object -%}
+        {%- else -%}
+          {%- assign parent_handle = link.url | split: '/collections/' | last | split: '?' | first | split: '#' | first | split: '/' | first -%}
+          {%- assign parent_collection = collections[parent_handle] -%}
+        {%- endif -%}
+
+        {%- if parent_collection and parent_collection.metafields.custom.subcollections.value != blank -%}
+          {%- assign has_subcollections = true -%}
+        {%- elsif link.links != blank -%}
+          {%- assign has_subcollections = true -%}
+        {%- endif -%}
 
         <li
           role="presentation"
@@ -88,7 +99,7 @@
             href="{{ link.url }}"
             data-skip-node-update="true"
             class="menu-list__link{% if link.active %} menu-list__link--active{% endif %}"
-            {%- if link.links != blank -%}
+            {%- if has_subcollections -%}
               aria-controls="submenu-{{ forloop.index }}"
               aria-haspopup="true"
               aria-expanded="false"
@@ -97,13 +108,11 @@
               aria-current="page"
             {% endif %}
             ref="menuitem"
-            data-parent-handle="{{ parent_handle }}"
-            data-parent-url="{{ link.url }}"
           >
             <span class="menu-list__link-title">{{- link.title -}}</span>
           </a>
 
-          {%- if link.links != blank -%}
+          {%- if has_subcollections -%}
             <div class="menu-list__submenu{{ color_scheme_classes }}" ref="submenu[]">
               <div
                 id="submenu-{{ forloop.index }}"
@@ -117,22 +126,8 @@
                   data-parent-url="{{ link.url }}"
                 >
                   <div class="oc-mega__header">
-                    <div class="oc-pill-row oc-mega__collections" role="list">
-                      {% for top_link in block_settings.menu.links %}
-                        {%- assign top_handle = top_link.url | split: '/collections/' | last | split: '?' | first | split: '#' | first | split: '/' | first -%}
-                        <a
-                          href="{{ top_link.url }}"
-                          role="listitem"
-                          class="oc-pill oc-mega__collection{% if top_link.url == link.url %} active oc-mega__collection--active{% endif %}"
-                          data-top-collection
-                          data-title="{{ top_link.title | escape }}"
-                          data-handle="{{ top_handle }}"
-                          data-url="{{ top_link.url }}"
-                          data-target-mega="{{ forloop.index0 }}"
-                        >
-                          {{ top_link.title }}
-                        </a>
-                      {% endfor %}
+                    <div class="oc-mega__head-left">
+                      <a href="{{ link.url }}" class="oc-mega__parent-title">{{ link.title }}</a>
                     </div>
 
                     <a href="{{ link.url }}" class="btn-g sm oc-mega__see-all" data-see-all>
@@ -144,44 +139,93 @@
                     <div class="oc-subnav-bar" aria-hidden="true"></div>
 
                     <div class="oc-subnav-items oc-mega__subcollections" role="list" data-subcollections>
-                      {%- for child in link.links -%}
-                        {%- assign child_handle = '' -%}
-                        {%- assign child_col = blank -%}
+                      {%- assign active_sub_found = false -%}
 
-                        {%- if child.type == 'collection_link' and child.object != blank -%}
-                          {%- assign child_handle = child.object.handle -%}
-                          {%- assign child_col = child.object -%}
-                        {%- else -%}
-                          {%- assign child_handle = child.url | split: '/collections/' | last | split: '?' | first | split: '#' | first | split: '/' | first -%}
-                          {%- assign child_col = collections[child_handle] -%}
-                        {%- endif -%}
-
-                        <a
-                          href="{{ child.url }}"
-                          role="listitem"
-                          class="oc-subnav-item oc-mega__subcollection{% if forloop.first %} active oc-mega__subcollection--active{% endif %}"
-                          data-subcollection
-                          data-title="{{ child.title | escape }}"
-                          data-handle="{{ child_handle }}"
-                          data-url="{{ child.url }}"
-                        >
-                          {%- if child_col and child_col.featured_image != blank -%}
-                            {{
-                              child_col.featured_image
-                              | image_url: width: 40
-                              | image_tag:
-                                widths: '20,28,32,40',
-                                sizes: '18px',
-                                alt: '',
-                                loading: 'lazy',
-                                width: 18,
-                                height: 18,
-                                class: 'oc-mega__subcollection-icon'
-                            }}
+                      {%- if parent_collection and parent_collection.metafields.custom.subcollections.value != blank -%}
+                        {% for sub in parent_collection.metafields.custom.subcollections.value %}
+                          {%- assign sub_active = false -%}
+                          {%- if collection and sub.handle == collection.handle -%}
+                            {%- assign sub_active = true -%}
+                            {%- assign active_sub_found = true -%}
+                          {%- elsif active_sub_found == false and forloop.first -%}
+                            {%- assign sub_active = true -%}
                           {%- endif -%}
-                          <span>{{ child.title }}</span>
-                        </a>
-                      {%- endfor -%}
+
+                          <a
+                            href="{{ sub.url }}"
+                            role="listitem"
+                            class="oc-subnav-item oc-mega__subcollection{% if sub_active %} active oc-mega__subcollection--active{% endif %}"
+                            data-subcollection
+                            data-title="{{ sub.title | escape }}"
+                            data-handle="{{ sub.handle }}"
+                            data-url="{{ sub.url }}"
+                          >
+                            {%- if sub.featured_image != blank -%}
+                              {{
+                                sub.featured_image
+                                | image_url: width: 40
+                                | image_tag:
+                                  widths: '20,28,32,40',
+                                  sizes: '18px',
+                                  alt: '',
+                                  loading: 'lazy',
+                                  width: 18,
+                                  height: 18,
+                                  class: 'oc-mega__subcollection-icon'
+                              }}
+                            {%- endif -%}
+                            <span>{{ sub.title }}</span>
+                          </a>
+                        {% endfor %}
+
+                      {%- else -%}
+                        {% for child in link.links %}
+                          {%- assign child_handle = '' -%}
+                          {%- assign child_col = blank -%}
+
+                          {%- if child.type == 'collection_link' and child.object != blank -%}
+                            {%- assign child_handle = child.object.handle -%}
+                            {%- assign child_col = child.object -%}
+                          {%- else -%}
+                            {%- assign child_handle = child.url | split: '/collections/' | last | split: '?' | first | split: '#' | first | split: '/' | first -%}
+                            {%- assign child_col = collections[child_handle] -%}
+                          {%- endif -%}
+
+                          {%- assign child_active = false -%}
+                          {%- if collection and child_handle == collection.handle -%}
+                            {%- assign child_active = true -%}
+                            {%- assign active_sub_found = true -%}
+                          {%- elsif active_sub_found == false and forloop.first -%}
+                            {%- assign child_active = true -%}
+                          {%- endif -%}
+
+                          <a
+                            href="{{ child.url }}"
+                            role="listitem"
+                            class="oc-subnav-item oc-mega__subcollection{% if child_active %} active oc-mega__subcollection--active{% endif %}"
+                            data-subcollection
+                            data-title="{{ child.title | escape }}"
+                            data-handle="{{ child_handle }}"
+                            data-url="{{ child.url }}"
+                          >
+                            {%- if child_col and child_col.featured_image != blank -%}
+                              {{
+                                child_col.featured_image
+                                | image_url: width: 40
+                                | image_tag:
+                                  widths: '20,28,32,40',
+                                  sizes: '18px',
+                                  alt: '',
+                                  loading: 'lazy',
+                                  width: 18,
+                                  height: 18,
+                                  class: 'oc-mega__subcollection-icon'
+                              }}
+                            {%- endif -%}
+                            <span>{{ child.title }}</span>
+                          </a>
+                        {% endfor %}
+                      {%- endif -%}
                     </div>
                   </div>
 
@@ -242,53 +286,12 @@
         fetchpriority="low"
       ></script>
 
-      <script type="application/json" data-oc-menu-map>
-      {
-        {% for top_link in block_settings.menu.links %}
-          {%- assign top_handle = top_link.url | split: '/collections/' | last | split: '?' | first | split: '#' | first | split: '/' | first -%}
-          "{{ top_handle }}": {
-            "title": {{ top_link.title | json }},
-            "url": {{ top_link.url | json }},
-            "children": [
-              {%- for child in top_link.links -%}
-                {%- assign child_handle = '' -%}
-                {%- assign child_col = blank -%}
-
-                {%- if child.type == 'collection_link' and child.object != blank -%}
-                  {%- assign child_handle = child.object.handle -%}
-                  {%- assign child_col = child.object -%}
-                {%- else -%}
-                  {%- assign child_handle = child.url | split: '/collections/' | last | split: '?' | first | split: '#' | first | split: '/' | first -%}
-                  {%- assign child_col = collections[child_handle] -%}
-                {%- endif -%}
-
-                {
-                  "title": {{ child.title | json }},
-                  "handle": {{ child_handle | json }},
-                  "url": {{ child.url | json }},
-                  "image": {% if child_col and child_col.featured_image != blank %}{{ child_col.featured_image | image_url: width: 40 | json }}{% else %}null{% endif %}
-                }{% unless forloop.last %},{% endunless %}
-              {%- endfor -%}
-            ]
-          }{% unless forloop.last %},{% endunless %}
-        {% endfor %}
-      }
-      </script>
-
       <script>
       (function () {
-        if (window.__ocMegaCollections) return;
-        window.__ocMegaCollections = true;
+        if (window.__ocMegaHierarchy) return;
+        window.__ocMegaHierarchy = true;
 
         var cache = {};
-        var mapEl = document.querySelector('[data-oc-menu-map]');
-        var menuMap = {};
-
-        try {
-          if (mapEl) menuMap = JSON.parse(mapEl.textContent || '{}');
-        } catch (e) {
-          console.warn('[OC Mega] menu map parse failed', e);
-        }
 
         function shopRoot() {
           return (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) ? window.Shopify.routes.root : '/';
@@ -303,14 +306,6 @@
             .replace(/'/g, '&#39;');
         }
 
-        function fmtPrice(p) {
-          return new Intl.NumberFormat('th-TH', {
-            style: 'currency',
-            currency: 'THB',
-            maximumFractionDigits: 0
-          }).format(parseFloat(p) || 0);
-        }
-
         function imgUrl(src, w) {
           if (!src) return '';
           try {
@@ -320,6 +315,14 @@
           } catch (e) {
             return src;
           }
+        }
+
+        function fmtPrice(p) {
+          return new Intl.NumberFormat('th-TH', {
+            style: 'currency',
+            currency: 'THB',
+            maximumFractionDigits: 0
+          }).format(parseFloat(p) || 0);
         }
 
         function skeletonHTML(n) {
@@ -343,6 +346,7 @@
               + imgUrl(imgObj.src, 220) + ' 220w, '
               + imgUrl(imgObj.src, 320) + ' 320w'
             : '';
+
           var price = p.variants && p.variants[0] ? fmtPrice(p.variants[0].price) : '';
           var title = esc(p.title);
           var href = shopRoot() + 'products/' + encodeURIComponent(p.handle);
@@ -358,10 +362,6 @@
             + '<p class="oc-mm-card__title">' + title + '</p>'
             + (price ? '<p class="oc-mm-card__price">เริ่ม ' + price + '</p>' : '')
             + '</div></a>';
-        }
-
-        function getCollectionData(handle) {
-          return menuMap && menuMap[handle] ? menuMap[handle] : null;
         }
 
         function loadProducts(handle, container) {
@@ -406,39 +406,6 @@
             });
         }
 
-        function renderSubcollections(mega, parentHandle) {
-          var row = mega.querySelector('[data-subcollections]');
-          if (!row) return;
-
-          var data = getCollectionData(parentHandle);
-          var html = '';
-
-          if (data && Array.isArray(data.children) && data.children.length) {
-            html = data.children.map(function (child, idx) {
-              var img = child.image
-                ? '<img src="' + esc(child.image) + '" alt="" width="18" height="18" loading="lazy" class="oc-mega__subcollection-icon">'
-                : '';
-
-              return '<a href="' + esc(child.url) + '" role="listitem" class="oc-subnav-item oc-mega__subcollection' + (idx === 0 ? ' active oc-mega__subcollection--active' : '') + '" data-subcollection data-title="' + esc(child.title) + '" data-handle="' + esc(child.handle) + '" data-url="' + esc(child.url) + '">' + img + '<span>' + esc(child.title) + '</span></a>';
-            }).join('');
-          }
-
-          row.innerHTML = html;
-        }
-
-        function updateSeeAll(mega, url) {
-          var btn = mega.querySelector('[data-see-all]');
-          if (btn && url) btn.setAttribute('href', url);
-        }
-
-        function setTopActive(mega, handle) {
-          mega.querySelectorAll('[data-top-collection]').forEach(function (el) {
-            var active = el.dataset.handle === handle;
-            el.classList.toggle('active', active);
-            el.classList.toggle('oc-mega__collection--active', active);
-          });
-        }
-
         function setSubActive(mega, handle) {
           mega.querySelectorAll('[data-subcollection]').forEach(function (el) {
             var active = el.dataset.handle === handle;
@@ -447,53 +414,13 @@
           });
         }
 
-        function activateTopCollection(el, mega) {
-          var handle = el.dataset.handle;
-          var url = el.dataset.url;
-
-          if (!handle) return;
-
-          setTopActive(mega, handle);
-          renderSubcollections(mega, handle);
-          updateSeeAll(mega, url);
-
-          var row = mega.querySelector('[data-subcollections]');
-          var firstSub = row ? row.querySelector('[data-subcollection]') : null;
-          var container = mega.querySelector('[data-products-container]');
-
-          if (firstSub) {
-            setSubActive(mega, firstSub.dataset.handle);
-            updateSeeAll(mega, firstSub.dataset.url || url);
-            loadProducts(firstSub.dataset.handle, container);
-          } else {
-            loadProducts(handle, container);
-          }
-
-          bindSubcollectionClicks(mega);
-        }
-
         function activateSubcollection(el, mega) {
           var handle = el.dataset.handle;
-          var url = el.dataset.url;
           var container = mega.querySelector('[data-products-container]');
-
-          if (!handle) return;
+          if (!handle || !container) return;
 
           setSubActive(mega, handle);
-          updateSeeAll(mega, url);
           loadProducts(handle, container);
-        }
-
-        function bindTopCollectionClicks(mega) {
-          mega.querySelectorAll('[data-top-collection]').forEach(function (el) {
-            if (el.__ocBound) return;
-            el.__ocBound = true;
-
-            el.addEventListener('click', function (e) {
-              e.preventDefault();
-              activateTopCollection(el, mega);
-            });
-          });
         }
 
         function bindSubcollectionClicks(mega) {
@@ -512,15 +439,16 @@
           if (!mega || mega.__ocReady) return;
           mega.__ocReady = true;
 
-          bindTopCollectionClicks(mega);
           bindSubcollectionClicks(mega);
 
+          var activeSub = mega.querySelector('[data-subcollection].active') || mega.querySelector('[data-subcollection]');
+          var container = mega.querySelector('[data-products-container]');
           var parentHandle = mega.dataset.parentHandle;
-          var topEl = mega.querySelector('[data-top-collection][data-handle="' + parentHandle + '"]')
-            || mega.querySelector('[data-top-collection]');
 
-          if (topEl) {
-            activateTopCollection(topEl, mega);
+          if (activeSub) {
+            activateSubcollection(activeSub, mega);
+          } else if (parentHandle && container) {
+            loadProducts(parentHandle, container);
           }
         }
 
@@ -611,7 +539,6 @@
   .menu-list {
     --menu-horizontal-gap: var(--gap-xl);
     --menu-vertical-gap: var(--gap-xl);
-
     display: flex;
     height: 100%;
   }
@@ -712,7 +639,6 @@
   .overflow-menu::part(overflow) {
     --submenu-padding-block-start: var(--padding-3xl);
     --submenu-padding-block-end: var(--padding-3xl);
-
     background-color: transparent;
   }
 
@@ -727,7 +653,6 @@
   .overflow-menu::part(overflow) {
     --submenu-content-opacity: 0;
     --submenu-content-animation: opacity calc(var(--submenu-animation-speed) * 0.75) var(--animation-easing);
-
     visibility: hidden;
     position: absolute;
     width: 100%;
@@ -773,7 +698,6 @@
   .menu-list__list-item:is([slot='overflow']) {
     --menu-top-level-font-color: var(--color-foreground);
     --menu-top-level-font-color-rgb: var(--color-foreground-rgb);
-
     display: contents;
     white-space: normal;
 
@@ -857,7 +781,7 @@
 
   .oc-mega__header {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
     gap: 16px;
     margin-bottom: 14px;
@@ -865,18 +789,11 @@
     border-bottom: 1px solid rgba(var(--oc-cyan-vv-rgb), 0.16);
   }
 
-  .oc-mega__collections {
-    flex: 1;
-    gap: 10px;
-  }
-
-  .oc-mega__collection {
-    font-size: 13px;
-  }
-
-  .oc-mega__see-all {
-    flex-shrink: 0;
-    margin-top: 1px;
+  .oc-mega__parent-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--oc-cyan);
+    text-decoration: none;
   }
 
   .oc-mega__subnav {
@@ -918,10 +835,7 @@
     border: 1px solid rgba(var(--oc-cyan-rgb), 0.08);
     text-decoration: none;
     color: inherit;
-    transition:
-      transform var(--oc-dur-fast),
-      box-shadow var(--oc-dur-base),
-      border-color var(--oc-dur-fast);
+    transition: transform var(--oc-dur-fast), box-shadow var(--oc-dur-base), border-color var(--oc-dur-fast);
   }
 
   .oc-mm-card:hover {
@@ -1057,10 +971,6 @@
 
     .oc-mega__header {
       flex-wrap: wrap;
-    }
-
-    .oc-mega__see-all {
-      margin-top: 0;
     }
 
     .oc-mega__products {
