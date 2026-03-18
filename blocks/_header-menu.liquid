@@ -547,35 +547,14 @@ this.thumbImageHeight = Math.round(this.thumbImageWidth * 3 / 4);
         OcMega.prototype.render = function (products, handle, collUrl) {
           var pp = this.productPanel;
           var tc = this.thumbCount;
-          var thumbSize = this.thumbSize;
-          var url = collUrl || (handle ? '/collections/' + handle : '#');
-
-          pp.setAttribute('aria-busy', 'false');
-
-          if (!products || !products.length) {
-            pp.innerHTML =
-              '<p class="oc-mega__empty">ไม่พบสินค้าในหมวดนี้</p>' +
-              (url !== '#'
-                ? '<a href="' + esc(url) + '" class="btn-g oc-mega__viewall">ดูทั้งหมด →</a>'
-                : '');
-            return;
-          }
-
-          var thumbs = products.slice(0, tc);
-          var rest = products.slice(tc);
-
-          var html = '<div class="oc-mega__thumbs">';
-
-          thumbs.forEach(function (p) {
-            var rawImg = getProductImage(p);
-            var src = rawImg ? resizeImg(rawImg, thumbSize) : null;
-            var productUrl = '/products/' + esc(p.handle);
-
-            html += '<a href="' + productUrl + '" class="oc-mega__thumb">';
-
-            if (src) {
-              html += '<img src="' + esc(src) + '" alt="' + esc(p.title) + '" loading="lazy" width="' + thumbSize + '" height="' + thumbSize + '">';
-            } else {
+          var thumbHeight = this.thumbHeight;
+var thumbRenderWidth = this.thumbRenderWidth;
+var thumbImageWidth = this.thumbImageWidth;
+var thumbImageHeight = this.thumbImageHeight;
+...
+var src = rawImg ? resizeImg(rawImg, thumbImageWidth, thumbImageHeight) : null;
+...
+html += '<img src="' + esc(src) + '" alt="' + esc(p.title) + '" loading="lazy" width="' + thumbRenderWidth + '" height="' + thumbHeight + '">';            } else {
               html += '<div class="oc-mega__thumb-ph"></div>';
             }
 
