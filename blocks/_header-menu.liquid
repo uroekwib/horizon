@@ -68,7 +68,6 @@
         assign color_scheme_classes = ' color-' | append: current_color_scheme
       endif
 
-      # Check if header and menu colors match. This is used to apply different padding styles in css
       if parent_color_scheme.settings.background.rgb == current_color_scheme.settings.background.rgb
         assign color_scheme_classes = color_scheme_classes | append: ' color-scheme-matches-parent'
       endif
@@ -108,26 +107,17 @@
           </a>
 
           {%- if link.links != blank -%}
-            {%- comment -%} ════════════════════════════════════════════
-              OC MEGA MENU — collection-filter style
-              Pill row (subcollections) + AJAX top-5 product row
-              Pills: preventDefault → load products inline, no page change
-              Only product card / "ดูสินค้าทั้งหมด" navigates
-            ════════════════════════════════════════════ {%- endcomment -%}
             <div class="menu-list__submenu{{ color_scheme_classes }}" ref="submenu[]">
               <div
                 id="submenu-{{ forloop.index }}"
                 class="menu-list__submenu-inner oc-mega-panel"
                 style="{% render 'submenu-font-styles', settings: block_settings %}"
               >
-                {%- comment -%} First child handle for JS auto-load on open {%- endcomment -%}
                 {%- assign _first_child = link.links | first -%}
                 <div
                   class="oc-mega"
                   data-first-handle="{{ _first_child.handle }}"
                 >
-
-                  {%- comment -%} ── Header ── {%- endcomment -%}
                   <div class="oc-mega__header">
                     <a href="{{ link.url }}" class="oc-mega__body-title">{{ link.title }}</a>
                     <a href="{{ link.url }}" class="oc-mega__see-all">
@@ -138,33 +128,45 @@
                     </a>
                   </div>
 
-                  {%- comment -%} ── Pill row: subcollections — click stays in menu ── {%- endcomment -%}
                   {%- if link.links.size > 0 -%}
                     <div class="oc-mega__pills" role="list">
                       {%- for child in link.links -%}
-                        {%- assign child_col = collections[child.handle] -%}
+                        {%- assign child_handle = '' -%}
+                        {%- assign child_col = blank -%}
+
+                        {%- if child.type == 'collection_link' and child.object != blank -%}
+                          {%- assign child_handle = child.object.handle -%}
+                          {%- assign child_col = child.object -%}
+                        {%- else -%}
+                          {%- assign child_handle = child.url | split: '/collections/' | last | split: '?' | first | split: '#' | first | split: '/' | first -%}
+                          {%- assign child_col = collections[child_handle] -%}
+                        {%- endif -%}
+
                         {%- assign pill_active = forloop.first -%}
-                        {%- if child_col.handle == collection.handle -%}
+                        {%- if collection and child_handle == collection.handle -%}
                           {%- assign pill_active = true -%}
                         {%- endif -%}
+
                         <a
                           href="{{ child.url }}"
                           role="listitem"
                           class="oc-mega__pill{%- if pill_active %} oc-mega__pill--active{%- endif -%}"
-                          data-handle="{{ child.handle }}"
+                          data-handle="{{ child_handle }}"
                           data-col-url="{{ child.url }}"
                         >
-                          {%- if child_col.featured_image != blank -%}
-                            <img
-                              src="{{ child_col.featured_image | image_url: width: 48 }}"
-                              alt=""
-                              aria-hidden="true"
-                              width="20"
-                              height="20"
-                              loading="lazy"
-                              decoding="async"
-                              class="oc-mega__pill-icon"
-                            >
+                          {%- if child_col and child_col.featured_image != blank -%}
+                            {{
+                              child_col.featured_image
+                              | image_url: width: 48
+                              | image_tag:
+                                widths: '20,32,40,48',
+                                sizes: '20px',
+                                alt: '',
+                                loading: 'lazy',
+                                width: 20,
+                                height: 20,
+                                class: 'oc-mega__pill-icon'
+                            }}
                           {%- endif -%}
                           <span>{{ child.title }}</span>
                         </a>
@@ -172,12 +174,10 @@
                     </div>
                   {%- endif -%}
 
-                  {%- comment -%} ── Product row: filled by JS on pill click / open ── {%- endcomment -%}
                   <div class="oc-mega__products" data-products-container data-limit="{{ block_settings.thumb_max_items | default: 5 }}"></div>
-
-                </div><!-- /.oc-mega -->
-              </div><!-- /.menu-list__submenu-inner -->
-            </div><!-- /.menu-list__submenu -->
+                </div>
+              </div>
+            </div>
           {%- endif -%}
         </li>
       {% endfor %}
@@ -227,7 +227,6 @@
         fetchpriority="low"
       ></script>
 
-      {%- comment -%} OC Mega Menu — AJAX product loader · runs once per page {%- endcomment -%}
       <script>
       (function () {
         if (window.__ocMega) return;
@@ -235,15 +234,26 @@
 
         var cache = {};
 
+        function shopRoot() {
+          return (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) ? window.Shopify.routes.root : '/';
+        }
+
         function imgUrl(src, w) {
           if (!src) return '';
-          try { var u = new URL(src); u.searchParams.set('width', w); return u.toString(); }
-          catch (e) { return src; }
+          try {
+            var u = new URL(src, window.location.origin);
+            u.searchParams.set('width', w);
+            return u.toString();
+          } catch (e) {
+            return src;
+          }
         }
 
         function fmtPrice(p) {
           return new Intl.NumberFormat('th-TH', {
-            style: 'currency', currency: 'THB', maximumFractionDigits: 0
+            style: 'currency',
+            currency: 'THB',
+            maximumFractionDigits: 0
           }).format(parseFloat(p) || 0);
         }
 
@@ -251,43 +261,62 @@
           var s = '';
           for (var i = 0; i < n; i++) {
             s += '<div class="oc-pc oc-pc--skel">'
-               + '<div class="oc-pc__img-wrap"></div>'
-               + '<div class="oc-pc__body">'
-               + '<div class="oc-pc__skel-line" style="width:75%"></div>'
-               + '<div class="oc-pc__skel-line" style="width:45%;margin-top:5px"></div>'
-               + '</div></div>';
+              + '<div class="oc-pc__img-wrap"></div>'
+              + '<div class="oc-pc__body">'
+              + '<div class="oc-pc__skel-line" style="width:75%"></div>'
+              + '<div class="oc-pc__skel-line" style="width:45%;margin-top:5px"></div>'
+              + '</div></div>';
           }
           return s;
         }
 
         function esc(s) {
-          return String(s || '').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+          return String(s || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
         }
 
         function cardHTML(p) {
           var imgObj = p.featured_image || (p.images && p.images[0]);
-          var src    = imgObj && imgObj.src ? imgUrl(imgObj.src, 260) : '';
-          var ss     = src
-            ? imgUrl(imgObj.src,180)+' 180w, '+imgUrl(imgObj.src,260)+' 260w, '+imgUrl(imgObj.src,360)+' 360w'
+          var src = imgObj && imgObj.src ? imgUrl(imgObj.src, 360) : '';
+          var ss = src
+            ? imgUrl(imgObj.src, 180) + ' 180w, '
+              + imgUrl(imgObj.src, 260) + ' 260w, '
+              + imgUrl(imgObj.src, 320) + ' 320w, '
+              + imgUrl(imgObj.src, 360) + ' 360w, '
+              + imgUrl(imgObj.src, 520) + ' 520w'
             : '';
-          var price  = p.variants && p.variants[0] ? fmtPrice(p.variants[0].price) : '';
-          var title  = esc(p.title);
-          return '<a href="/products/'+p.handle+'" class="oc-pc">'
-            +'<div class="oc-pc__img-wrap">'
-            +(src
-              ? '<img src="'+src+'" srcset="'+ss+'" sizes="180px" alt="'+title+'" width="260" height="195" loading="lazy" decoding="async" class="oc-pc__img">'
-              : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;opacity:.25"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>'
+          var price = p.variants && p.variants[0] ? fmtPrice(p.variants[0].price) : '';
+          var title = esc(p.title);
+          var href = shopRoot() + 'products/' + encodeURIComponent(p.handle);
+
+          return '<a href="' + href + '" class="oc-pc">'
+            + '<div class="oc-pc__img-wrap">'
+            + (src
+              ? '<img src="' + src + '" srcset="' + ss + '" sizes="(min-width: 1200px) 180px, (min-width: 990px) 16vw, 42vw" alt="' + title + '" width="360" height="270" loading="lazy" decoding="async" class="oc-pc__img">'
+              : '<div class="oc-pc__no-img" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>'
             )
-            +'</div>'
-            +'<div class="oc-pc__body">'
-            +'<p class="oc-pc__title">'+title+'</p>'
-            +(price ? '<p class="oc-pc__price">เริ่ม '+price+'</p>' : '')
-            +'</div></a>';
+            + '</div>'
+            + '<div class="oc-pc__body">'
+            + '<p class="oc-pc__title">' + title + '</p>'
+            + (price ? '<p class="oc-pc__price">เริ่ม ' + price + '</p>' : '')
+            + '</div></a>';
         }
 
         function loadProducts(handle, container) {
           if (!handle || !container) return;
+
+          handle = String(handle).trim().replace(/^\/+|\/+$/g, '');
+          if (!handle) {
+            container.innerHTML = '<p class="oc-pc-empty">ไม่พบ handle ของหมวดสินค้า</p>';
+            return;
+          }
+
           var limit = parseInt(container.dataset.limit, 10) || 5;
+          var url = shopRoot() + 'collections/' + encodeURIComponent(handle) + '/products.json?limit=' + limit;
 
           if (cache[handle] !== undefined) {
             container.innerHTML = cache[handle].length
@@ -297,68 +326,84 @@
           }
 
           container.innerHTML = skeletonHTML(limit);
-          fetch('/collections/'+handle+'/products.json?limit='+limit, { credentials: 'same-origin' })
-            .then(function(r){ return r.json(); })
-            .then(function(d){
-              cache[handle] = d.products || [];
+
+          fetch(url, {
+            credentials: 'same-origin',
+            headers: {
+              'Accept': 'application/json'
+            }
+          })
+            .then(function(r) {
+              if (!r.ok) throw new Error('HTTP ' + r.status);
+              return r.json();
+            })
+            .then(function(d) {
+              cache[handle] = Array.isArray(d.products) ? d.products : [];
               container.innerHTML = cache[handle].length
                 ? cache[handle].map(cardHTML).join('')
                 : '<p class="oc-pc-empty">ไม่พบสินค้าในหมวดนี้</p>';
             })
-            .catch(function(){
+            .catch(function(err) {
+              console.warn('[OC Mega] loadProducts failed:', handle, err);
               delete cache[handle];
               container.innerHTML = '<p class="oc-pc-empty">โหลดไม่ได้ กรุณาลองใหม่</p>';
             });
         }
 
         function activatePill(pill, mega) {
-          mega.querySelectorAll('.oc-mega__pill').forEach(function(p){
+          mega.querySelectorAll('.oc-mega__pill').forEach(function(p) {
             p.classList.remove('oc-mega__pill--active');
           });
+
           pill.classList.add('oc-mega__pill--active');
+
           var container = mega.querySelector('[data-products-container]');
-          /* handle = data-handle attr, fallback: extract from href */
+          if (!container) return;
+
           var handle = pill.dataset.handle;
-          if (!handle && pill.href) {
-            var m = pill.getAttribute('href').match(/\/collections\/([^/?#]+)/);
-            if (m) handle = m[1];
+
+          if (!handle && pill.dataset.colUrl) {
+            var m1 = pill.dataset.colUrl.match(/\/collections\/([^/?#]+)/);
+            if (m1) handle = m1[1];
           }
+
+          if (!handle && pill.getAttribute('href')) {
+            var m2 = pill.getAttribute('href').match(/\/collections\/([^/?#]+)/);
+            if (m2) handle = m2[1];
+          }
+
+          if (!handle) {
+            container.innerHTML = '<p class="oc-pc-empty">ไม่พบ handle ของหมวดสินค้า</p>';
+            return;
+          }
+
           loadProducts(handle, container);
         }
 
         function initMega(mega) {
-          if (mega.__ocReady) return;
+          if (!mega || mega.__ocReady) return;
           mega.__ocReady = true;
 
-          mega.querySelectorAll('.oc-mega__pill').forEach(function(pill){
-            pill.addEventListener('click', function(e){
+          mega.querySelectorAll('.oc-mega__pill').forEach(function(pill) {
+            pill.addEventListener('click', function(e) {
               e.preventDefault();
               activatePill(pill, mega);
             });
           });
 
-          /* Auto-load first pill on open */
-          var first = mega.querySelector('.oc-mega__pill--active')
-                   || mega.querySelector('.oc-mega__pill');
+          var first = mega.querySelector('.oc-mega__pill--active') || mega.querySelector('.oc-mega__pill');
           if (first) activatePill(first, mega);
         }
 
-        /* ── Event delegation — works after Horizon hydration ── */
-        /* Trigger on pointerenter of any list item that has a mega panel */
         document.addEventListener('pointerenter', function(e) {
-          var item = e.target && e.target.closest
-            ? e.target.closest('.menu-list__list-item')
-            : null;
+          var item = e.target && e.target.closest ? e.target.closest('.menu-list__list-item') : null;
           if (!item) return;
           var mega = item.querySelector('.oc-mega');
           if (mega) initMega(mega);
-        }, true); /* capture phase so it fires before Horizon's own handlers */
+        }, true);
 
-        /* Keyboard fallback: focus on the nav link */
         document.addEventListener('focusin', function(e) {
-          var item = e.target && e.target.closest
-            ? e.target.closest('.menu-list__list-item')
-            : null;
+          var item = e.target && e.target.closest ? e.target.closest('.menu-list__list-item') : null;
           if (!item) return;
           var mega = item.querySelector('.oc-mega');
           if (mega) initMega(mega);
@@ -375,10 +420,6 @@
 {% endstyle %}
 
 {% stylesheet %}
-  /* ─────────────────────────────────────────────────────────────────
-     HORIZON CORE — unchanged from theme source
-  ───────────────────────────────────────────────────────────────── */
-
   .header__drawer {
     --header-drawer-min-height: 60px;
     display: flex;
@@ -492,6 +533,7 @@
   .menu-list__link-title {
     padding-inline: calc(var(--gap-xl) / 2);
   }
+
   [slot='overflow'] .menu-list__link-title {
     padding-inline: 0;
   }
@@ -499,6 +541,7 @@
   .menu-list__list-item:not([slot='overflow']) {
     flex-direction: column;
   }
+
   .menu-list__list-item:not([slot='overflow'])::after {
     content: '';
     width: 100%;
@@ -518,7 +561,6 @@
     }
   }
 
-  /* stylelint-disable-next-line selector-max-specificity */
   .menu-list:not(:has(.menu-list__list-item:hover)) .menu-list__link--active,
   .menu-list .menu-list__list-item:where(:hover, :focus-within) .menu-list__link,
   .menu-list .menu-list__list-item[slot='overflow'] .menu-list__link[aria-expanded='true'] {
@@ -565,14 +607,14 @@
     top: calc(100% - 1px + var(--border-bottom-width) - (var(--full-open-header-height) - var(--submenu-height)));
     z-index: var(--layer-header-menu);
     padding-inline: var(--padding-inline);
-    clip-path: rect(var(--header-height) 100% var(--full-open-header-height) 0); /* stylelint-disable-line */
-    transition: clip-path var(--submenu-animation-speed) var(--ease-out-cubic); /* stylelint-disable-line */
+    clip-path: rect(var(--header-height) 100% var(--full-open-header-height) 0);
+    transition: clip-path var(--submenu-animation-speed) var(--ease-out-cubic);
   }
 
   [data-submenu-overlap-bottom-row] {
     .menu-list__list-item:where(:not([slot='overflow'])) > .menu-list__submenu,
     .overflow-menu::part(overflow) {
-      clip-path: rect(var(--top-row-height) 100% var(--full-open-header-height) 0); /* stylelint-disable-line */
+      clip-path: rect(var(--top-row-height) 100% var(--full-open-header-height) 0);
     }
   }
 
@@ -843,16 +885,6 @@
     display: contents;
   }
 
-
-
-  /* ═══════════════════════════════════════════════════════════════
-     OC MEGA MENU — Collection-filter style
-     Full-width: pill row + thumbnail grid · no sidebar
-     Octopus Media Solutions · octopus.co.th
-     CI cyan: #17a9bb (anchor) · #14c9df (vivid)
-  ═══════════════════════════════════════════════════════════════ */
-
-  /* 1 ── Panel: glass + CI cyan top border ── */
   .menu-list__submenu {
     border-top: 3px solid #14c9df !important;
     background: rgba(248, 252, 253, 0.98) !important;
@@ -861,7 +893,6 @@
     box-shadow: 0 24px 64px rgba(80, 90, 160, 0.14) !important;
   }
 
-  /* 2 ── submenu-inner: block layout for stacking rows ── */
   .menu-list__submenu-inner.oc-mega-panel {
     display: block !important;
     padding: 0 !important;
@@ -869,7 +900,6 @@
     max-height: 72vh !important;
   }
 
-  /* 3 ── Wrapper: full-width column ── */
   .oc-mega {
     display: flex;
     flex-direction: column;
@@ -882,7 +912,6 @@
     scrollbar-color: rgba(20, 201, 223, 0.2) transparent;
   }
 
-  /* 4 ── Header row ── */
   .oc-mega__header {
     display: flex;
     align-items: center;
@@ -927,7 +956,6 @@
     -webkit-text-fill-color: #fff;
   }
 
-  /* 5 ── Pill row (เหมือน row 1 ของ collection filter) ── */
   .oc-mega__pills {
     display: flex;
     flex-wrap: wrap;
@@ -976,7 +1004,6 @@
     flex-shrink: 0;
   }
 
-  /* 6 ── Product row (AJAX-filled) ── */
   .oc-mega__products {
     display: grid;
     grid-template-columns: repeat(var(--oc-prod-cols, 5), minmax(0, 1fr));
@@ -984,7 +1011,6 @@
     min-height: 160px;
   }
 
-  /* Product card */
   .oc-pc {
     display: flex;
     flex-direction: column;
@@ -1026,8 +1052,13 @@
   }
 
   .oc-pc__no-img {
+    width: 100%;
+    height: 100%;
     color: #17a9bb;
     opacity: 0.4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .oc-pc__body {
@@ -1060,7 +1091,6 @@
     margin: 0;
   }
 
-  /* Skeleton shimmer */
   .oc-pc--skel {
     pointer-events: none;
     border-color: transparent !important;
@@ -1083,7 +1113,7 @@
   }
 
   @keyframes oc-shimmer {
-    0%   { background-position: 200% 0; }
+    0% { background-position: 200% 0; }
     100% { background-position: -200% 0; }
   }
 
@@ -1097,7 +1127,6 @@
     margin: 0;
   }
 
-  /* 7 ── Top nav: animated gradient underline ── */
   .menu-list__list-item:not([slot='overflow']) .menu-list__link-title {
     position: relative;
   }
@@ -1123,7 +1152,6 @@
     right: 0;
   }
 
-  /* 8 ── Reduced motion ── */
   @media (prefers-reduced-motion: reduce) {
     .oc-mega__pill,
     .oc-mega__see-all,
@@ -1134,6 +1162,33 @@
     .menu-list__link-title::after {
       transition: none !important;
       animation: none !important;
+    }
+  }
+
+  @media screen and (max-width: 1199px) {
+    .oc-mega__products {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 989px) {
+    .oc-mega {
+      padding: 18px 20px 22px;
+    }
+
+    .oc-mega__products {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .oc-mega__header {
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+
+    .oc-mega__products {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 {% endstylesheet %}
@@ -1164,26 +1219,11 @@
       "id": "type_font_primary_size",
       "label": "t:settings.top_level_size",
       "options": [
-        {
-          "value": "0.625rem",
-          "label": "10px"
-        },
-        {
-          "value": "0.75rem",
-          "label": "12px"
-        },
-        {
-          "value": "0.875rem",
-          "label": "14px"
-        },
-        {
-          "value": "1rem",
-          "label": "16px"
-        },
-        {
-          "value": "1.125rem",
-          "label": "18px"
-        }
+        { "value": "0.625rem", "label": "10px" },
+        { "value": "0.75rem", "label": "12px" },
+        { "value": "0.875rem", "label": "14px" },
+        { "value": "1rem", "label": "16px" },
+        { "value": "1.125rem", "label": "18px" }
       ],
       "default": "1rem"
     },
@@ -1192,18 +1232,9 @@
       "id": "menu_font_style",
       "label": "t:settings.submenu_size",
       "options": [
-        {
-          "value": "regular",
-          "label": "t:options.small"
-        },
-        {
-          "value": "inverse",
-          "label": "t:options.medium"
-        },
-        {
-          "value": "inverse_large",
-          "label": "t:options.large"
-        }
+        { "value": "regular", "label": "t:options.small" },
+        { "value": "inverse", "label": "t:options.medium" },
+        { "value": "inverse_large", "label": "t:options.large" }
       ],
       "default": "inverse"
     },
@@ -1212,22 +1243,10 @@
       "id": "type_font_primary_link",
       "label": "t:settings.font",
       "options": [
-        {
-          "value": "body",
-          "label": "t:options.body"
-        },
-        {
-          "value": "subheading",
-          "label": "t:options.subheading"
-        },
-        {
-          "value": "heading",
-          "label": "t:options.heading"
-        },
-        {
-          "value": "accent",
-          "label": "t:options.accent"
-        }
+        { "value": "body", "label": "t:options.body" },
+        { "value": "subheading", "label": "t:options.subheading" },
+        { "value": "heading", "label": "t:options.heading" },
+        { "value": "accent", "label": "t:options.accent" }
       ],
       "default": "heading"
     },
@@ -1236,14 +1255,8 @@
       "id": "type_case_primary_link",
       "label": "t:settings.text_case",
       "options": [
-        {
-          "value": "none",
-          "label": "t:options.default"
-        },
-        {
-          "value": "uppercase",
-          "label": "t:options.uppercase"
-        }
+        { "value": "none", "label": "t:options.default" },
+        { "value": "uppercase", "label": "t:options.uppercase" }
       ],
       "default": "none"
     },
@@ -1257,22 +1270,10 @@
       "label": "t:settings.media_type",
       "info": "t:info.media_type_info",
       "options": [
-        {
-          "value": "text",
-          "label": "t:options.none"
-        },
-        {
-          "value": "collection_images",
-          "label": "t:options.collection_images"
-        },
-        {
-          "value": "featured_products",
-          "label": "t:options.featured_products"
-        },
-        {
-          "value": "featured_collections",
-          "label": "t:options.featured_collections"
-        }
+        { "value": "text", "label": "t:options.none" },
+        { "value": "collection_images", "label": "t:options.collection_images" },
+        { "value": "featured_products", "label": "t:options.featured_products" },
+        { "value": "featured_collections", "label": "t:options.featured_collections" }
       ],
       "default": "collection_images"
     },
@@ -1281,18 +1282,9 @@
       "id": "featured_products_aspect_ratio",
       "label": "t:settings.image_ratio",
       "options": [
-        {
-          "value": "adapt",
-          "label": "t:options.auto"
-        },
-        {
-          "value": "4 / 5",
-          "label": "t:options.portrait"
-        },
-        {
-          "value": "1 / 1",
-          "label": "t:options.square"
-        }
+        { "value": "adapt", "label": "t:options.auto" },
+        { "value": "4 / 5", "label": "t:options.portrait" },
+        { "value": "1 / 1", "label": "t:options.square" }
       ],
       "default": "4 / 5",
       "visible_if": "{{ block.settings.menu_style == 'featured_products' }}"
@@ -1302,18 +1294,9 @@
       "id": "featured_collections_aspect_ratio",
       "label": "t:settings.image_ratio",
       "options": [
-        {
-          "value": "adapt",
-          "label": "t:options.auto"
-        },
-        {
-          "value": "16 / 9",
-          "label": "t:options.landscape"
-        },
-        {
-          "value": "1 / 1",
-          "label": "t:options.square"
-        }
+        { "value": "adapt", "label": "t:options.auto" },
+        { "value": "16 / 9", "label": "t:options.landscape" },
+        { "value": "1 / 1", "label": "t:options.square" }
       ],
       "default": "16 / 9",
       "visible_if": "{{ block.settings.menu_style == 'featured_collections' }}"
