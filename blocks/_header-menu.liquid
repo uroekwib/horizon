@@ -74,11 +74,9 @@
     {% capture children %}
       {% for link in block_settings.menu.links %}
         <li
-  class="menu-list__list-item oc-delay-item"
-  role="presentation"
-  on:pointerenter="/activate"
-  on:focus="/activate"
->
+          class="menu-list__list-item oc-delay-item"
+          role="presentation"
+        >
           <a
             href="{{ link.url }}"
             data-skip-node-update="true"
@@ -223,12 +221,12 @@
       {% endfor %}
 
       <li
-  class="menu-list__list-item"
-  role="presentation"
-  slot="more"
-  on:pointerenter="/activate"
-  on:focus="/activate"
->
+        class="menu-list__list-item"
+        role="presentation"
+        slot="more"
+        on:pointerenter="/activate"
+        on:focus="/activate"
+      >
         <button role="listitem" class="menu-list__link button-unstyled">
           <span class="menu-list__link-title">{{ 'actions.more' | t }}</span>
         </button>
@@ -643,72 +641,190 @@
     </script>
 
     <script>
-(function () {
-  'use strict';
+      (function () {
+        'use strict';
 
-  var CLOSE_DELAY = 900;
+        var CLOSE_DELAY = 950;
+        var OPEN_CLASS_ATTR = 'data-oc-open';
+        var activeItem = null;
 
-  function bindDelayedClose(root) {
-    root.querySelectorAll('.oc-delay-item').forEach(function (item) {
-      if (item._ocDelayBound) return;
-      item._ocDelayBound = true;
+        function getParts(item) {
+          if (!item) return null;
 
-      var trigger = item.querySelector('.menu-list__link[aria-haspopup]');
-      var submenu = item.querySelector('.menu-list__submenu');
-      if (!trigger || !submenu) return;
+          var trigger = item.querySelector('.menu-list__link[aria-haspopup]');
+          var submenu = item.querySelector('.menu-list__submenu');
 
-      var closeTimer = null;
+          if (!trigger || !submenu) return null;
 
-      function clearCloseTimer() {
-        if (closeTimer) {
-          clearTimeout(closeTimer);
-          closeTimer = null;
+          return {
+            item: item,
+            trigger: trigger,
+            submenu: submenu
+          };
         }
-      }
 
-      function openMenu() {
-        clearCloseTimer();
-        trigger.setAttribute('aria-expanded', 'true');
-      }
-
-      function scheduleClose() {
-        clearCloseTimer();
-        closeTimer = setTimeout(function () {
-          var stillHoverItem = item.matches(':hover');
-          var stillHoverSubmenu = submenu.matches(':hover');
-          var focusInside = item.contains(document.activeElement);
-
-          if (!stillHoverItem && !stillHoverSubmenu && !focusInside) {
-            trigger.setAttribute('aria-expanded', 'false');
+        function clearTimer(item) {
+          if (item && item._ocCloseTimer) {
+            clearTimeout(item._ocCloseTimer);
+            item._ocCloseTimer = null;
           }
-        }, CLOSE_DELAY);
-      }
+        }
 
-      item.addEventListener('mouseenter', openMenu);
-      item.addEventListener('mouseleave', scheduleClose);
+        function isFocusInside(item) {
+          return !!(item && item.contains(document.activeElement));
+        }
 
-      submenu.addEventListener('mouseenter', openMenu);
-      submenu.addEventListener('mouseleave', scheduleClose);
+        function isPointerInside(parts) {
+          if (!parts) return false;
 
-      item.addEventListener('focusin', openMenu);
-      item.addEventListener('focusout', function () {
-        scheduleClose();
-      });
-    });
-  }
+          var itemHover = parts.item.matches(':hover');
+          var submenuHover = parts.submenu.matches(':hover');
+          var triggerHover = parts.trigger.matches(':hover');
 
-  bindDelayedClose(document);
+          return itemHover || submenuHover || triggerHover;
+        }
 
-  var obs = new MutationObserver(function () {
-    bindDelayedClose(document);
-  });
+        function setOpen(parts, open) {
+          if (!parts) return;
 
-  obs.observe(document.body, {
-    childList: true,
-    subtree: true
-  });
-})();
-</script>
+          clearTimer(parts.item);
+
+          if (open) {
+            parts.item.setAttribute(OPEN_CLASS_ATTR, 'true');
+            parts.trigger.setAttribute('aria-expanded', 'true');
+            activeItem = parts.item;
+          } else {
+            parts.item.removeAttribute(OPEN_CLASS_ATTR);
+            parts.trigger.setAttribute('aria-expanded', 'false');
+
+            if (activeItem === parts.item) {
+              activeItem = null;
+            }
+          }
+        }
+
+        function closeOthers(currentItem) {
+          document.querySelectorAll('.oc-delay-item[' + OPEN_CLASS_ATTR + '="true"]').forEach(function (item) {
+            if (item !== currentItem) {
+              var parts = getParts(item);
+              setOpen(parts, false);
+            }
+          });
+        }
+
+        function openNow(item) {
+          var parts = getParts(item);
+          if (!parts) return;
+
+          closeOthers(item);
+          setOpen(parts, true);
+        }
+
+        function scheduleClose(item) {
+          var parts = getParts(item);
+          if (!parts) return;
+
+          clearTimer(item);
+
+          item._ocCloseTimer = setTimeout(function () {
+            var stillInside = isPointerInside(parts);
+            var focusInside = isFocusInside(item);
+
+            if (!stillInside && !focusInside) {
+              setOpen(parts, false);
+            }
+          }, CLOSE_DELAY);
+        }
+
+        function bindItem(item) {
+          if (!item || item._ocDelayBound) return;
+          item._ocDelayBound = true;
+
+          var parts = getParts(item);
+          if (!parts) return;
+
+          item.addEventListener('mouseenter', function () {
+            openNow(item);
+          });
+
+          parts.trigger.addEventListener('mouseenter', function () {
+            openNow(item);
+          });
+
+          parts.submenu.addEventListener('mouseenter', function () {
+            openNow(item);
+          });
+
+          item.addEventListener('mouseleave', function () {
+            scheduleClose(item);
+          });
+
+          parts.trigger.addEventListener('mouseleave', function () {
+            scheduleClose(item);
+          });
+
+          parts.submenu.addEventListener('mouseleave', function () {
+            scheduleClose(item);
+          });
+
+          item.addEventListener('focusin', function () {
+            openNow(item);
+          });
+
+          item.addEventListener('focusout', function () {
+            setTimeout(function () {
+              if (!isFocusInside(item)) {
+                scheduleClose(item);
+              }
+            }, 0);
+          });
+
+          parts.trigger.addEventListener('click', function () {
+            openNow(item);
+          });
+
+          parts.submenu.addEventListener('pointerdown', function () {
+            openNow(item);
+          }, true);
+        }
+
+        function bindAll(root) {
+          root.querySelectorAll('.oc-delay-item').forEach(bindItem);
+        }
+
+        bindAll(document);
+
+        var obs = new MutationObserver(function () {
+          bindAll(document);
+        });
+
+        obs.observe(document.body, {
+          childList: true,
+          subtree: true
+        });
+
+        document.addEventListener('pointermove', function () {
+          if (!activeItem) return;
+
+          var parts = getParts(activeItem);
+          if (!parts) return;
+
+          clearTimer(activeItem);
+
+          if (!isPointerInside(parts) && !isFocusInside(activeItem)) {
+            scheduleClose(activeItem);
+          }
+        }, true);
+
+        document.addEventListener('keydown', function (e) {
+          if (e.key !== 'Escape') return;
+          if (!activeItem) return;
+
+          var parts = getParts(activeItem);
+          setOpen(parts, false);
+        });
+      })();
+    </script>
 
 {% endcase %}
 
@@ -1242,6 +1358,42 @@
   .oc-mega__tag {
     transition: none !important;
   }
+}
+
+/* ===== Octopus mega menu state control fix ===== */
+.oc-delay-item {
+  position: relative;
+}
+
+.menu-list__list-item.oc-delay-item > .menu-list__submenu {
+  pointer-events: none;
+}
+
+.menu-list__list-item.oc-delay-item[data-oc-open='true'] > .menu-list__submenu {
+  --submenu-content-opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.menu-list__list-item.oc-delay-item[data-oc-open='true'] > .menu-list__submenu .menu-list__submenu-inner {
+  opacity: 1;
+}
+
+.menu-list__list-item.oc-delay-item:not([data-oc-open='true']) > .menu-list__submenu {
+  pointer-events: none;
+}
+
+.menu-list__list-item.oc-delay-item:not([data-oc-open='true']) > .menu-list__submenu .menu-list__submenu-inner {
+  opacity: 0;
+}
+
+.menu-list__list-item.oc-delay-item[data-oc-open='true'] > .menu-list__link {
+  color: var(--menu-top-level-font-color);
+}
+
+.menu-list__list-item.oc-delay-item:not([data-oc-open='true']) > .menu-list__submenu:hover {
+  --submenu-content-opacity: 0;
+  visibility: hidden;
 }
 {% endstylesheet %}
 
