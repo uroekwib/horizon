@@ -710,6 +710,54 @@
 })();
 </script>
 
+<script>
+(function() {
+  const menuItems = document.querySelectorAll('.menu-list__item, .header__menu-item');
+  let timeoutId = null;
+
+  menuItems.forEach(item => {
+    // 1. ดักจับตอนเมาส์จะเข้าเมนู
+    item.addEventListener('mouseenter', function(e) {
+      // เคลียร์คำสั่งปิดเก่าทิ้งก่อน
+      clearTimeout(timeoutId);
+      
+      // ถ้าเมาส์แค่ "เฉี่ยวผ่าน" (เร็วกว่า 200ms) จะไม่เกิดอะไรขึ้น
+      // ระบบจะยังไม่เปิดเมนูใหม่ทันที
+      e.stopPropagation(); 
+    }, true);
+
+    // 2. ดักจับตอนเมาส์จะออกจากเมนู
+    item.addEventListener('mouseleave', function() {
+      // เมื่อเมาส์ออก ให้รอ 300ms ก่อนจะยอมให้เมนูอื่นทำงาน
+      // ช่วงเวลานี้เองที่คุณจะลากเมาส์ลง Drawer ได้โดยเมนูข้างๆ จะ "เป็นอัมพาต" ชั่วคราว
+      timeoutId = setTimeout(() => {
+        // ปล่อยให้ระบบทำงานตามปกติหลังจากพ้นช่วงวิกฤต
+      }, 300);
+    });
+  });
+
+  // 3. ป้องกันการปิดเมื่อเมาส์อยู่ในพื้นที่ว่างระหว่างทาง (Safe Zone)
+  const drawers = document.querySelectorAll('.header__drawer, .mega-menu');
+  drawers.forEach(drawer => {
+    drawer.addEventListener('mouseenter', () => clearTimeout(timeoutId));
+  });
+})();
+</script>
+
+<style>
+  /* เพิ่มพื้นที่ "แม่เหล็ก" ล่องหนเชื่อมเมนูกับ Drawer */
+  .menu-list__item::after {
+    content: '';
+    position: absolute;
+    bottom: -30px; /* ความสูงของช่องว่างที่เมาส์มักจะหลุด */
+    left: 0;
+    width: 100%;
+    height: 30px;
+    background: transparent;
+    z-index: 1;
+  }
+</style>
+
 {% endcase %}
 
 {% style %}
@@ -1244,44 +1292,7 @@
   }
 }
 
-/* 1. ยืดพื้นที่เมนูให้ไม่มีช่องว่างโหว่ (Gap) */
-  .menu-list__item, 
-  .header__menu-item {
-    padding-bottom: 20px !important; /* ยืดพื้นที่ลงมาข้างล่าง */
-    margin-bottom: -20px !important;
-    position: relative;
-    z-index: 100;
-  }
 
-  /* 2. เมื่อเมนูกางออกมา (Drawer Open) ให้เมนูข้างๆ "หูหนวก" ชั่วคราว */
-  /* เราจะใช้จังหวะที่ Mega Menu มี Class active หรือเปิดอยู่ */
-  
-  .menu-list:hover .menu-list__item:not(:hover) {
-    pointer-events: none; /* ทำให้เมนูอื่นที่ไม่ได้โดนจิ้มอยู่ กด/ไถ ไม่ติด */
-    transition: none !important;
-  }
-
-  /* 3. สร้าง "พื้นที่ปลอดภัย" (Safe Zone) ขนาดใหญ่ */
-  /* เวลาลากเมาส์เฉียงๆ จะได้ไม่หลุด */
-  .mega-menu, 
-  .header__drawer {
-    pointer-events: auto !important;
-  }
-
-  /* 4. ใส่ Delay ฝั่ง JavaScript ผ่าน CSS (บังคับปิดช้าลง) */
-  .mega-menu[style*="display: block"],
-  .mega-menu:not([hidden]),
-  .is-open .mega-menu {
-    display: block !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    transition: opacity 0.4s ease-out, visibility 0.4s ease-out !important;
-  }
-
-  /* หัวใจสำคัญ: เมื่อเมาส์ออกจากเมนูหลัก ให้ Drawer "รอ" นานขึ้นนิดนึง */
-  .menu-list__item:not(:hover) + .mega-menu {
-    transition-delay: 0.2s !important; 
-  }
 
 {% endstylesheet %}
 
