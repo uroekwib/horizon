@@ -802,6 +802,10 @@
   min-height: var(--header-drawer-min-height);
 }
 
+#header-component[data-menu-style='drawer'] .header__navigation-bar-row {
+  display: none;
+}
+
 @media screen and (min-width: 750px) {
   #header-component[data-menu-style='menu'] .header__drawer {
     display: none;
@@ -874,6 +878,8 @@
     color: var(--menu-top-level-font-color);
   }
 }
+
+
 
 @media screen and (min-width: 750px) {
   .menu-list__link {
