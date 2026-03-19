@@ -162,7 +162,7 @@
 
                         if l0_coll != blank
                           assign l0_handle = l0_coll.handle
-                          assign subcols = l0_coll.metafields.custom.subcol_megamenu.value
+                          assign subcols = l0_coll.metafields.custom.subcollections.value
                         endif
 
                         if subcols != blank and subcols.size > 0
@@ -429,7 +429,7 @@
             var l1 = e.target.closest('.oc-mega__l1-item');
 
             if (l0) self.selectL0(Number(l0.dataset.grp), l0);
-            if (l1 && l1.dataset.coll) self.prefetch(l1.dataset.coll);
+            if (l1) self.selectL1(l1);
           }, true);
 
           this.panel.addEventListener('click', function (e) {
@@ -1059,14 +1059,14 @@
 }
 
 .oc-mega__col0 {
-  width: var(--oc-col0-width, 250px);
+  width: var(--oc-col0-width, 230px);
   flex-shrink: 0;
   border-right: 1px solid var(--oc-ink-15);
   padding: 0 6px 12px;
 }
 
 .oc-mega__col1 {
-  width: var(--oc-col1-width, 280px);
+  width: var(--oc-col1-width, 230px);
   flex-shrink: 0;
   border-right: 1px solid var(--oc-ink-15);
   padding: 0 6px 12px;
@@ -1280,8 +1280,8 @@
 }
 
 @media screen and (max-width: 1199px) {
-  .oc-mega__col0 { width: min(var(--oc-col0-width, 240px), 240px); }
-  .oc-mega__col1 { width: min(var(--oc-col1-width, 280px), 280px); }
+  .oc-mega__col0 { width: min(var(--oc-col0-width, 230px), 200px); }
+  .oc-mega__col1 { width: min(var(--oc-col1-width, 230px), 200px); }
 }
 
 @media screen and (max-width: 989px) {
@@ -1292,8 +1292,8 @@
     border-right: none;
     border-bottom: 1px solid var(--oc-ink-15);
   }
-  .oc-mega__col0 { max-height: 190px; }
-  .oc-mega__col1 { max-height: 240px; }
+  .oc-mega__col0 { max-height: 160px; }
+  .oc-mega__col1 { max-height: 200px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
