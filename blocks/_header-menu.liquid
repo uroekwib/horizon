@@ -223,12 +223,12 @@
       {% endfor %}
 
       <li
-        class="menu-list__list-item"
-        role="presentation"
-        slot="more"
-        on:pointerenter="/activate"
-        on:focus="/activate"
-      >
+  class="menu-list__list-item"
+  role="presentation"
+  slot="more"
+  on:pointerenter="/activate"
+  on:focus="/activate"
+>
         <button role="listitem" class="menu-list__link button-unstyled">
           <span class="menu-list__link-title">{{ 'actions.more' | t }}</span>
         </button>
@@ -270,427 +270,383 @@
     </header-menu>
 
     <script>
-  (function () {
-    'use strict';
+      (function () {
+        'use strict';
 
-    var _cache = {};
+        var _cache = {};
 
-    function esc(s) {
-      return String(s || '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    }
+        function esc(s) {
+          return String(s || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+        }
 
-    function normalizeShopifyImage(src) {
-      if (!src) return null;
-      src = String(src);
+        function normalizeShopifyImage(src) {
+          if (!src) return null;
+          src = String(src);
 
-      if (src.indexOf('//') === 0) src = window.location.protocol + src;
+          if (src.indexOf('//') === 0) src = window.location.protocol + src;
 
-      if (src.indexOf('http') !== 0 && src.indexOf('//') !== 0) {
-        src = src.indexOf('/') === 0 ? window.location.origin + src : window.location.origin + '/' + src;
-      }
-
-      return src;
-    }
-
-    function resizeImg(src, width, height) {
-      src = normalizeShopifyImage(src);
-      if (!src) return null;
-
-      src = src.replace(/_(pico|icon|thumb|small|compact|medium|large|grande|original|\d+x\d*)(?=\.[a-zA-Z]{3,4}(\?[^.]*)?$)/, '');
-      return src.replace(/(\.[a-zA-Z]{3,4})(\?[^.]*)?$/, '_' + width + 'x' + height + '$1$2');
-    }
-
-    function getProductImage(product) {
-      if (!product) return null;
-
-      if (typeof product.featured_image === 'string' && product.featured_image) return product.featured_image;
-
-      if (product.featured_image && typeof product.featured_image === 'object') {
-        if (product.featured_image.src) return product.featured_image.src;
-        if (product.featured_image.url) return product.featured_image.url;
-      }
-
-      if (Array.isArray(product.images) && product.images.length) {
-        var first = product.images[0];
-        if (typeof first === 'string') return first;
-        if (first && first.src) return first.src;
-        if (first && first.url) return first.url;
-      }
-
-      if (product.image && product.image.src) return product.image.src;
-
-      return null;
-    }
-
-    function fetchProducts(handle, limit) {
-      if (!handle) return Promise.resolve([]);
-
-      var cacheKey = handle + '::' + limit;
-
-      if (Array.isArray(_cache[cacheKey])) {
-        return Promise.resolve(_cache[cacheKey]);
-      }
-
-      if (_cache[cacheKey] && typeof _cache[cacheKey].then === 'function') {
-        return _cache[cacheKey];
-      }
-
-      _cache[cacheKey] = fetch('/collections/' + encodeURIComponent(handle) + '/products.json?limit=' + encodeURIComponent(limit), {
-        credentials: 'same-origin'
-      })
-        .then(function (res) {
-          if (!res.ok) throw new Error('Fetch failed: ' + res.status);
-          return res.json();
-        })
-        .then(function (data) {
-          var products = Array.isArray(data.products) ? data.products : [];
-          _cache[cacheKey] = products;
-          return products;
-        })
-        .catch(function () {
-          _cache[cacheKey] = [];
-          return [];
-        });
-
-      return _cache[cacheKey];
-    }
-
-    function OcMega(panel) {
-      this.panel = panel;
-      this.productPanel = panel.querySelector('.oc-mega__product-panel');
-      this.thumbCount = parseInt(this.productPanel.dataset.thumbCount || 4, 10);
-      this.productLimit = parseInt(this.productPanel.dataset.productLimit || 8, 10);
-
-      var styles = getComputedStyle(this.panel);
-      this.thumbHeight = parseInt(styles.getPropertyValue('--oc-thumb-height') || 72, 10);
-      this.thumbRenderWidth = Math.round(this.thumbHeight * 4 / 3);
-      this.thumbImageWidth = parseInt(styles.getPropertyValue('--oc-thumb-image-width') || 500, 10);
-      this.thumbImageHeight = Math.round(this.thumbImageWidth * 3 / 4);
-
-      this.activeHandle = null;
-      this.booted = false;
-      this.bind();
-      this.watchOpen();
-
-      /* fallback กันเคส observer ไม่ทัน */
-      this.tryBootIfVisible();
-      var self = this;
-      setTimeout(function () { self.tryBootIfVisible(); }, 80);
-      setTimeout(function () { self.tryBootIfVisible(); }, 250);
-    }
-
-    OcMega.prototype.getTrigger = function () {
-      var submenu = this.panel.closest('.menu-list__submenu');
-      var menuItem = submenu ? submenu.closest('.menu-list__list-item') : null;
-      return menuItem ? menuItem.querySelector('.menu-list__link[aria-haspopup]') : null;
-    };
-
-    OcMega.prototype.tryBootIfVisible = function () {
-      if (this.booted) return;
-
-      var trigger = this.getTrigger();
-      var submenu = this.panel.closest('.menu-list__submenu');
-
-      var expanded = trigger && trigger.getAttribute('aria-expanded') === 'true';
-      var visible = submenu && (
-        submenu.matches(':hover') ||
-        submenu.offsetParent !== null ||
-        getComputedStyle(submenu).visibility === 'visible'
-      );
-
-      if (expanded || visible) {
-        this.boot();
-      }
-    };
-
-    OcMega.prototype.watchOpen = function () {
-      var self = this;
-      var trigger = this.getTrigger();
-
-      if (!trigger) {
-        self.boot();
-        return;
-      }
-
-      /* ถ้าตอน bind เมนูเปิดอยู่แล้ว ให้ boot ทันที */
-      if (trigger.getAttribute('aria-expanded') === 'true') {
-        self.boot();
-        return;
-      }
-
-      trigger.addEventListener('mouseenter', function () {
-        self.tryBootIfVisible();
-      });
-
-      trigger.addEventListener('focus', function () {
-        self.tryBootIfVisible();
-      });
-
-      var mo = new MutationObserver(function (mutations) {
-        mutations.forEach(function (m) {
-          if (
-            m.attributeName === 'aria-expanded' &&
-            trigger.getAttribute('aria-expanded') === 'true'
-          ) {
-            self.boot();
+          if (src.indexOf('http') !== 0 && src.indexOf('//') !== 0) {
+            src = src.indexOf('/') === 0 ? window.location.origin + src : window.location.origin + '/' + src;
           }
-        });
-      });
 
-      mo.observe(trigger, {
-        attributes: true,
-        attributeFilter: ['aria-expanded']
-      });
-    };
-
-    OcMega.prototype.bind = function () {
-      var self = this;
-
-      this.panel.addEventListener('mouseenter', function (e) {
-        var l0 = e.target.closest('.oc-mega__l0-item');
-        var l1 = e.target.closest('.oc-mega__l1-item');
-
-        if (l0) self.selectL0(Number(l0.dataset.grp), l0);
-        if (l1 && l1.dataset.coll) self.prefetch(l1.dataset.coll);
-      }, true);
-
-      this.panel.addEventListener('click', function (e) {
-        var l0 = e.target.closest('.oc-mega__l0-item');
-        var l1 = e.target.closest('.oc-mega__l1-item');
-
-        if (l0) {
-          e.preventDefault();
-          self.selectL0(Number(l0.dataset.grp), l0);
+          return src;
         }
 
-        if (l1) {
-          e.preventDefault();
-          self.selectL1(l1);
-        }
-      });
+        function resizeImg(src, width, height) {
+          src = normalizeShopifyImage(src);
+          if (!src) return null;
 
-      this.panel.addEventListener('focusin', function (e) {
-        var l0 = e.target.closest('.oc-mega__l0-item');
-        var l1 = e.target.closest('.oc-mega__l1-item');
-
-        if (l0) self.selectL0(Number(l0.dataset.grp), l0);
-        if (l1) self.selectL1(l1);
-      });
-
-      this.panel.addEventListener('keydown', function (e) {
-        var l1 = e.target.closest('.oc-mega__l1-item');
-        if (!l1) return;
-
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          self.selectL1(l1);
+          src = src.replace(/_(pico|icon|thumb|small|compact|medium|large|grande|original|\d+x\d*)(?=\.[a-zA-Z]{3,4}(\?[^.]*)?$)/, '');
+          return src.replace(/(\.[a-zA-Z]{3,4})(\?[^.]*)?$/, '_' + width + 'x' + height + '$1$2');
         }
 
-        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-          e.preventDefault();
-          var items = Array.from(l1.closest('.oc-mega__l1-list').querySelectorAll('.oc-mega__l1-item'));
-          var index = items.indexOf(l1);
-          var next = items[index + (e.key === 'ArrowDown' ? 1 : -1)];
-          if (next) next.focus();
-        }
-      });
-    };
+        function getProductImage(product) {
+          if (!product) return null;
 
-    OcMega.prototype.boot = function () {
-      if (this.booted) return;
-      this.booted = true;
+          if (typeof product.featured_image === 'string' && product.featured_image) return product.featured_image;
 
-      var firstL0 = this.panel.querySelector('.oc-mega__l0-item');
-      if (firstL0) {
-        this.selectL0(Number(firstL0.dataset.grp || 0), firstL0);
-        return;
-      }
+          if (product.featured_image && typeof product.featured_image === 'object') {
+            if (product.featured_image.src) return product.featured_image.src;
+            if (product.featured_image.url) return product.featured_image.url;
+          }
 
-      this.render([], '', '');
-    };
+          if (Array.isArray(product.images) && product.images.length) {
+            var first = product.images[0];
+            if (typeof first === 'string') return first;
+            if (first && first.src) return first.src;
+            if (first && first.url) return first.url;
+          }
 
-    OcMega.prototype.selectL0 = function (grp, activeEl) {
-      var self = this;
+          if (product.image && product.image.src) return product.image.src;
 
-      this.panel.querySelectorAll('.oc-mega__l0-item').forEach(function (el) {
-        var on = el === activeEl;
-        el.classList.toggle('on', on);
-        el.setAttribute('aria-selected', on ? 'true' : 'false');
-      });
-
-      this.panel.querySelectorAll('.oc-mega__l1-group').forEach(function (group) {
-        var show = Number(group.dataset.grp) === grp;
-        group.classList.toggle('oc-hidden', !show);
-      });
-
-      var activeGroup = this.panel.querySelector('.oc-mega__l1-group[data-grp="' + grp + '"]');
-      if (!activeGroup) {
-        this.render([], '', activeEl ? activeEl.dataset.url : '');
-        return;
-      }
-
-      var firstL1 = activeGroup.querySelector('.oc-mega__l1-item');
-
-      this.panel.querySelectorAll('.oc-mega__l1-item').forEach(function (el) {
-        var on = el === firstL1;
-        el.classList.toggle('on', on);
-        el.setAttribute('aria-selected', on ? 'true' : 'false');
-      });
-
-      if (firstL1) {
-        self.loadProducts(firstL1.dataset.coll, firstL1.dataset.url);
-      } else {
-        self.render([], '', activeEl ? activeEl.dataset.url : '');
-      }
-    };
-
-    OcMega.prototype.selectL1 = function (item) {
-      this.panel.querySelectorAll('.oc-mega__l1-item').forEach(function (el) {
-        var on = el === item;
-        el.classList.toggle('on', on);
-        el.setAttribute('aria-selected', on ? 'true' : 'false');
-      });
-
-      this.loadProducts(item.dataset.coll, item.dataset.url);
-    };
-
-    OcMega.prototype.prefetch = function (handle) {
-      if (!handle) return;
-      fetchProducts(handle, this.productLimit);
-    };
-
-    OcMega.prototype.loadProducts = function (handle, collUrl) {
-      var self = this;
-
-      if (!handle) {
-        self.render([], handle, collUrl);
-        return;
-      }
-
-      if (self.activeHandle === handle && self.productPanel.innerHTML.trim() !== '') {
-        return;
-      }
-
-      self.activeHandle = handle;
-      self.productPanel.setAttribute('aria-busy', 'true');
-      self.productPanel.innerHTML = '<p class="oc-mega__loading">กำลังโหลด…</p>';
-
-      fetchProducts(handle, self.productLimit).then(function (products) {
-        if (self.activeHandle !== handle) return;
-        self.render(products, handle, collUrl);
-      });
-    };
-
-    OcMega.prototype.render = function (products, handle, collUrl) {
-      var pp = this.productPanel;
-      var tc = this.thumbCount;
-      var thumbHeight = this.thumbHeight;
-      var thumbRenderWidth = this.thumbRenderWidth;
-      var thumbImageWidth = this.thumbImageWidth;
-      var thumbImageHeight = this.thumbImageHeight;
-      var url = collUrl || (handle ? '/collections/' + handle : '#');
-
-      pp.setAttribute('aria-busy', 'false');
-
-      if (!products || !products.length) {
-        pp.innerHTML =
-          '<p class="oc-mega__empty">ไม่พบสินค้าในหมวดนี้</p>' +
-          (url !== '#'
-            ? '<a href="' + esc(url) + '" class="btn-g oc-mega__viewall">ดูทั้งหมด →</a>'
-            : '');
-        return;
-      }
-
-      var thumbs = products.slice(0, tc);
-      var rest = products.slice(tc);
-
-      var html = '<div class="oc-mega__thumbs">';
-
-      thumbs.forEach(function (p) {
-        var rawImg = getProductImage(p);
-        var src = rawImg ? resizeImg(rawImg, thumbImageWidth, thumbImageHeight) : null;
-        var productUrl = '/products/' + esc(p.handle);
-
-        html += '<a href="' + productUrl + '" class="oc-mega__thumb">';
-        html += '<div class="oc-mega__thumb-media">';
-
-        if (src) {
-          html += '<img src="' + esc(src) + '" alt="' + esc(p.title) + '" loading="lazy" width="' + thumbRenderWidth + '" height="' + thumbHeight + '">';
-        } else {
-          html += '<div class="oc-mega__thumb-ph"></div>';
+          return null;
         }
 
-        html += '</div>';
-        html += '<span class="oc-mega__thumb-nm">' + esc(p.title) + '</span>';
-        html += '</a>';
-      });
+        function fetchProducts(handle, limit) {
+          if (!handle) return Promise.resolve([]);
 
-      html += '</div>';
+          var cacheKey = handle + '::' + limit;
 
-      if (rest.length) {
-        html += '<p class="oc-mega__tags-hd">สินค้าอื่นๆ ในหมวดนี้</p>';
-        html += '<div class="oc-mega__tags">';
-        rest.forEach(function (p) {
-          html += '<a href="/products/' + esc(p.handle) + '" class="oc-mega__tag">' + esc(p.title) + '</a>';
-        });
-        html += '</div>';
-      }
+          if (Array.isArray(_cache[cacheKey])) {
+            return Promise.resolve(_cache[cacheKey]);
+          }
 
-      html += '<a href="' + esc(url) + '" class="btn-g oc-mega__viewall">ดูทั้งหมด →</a>';
-      pp.innerHTML = html;
-    };
+          if (_cache[cacheKey] && typeof _cache[cacheKey].then === 'function') {
+            return _cache[cacheKey];
+          }
 
-    function tryInit() {
-      document.querySelectorAll('.oc-mega-panel').forEach(function (panel) {
-        if (!panel._ocMega) {
-          panel._ocMega = new OcMega(panel);
-        } else {
-          panel._ocMega.tryBootIfVisible();
+          _cache[cacheKey] = fetch('/collections/' + encodeURIComponent(handle) + '/products.json?limit=' + encodeURIComponent(limit), {
+            credentials: 'same-origin'
+          })
+            .then(function (res) {
+              if (!res.ok) throw new Error('Fetch failed: ' + res.status);
+              return res.json();
+            })
+            .then(function (data) {
+              var products = Array.isArray(data.products) ? data.products : [];
+              _cache[cacheKey] = products;
+              return products;
+            })
+            .catch(function () {
+              _cache[cacheKey] = [];
+              return [];
+            });
+
+          return _cache[cacheKey];
         }
-      });
-    }
 
-    tryInit();
+        function OcMega(panel) {
+          this.panel = panel;
+          this.productPanel = panel.querySelector('.oc-mega__product-panel');
+          this.thumbCount = parseInt(this.productPanel.dataset.thumbCount || 4, 10);
+          this.productLimit = parseInt(this.productPanel.dataset.productLimit || 8, 10);
 
-    var obs = new MutationObserver(function (mutations) {
-      var found = mutations.some(function (m) {
-        return Array.from(m.addedNodes).some(function (n) {
-          return n.nodeType === 1 && (
-            n.matches('.oc-mega-panel') ||
-            (n.querySelector && n.querySelector('.oc-mega-panel'))
-          );
-        });
-      });
+          var styles = getComputedStyle(this.panel);
+          this.thumbHeight = parseInt(styles.getPropertyValue('--oc-thumb-height') || 72, 10);
+          this.thumbRenderWidth = Math.round(this.thumbHeight * 4 / 3);
+          this.thumbImageWidth = parseInt(styles.getPropertyValue('--oc-thumb-image-width') || 500, 10);
+          this.thumbImageHeight = Math.round(this.thumbImageWidth * 3 / 4);
 
-      if (found) tryInit();
-    });
+          this.activeHandle = null;
+          this.booted = false;
+          this.bind();
+          this.watchOpen();
+        }
 
-    obs.observe(document.body, { childList: true, subtree: true });
+        OcMega.prototype.watchOpen = function () {
+          var self = this;
+          var submenu = this.panel.closest('.menu-list__submenu');
+          var menuItem = submenu ? submenu.closest('.menu-list__list-item') : null;
+          var trigger = menuItem ? menuItem.querySelector('[aria-haspopup]') : null;
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', function () {
+          if (!trigger) {
+            self.boot();
+            return;
+          }
+
+          var mo = new MutationObserver(function (mutations) {
+            mutations.forEach(function (m) {
+              if (
+                m.attributeName === 'aria-expanded' &&
+                trigger.getAttribute('aria-expanded') === 'true' &&
+                !self.booted
+              ) {
+                self.boot();
+                mo.disconnect();
+              }
+            });
+          });
+
+          mo.observe(trigger, {
+            attributes: true,
+            attributeFilter: ['aria-expanded']
+          });
+        };
+
+        OcMega.prototype.bind = function () {
+          var self = this;
+
+          this.panel.addEventListener('mouseenter', function (e) {
+            var l0 = e.target.closest('.oc-mega__l0-item');
+            var l1 = e.target.closest('.oc-mega__l1-item');
+
+            if (l0) self.selectL0(Number(l0.dataset.grp), l0);
+            if (l1 && l1.dataset.coll) self.prefetch(l1.dataset.coll);
+          }, true);
+
+          this.panel.addEventListener('click', function (e) {
+            var l0 = e.target.closest('.oc-mega__l0-item');
+            var l1 = e.target.closest('.oc-mega__l1-item');
+
+            if (l0) {
+              e.preventDefault();
+              self.selectL0(Number(l0.dataset.grp), l0);
+            }
+
+            if (l1) {
+              e.preventDefault();
+              self.selectL1(l1);
+            }
+          });
+
+          this.panel.addEventListener('focusin', function (e) {
+            var l0 = e.target.closest('.oc-mega__l0-item');
+            var l1 = e.target.closest('.oc-mega__l1-item');
+
+            if (l0) self.selectL0(Number(l0.dataset.grp), l0);
+            if (l1) self.selectL1(l1);
+          });
+
+          this.panel.addEventListener('keydown', function (e) {
+            var l1 = e.target.closest('.oc-mega__l1-item');
+            if (!l1) return;
+
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              self.selectL1(l1);
+            }
+
+            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+              e.preventDefault();
+              var items = Array.from(l1.closest('.oc-mega__l1-list').querySelectorAll('.oc-mega__l1-item'));
+              var index = items.indexOf(l1);
+              var next = items[index + (e.key === 'ArrowDown' ? 1 : -1)];
+              if (next) next.focus();
+            }
+          });
+        };
+
+        OcMega.prototype.boot = function () {
+          if (this.booted) return;
+          this.booted = true;
+
+          var firstL0 = this.panel.querySelector('.oc-mega__l0-item');
+          if (firstL0) {
+            this.selectL0(Number(firstL0.dataset.grp || 0), firstL0);
+            return;
+          }
+
+          this.render([], '', '');
+        };
+
+        OcMega.prototype.selectL0 = function (grp, activeEl) {
+          var self = this;
+
+          this.panel.querySelectorAll('.oc-mega__l0-item').forEach(function (el) {
+            var on = el === activeEl;
+            el.classList.toggle('on', on);
+            el.setAttribute('aria-selected', on ? 'true' : 'false');
+          });
+
+          this.panel.querySelectorAll('.oc-mega__l1-group').forEach(function (group) {
+            var show = Number(group.dataset.grp) === grp;
+            group.classList.toggle('oc-hidden', !show);
+          });
+
+          var activeGroup = this.panel.querySelector('.oc-mega__l1-group[data-grp="' + grp + '"]');
+          if (!activeGroup) {
+            this.render([], '', activeEl ? activeEl.dataset.url : '');
+            return;
+          }
+
+          var firstL1 = activeGroup.querySelector('.oc-mega__l1-item');
+          this.panel.querySelectorAll('.oc-mega__l1-item').forEach(function (el) {
+            var on = el === firstL1;
+            el.classList.toggle('on', on);
+            el.setAttribute('aria-selected', on ? 'true' : 'false');
+          });
+
+          if (firstL1) {
+            self.loadProducts(firstL1.dataset.coll, firstL1.dataset.url);
+          } else {
+            self.render([], '', activeEl ? activeEl.dataset.url : '');
+          }
+        };
+
+        OcMega.prototype.selectL1 = function (item) {
+          this.panel.querySelectorAll('.oc-mega__l1-item').forEach(function (el) {
+            var on = el === item;
+            el.classList.toggle('on', on);
+            el.setAttribute('aria-selected', on ? 'true' : 'false');
+          });
+
+          this.loadProducts(item.dataset.coll, item.dataset.url);
+        };
+
+        OcMega.prototype.prefetch = function (handle) {
+          if (!handle) return;
+          fetchProducts(handle, this.productLimit);
+        };
+
+        OcMega.prototype.loadProducts = function (handle, collUrl) {
+          var self = this;
+
+          if (!handle) {
+            self.render([], handle, collUrl);
+            return;
+          }
+
+          if (self.activeHandle === handle && self.productPanel.innerHTML.trim() !== '') {
+            return;
+          }
+
+          self.activeHandle = handle;
+          self.productPanel.setAttribute('aria-busy', 'true');
+          self.productPanel.innerHTML = '<p class="oc-mega__loading">กำลังโหลด…</p>';
+
+          fetchProducts(handle, self.productLimit).then(function (products) {
+            if (self.activeHandle !== handle) return;
+            self.render(products, handle, collUrl);
+          });
+        };
+
+        OcMega.prototype.render = function (products, handle, collUrl) {
+          var pp = this.productPanel;
+          var tc = this.thumbCount;
+          var thumbHeight = this.thumbHeight;
+          var thumbRenderWidth = this.thumbRenderWidth;
+          var thumbImageWidth = this.thumbImageWidth;
+          var thumbImageHeight = this.thumbImageHeight;
+          var url = collUrl || (handle ? '/collections/' + handle : '#');
+
+          pp.setAttribute('aria-busy', 'false');
+
+          if (!products || !products.length) {
+            pp.innerHTML =
+              '<p class="oc-mega__empty">ไม่พบสินค้าในหมวดนี้</p>' +
+              (url !== '#'
+                ? '<a href="' + esc(url) + '" class="btn-g oc-mega__viewall">ดูทั้งหมด →</a>'
+                : '');
+            return;
+          }
+
+          var thumbs = products.slice(0, tc);
+          var rest = products.slice(tc);
+
+          var html = '<div class="oc-mega__thumbs">';
+
+          thumbs.forEach(function (p) {
+            var rawImg = getProductImage(p);
+            var src = rawImg ? resizeImg(rawImg, thumbImageWidth, thumbImageHeight) : null;
+            var productUrl = '/products/' + esc(p.handle);
+
+            html += '<a href="' + productUrl + '" class="oc-mega__thumb">';
+            html += '<div class="oc-mega__thumb-media">';
+
+            if (src) {
+              html += '<img src="' + esc(src) + '" alt="' + esc(p.title) + '" loading="lazy" width="' + thumbRenderWidth + '" height="' + thumbHeight + '">';
+            } else {
+              html += '<div class="oc-mega__thumb-ph"></div>';
+            }
+
+            html += '</div>';
+            html += '<span class="oc-mega__thumb-nm">' + esc(p.title) + '</span>';
+            html += '</a>';
+          });
+
+          html += '</div>';
+
+          if (rest.length) {
+            html += '<p class="oc-mega__tags-hd">สินค้าอื่นๆ ในหมวดนี้</p>';
+            html += '<div class="oc-mega__tags">';
+            rest.forEach(function (p) {
+              html += '<a href="/products/' + esc(p.handle) + '" class="oc-mega__tag">' + esc(p.title) + '</a>';
+            });
+            html += '</div>';
+          }
+
+          html += '<a href="' + esc(url) + '" class="btn-g oc-mega__viewall">ดูทั้งหมด →</a>';
+          pp.innerHTML = html;
+        };
+
+        function tryInit() {
+          document.querySelectorAll('.oc-mega-panel').forEach(function (panel) {
+            if (!panel._ocMega) {
+              panel._ocMega = new OcMega(panel);
+            }
+          });
+        }
+
         tryInit();
-        setTimeout(tryInit, 100);
-        setTimeout(tryInit, 400);
-        setTimeout(tryInit, 900);
-      });
-    } else {
-      setTimeout(tryInit, 100);
-      setTimeout(tryInit, 400);
-      setTimeout(tryInit, 900);
-    }
-  })();
-</script>
+
+        var obs = new MutationObserver(function (mutations) {
+          var found = mutations.some(function (m) {
+            return Array.from(m.addedNodes).some(function (n) {
+              return n.nodeType === 1 && (
+                n.matches('.oc-mega-panel') ||
+                (n.querySelector && n.querySelector('.oc-mega-panel'))
+              );
+            });
+          });
+
+          if (found) tryInit();
+        });
+
+        obs.observe(document.body, { childList: true, subtree: true });
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', function () {
+            tryInit();
+            setTimeout(tryInit, 500);
+            setTimeout(tryInit, 1200);
+          });
+        } else {
+          setTimeout(tryInit, 100);
+          setTimeout(tryInit, 500);
+          setTimeout(tryInit, 1200);
+        }
+      })();
+    </script>
 
     <script>
 (function () {
   'use strict';
 
-  var CLOSE_DELAY = 950;
+  var CLOSE_DELAY = 900;
 
   function bindDelayedClose(root) {
     root.querySelectorAll('.oc-delay-item').forEach(function (item) {
@@ -702,7 +658,6 @@
       if (!trigger || !submenu) return;
 
       var closeTimer = null;
-      var pointerInsideSafeZone = false;
 
       function clearCloseTimer() {
         if (closeTimer) {
@@ -716,61 +671,28 @@
         trigger.setAttribute('aria-expanded', 'true');
       }
 
-      function markInside() {
-        pointerInsideSafeZone = true;
-        clearCloseTimer();
-      }
-
-      function markMaybeOutside() {
-        pointerInsideSafeZone = false;
-        scheduleClose();
-      }
-
       function scheduleClose() {
         clearCloseTimer();
-
         closeTimer = setTimeout(function () {
           var stillHoverItem = item.matches(':hover');
           var stillHoverSubmenu = submenu.matches(':hover');
-          var stillHoverTrigger = trigger.matches(':hover');
           var focusInside = item.contains(document.activeElement);
 
-          if (!pointerInsideSafeZone && !stillHoverItem && !stillHoverSubmenu && !stillHoverTrigger && !focusInside) {
+          if (!stillHoverItem && !stillHoverSubmenu && !focusInside) {
             trigger.setAttribute('aria-expanded', 'false');
           }
         }, CLOSE_DELAY);
       }
 
-      item.addEventListener('mouseenter', function () {
-        markInside();
-        openMenu();
-      });
+      item.addEventListener('mouseenter', openMenu);
+      item.addEventListener('mouseleave', scheduleClose);
 
-      trigger.addEventListener('mouseenter', function () {
-        markInside();
-        openMenu();
-      });
+      submenu.addEventListener('mouseenter', openMenu);
+      submenu.addEventListener('mouseleave', scheduleClose);
 
-      submenu.addEventListener('mouseenter', function () {
-        markInside();
-        openMenu();
-      });
-
-      item.addEventListener('mouseleave', markMaybeOutside);
-      trigger.addEventListener('mouseleave', markMaybeOutside);
-      submenu.addEventListener('mouseleave', markMaybeOutside);
-
-      item.addEventListener('focusin', function () {
-        markInside();
-        openMenu();
-      });
-
+      item.addEventListener('focusin', openMenu);
       item.addEventListener('focusout', function () {
-        setTimeout(function () {
-          if (!item.contains(document.activeElement)) {
-            markMaybeOutside();
-          }
-        }, 0);
+        scheduleClose();
       });
     });
   }
@@ -787,6 +709,7 @@
   });
 })();
 </script>
+
 {% endcase %}
 
 {% style %}
@@ -1319,42 +1242,6 @@
   .oc-mega__tag {
     transition: none !important;
   }
-}
-
-/* ===== Octopus mega menu state control fix ===== */
-.oc-delay-item {
-  position: relative;
-}
-
-.menu-list__list-item.oc-delay-item > .menu-list__submenu {
-  pointer-events: none;
-}
-
-.menu-list__list-item.oc-delay-item[data-oc-open='true'] > .menu-list__submenu {
-  --submenu-content-opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-}
-
-.menu-list__list-item.oc-delay-item[data-oc-open='true'] > .menu-list__submenu .menu-list__submenu-inner {
-  opacity: 1;
-}
-
-.menu-list__list-item.oc-delay-item:not([data-oc-open='true']) > .menu-list__submenu {
-  pointer-events: none;
-}
-
-.menu-list__list-item.oc-delay-item:not([data-oc-open='true']) > .menu-list__submenu .menu-list__submenu-inner {
-  opacity: 0;
-}
-
-.menu-list__list-item.oc-delay-item[data-oc-open='true'] > .menu-list__link {
-  color: var(--menu-top-level-font-color);
-}
-
-.menu-list__list-item.oc-delay-item:not([data-oc-open='true']) > .menu-list__submenu:hover {
-  --submenu-content-opacity: 0;
-  visibility: hidden;
 }
 {% endstylesheet %}
 
