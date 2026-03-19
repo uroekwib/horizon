@@ -8,7 +8,7 @@
 
   Mega drawer:
    - Col 0 = parent collections from menu children
-   - Col 1 = subcollections from metafield custom.subcollections
+   - Col 1 = subcollections from metafield custom.subcol_megamenu
    - Col 2 = products loaded by AJAX from selected subcollection
 {%- enddoc -%}
 
@@ -77,6 +77,8 @@
           <li
             class="menu-list__list-item oc-delay-item"
             role="presentation"
+            on:focus="/activate"
+            on:pointerenter="/activate"
           >
             <a
               href="{{ link.url }}"
@@ -146,7 +148,7 @@
 
                         if l0_coll != blank
                           assign l0_handle = l0_coll.handle
-                          assign subcols = l0_coll.metafields.custom.subcollections.value
+                          assign subcols = l0_coll.metafields.custom.subcol_megamenu.value
                         endif
 
                         if subcols != blank and subcols.size > 0
@@ -650,8 +652,8 @@
         'use strict';
 
         var CLOSE_DELAY = 900;
-        var openItem = null;
         var closeTimer = null;
+        var openItem = null;
 
         function clearCloseTimer() {
           if (closeTimer) {
@@ -660,13 +662,13 @@
           }
         }
 
-        function setOpen(item) {
+        function markOpen(item) {
           if (!item) return;
 
           clearCloseTimer();
 
           if (openItem && openItem !== item) {
-            setClosed(openItem);
+            openItem.classList.remove('oc-open');
           }
 
           openItem = item;
@@ -676,7 +678,7 @@
           if (trigger) trigger.setAttribute('aria-expanded', 'true');
         }
 
-        function setClosed(item) {
+        function closeItem(item) {
           if (!item) return;
 
           item.classList.remove('oc-open');
@@ -684,9 +686,7 @@
           var trigger = item.querySelector('.menu-list__link[aria-haspopup]');
           if (trigger) trigger.setAttribute('aria-expanded', 'false');
 
-          if (openItem === item) {
-            openItem = null;
-          }
+          if (openItem === item) openItem = null;
         }
 
         function scheduleClose(item) {
@@ -699,15 +699,16 @@
             var stillHoverItem = item.matches(':hover');
             var stillHoverSubmenu = submenu && submenu.matches(':hover');
             var focusInside = item.contains(document.activeElement);
+            var insideHeader = document.querySelector('.header-menu:hover');
 
-            if (!stillHoverItem && !stillHoverSubmenu && !focusInside) {
-              setClosed(item);
+            if (!stillHoverItem && !stillHoverSubmenu && !focusInside && !insideHeader) {
+              closeItem(item);
             }
           }, CLOSE_DELAY);
         }
 
-        function bindDelayedMegaMenu(root) {
-          root.querySelectorAll('.oc-delay-item').forEach(function (item) {
+        function bindMegaDelay() {
+          document.querySelectorAll('.oc-delay-item').forEach(function (item) {
             if (item._ocDelayBound) return;
             item._ocDelayBound = true;
 
@@ -716,19 +717,19 @@
             if (!trigger || !submenu) return;
 
             item.addEventListener('mouseenter', function () {
-              setOpen(item);
+              markOpen(item);
             });
 
             trigger.addEventListener('focus', function () {
-              setOpen(item);
+              markOpen(item);
+            });
+
+            submenu.addEventListener('mouseenter', function () {
+              markOpen(item);
             });
 
             item.addEventListener('mouseleave', function () {
               scheduleClose(item);
-            });
-
-            submenu.addEventListener('mouseenter', function () {
-              setOpen(item);
             });
 
             submenu.addEventListener('mouseleave', function () {
@@ -741,38 +742,29 @@
           });
         }
 
-        function bindHeaderGlideProtection() {
+        function bindHeaderProtection() {
           var header = document.querySelector('.header-menu');
-          if (!header || header._ocHeaderBound) return;
-          header._ocHeaderBound = true;
+          if (!header || header._ocHeaderProtectionBound) return;
+          header._ocHeaderProtectionBound = true;
 
-          header.addEventListener('pointerenter', function () {
+          header.addEventListener('mouseenter', function () {
             clearCloseTimer();
           });
 
-          header.addEventListener('pointerleave', function () {
+          header.addEventListener('mouseleave', function () {
             if (openItem) scheduleClose(openItem);
-          });
-
-          header.querySelectorAll('.menu-list__list-item:not(.oc-delay-item), .header__logo, .header-logo, a, button').forEach(function (el) {
-            el.addEventListener('mouseenter', function () {
-              if (openItem) clearCloseTimer();
-            });
           });
         }
 
-        bindDelayedMegaMenu(document);
-        bindHeaderGlideProtection();
+        bindMegaDelay();
+        bindHeaderProtection();
 
         var obs = new MutationObserver(function () {
-          bindDelayedMegaMenu(document);
-          bindHeaderGlideProtection();
+          bindMegaDelay();
+          bindHeaderProtection();
         });
 
-        obs.observe(document.body, {
-          childList: true,
-          subtree: true
-        });
+        obs.observe(document.body, { childList: true, subtree: true });
       })();
     </script>
 
