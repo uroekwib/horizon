@@ -81,7 +81,7 @@
           "settings": {
             "menu": "main-menu",
             "page_width_preset": "narrow",
-            "mega_thumb_count": 6,
+            "mega_thumb_count": 5,
             "product_limit": 14,
             "drawer_min_height": 280,
             "thumb_height": 72,
