@@ -137,7 +137,7 @@
 
                         if l0_coll != blank
                           assign l0_handle = l0_coll.handle
-                          assign subcols = l0_coll.metafields.custom.subcol_megamenu.value
+                          assign subcols = l0_coll.metafields.custom.subcollections.value
                         endif
 
                         if subcols != blank and subcols.size > 0
@@ -1303,6 +1303,16 @@
         { "value": "content", "label": "Content" }
       ],
       "default": "wide"
+    },
+    {
+      "type": "header",
+      "content": "Mobile drawer"
+    },
+    {
+      "type": "checkbox",
+      "id": "drawer_accordion",
+      "label": "Accordion expand",
+      "default": true
     },
     {
       "type": "header",
