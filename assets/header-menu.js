@@ -28,6 +28,8 @@ class HeaderMenu extends Component {
     onDocumentLoaded(this.#preloadImages);
     window.addEventListener('resize', this.#resizeListener);
     this.overflowMenu?.addEventListener('pointerleave', this.#overflowSubmenuListener);
+
+    document.addEventListener('click', this.#onOutsideClick);
   }
 
   disconnectedCallback() {
@@ -36,6 +38,23 @@ class HeaderMenu extends Component {
     this.overflowMenu?.removeEventListener('pointerleave', this.#overflowSubmenuListener);
     this.#cleanupMutationObserver();
   }
+
+  // ✅ เพิ่ม method นี้ใน class
+#onOutsideClick = (event) => {
+  if (!this.contains(event.target)) {
+    this.#deactivate();
+  }
+};
+
+disconnectedCallback() {
+  super.disconnectedCallback();
+  window.removeEventListener('resize', this.#resizeListener);
+  this.overflowMenu?.removeEventListener('pointerleave', this.#overflowSubmenuListener);
+  // ✅ เพิ่มบรรทัดนี้
+  document.removeEventListener('click', this.#onOutsideClick);
+  this.#cleanupMutationObserver();
+}
+
 
   /**
    * Debounced resize event listener to recalculate menu style
@@ -171,7 +190,7 @@ class HeaderMenu extends Component {
   deactivate(event) {
 
     if (event.type === 'pointerleave' || event.type === 'mouseleave') return;
-    
+
     if (!(event.target instanceof Element)) return;
 
     const menu = findSubmenu(this.#state.activeItem);
