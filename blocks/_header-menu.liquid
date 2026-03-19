@@ -8,7 +8,7 @@
 
   Mega drawer:
    - Col 0 = parent collections from menu children
-   - Col 1 = subcollections from metafield custom.subcollections
+   - Col 1 = subcollections from metafield custom.subcol_megamenu
    - Col 2 = products loaded by AJAX from selected subcollection
 {%- enddoc -%}
 
@@ -77,6 +77,7 @@
           <li
             class="menu-list__list-item oc-delay-item"
             role="presentation"
+            data-mega-menu="true"
           >
             <a
               href="{{ link.url }}"
@@ -146,7 +147,7 @@
 
                         if l0_coll != blank
                           assign l0_handle = l0_coll.handle
-                          assign subcols = l0_coll.metafields.custom.subcollections.value
+                          assign subcols = l0_coll.metafields.custom.subcol_megamenu.value
                         endif
 
                         if subcols != blank and subcols.size > 0
@@ -391,36 +392,7 @@
           this.activeHandle = null;
           this.booted = false;
           this.bind();
-          this.watchOpen();
         }
-
-        OcMega.prototype.watchOpen = function () {
-          var self = this;
-          var item = this.panel.closest('.oc-delay-item');
-          var trigger = item ? item.querySelector('[aria-haspopup]') : null;
-
-          if (!trigger) {
-            self.boot();
-            return;
-          }
-
-          var mo = new MutationObserver(function (mutations) {
-            mutations.forEach(function (m) {
-              if (
-                m.attributeName === 'aria-expanded' &&
-                trigger.getAttribute('aria-expanded') === 'true' &&
-                !self.booted
-              ) {
-                self.boot();
-              }
-            });
-          });
-
-          mo.observe(trigger, {
-            attributes: true,
-            attributeFilter: ['aria-expanded']
-          });
-        };
 
         OcMega.prototype.bind = function () {
           var self = this;
@@ -618,7 +590,7 @@
           pp.innerHTML = html;
         };
 
-        function tryInit() {
+        function tryInitMegaPanels() {
           document.querySelectorAll('.oc-mega-panel').forEach(function (panel) {
             if (!panel._ocMega) {
               panel._ocMega = new OcMega(panel);
@@ -626,7 +598,7 @@
           });
         }
 
-        tryInit();
+        tryInitMegaPanels();
 
         var obs = new MutationObserver(function (mutations) {
           var found = mutations.some(function (m) {
@@ -638,10 +610,12 @@
             });
           });
 
-          if (found) tryInit();
+          if (found) tryInitMegaPanels();
         });
 
         obs.observe(document.body, { childList: true, subtree: true });
+
+        window.__ocTryInitMegaPanels = tryInitMegaPanels;
       })();
     </script>
 
@@ -650,8 +624,15 @@
         'use strict';
 
         var CLOSE_DELAY = 900;
-        var openItem = null;
         var closeTimer = null;
+        var openItem = null;
+
+        function getHeaderZone() {
+          return document.querySelector('.header-menu') ||
+                 document.querySelector('header-menu') ||
+                 document.querySelector('.header__row') ||
+                 document.querySelector('#header-component');
+        }
 
         function clearCloseTimer() {
           if (closeTimer) {
@@ -660,13 +641,13 @@
           }
         }
 
-        function setOpen(item) {
+        function openMegaItem(item) {
           if (!item) return;
 
           clearCloseTimer();
 
           if (openItem && openItem !== item) {
-            setClosed(openItem);
+            closeMegaItem(openItem, true);
           }
 
           openItem = item;
@@ -674,9 +655,17 @@
 
           var trigger = item.querySelector('.menu-list__link[aria-haspopup]');
           if (trigger) trigger.setAttribute('aria-expanded', 'true');
+
+          var panel = item.querySelector('.oc-mega-panel');
+          if (panel && panel._ocMega) {
+            panel._ocMega.boot();
+          } else if (window.__ocTryInitMegaPanels) {
+            window.__ocTryInitMegaPanels();
+            if (panel && panel._ocMega) panel._ocMega.boot();
+          }
         }
 
-        function setClosed(item) {
+        function closeMegaItem(item, immediate) {
           if (!item) return;
 
           item.classList.remove('oc-open');
@@ -687,48 +676,56 @@
           if (openItem === item) {
             openItem = null;
           }
+
+          if (!immediate) clearCloseTimer();
+        }
+
+        function isPointerInsideHeaderZone() {
+          var headerZone = getHeaderZone();
+          return !!(headerZone && headerZone.matches(':hover'));
         }
 
         function scheduleClose(item) {
+          if (!item) return;
+
           clearCloseTimer();
 
           closeTimer = setTimeout(function () {
-            if (!item) return;
-
             var submenu = item.querySelector('.menu-list__submenu');
             var stillHoverItem = item.matches(':hover');
-            var stillHoverSubmenu = submenu && submenu.matches(':hover');
+            var stillHoverSubmenu = !!(submenu && submenu.matches(':hover'));
             var focusInside = item.contains(document.activeElement);
+            var insideHeaderZone = isPointerInsideHeaderZone();
 
-            if (!stillHoverItem && !stillHoverSubmenu && !focusInside) {
-              setClosed(item);
+            if (!stillHoverItem && !stillHoverSubmenu && !focusInside && !insideHeaderZone) {
+              closeMegaItem(item);
             }
           }, CLOSE_DELAY);
         }
 
-        function bindDelayedMegaMenu(root) {
-          root.querySelectorAll('.oc-delay-item').forEach(function (item) {
-            if (item._ocDelayBound) return;
-            item._ocDelayBound = true;
+        function bindMegaHover() {
+          document.querySelectorAll('.oc-delay-item').forEach(function (item) {
+            if (item._ocMegaHoverBound) return;
+            item._ocMegaHoverBound = true;
 
             var trigger = item.querySelector('.menu-list__link[aria-haspopup]');
             var submenu = item.querySelector('.menu-list__submenu');
             if (!trigger || !submenu) return;
 
             item.addEventListener('mouseenter', function () {
-              setOpen(item);
+              openMegaItem(item);
             });
 
             trigger.addEventListener('focus', function () {
-              setOpen(item);
+              openMegaItem(item);
+            });
+
+            submenu.addEventListener('mouseenter', function () {
+              openMegaItem(item);
             });
 
             item.addEventListener('mouseleave', function () {
               scheduleClose(item);
-            });
-
-            submenu.addEventListener('mouseenter', function () {
-              setOpen(item);
             });
 
             submenu.addEventListener('mouseleave', function () {
@@ -741,38 +738,38 @@
           });
         }
 
-        function bindHeaderGlideProtection() {
-          var header = document.querySelector('.header-menu');
-          if (!header || header._ocHeaderBound) return;
-          header._ocHeaderBound = true;
+        function bindHeaderZoneProtection() {
+          var headerZone = getHeaderZone();
+          if (!headerZone || headerZone._ocHeaderZoneBound) return;
+          headerZone._ocHeaderZoneBound = true;
 
-          header.addEventListener('pointerenter', function () {
+          headerZone.addEventListener('mouseenter', function () {
             clearCloseTimer();
           });
 
-          header.addEventListener('pointerleave', function () {
+          headerZone.addEventListener('mouseleave', function () {
             if (openItem) scheduleClose(openItem);
           });
 
-          header.querySelectorAll('.menu-list__list-item:not(.oc-delay-item), .header__logo, .header-logo, a, button').forEach(function (el) {
+          headerZone.querySelectorAll('a, button, [role="button"], .menu-list__list-item').forEach(function (el) {
             el.addEventListener('mouseenter', function () {
               if (openItem) clearCloseTimer();
             });
           });
         }
 
-        bindDelayedMegaMenu(document);
-        bindHeaderGlideProtection();
+        function initAll() {
+          bindMegaHover();
+          bindHeaderZoneProtection();
+        }
+
+        initAll();
 
         var obs = new MutationObserver(function () {
-          bindDelayedMegaMenu(document);
-          bindHeaderGlideProtection();
+          initAll();
         });
 
-        obs.observe(document.body, {
-          childList: true,
-          subtree: true
-        });
+        obs.observe(document.body, { childList: true, subtree: true });
       })();
     </script>
 
@@ -929,6 +926,7 @@
   --submenu-content-opacity: 0;
   --submenu-content-animation: opacity calc(var(--submenu-animation-speed) * 0.75) var(--animation-easing);
   visibility: hidden;
+  pointer-events: none;
   position: absolute;
   width: min(100%, var(--page-width, 1440px));
   max-width: calc(100vw - (var(--padding-inline) * 2));
@@ -938,7 +936,9 @@
   z-index: var(--layer-header-menu);
   padding-inline: 0;
   clip-path: rect(var(--header-height) 100% var(--full-open-header-height) 0);
-  transition: clip-path var(--submenu-animation-speed) var(--ease-out-cubic);
+  transition:
+    clip-path var(--submenu-animation-speed) var(--ease-out-cubic),
+    visibility 0s linear var(--submenu-animation-speed);
 }
 
 [data-submenu-overlap-bottom-row] {
@@ -950,11 +950,13 @@
 
 .menu-list__list-item.oc-open > .menu-list__submenu,
 .menu-list__list-item:has([aria-expanded='true']) > .menu-list__submenu,
-.overflow-menu:has([slot="overflow"] [aria-expanded='true'])::part(overflow-list),
-.menu-list__submenu:is(:hover),
-.overflow-menu::part(overflow):hover {
+.overflow-menu:has([slot="overflow"] [aria-expanded='true'])::part(overflow-list) {
   --submenu-content-opacity: 1;
   visibility: visible;
+  pointer-events: auto;
+  transition:
+    clip-path var(--submenu-animation-speed) var(--ease-out-cubic),
+    visibility 0s linear 0s;
 }
 
 .overflow-menu::part(overflow) {
@@ -1012,7 +1014,7 @@
   padding-block-end: var(--submenu-padding-block-end);
   padding-inline: var(--section-padding-inline);
   opacity: var(--submenu-content-opacity);
-  transition: var(--submenu-content-animation);
+  transition: opacity calc(var(--submenu-animation-speed) * 0.75) var(--animation-easing);
   max-height: calc(80vh - var(--header-height));
   overflow: hidden;
   overflow-x: hidden;
@@ -1273,7 +1275,9 @@
   .oc-mega__l0-item,
   .oc-mega__l1-item,
   .oc-mega__thumb,
-  .oc-mega__tag {
+  .oc-mega__tag,
+  .menu-list__submenu,
+  .menu-list__submenu-inner {
     transition: none !important;
   }
 }
