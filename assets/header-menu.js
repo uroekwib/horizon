@@ -169,6 +169,9 @@ class HeaderMenu extends Component {
    * @param {PointerEvent | FocusEvent} event
    */
   deactivate(event) {
+
+    if (event.type === 'pointerleave' || event.type === 'mouseleave') return;
+    
     if (!(event.target instanceof Element)) return;
 
     const menu = findSubmenu(this.#state.activeItem);
