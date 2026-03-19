@@ -642,33 +642,13 @@
       })();
     </script>
 
-   <script>
+    <script>
 (function () {
   'use strict';
 
-  var OPEN_DELAY  = 150;  // กัน accidental open ตอนยังไม่มีเมนูเปิด
-  var CLOSE_DELAY = 600;  // หลัง mouse ออกจาก header จริงๆ
+  var CLOSE_DELAY = 900;
 
-  var openTimer  = null;
-  var closeTimer = null;
-
-  function clearOpen()  { if (openTimer)  { clearTimeout(openTimer);  openTimer  = null; } }
-  function clearClose() { if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; } }
-
-  function getOpenTrigger() {
-    return document.querySelector(
-      '.oc-delay-item .menu-list__link[aria-haspopup][aria-expanded="true"]'
-    );
-  }
-
-  function closeAll() {
-    document.querySelectorAll(
-      '.oc-delay-item .menu-list__link[aria-haspopup][aria-expanded="true"]'
-    ).forEach(function (t) { t.setAttribute('aria-expanded', 'false'); });
-  }
-
-  /* ── per-item: จัดการ open / switch เท่านั้น ── */
-  function bindItems(root) {
+  function bindDelayedClose(root) {
     root.querySelectorAll('.oc-delay-item').forEach(function (item) {
       if (item._ocDelayBound) return;
       item._ocDelayBound = true;
@@ -677,65 +657,56 @@
       var submenu = item.querySelector('.menu-list__submenu');
       if (!trigger || !submenu) return;
 
-      item.addEventListener('mouseenter', function () {
-        clearOpen();
-        clearClose(); // ยกเลิก close timer ทุกครั้งที่ mouse เข้า item ใดก็ตาม
+      var closeTimer = null;
 
-        if (trigger.getAttribute('aria-expanded') === 'true') return; // already open
-
-        if (getOpenTrigger()) {
-          // มี menu เปิดอยู่แล้ว → switch ทันที (user อยู่ในโซน nav แน่นอน)
-          closeAll();
-          trigger.setAttribute('aria-expanded', 'true');
-        } else {
-          // ยังไม่มีอะไรเปิด → รอ delay ก่อน (กัน accidental hover ขณะผ่าน)
-          openTimer = setTimeout(function () {
-            trigger.setAttribute('aria-expanded', 'true');
-          }, OPEN_DELAY);
+      function clearCloseTimer() {
+        if (closeTimer) {
+          clearTimeout(closeTimer);
+          closeTimer = null;
         }
-      });
+      }
 
-      // keyboard / focus support
-      item.addEventListener('focusin', function () {
-        clearOpen(); clearClose();
+      function openMenu() {
+        clearCloseTimer();
         trigger.setAttribute('aria-expanded', 'true');
-      });
-      item.addEventListener('focusout', function () {
-        setTimeout(function () {
-          if (!item.contains(document.activeElement)) {
+      }
+
+      function scheduleClose() {
+        clearCloseTimer();
+        closeTimer = setTimeout(function () {
+          var stillHoverItem = item.matches(':hover');
+          var stillHoverSubmenu = submenu.matches(':hover');
+          var focusInside = item.contains(document.activeElement);
+
+          if (!stillHoverItem && !stillHoverSubmenu && !focusInside) {
             trigger.setAttribute('aria-expanded', 'false');
           }
-        }, 150);
+        }, CLOSE_DELAY);
+      }
+
+      item.addEventListener('mouseenter', openMenu);
+      item.addEventListener('mouseleave', scheduleClose);
+
+      submenu.addEventListener('mouseenter', openMenu);
+      submenu.addEventListener('mouseleave', scheduleClose);
+
+      item.addEventListener('focusin', openMenu);
+      item.addEventListener('focusout', function () {
+        scheduleClose();
       });
     });
   }
 
-  /* ── header-level close guard ── */
-  function attachHeaderGuard() {
-    var hdr = document.getElementById('header-component');
-    if (!hdr || hdr._ocGuardBound) return;
-    hdr._ocGuardBound = true;
-
-    // cursor ยังอยู่ใน header DOM (logo / search / submenu panel ฯลฯ) → ยกเลิก close เสมอ
-    hdr.addEventListener('mouseover', function () {
-      clearClose();
-    });
-
-    // cursor ออกไปนอก header จริงๆ → ค่อย schedule close
-    hdr.addEventListener('mouseleave', function () {
-      clearOpen();
-      closeTimer = setTimeout(closeAll, CLOSE_DELAY);
-    });
-  }
-
-  bindItems(document);
-  attachHeaderGuard();
+  bindDelayedClose(document);
 
   var obs = new MutationObserver(function () {
-    bindItems(document);
-    attachHeaderGuard();
+    bindDelayedClose(document);
   });
-  obs.observe(document.body, { childList: true, subtree: true });
+
+  obs.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
 })();
 </script>
 
