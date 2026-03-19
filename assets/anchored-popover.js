@@ -102,12 +102,14 @@ export class AnchoredPopoverComponent extends Component {
         window[evt.newState === 'open' ? 'addEventListener' : 'removeEventListener']('resize', this.#resizeListener);
       });
     }
+    /*
     if (this.dataset.hoverTriggered) {
       trigger.addEventListener('pointerenter', this.#onTriggerEnter);
       trigger.addEventListener('pointerleave', this.#onTriggerLeave);
       popover.addEventListener('pointerenter', this.#onPopoverEnter);
       popover.addEventListener('pointerleave', this.#onPopoverLeave);
     }
+      */
     if (!CSS.supports('position-anchor: --trigger')) {
       popover.addEventListener('beforetoggle', () => {
         this.#updatePosition();
