@@ -182,10 +182,20 @@ class HeaderComponent extends Component {
     this.#lastScrollTop = scrollTop;
   };
 
+/**
+ * Sets the menuStyle dataset attribute on the header component element. PEAR AMENDS FOR RESPONSIVE HEADER 18/3/2026
+ */
+
   connectedCallback() {
     super.connectedCallback();
     this.#resizeObserver.observe(this);
     this.addEventListener('overflowMinimum', this.#handleOverflowMinimum);
+
+     window.addEventListener('resize', () => setHeaderMenuStyle());
+     const drawer = document.querySelector('#Details-menu-drawer-container');
+      if (window.matchMedia('(min-width: 750px)').matches && drawer?.hasAttribute('open')) {
+      drawer.removeAttribute('open'); // 👈 ปิด drawer ค้าง
+     }
 
     const stickyMode = this.getAttribute('sticky');
     if (stickyMode) {
