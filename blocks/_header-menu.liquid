@@ -78,6 +78,8 @@
             class="menu-list__list-item oc-delay-item"
             role="presentation"
             data-mega-menu="true"
+            on:focus="/activate"
+            on:pointerenter="/activate"
           >
             <a
               href="{{ link.url }}"
@@ -599,22 +601,6 @@
         }
 
         tryInitMegaPanels();
-
-        var obs = new MutationObserver(function (mutations) {
-          var found = mutations.some(function (m) {
-            return Array.from(m.addedNodes).some(function (n) {
-              return n.nodeType === 1 && (
-                n.matches('.oc-mega-panel') ||
-                (n.querySelector && n.querySelector('.oc-mega-panel'))
-              );
-            });
-          });
-
-          if (found) tryInitMegaPanels();
-        });
-
-        obs.observe(document.body, { childList: true, subtree: true });
-
         window.__ocTryInitMegaPanels = tryInitMegaPanels;
       })();
     </script>
@@ -628,10 +614,9 @@
         var openItem = null;
 
         function getHeaderZone() {
-          return document.querySelector('.header-menu') ||
-                 document.querySelector('header-menu') ||
-                 document.querySelector('.header__row') ||
-                 document.querySelector('#header-component');
+          return document.querySelector('.header-menu')
+            || document.querySelector('header-menu')
+            || document.querySelector('#header-component');
         }
 
         function clearCloseTimer() {
@@ -654,7 +639,9 @@
           item.classList.add('oc-open');
 
           var trigger = item.querySelector('.menu-list__link[aria-haspopup]');
-          if (trigger) trigger.setAttribute('aria-expanded', 'true');
+          if (trigger) {
+            trigger.setAttribute('aria-expanded', 'true');
+          }
 
           var panel = item.querySelector('.oc-mega-panel');
           if (panel && panel._ocMega) {
@@ -671,18 +658,15 @@
           item.classList.remove('oc-open');
 
           var trigger = item.querySelector('.menu-list__link[aria-haspopup]');
-          if (trigger) trigger.setAttribute('aria-expanded', 'false');
+          if (trigger) {
+            trigger.setAttribute('aria-expanded', 'false');
+          }
 
           if (openItem === item) {
             openItem = null;
           }
 
           if (!immediate) clearCloseTimer();
-        }
-
-        function isPointerInsideHeaderZone() {
-          var headerZone = getHeaderZone();
-          return !!(headerZone && headerZone.matches(':hover'));
         }
 
         function scheduleClose(item) {
@@ -693,20 +677,21 @@
           closeTimer = setTimeout(function () {
             var submenu = item.querySelector('.menu-list__submenu');
             var stillHoverItem = item.matches(':hover');
-            var stillHoverSubmenu = !!(submenu && submenu.matches(':hover'));
+            var stillHoverSubmenu = submenu && submenu.matches(':hover');
             var focusInside = item.contains(document.activeElement);
-            var insideHeaderZone = isPointerInsideHeaderZone();
+            var headerZone = getHeaderZone();
+            var stillInsideHeader = headerZone && headerZone.matches(':hover');
 
-            if (!stillHoverItem && !stillHoverSubmenu && !focusInside && !insideHeaderZone) {
+            if (!stillHoverItem && !stillHoverSubmenu && !focusInside && !stillInsideHeader) {
               closeMegaItem(item);
             }
           }, CLOSE_DELAY);
         }
 
-        function bindMegaHover() {
+        function bindMegaDelay() {
           document.querySelectorAll('.oc-delay-item').forEach(function (item) {
-            if (item._ocMegaHoverBound) return;
-            item._ocMegaHoverBound = true;
+            if (item._ocDelayBound) return;
+            item._ocDelayBound = true;
 
             var trigger = item.querySelector('.menu-list__link[aria-haspopup]');
             var submenu = item.querySelector('.menu-list__submenu');
@@ -738,10 +723,10 @@
           });
         }
 
-        function bindHeaderZoneProtection() {
+        function bindHeaderProtection() {
           var headerZone = getHeaderZone();
-          if (!headerZone || headerZone._ocHeaderZoneBound) return;
-          headerZone._ocHeaderZoneBound = true;
+          if (!headerZone || headerZone._ocHeaderBound) return;
+          headerZone._ocHeaderBound = true;
 
           headerZone.addEventListener('mouseenter', function () {
             clearCloseTimer();
@@ -751,25 +736,28 @@
             if (openItem) scheduleClose(openItem);
           });
 
-          headerZone.querySelectorAll('a, button, [role="button"], .menu-list__list-item').forEach(function (el) {
+          headerZone.querySelectorAll('a, button, .menu-list__list-item').forEach(function (el) {
             el.addEventListener('mouseenter', function () {
               if (openItem) clearCloseTimer();
             });
           });
         }
 
-        function initAll() {
-          bindMegaHover();
-          bindHeaderZoneProtection();
+        function init() {
+          bindMegaDelay();
+          bindHeaderProtection();
         }
 
-        initAll();
+        init();
 
         var obs = new MutationObserver(function () {
-          initAll();
+          init();
         });
 
-        obs.observe(document.body, { childList: true, subtree: true });
+        obs.observe(document.body, {
+          childList: true,
+          subtree: true
+        });
       })();
     </script>
 
@@ -950,7 +938,9 @@
 
 .menu-list__list-item.oc-open > .menu-list__submenu,
 .menu-list__list-item:has([aria-expanded='true']) > .menu-list__submenu,
-.overflow-menu:has([slot="overflow"] [aria-expanded='true'])::part(overflow-list) {
+.menu-list__submenu:hover,
+.overflow-menu:has([slot="overflow"] [aria-expanded='true'])::part(overflow-list),
+.overflow-menu::part(overflow):hover {
   --submenu-content-opacity: 1;
   visibility: visible;
   pointer-events: auto;
