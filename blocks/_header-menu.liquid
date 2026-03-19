@@ -74,9 +74,11 @@
     {% capture children %}
       {% for link in block_settings.menu.links %}
         <li
-          class="menu-list__list-item oc-delay-item"
-          role="presentation"
-        >
+  class="menu-list__list-item oc-delay-item"
+  role="presentation"
+  on:pointerenter="/activate"
+  on:focus="/activate"
+>
           <a
             href="{{ link.url }}"
             data-skip-node-update="true"
