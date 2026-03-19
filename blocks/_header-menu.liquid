@@ -77,7 +77,6 @@
           <li
             class="menu-list__list-item oc-delay-item"
             role="presentation"
-            data-mega-menu="true"
             on:focus="/activate"
             on:pointerenter="/activate"
           >
@@ -394,7 +393,36 @@
           this.activeHandle = null;
           this.booted = false;
           this.bind();
+          this.watchOpen();
         }
+
+        OcMega.prototype.watchOpen = function () {
+          var self = this;
+          var item = this.panel.closest('.oc-delay-item');
+          var trigger = item ? item.querySelector('[aria-haspopup]') : null;
+
+          if (!trigger) {
+            self.boot();
+            return;
+          }
+
+          var mo = new MutationObserver(function (mutations) {
+            mutations.forEach(function (m) {
+              if (
+                m.attributeName === 'aria-expanded' &&
+                trigger.getAttribute('aria-expanded') === 'true' &&
+                !self.booted
+              ) {
+                self.boot();
+              }
+            });
+          });
+
+          mo.observe(trigger, {
+            attributes: true,
+            attributeFilter: ['aria-expanded']
+          });
+        };
 
         OcMega.prototype.bind = function () {
           var self = this;
@@ -592,7 +620,7 @@
           pp.innerHTML = html;
         };
 
-        function tryInitMegaPanels() {
+        function tryInit() {
           document.querySelectorAll('.oc-mega-panel').forEach(function (panel) {
             if (!panel._ocMega) {
               panel._ocMega = new OcMega(panel);
@@ -600,8 +628,22 @@
           });
         }
 
-        tryInitMegaPanels();
-        window.__ocTryInitMegaPanels = tryInitMegaPanels;
+        tryInit();
+
+        var obs = new MutationObserver(function (mutations) {
+          var found = mutations.some(function (m) {
+            return Array.from(m.addedNodes).some(function (n) {
+              return n.nodeType === 1 && (
+                n.matches('.oc-mega-panel') ||
+                (n.querySelector && n.querySelector('.oc-mega-panel'))
+              );
+            });
+          });
+
+          if (found) tryInit();
+        });
+
+        obs.observe(document.body, { childList: true, subtree: true });
       })();
     </script>
 
@@ -613,12 +655,6 @@
         var closeTimer = null;
         var openItem = null;
 
-        function getHeaderZone() {
-          return document.querySelector('.header-menu')
-            || document.querySelector('header-menu')
-            || document.querySelector('#header-component');
-        }
-
         function clearCloseTimer() {
           if (closeTimer) {
             clearTimeout(closeTimer);
@@ -626,64 +662,47 @@
           }
         }
 
-        function openMegaItem(item) {
+        function markOpen(item) {
           if (!item) return;
 
           clearCloseTimer();
 
           if (openItem && openItem !== item) {
-            closeMegaItem(openItem, true);
+            openItem.classList.remove('oc-open');
           }
 
           openItem = item;
           item.classList.add('oc-open');
 
           var trigger = item.querySelector('.menu-list__link[aria-haspopup]');
-          if (trigger) {
-            trigger.setAttribute('aria-expanded', 'true');
-          }
-
-          var panel = item.querySelector('.oc-mega-panel');
-          if (panel && panel._ocMega) {
-            panel._ocMega.boot();
-          } else if (window.__ocTryInitMegaPanels) {
-            window.__ocTryInitMegaPanels();
-            if (panel && panel._ocMega) panel._ocMega.boot();
-          }
+          if (trigger) trigger.setAttribute('aria-expanded', 'true');
         }
 
-        function closeMegaItem(item, immediate) {
+        function closeItem(item) {
           if (!item) return;
 
           item.classList.remove('oc-open');
 
           var trigger = item.querySelector('.menu-list__link[aria-haspopup]');
-          if (trigger) {
-            trigger.setAttribute('aria-expanded', 'false');
-          }
+          if (trigger) trigger.setAttribute('aria-expanded', 'false');
 
-          if (openItem === item) {
-            openItem = null;
-          }
-
-          if (!immediate) clearCloseTimer();
+          if (openItem === item) openItem = null;
         }
 
         function scheduleClose(item) {
-          if (!item) return;
-
           clearCloseTimer();
 
           closeTimer = setTimeout(function () {
+            if (!item) return;
+
             var submenu = item.querySelector('.menu-list__submenu');
             var stillHoverItem = item.matches(':hover');
             var stillHoverSubmenu = submenu && submenu.matches(':hover');
             var focusInside = item.contains(document.activeElement);
-            var headerZone = getHeaderZone();
-            var stillInsideHeader = headerZone && headerZone.matches(':hover');
+            var insideHeader = document.querySelector('.header-menu:hover');
 
-            if (!stillHoverItem && !stillHoverSubmenu && !focusInside && !stillInsideHeader) {
-              closeMegaItem(item);
+            if (!stillHoverItem && !stillHoverSubmenu && !focusInside && !insideHeader) {
+              closeItem(item);
             }
           }, CLOSE_DELAY);
         }
@@ -698,15 +717,15 @@
             if (!trigger || !submenu) return;
 
             item.addEventListener('mouseenter', function () {
-              openMegaItem(item);
+              markOpen(item);
             });
 
             trigger.addEventListener('focus', function () {
-              openMegaItem(item);
+              markOpen(item);
             });
 
             submenu.addEventListener('mouseenter', function () {
-              openMegaItem(item);
+              markOpen(item);
             });
 
             item.addEventListener('mouseleave', function () {
@@ -724,40 +743,28 @@
         }
 
         function bindHeaderProtection() {
-          var headerZone = getHeaderZone();
-          if (!headerZone || headerZone._ocHeaderBound) return;
-          headerZone._ocHeaderBound = true;
+          var header = document.querySelector('.header-menu');
+          if (!header || header._ocHeaderProtectionBound) return;
+          header._ocHeaderProtectionBound = true;
 
-          headerZone.addEventListener('mouseenter', function () {
+          header.addEventListener('mouseenter', function () {
             clearCloseTimer();
           });
 
-          headerZone.addEventListener('mouseleave', function () {
+          header.addEventListener('mouseleave', function () {
             if (openItem) scheduleClose(openItem);
           });
-
-          headerZone.querySelectorAll('a, button, .menu-list__list-item').forEach(function (el) {
-            el.addEventListener('mouseenter', function () {
-              if (openItem) clearCloseTimer();
-            });
-          });
         }
 
-        function init() {
-          bindMegaDelay();
-          bindHeaderProtection();
-        }
-
-        init();
+        bindMegaDelay();
+        bindHeaderProtection();
 
         var obs = new MutationObserver(function () {
-          init();
+          bindMegaDelay();
+          bindHeaderProtection();
         });
 
-        obs.observe(document.body, {
-          childList: true,
-          subtree: true
-        });
+        obs.observe(document.body, { childList: true, subtree: true });
       })();
     </script>
 
@@ -914,7 +921,6 @@
   --submenu-content-opacity: 0;
   --submenu-content-animation: opacity calc(var(--submenu-animation-speed) * 0.75) var(--animation-easing);
   visibility: hidden;
-  pointer-events: none;
   position: absolute;
   width: min(100%, var(--page-width, 1440px));
   max-width: calc(100vw - (var(--padding-inline) * 2));
@@ -924,9 +930,7 @@
   z-index: var(--layer-header-menu);
   padding-inline: 0;
   clip-path: rect(var(--header-height) 100% var(--full-open-header-height) 0);
-  transition:
-    clip-path var(--submenu-animation-speed) var(--ease-out-cubic),
-    visibility 0s linear var(--submenu-animation-speed);
+  transition: clip-path var(--submenu-animation-speed) var(--ease-out-cubic);
 }
 
 [data-submenu-overlap-bottom-row] {
@@ -938,15 +942,11 @@
 
 .menu-list__list-item.oc-open > .menu-list__submenu,
 .menu-list__list-item:has([aria-expanded='true']) > .menu-list__submenu,
-.menu-list__submenu:hover,
 .overflow-menu:has([slot="overflow"] [aria-expanded='true'])::part(overflow-list),
+.menu-list__submenu:is(:hover),
 .overflow-menu::part(overflow):hover {
   --submenu-content-opacity: 1;
   visibility: visible;
-  pointer-events: auto;
-  transition:
-    clip-path var(--submenu-animation-speed) var(--ease-out-cubic),
-    visibility 0s linear 0s;
 }
 
 .overflow-menu::part(overflow) {
@@ -1004,7 +1004,7 @@
   padding-block-end: var(--submenu-padding-block-end);
   padding-inline: var(--section-padding-inline);
   opacity: var(--submenu-content-opacity);
-  transition: opacity calc(var(--submenu-animation-speed) * 0.75) var(--animation-easing);
+  transition: var(--submenu-content-animation);
   max-height: calc(80vh - var(--header-height));
   overflow: hidden;
   overflow-x: hidden;
@@ -1265,9 +1265,7 @@
   .oc-mega__l0-item,
   .oc-mega__l1-item,
   .oc-mega__thumb,
-  .oc-mega__tag,
-  .menu-list__submenu,
-  .menu-list__submenu-inner {
+  .oc-mega__tag {
     transition: none !important;
   }
 }
