@@ -2,13 +2,12 @@
   Octopus Media header menu block
 
   Variants:
-   - 'mobile'           → mobile drawer (Horizon native)
-   - 'navigation_bar'   → horizontal scroll bar (Horizon native)
-   - default            → desktop nav + 3-column mega drawer
+   - 'mobile'   → mobile drawer (Horizon native)
+   - default    → desktop nav + 3-column mega drawer
 
   Mega drawer:
    - Col 0 = parent collections from menu children
-   - Col 1 = subcollections from metafield custom.subcollections
+   - Col 1 = subcollections from metafield custom.subcol_megamenu
    - Col 2 = products loaded by AJAX from selected subcollection
 {%- enddoc -%}
 
@@ -29,30 +28,6 @@
         linklist: block_settings.menu,
         data_header_drawer_type: 'mobile-drawer'
       %}
-    </div>
-
-  {% when 'navigation_bar' %}
-    <div
-      class="menu-list menu-list--mobile"
-      style="--menu-horizontal-gap: 15px; --mobile-nav-margin: auto;"
-      data-hydration-key="header-menu-mobile-navigation-bar"
-    >
-      <div class="menu-list__scroll-container">
-        <ul class="menu-list__list list-unstyled" role="list">
-          {% for link in block_settings.menu.links %}
-            <li>
-              <a
-                href="{{ link.url }}"
-                id="MenuItem-{{ link.handle }}"
-                class="menu-list__item"
-                {% if link.current %}aria-current="page"{% endif %}
-              >
-                {{- link.title -}}
-              </a>
-            </li>
-          {% endfor %}
-        </ul>
-      </div>
     </div>
 
   {% else %}
@@ -162,7 +137,7 @@
 
                         if l0_coll != blank
                           assign l0_handle = l0_coll.handle
-                          assign subcols = l0_coll.metafields.custom.subcol_megamenu.value
+                          assign subcols = l0_coll.metafields.custom.subcollections.value
                         endif
 
                         if subcols != blank and subcols.size > 0
@@ -802,10 +777,6 @@
   min-height: var(--header-drawer-min-height);
 }
 
-#header-component[data-menu-style='drawer'] .header__navigation-bar-row {
-  display: none;
-}
-
 @media screen and (min-width: 750px) {
   #header-component[data-menu-style='menu'] .header__drawer {
     display: none;
@@ -815,22 +786,6 @@
 
 .header--compact .header__drawer {
   min-height: var(--minimum-touch-target);
-}
-
-.menu-list--mobile {
-  &.menu-list { display: grid; }
-  & .menu-list__list { width: max-content; margin-inline: auto; gap: var(--menu-horizontal-gap); }
-  & li { width: max-content; padding-block: var(--padding-sm); }
-  & li:first-of-type { padding-inline-start: var(--menu-horizontal-gap); }
-  & li:last-of-type { padding-inline-end: var(--menu-horizontal-gap); }
-  & a { color: var(--color-foreground); }
-}
-
-.menu-list__scroll-container {
-  position: relative;
-  overflow-x: auto;
-  mask-image: linear-gradient(to right, transparent, #000 20px, #000 calc(100% - 20px), transparent);
-  padding-block: var(--padding-2xs);
 }
 
 .menu-list {
@@ -878,8 +833,6 @@
     color: var(--menu-top-level-font-color);
   }
 }
-
-
 
 @media screen and (min-width: 750px) {
   .menu-list__link {
