@@ -646,7 +646,8 @@
 (function () {
   'use strict';
 
-  var CLOSE_DELAY = 900;
+  var OPEN_DELAY  = 150;   // ← กันการ glide ผ่านโดยไม่เจตนา
+  var CLOSE_DELAY = 900;   // คงเดิม
 
   function bindDelayedClose(root) {
     root.querySelectorAll('.oc-delay-item').forEach(function (item) {
@@ -658,42 +659,54 @@
       if (!trigger || !submenu) return;
 
       var closeTimer = null;
+      var openTimer  = null;
 
-      function clearCloseTimer() {
-        if (closeTimer) {
-          clearTimeout(closeTimer);
-          closeTimer = null;
-        }
+      function clearClose() {
+        if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
       }
 
-      function openMenu() {
-        clearCloseTimer();
+      function clearOpen() {
+        if (openTimer) { clearTimeout(openTimer); openTimer = null; }
+      }
+
+      /* เปิด drawer จริง — ใช้เมื่อเจตนาชัดเจนแล้ว */
+      function doOpen() {
+        clearClose();
+        clearOpen();
         trigger.setAttribute('aria-expanded', 'true');
       }
 
-      function scheduleClose() {
-        clearCloseTimer();
-        closeTimer = setTimeout(function () {
-          var stillHoverItem = item.matches(':hover');
-          var stillHoverSubmenu = submenu.matches(':hover');
-          var focusInside = item.contains(document.activeElement);
+      /* ขอเปิด — รอ OPEN_DELAY ก่อน หาก mouse จากไปก่อนก็ยกเลิก */
+      function requestOpen() {
+        clearClose();   // ยกเลิก close timer ของ item นี้ที่ค้างอยู่
+        clearOpen();    // ยกเลิก open timer เก่า
+        openTimer = setTimeout(doOpen, OPEN_DELAY);
+      }
 
-          if (!stillHoverItem && !stillHoverSubmenu && !focusInside) {
+      function scheduleClose() {
+        clearOpen();    // ถ้ากำลังรอ open อยู่ให้ยกเลิกทันที
+        clearClose();
+        closeTimer = setTimeout(function () {
+          if (
+            !item.matches(':hover') &&
+            !submenu.matches(':hover') &&
+            !item.contains(document.activeElement)
+          ) {
             trigger.setAttribute('aria-expanded', 'false');
           }
         }, CLOSE_DELAY);
       }
 
-      item.addEventListener('mouseenter', openMenu);
+      /* เข้า trigger → รอ 150ms ก่อนเปิด */
+      item.addEventListener('mouseenter', requestOpen);
       item.addEventListener('mouseleave', scheduleClose);
 
-      submenu.addEventListener('mouseenter', openMenu);
+      /* เข้า submenu แล้ว = เจตนาชัดเจน → เปิดทันที ไม่ต้อง delay */
+      submenu.addEventListener('mouseenter', doOpen);
       submenu.addEventListener('mouseleave', scheduleClose);
 
-      item.addEventListener('focusin', openMenu);
-      item.addEventListener('focusout', function () {
-        scheduleClose();
-      });
+      item.addEventListener('focusin', doOpen);
+      item.addEventListener('focusout', scheduleClose);
     });
   }
 
@@ -702,11 +715,7 @@
   var obs = new MutationObserver(function () {
     bindDelayedClose(document);
   });
-
-  obs.observe(document.body, {
-    childList: true,
-    subtree: true
-  });
+  obs.observe(document.body, { childList: true, subtree: true });
 })();
 </script>
 
