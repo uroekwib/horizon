@@ -286,7 +286,12 @@
     <script>
       (function () {
         'use strict';
-        if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+        /* รันเฉพาะ desktop menu mode — Horizon set data-menu-style='drawer' บน touch/mobile */
+        function isDesktopMenu() {
+          var hdr = document.getElementById('header-component');
+          return hdr && hdr.getAttribute('data-menu-style') === 'menu';
+        }
 
         var _cache = {};
 
@@ -619,6 +624,7 @@
         };
 
         function tryInit() {
+          if (!isDesktopMenu()) return;
           document.querySelectorAll('.oc-mega-panel').forEach(function (panel) {
             if (!panel._ocMega) {
               panel._ocMega = new OcMega(panel);
@@ -660,10 +666,11 @@
     <script>
       (function () {
         'use strict';
-        if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
 
         /*
          * OC Mega Menu — Header-level hover guard
+         * รันเฉพาะ data-menu-style='menu' (desktop) เท่านั้น
+         * Horizon set 'drawer' บน touch/mobile ทำให้ guard นี้ถูก skip โดยอัตโนมัติ
          *
          * หลักการ:
          *  - per-item mouseenter  → open (ทันทีถ้ามีเมนูอื่นเปิดอยู่แล้ว / รอ OPEN_DELAY ถ้ายังไม่มี)
@@ -671,6 +678,11 @@
          *  - header mouseover     → clearClose เสมอ (logo / search / lang toggle เฉี่ยวผ่าน = ไม่ปิด)
          *  - header mouseleave    → ค่อย schedule closeAll (cursor ออกนอก header จริงๆ)
          */
+
+        function isDesktopMenu() {
+          var hdr = document.getElementById('header-component');
+          return hdr && hdr.getAttribute('data-menu-style') === 'menu';
+        }
 
         var OPEN_DELAY  = 150;  /* กัน accidental open ตอนยังไม่มีเมนูเปิด */
         var CLOSE_DELAY = 600;  /* หลัง cursor ออกนอก header จริงๆ */
@@ -695,6 +707,7 @@
 
         /* ── per-item: จัดการ open / switch เท่านั้น ── */
         function bindItems(root) {
+          if (!isDesktopMenu()) return;
           root.querySelectorAll('.menu-list__list-item').forEach(function (item) {
             if (item._ocHoverBound) return;
             item._ocHoverBound = true;
@@ -739,6 +752,7 @@
 
         /* ── header-level close guard ── */
         function attachHeaderGuard() {
+          if (!isDesktopMenu()) return;
           var hdr = document.getElementById('header-component');
           if (!hdr || hdr._ocGuardBound) return;
           hdr._ocGuardBound = true;
