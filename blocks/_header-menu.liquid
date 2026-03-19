@@ -1244,7 +1244,44 @@
   }
 }
 
+/* 1. ยืดพื้นที่เมนูให้ไม่มีช่องว่างโหว่ (Gap) */
+  .menu-list__item, 
+  .header__menu-item {
+    padding-bottom: 20px !important; /* ยืดพื้นที่ลงมาข้างล่าง */
+    margin-bottom: -20px !important;
+    position: relative;
+    z-index: 100;
+  }
 
+  /* 2. เมื่อเมนูกางออกมา (Drawer Open) ให้เมนูข้างๆ "หูหนวก" ชั่วคราว */
+  /* เราจะใช้จังหวะที่ Mega Menu มี Class active หรือเปิดอยู่ */
+  
+  .menu-list:hover .menu-list__item:not(:hover) {
+    pointer-events: none; /* ทำให้เมนูอื่นที่ไม่ได้โดนจิ้มอยู่ กด/ไถ ไม่ติด */
+    transition: none !important;
+  }
+
+  /* 3. สร้าง "พื้นที่ปลอดภัย" (Safe Zone) ขนาดใหญ่ */
+  /* เวลาลากเมาส์เฉียงๆ จะได้ไม่หลุด */
+  .mega-menu, 
+  .header__drawer {
+    pointer-events: auto !important;
+  }
+
+  /* 4. ใส่ Delay ฝั่ง JavaScript ผ่าน CSS (บังคับปิดช้าลง) */
+  .mega-menu[style*="display: block"],
+  .mega-menu:not([hidden]),
+  .is-open .mega-menu {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transition: opacity 0.4s ease-out, visibility 0.4s ease-out !important;
+  }
+
+  /* หัวใจสำคัญ: เมื่อเมาส์ออกจากเมนูหลัก ให้ Drawer "รอ" นานขึ้นนิดนึง */
+  .menu-list__item:not(:hover) + .mega-menu {
+    transition-delay: 0.2s !important; 
+  }
 
 {% endstylesheet %}
 
