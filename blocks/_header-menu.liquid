@@ -73,28 +73,24 @@
 
     {% capture children %}
       {% for link in block_settings.menu.links %}
-        <li
-  class="menu-list__list-item oc-delay-item"
-  role="presentation"
-  on:pointerenter="/activate"
-  on:focus="/activate"
->
-          <a
-            href="{{ link.url }}"
-            data-skip-node-update="true"
-            class="menu-list__link{% if link.active %} menu-list__link--active{% endif %}"
-            {% if link.links != blank %}
+        {% if link.links != blank %}
+          <li
+            class="menu-list__list-item oc-delay-item"
+            role="presentation"
+          >
+            <a
+              href="{{ link.url }}"
+              data-skip-node-update="true"
+              class="menu-list__link{% if link.active %} menu-list__link--active{% endif %}"
               aria-controls="submenu-{{ forloop.index }}"
               aria-haspopup="true"
               aria-expanded="false"
-            {% endif %}
-            {% if link.current %}aria-current="page"{% endif %}
-            ref="menuitem"
-          >
-            <span class="menu-list__link-title">{{- link.title -}}</span>
-          </a>
+              {% if link.current %}aria-current="page"{% endif %}
+              ref="menuitem"
+            >
+              <span class="menu-list__link-title">{{- link.title -}}</span>
+            </a>
 
-          {% if link.links != blank %}
             <div class="menu-list__submenu{{ color_scheme_classes }}" ref="submenu[]">
               <div
                 id="submenu-{{ forloop.index }}"
@@ -218,17 +214,38 @@
                 </div>
               </div>
             </div>
-          {% endif %}
-        </li>
+          </li>
+        {% else %}
+          <li
+            class="menu-list__list-item"
+            role="presentation"
+            on:focus="/activate"
+            on:blur="/deactivate"
+            on:pointerenter="/activate"
+            on:pointerleave="/deactivate"
+          >
+            <a
+              href="{{ link.url }}"
+              data-skip-node-update="true"
+              class="menu-list__link{% if link.active %} menu-list__link--active{% endif %}"
+              {% if link.current %}aria-current="page"{% endif %}
+              ref="menuitem"
+            >
+              <span class="menu-list__link-title">{{- link.title -}}</span>
+            </a>
+          </li>
+        {% endif %}
       {% endfor %}
 
       <li
-  class="menu-list__list-item"
-  role="presentation"
-  slot="more"
-  on:pointerenter="/activate"
-  on:focus="/activate"
->
+        class="menu-list__list-item"
+        role="presentation"
+        slot="more"
+        on:focus="/activate"
+        on:blur="/deactivate"
+        on:pointerenter="/activate"
+        on:pointerleave="/deactivate"
+      >
         <button role="listitem" class="menu-list__link button-unstyled">
           <span class="menu-list__link-title">{{ 'actions.more' | t }}</span>
         </button>
@@ -379,9 +396,8 @@
 
         OcMega.prototype.watchOpen = function () {
           var self = this;
-          var submenu = this.panel.closest('.menu-list__submenu');
-          var menuItem = submenu ? submenu.closest('.menu-list__list-item') : null;
-          var trigger = menuItem ? menuItem.querySelector('[aria-haspopup]') : null;
+          var item = this.panel.closest('.oc-delay-item');
+          var trigger = item ? item.querySelector('[aria-haspopup]') : null;
 
           if (!trigger) {
             self.boot();
@@ -396,7 +412,6 @@
                 !self.booted
               ) {
                 self.boot();
-                mo.disconnect();
               }
             });
           });
@@ -627,88 +642,139 @@
         });
 
         obs.observe(document.body, { childList: true, subtree: true });
-
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', function () {
-            tryInit();
-            setTimeout(tryInit, 500);
-            setTimeout(tryInit, 1200);
-          });
-        } else {
-          setTimeout(tryInit, 100);
-          setTimeout(tryInit, 500);
-          setTimeout(tryInit, 1200);
-        }
       })();
     </script>
 
     <script>
-(function () {
-  'use strict';
+      (function () {
+        'use strict';
 
-  var CLOSE_DELAY = 900;
+        var CLOSE_DELAY = 900;
+        var openItem = null;
+        var closeTimer = null;
 
-  function bindDelayedClose(root) {
-    root.querySelectorAll('.oc-delay-item').forEach(function (item) {
-      if (item._ocDelayBound) return;
-      item._ocDelayBound = true;
-
-      var trigger = item.querySelector('.menu-list__link[aria-haspopup]');
-      var submenu = item.querySelector('.menu-list__submenu');
-      if (!trigger || !submenu) return;
-
-      var closeTimer = null;
-
-      function clearCloseTimer() {
-        if (closeTimer) {
-          clearTimeout(closeTimer);
-          closeTimer = null;
-        }
-      }
-
-      function openMenu() {
-        clearCloseTimer();
-        trigger.setAttribute('aria-expanded', 'true');
-      }
-
-      function scheduleClose() {
-        clearCloseTimer();
-        closeTimer = setTimeout(function () {
-          var stillHoverItem = item.matches(':hover');
-          var stillHoverSubmenu = submenu.matches(':hover');
-          var focusInside = item.contains(document.activeElement);
-
-          if (!stillHoverItem && !stillHoverSubmenu && !focusInside) {
-            trigger.setAttribute('aria-expanded', 'false');
+        function clearCloseTimer() {
+          if (closeTimer) {
+            clearTimeout(closeTimer);
+            closeTimer = null;
           }
-        }, CLOSE_DELAY);
-      }
+        }
 
-      item.addEventListener('mouseenter', openMenu);
-      item.addEventListener('mouseleave', scheduleClose);
+        function setOpen(item) {
+          if (!item) return;
 
-      submenu.addEventListener('mouseenter', openMenu);
-      submenu.addEventListener('mouseleave', scheduleClose);
+          clearCloseTimer();
 
-      item.addEventListener('focusin', openMenu);
-      item.addEventListener('focusout', function () {
-        scheduleClose();
-      });
-    });
-  }
+          if (openItem && openItem !== item) {
+            setClosed(openItem);
+          }
 
-  bindDelayedClose(document);
+          openItem = item;
+          item.classList.add('oc-open');
 
-  var obs = new MutationObserver(function () {
-    bindDelayedClose(document);
-  });
+          var trigger = item.querySelector('.menu-list__link[aria-haspopup]');
+          if (trigger) trigger.setAttribute('aria-expanded', 'true');
+        }
 
-  obs.observe(document.body, {
-    childList: true,
-    subtree: true
-  });
-})();
-</script>
+        function setClosed(item) {
+          if (!item) return;
+
+          item.classList.remove('oc-open');
+
+          var trigger = item.querySelector('.menu-list__link[aria-haspopup]');
+          if (trigger) trigger.setAttribute('aria-expanded', 'false');
+
+          if (openItem === item) {
+            openItem = null;
+          }
+        }
+
+        function scheduleClose(item) {
+          clearCloseTimer();
+
+          closeTimer = setTimeout(function () {
+            if (!item) return;
+
+            var submenu = item.querySelector('.menu-list__submenu');
+            var stillHoverItem = item.matches(':hover');
+            var stillHoverSubmenu = submenu && submenu.matches(':hover');
+            var focusInside = item.contains(document.activeElement);
+
+            if (!stillHoverItem && !stillHoverSubmenu && !focusInside) {
+              setClosed(item);
+            }
+          }, CLOSE_DELAY);
+        }
+
+        function bindDelayedMegaMenu(root) {
+          root.querySelectorAll('.oc-delay-item').forEach(function (item) {
+            if (item._ocDelayBound) return;
+            item._ocDelayBound = true;
+
+            var trigger = item.querySelector('.menu-list__link[aria-haspopup]');
+            var submenu = item.querySelector('.menu-list__submenu');
+            if (!trigger || !submenu) return;
+
+            item.addEventListener('mouseenter', function () {
+              setOpen(item);
+            });
+
+            trigger.addEventListener('focus', function () {
+              setOpen(item);
+            });
+
+            item.addEventListener('mouseleave', function () {
+              scheduleClose(item);
+            });
+
+            submenu.addEventListener('mouseenter', function () {
+              setOpen(item);
+            });
+
+            submenu.addEventListener('mouseleave', function () {
+              scheduleClose(item);
+            });
+
+            item.addEventListener('focusout', function () {
+              scheduleClose(item);
+            });
+          });
+        }
+
+        function bindHeaderGlideProtection() {
+          var header = document.querySelector('.header-menu');
+          if (!header || header._ocHeaderBound) return;
+          header._ocHeaderBound = true;
+
+          header.addEventListener('pointerenter', function () {
+            clearCloseTimer();
+          });
+
+          header.addEventListener('pointerleave', function () {
+            if (openItem) scheduleClose(openItem);
+          });
+
+          header.querySelectorAll('.menu-list__list-item:not(.oc-delay-item), .header__logo, .header-logo, a, button').forEach(function (el) {
+            el.addEventListener('mouseenter', function () {
+              if (openItem) clearCloseTimer();
+            });
+          });
+        }
+
+        bindDelayedMegaMenu(document);
+        bindHeaderGlideProtection();
+
+        var obs = new MutationObserver(function () {
+          bindDelayedMegaMenu(document);
+          bindHeaderGlideProtection();
+        });
+
+        obs.observe(document.body, {
+          childList: true,
+          subtree: true
+        });
+      })();
+    </script>
 
 {% endcase %}
 
@@ -799,9 +865,7 @@
   margin-block: 0;
 
   &:hover,
-  &:focus {
-    color: var(--menu-top-level-font-color);
-  }
+  &:focus { color: var(--menu-top-level-font-color); }
 }
 
 @media screen and (min-width: 750px) {
@@ -810,35 +874,22 @@
   }
 }
 
-.menu-list__link-title {
-  padding-inline: calc(var(--gap-xl) / 2);
-}
+.menu-list__link-title { padding-inline: calc(var(--gap-xl) / 2); }
+[slot='overflow'] .menu-list__link-title { padding-inline: 0; }
 
-[slot='overflow'] .menu-list__link-title {
-  padding-inline: 0;
-}
-
-.menu-list__list-item:not([slot='overflow']) {
-  flex-direction: column;
-}
-
+.menu-list__list-item:not([slot='overflow']) { flex-direction: column; }
 .menu-list__list-item:not([slot='overflow'])::after {
   content: '';
   width: 100%;
   height: var(--header-padding);
   margin-bottom: calc(-1 * var(--header-padding));
 }
-
-[slot='overflow'] > .menu-list__link::after {
-  content: none;
-}
+[slot='overflow'] > .menu-list__link::after { content: none; }
 
 .menu-list:where(:has(.menu-list__list-item:hover)),
 .menu-list:where(:has(.menu-list__list-item:focus-within)),
 .menu-list:where(:has(.menu-list__list-item:not([aria-hidden='true']) .menu-list__link--active)) {
-  .menu-list__link {
-    color: rgb(var(--menu-top-level-font-color-rgb) / var(--opacity-subdued-text));
-  }
+  .menu-list__link { color: rgb(var(--menu-top-level-font-color-rgb) / var(--opacity-subdued-text)); }
 }
 
 .menu-list:not(:has(.menu-list__list-item:hover)) .menu-list__link--active,
@@ -879,11 +930,13 @@
   --submenu-content-animation: opacity calc(var(--submenu-animation-speed) * 0.75) var(--animation-easing);
   visibility: hidden;
   position: absolute;
-  width: 100%;
-  left: 0;
+  width: min(100%, var(--page-width, 1440px));
+  max-width: calc(100vw - (var(--padding-inline) * 2));
+  left: 50%;
+  transform: translateX(-50%);
   top: calc(100% - 1px + var(--border-bottom-width) - (var(--full-open-header-height) - var(--submenu-height)));
   z-index: var(--layer-header-menu);
-  padding-inline: var(--padding-inline);
+  padding-inline: 0;
   clip-path: rect(var(--header-height) 100% var(--full-open-header-height) 0);
   transition: clip-path var(--submenu-animation-speed) var(--ease-out-cubic);
 }
@@ -895,6 +948,7 @@
   }
 }
 
+.menu-list__list-item.oc-open > .menu-list__submenu,
 .menu-list__list-item:has([aria-expanded='true']) > .menu-list__submenu,
 .overflow-menu:has([slot="overflow"] [aria-expanded='true'])::part(overflow-list),
 .menu-list__submenu:is(:hover),
@@ -947,14 +1001,10 @@
     padding-block: 0;
   }
 
-  .menu-list__link[aria-expanded='true'] + .menu-list__submenu {
-    visibility: visible;
-  }
+  .menu-list__link[aria-expanded='true'] + .menu-list__submenu { visibility: visible; }
 }
 
-.header-menu {
-  height: 100%;
-}
+.header-menu { height: 100%; }
 
 .menu-list__submenu-inner,
 .overflow-menu::part(overflow-list) {
@@ -963,7 +1013,6 @@
   padding-inline: var(--section-padding-inline);
   opacity: var(--submenu-content-opacity);
   transition: var(--submenu-content-animation);
-  transform: translateY(calc(var(--full-open-header-height) - var(--submenu-height)));
   max-height: calc(80vh - var(--header-height));
   overflow: hidden;
   overflow-x: hidden;
@@ -1068,13 +1117,8 @@
     color var(--oc-dur-fast) ease;
 }
 
-.oc-mega__l0-item {
-  font-size: var(--oc-l0-font-size, 13px);
-}
-
-.oc-mega__l1-item {
-  font-size: var(--oc-l1-font-size, 13px);
-}
+.oc-mega__l0-item { font-size: var(--oc-l0-font-size, 13px); }
+.oc-mega__l1-item { font-size: var(--oc-l1-font-size, 13px); }
 
 .oc-mega__l0-item::after {
   content: '›';
@@ -1090,10 +1134,7 @@
   background: var(--oc-cyan-l);
   color: var(--oc-cyan);
 }
-
-.oc-mega__l0-item.on::after {
-  color: var(--oc-cyan);
-}
+.oc-mega__l0-item.on::after { color: var(--oc-cyan); }
 
 .oc-mega__l1-item:hover,
 .oc-mega__l1-item.on {
@@ -1101,13 +1142,8 @@
   color: var(--oc-purple-d);
 }
 
-.oc-mega__l1-group {
-  display: block;
-}
-
-.oc-mega__l1-group.oc-hidden {
-  display: none;
-}
+.oc-mega__l1-group { display: block; }
+.oc-mega__l1-group.oc-hidden { display: none; }
 
 .oc-mega__thumbs {
   display: flex;
@@ -1206,9 +1242,7 @@
   color: var(--oc-cyan);
 }
 
-.oc-mega__viewall {
-  margin-top: 6px;
-}
+.oc-mega__viewall { margin-top: 6px; }
 
 .oc-mega__loading,
 .oc-mega__empty {
