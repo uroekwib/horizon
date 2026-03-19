@@ -80,6 +80,7 @@
           "static": true,
           "settings": {
             "menu": "main-menu",
+            "page_width_preset": "narrow",
             "mega_thumb_count": 4,
             "product_limit": 8,
             "drawer_min_height": 260,
