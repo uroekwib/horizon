@@ -81,16 +81,17 @@
           "settings": {
             "menu": "main-menu",
             "mega_thumb_count": 4,
-            "color_scheme": "scheme-2",
-            "type_font_primary_size": "1rem",
-            "menu_font_style": "inverse",
-            "type_font_primary_link": "heading",
-            "type_case_primary_link": "none",
-            "navigation_bar": false,
-            "color_scheme_navigation_bar": "",
-            "drawer_accordion": false,
-            "drawer_accordion_expand_first": false,
-            "drawer_dividers": false
+            "product_limit": 8,
+            "drawer_min_height": 260,
+            "thumb_height": 72,
+            "thumb_image_width": 500,
+            "thumb_title_font_size": 11,
+            "col0_width": 250,
+            "col1_width": 250,
+            "top_menu_font_size": 16,
+            "l0_font_size": 14,
+            "l1_font_size": 14,
+            "color_scheme": "scheme-2"
           },
           "blocks": {}
         }
