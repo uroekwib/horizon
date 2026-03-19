@@ -77,19 +77,21 @@
         },
         "header-menu": {
           "type": "_header-menu",
+          "disabled": true,
           "static": true,
           "settings": {
             "menu": "main-menu",
             "mega_thumb_count": 6,
-            "product_limit": 12,
-            "thumb_size": 100,
-            "thumb_title_font_size": 12,
-            "col0_width": 260,
-            "col1_width": 250,
-            "top_menu_font_size": 16,
-            "l0_font_size": 14,
-            "l1_font_size": 14,
-            "color_scheme": "scheme-2"
+            "color_scheme": "scheme-2",
+            "type_font_primary_size": "1rem",
+            "menu_font_style": "inverse",
+            "type_font_primary_link": "heading",
+            "type_case_primary_link": "none",
+            "navigation_bar": false,
+            "color_scheme_navigation_bar": "",
+            "drawer_accordion": false,
+            "drawer_accordion_expand_first": false,
+            "drawer_dividers": false
           },
           "blocks": {}
         }
