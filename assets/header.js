@@ -1,298 +1,284 @@
 import { Component } from '@theme/component';
-import { debounce, onDocumentLoaded, setHeaderMenuStyle } from '@theme/utilities';
-import { MegaMenuHoverEvent } from '@theme/events';
+import { onDocumentLoaded, changeMetaThemeColor, setHeaderMenuStyle } from '@theme/utilities';
 
 /**
- * A custom element that manages a header menu.
- *
- * @typedef {Object} State
- * @property {HTMLElement | null} activeItem - The currently active menu item.
- *
- * @typedef {object} Refs
- * @property {HTMLElement} overflowMenu - The overflow menu.
- * @property {HTMLElement[]} [submenu] - The submenu in each respective menu item.
- *
- * @extends {Component<Refs>}
+ * @typedef {Object} HeaderComponentRefs
+ * @property {HTMLDivElement} headerDrawerContainer - The header drawer container element
+ * @property {HTMLElement} headerMenu - The header menu element
+ * @property {HTMLElement} headerRowTop - The header top row element
  */
-class HeaderMenu extends Component {
-  requiredRefs = ['overflowMenu'];
+
+/**
+ * @typedef {CustomEvent<{ minimumReached: boolean }>} OverflowMinimumEvent
+ */
+
+/**
+ * A custom element that manages the site header.
+ *
+ * @extends {Component<HeaderComponentRefs>}
+ */
+
+class HeaderComponent extends Component {
+  requiredRefs = ['headerDrawerContainer', 'headerMenu', 'headerRowTop'];
 
   /**
-   * @type {MutationObserver | null}
+   * Width of window when header drawer was hidden
+   * @type {number | null}
    */
-  #submenuMutationObserver = null;
+  #menuDrawerHiddenWidth = null;
+
+  /**
+   * An intersection observer for monitoring sticky header position
+   * @type {IntersectionObserver | null}
+   */
+  #intersectionObserver = null;
+
+  /**
+   * Whether the header has been scrolled offscreen, when sticky behavior is 'scroll-up'
+   * @type {boolean}
+   */
+  #offscreen = false;
+
+  /**
+   * The last recorded scrollTop of the document, when sticky behavior is 'scroll-up
+   * @type {number}
+   */
+  #lastScrollTop = 0;
+
+  /**
+   * A timeout to allow for hiding animation, when sticky behavior is 'scroll-up'
+   * @type {number | null}
+   */
+  #timeout = null;
+
+  /**
+   * RAF ID for scroll handler throttling
+   * @type {number | null}
+   */
+  #scrollRafId = null;
+
+  /**
+   * Keeps the global `--header-height` custom property up to date,
+   * which other theme components can then consume
+   */
+  #resizeObserver = new ResizeObserver(([entry]) => {
+    if (!entry || !entry.borderBoxSize[0]) return;
+
+    // The initial height is calculated using the .offsetHeight property, which returns an integer.
+    // We round to the nearest integer to avoid unnecessaary reflows.
+    const roundedHeaderHeight = Math.round(entry.borderBoxSize[0].blockSize);
+    document.body.style.setProperty('--header-height', `${roundedHeaderHeight}px`);
+
+    // Check if the menu drawer should be hidden in favor of the header menu
+    if (this.#menuDrawerHiddenWidth && window.innerWidth > this.#menuDrawerHiddenWidth) {
+      this.#updateMenuVisibility(false);
+    }
+  });
+
+  /**
+   * Observes the header while scrolling the viewport to track when its actively sticky
+   * @param {Boolean} alwaysSticky - Determines if we need to observe when the header is offscreen
+   */
+  #observeStickyPosition = (alwaysSticky = true) => {
+    if (this.#intersectionObserver) return;
+
+    const config = {
+      threshold: alwaysSticky ? 1 : 0,
+    };
+
+    this.#intersectionObserver = new IntersectionObserver(([entry]) => {
+      if (!entry) return;
+
+      const { isIntersecting } = entry;
+
+      if (alwaysSticky) {
+        this.dataset.stickyState = isIntersecting ? 'inactive' : 'active';
+        if (this.dataset.themeColor) changeMetaThemeColor(this.dataset.themeColor);
+      } else {
+        this.#offscreen = !isIntersecting || this.dataset.stickyState === 'active';
+      }
+    }, config);
+
+    this.#intersectionObserver.observe(this);
+  };
+
+  /**
+   * Handles the overflow minimum event from the header menu
+   * @param {OverflowMinimumEvent} event
+   */
+  #handleOverflowMinimum = (event) => {
+    this.#updateMenuVisibility(event.detail.minimumReached);
+  };
+
+  /**
+   * Updates the visibility of the menu and drawer
+   * @param {boolean} hideMenu - Whether to hide the menu and show the drawer
+   */
+  #updateMenuVisibility(hideMenu) {
+    if (hideMenu) {
+      this.#menuDrawerHiddenWidth = window.innerWidth;
+    } else {
+      this.#menuDrawerHiddenWidth = null;
+    }
+    setHeaderMenuStyle();
+  }
+
+  #handleWindowScroll = () => {
+    if (this.#scrollRafId !== null) return;
+
+    this.#scrollRafId = requestAnimationFrame(() => {
+      this.#scrollRafId = null;
+      this.#updateScrollState();
+    });
+  };
+
+  #updateScrollState = () => {
+    const stickyMode = this.getAttribute('sticky');
+    if (!this.#offscreen && stickyMode !== 'always') return;
+
+    const scrollTop = document.scrollingElement?.scrollTop ?? 0;
+    const headerTop = this.getBoundingClientRect().top;
+    const isScrollingUp = scrollTop < this.#lastScrollTop;
+    const isAtTop = headerTop >= 0;
+
+    if (this.#timeout) {
+      clearTimeout(this.#timeout);
+      this.#timeout = null;
+    }
+
+    if (stickyMode === 'always') {
+      if (isAtTop) {
+        this.dataset.scrollDirection = 'none';
+      } else if (isScrollingUp) {
+        this.dataset.scrollDirection = 'up';
+      } else {
+        this.dataset.scrollDirection = 'down';
+      }
+
+      this.#lastScrollTop = scrollTop;
+      return;
+    }
+
+    if (isScrollingUp) {
+      if (isAtTop) {
+        // reset sticky state when header is scrolled up to natural position
+        this.#offscreen = false;
+        this.dataset.stickyState = 'inactive';
+        this.dataset.scrollDirection = 'none';
+      } else {
+        // show sticky header when scrolling up
+        this.dataset.stickyState = 'active';
+        this.dataset.scrollDirection = 'up';
+      }
+    } else if (this.dataset.stickyState === 'active') {
+      this.dataset.scrollDirection = 'none';
+
+      this.dataset.stickyState = 'idle';
+    } else {
+      this.dataset.scrollDirection = 'none';
+      this.dataset.stickyState = 'idle';
+    }
+
+    this.#lastScrollTop = scrollTop;
+  };
+
+/**
+ * Sets the menuStyle dataset attribute on the header component element. PEAR AMENDS FOR RESPONSIVE HEADER 18/3/2026
+ */
 
   connectedCallback() {
     super.connectedCallback();
+    this.#resizeObserver.observe(this);
+    this.addEventListener('overflowMinimum', this.#handleOverflowMinimum);
 
-    onDocumentLoaded(this.#preloadImages);
-    window.addEventListener('resize', this.#resizeListener);
-    this.overflowMenu?.addEventListener('pointerleave', this.#overflowSubmenuListener);
+     window.addEventListener('resize', () => setHeaderMenuStyle());
+     const drawer = document.querySelector('#Details-menu-drawer-container');
+      if (window.matchMedia('(min-width: 750px)').matches && drawer?.hasAttribute('open')) {
+      drawer.removeAttribute('open'); // 👈 ปิด drawer ค้าง
+     }
+
+    const stickyMode = this.getAttribute('sticky');
+    if (stickyMode) {
+      this.#observeStickyPosition(stickyMode === 'always');
+
+      if (stickyMode === 'scroll-up' || stickyMode === 'always') {
+        document.addEventListener('scroll', this.#handleWindowScroll);
+      }
+    }
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    window.removeEventListener('resize', this.#resizeListener);
-    this.overflowMenu?.removeEventListener('pointerleave', this.#overflowSubmenuListener);
-    this.#cleanupMutationObserver();
+    this.#resizeObserver.disconnect();
+    this.#intersectionObserver?.disconnect();
+    this.removeEventListener('overflowMinimum', this.#handleOverflowMinimum);
+    document.removeEventListener('scroll', this.#handleWindowScroll);
+    if (this.#scrollRafId !== null) {
+      cancelAnimationFrame(this.#scrollRafId);
+      this.#scrollRafId = null;
+    }
+    document.body.style.setProperty('--header-height', '0px');
   }
+}
 
-  /**
-   * Debounced resize event listener to recalculate menu style
-   */
-  #resizeListener = debounce(() => {
-    setHeaderMenuStyle();
-  }, 100);
+if (!customElements.get('header-component')) {
+  customElements.define('header-component', HeaderComponent);
+}
 
+onDocumentLoaded(() => {
+  const header = document.querySelector('header-component');
+  const headerGroup = document.querySelector('#header-group');
 
-  #overflowSubmenuListener = () => {
-    this.#deactivate();
-  };
+  // Note: Initial header heights are set via inline script in theme.liquid
+  // This ResizeObserver handles dynamic updates after page load
 
-  /**
-   * @type {State}
-   */
-  #state = {
-    activeItem: null,
-  };
+  // Update header group height on resize of any child
+  if (headerGroup) {
+    const resizeObserver = new ResizeObserver((entries) => {
+      const headerGroupHeight = entries.reduce((totalHeight, entry) => {
+        if (
+          entry.target !== header ||
+          (header.hasAttribute('transparent') && header.parentElement?.nextElementSibling)
+        ) {
+          return totalHeight + (entry.borderBoxSize[0]?.blockSize ?? 0);
+        }
+        return totalHeight;
+      }, 0);
+      // The initial height is calculated using the .offsetHeight property, which returns an integer.
+      // We round to the nearest integer to avoid unnecessaary reflows.
+      const roundedHeaderGroupHeight = Math.round(headerGroupHeight);
+      document.body.style.setProperty('--header-group-height', `${roundedHeaderGroupHeight}px`);
+    });
 
-  /**
-   * Get the overflow menu
-   */
-  get overflowMenu() {
-    return /** @type {HTMLElement | null} */ (this.refs.overflowMenu?.shadowRoot?.querySelector('[part="overflow"]'));
-  }
-
-  /**
-   * Whether the overflow list is hovered
-   * @returns {boolean}
-   */
-  get overflowListHovered() {
-    return this.refs.overflowMenu?.shadowRoot?.querySelector('[part="overflow-list"]')?.matches(':hover') ?? false;
-  }
-
-  get headerComponent() {
-    return /** @type {HTMLElement | null} */ (this.closest('header-component'));
-  }
-
-  /**
-   * Activate the selected menu item immediately
-   * @param {PointerEvent | FocusEvent} event
-   */
-  activate = (event) => {
-    this.dispatchEvent(new MegaMenuHoverEvent());
-
-    if (!(event.target instanceof Element) || !this.headerComponent) return;
-
-    let item = findMenuItem(event.target);
-
-    if (!item || item == this.#state.activeItem) return;
-
-    const isDefaultSlot = event.target.slot === '';
-
-    this.dataset.overflowExpanded = (!isDefaultSlot).toString();
-
-    const previouslyActiveItem = this.#state.activeItem;
-
-    if (previouslyActiveItem) {
-      previouslyActiveItem.ariaExpanded = 'false';
+    if (header instanceof HTMLElement) {
+      resizeObserver.observe(header);
     }
 
-    this.#state.activeItem = item;
-    this.ariaExpanded = 'true';
-    item.ariaExpanded = 'true';
-
-    let submenu = findSubmenu(item);
-    const hasSubmenu = Boolean(submenu);
-
-    if (!hasSubmenu && !isDefaultSlot) {
-      submenu = this.overflowMenu;
-    }
-
-    if (submenu) {
-      // Mark submenu as active for content-visibility optimization
-      submenu.dataset.active = '';
-
-      // Cleanup any existing mutation observer from previous menu activations
-      this.#cleanupMutationObserver();
-
-      // Monitor DOM mutations to catch deferred content injection (from section hydration)
-      this.#submenuMutationObserver = new MutationObserver(() => {
-        requestAnimationFrame(() => {
-          // Double requestAnimationFrame to ensure the height is properly calculated and not defaulting to the contain-intrinsic-size
-          requestAnimationFrame(() => {
-            if (submenu.offsetHeight > 0) {
-              this.headerComponent?.style.setProperty('--submenu-height', `${submenu.offsetHeight}px`);
-              this.#cleanupMutationObserver();
-            }
-          });
-        });
-      });
-      this.#submenuMutationObserver.observe(submenu, {childList: true, subtree: true});
-
-      // Auto-disconnect after 500ms to prevent memory leaks
-      setTimeout(() => {
-        this.#cleanupMutationObserver();
-      }, 500);
-    }
-
-    let finalHeight = submenu?.offsetHeight || 0;
-
-    // For overflow menu, the height needs to be either content of the submenu or the total height of the menu list links
-    if (!isDefaultSlot) {
-      const overflowListHeight = this.#getOverflowListLinksHeight();
-      if (hasSubmenu) {
-        /* Note: When the submenu is inside the overflow menu, its offsetHeight is not valid due to the lack of padding
-         * we could add the padding variables to the submenu.offsetHeight, but measuring the overflowMenu.offsetHeight is just easier */
-        const overflowHeight = this.overflowMenu?.offsetHeight || 0;
-        finalHeight = Math.max(overflowHeight, overflowListHeight);
-      } else {
-        finalHeight = overflowListHeight;
+    // Observe all children of the header group
+    const children = headerGroup.children;
+    for (let i = 0; i < children.length; i++) {
+      const element = children[i];
+      if (element instanceof HTMLElement) {
+        resizeObserver.observe(element);
       }
     }
 
-    if (!submenu) {
-      // If there is no content to open, don't try to open it
-      finalHeight = 0;
-    }
-
-    this.headerComponent.style.setProperty('--submenu-height', `${finalHeight}px`);
-    this.#setFullOpenHeaderHeight(finalHeight);
-    this.style.setProperty('--submenu-opacity', '1');
-  };
-
-  /**
-   * Deactivate the active item after a delay
-   * @param {PointerEvent | FocusEvent} event
-   */
-  deactivate(event) {
-    if (!(event.target instanceof Element)) return;
-
-    const menu = findSubmenu(this.#state.activeItem);
-    const isMovingWithinMenu = event.relatedTarget instanceof Node && menu?.contains(document.activeElement);
-    const isMovingToSubmenu =
-      event.relatedTarget instanceof Node && event.type === 'blur' && menu?.contains(event.relatedTarget);
-    const isMovingToOverflowMenu =
-      event.relatedTarget instanceof Node && event.relatedTarget.parentElement?.matches('[slot="overflow"]');
-
-    if (isMovingWithinMenu || isMovingToOverflowMenu || isMovingToSubmenu) return;
-
-    this.#deactivate();
-  }
-
-  /**
-   * Deactivate the active item immediately
-   * @param {HTMLElement | null} [item]
-   */
-  #deactivate = (item = this.#state.activeItem) => {
-    if (!item || item != this.#state.activeItem) return;
-
-    // Don't deactivate if the overflow menu or overflow list is still being hovered
-    if (this.overflowListHovered || this.overflowMenu?.matches(':hover')) return;
-
-    this.headerComponent?.style.setProperty('--submenu-height', '0px');
-    this.#setFullOpenHeaderHeight(0);
-    this.style.setProperty('--submenu-opacity', '0');
-    this.dataset.overflowExpanded = 'false';
-
-    const submenu = findSubmenu(item);
-
-    this.#state.activeItem = null;
-    this.ariaExpanded = 'false';
-    item.ariaExpanded = 'false';
-
-    // Remove active state from submenu after animation completes
-    if (submenu) {
-      delete submenu.dataset.active;
-    }
-  };
-
-  #getOverflowListLinksHeight() {
-    const slottedMenuLinks = this.overflowMenu?.querySelector('slot')?.assignedElements();
-    if (!slottedMenuLinks) return this.overflowMenu?.offsetHeight || 0;
-
-    /**
-     * @param {(submenu: HTMLElement) => void} cb
-     */
-    const mapSubmenus = (cb) => {
-      slottedMenuLinks.forEach((link) => {
-        const submenu = /** @type {HTMLElement | null} */ (link.querySelector('[ref="submenu[]"]'));
-        if (submenu) {
-          cb(submenu);
+    // Also observe the header group itself for child changes
+    const mutationObserver = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.type === 'childList') {
+          // Re-observe all children when the list changes
+          const children = headerGroup.children;
+          for (let i = 0; i < children.length; i++) {
+            const element = children[i];
+            if (element instanceof HTMLElement) {
+              resizeObserver.observe(element);
+            }
+          }
         }
-      });
-    }
-
-    mapSubmenus((submenu) => {
-      submenu.style.setProperty('display', 'none');
+      }
     });
-    const height = this.overflowMenu?.offsetHeight || 0;
-    mapSubmenus((submenu) => {
-      submenu.style.removeProperty('display');
-    });
-    return height;
+
+    mutationObserver.observe(headerGroup, { childList: true });
   }
-
-  /**
-   * Calculate and set the full open header height. If the submenu is not open, the full open header height is 0.
-   * @param {number} submenuHeight
-   */
-  #setFullOpenHeaderHeight(submenuHeight) {
-    if (!this.headerComponent) return;
-
-    const isOverlapSituation = this.headerComponent.hasAttribute('data-submenu-overlap-bottom-row');
-
-    const headerVisibleHeight =
-      isOverlapSituation && this.headerComponent.offsetHeight > 0
-        ? /** @type {HTMLElement | null} */ (this.headerComponent.querySelector('.header__row--top'))?.offsetHeight ?? 0
-        : this.headerComponent.offsetHeight;
-
-    const nothingToOpen = submenuHeight === 0;
-    const fullOpenHeaderHeight = nothingToOpen ? 0 : submenuHeight + (headerVisibleHeight ?? 0);
-
-    this.headerComponent?.style.setProperty('--full-open-header-height', `${fullOpenHeaderHeight}px`);
-  }
-
-  /**
-   * Preload images that are set to load lazily.
-   */
-  #preloadImages = () => {
-    const images = this.querySelectorAll('img[loading="lazy"]');
-    images?.forEach((image) => image.removeAttribute('loading'));
-  };
-
-  #cleanupMutationObserver() {
-    this.#submenuMutationObserver?.disconnect();
-    this.#submenuMutationObserver = null;
-  }
-}
-
-if (!customElements.get('header-menu')) {
-  customElements.define('header-menu', HeaderMenu);
-}
-
-/**
- * Find the closest menu item.
- * @param {Element | null | undefined} element
- * @returns {HTMLElement | null}
- */
-function findMenuItem(element) {
-  if (!(element instanceof Element)) return null;
-
-  if (element?.matches('[slot="more"')) {
-    // Select the first overflowing menu item when hovering over the "More" item
-    return findMenuItem(element.parentElement?.querySelector('[slot="overflow"]'));
-  }
-
-  return element?.querySelector('[ref="menuitem"]');
-}
-
-/**
- * Find the closest submenu.
- * @param {Element | null | undefined} element
- * @returns {HTMLElement | null}
- */
-function findSubmenu(element) {
-  const submenu = element?.parentElement?.querySelector('[ref="submenu[]"]');
-  return submenu instanceof HTMLElement ? submenu : null;
-}
+});
