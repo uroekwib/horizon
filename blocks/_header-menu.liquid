@@ -74,13 +74,11 @@
     {% capture children %}
       {% for link in block_settings.menu.links %}
         <li
-          class="menu-list__list-item"
-          role="presentation"
-          on:focus="/activate"
-          on:blur="/deactivate"
-          on:pointerenter="/activate"
-          on:pointerleave="/deactivate"
-        >
+  class="menu-list__list-item oc-delay-item"
+  role="presentation"
+  on:pointerenter="/activate"
+  on:focus="/activate"
+>
           <a
             href="{{ link.url }}"
             data-skip-node-update="true"
@@ -225,14 +223,12 @@
       {% endfor %}
 
       <li
-        class="menu-list__list-item"
-        role="presentation"
-        slot="more"
-        on:focus="/activate"
-        on:blur="/deactivate"
-        on:pointerenter="/activate"
-        on:pointerleave="/deactivate"
-      >
+  class="menu-list__list-item"
+  role="presentation"
+  slot="more"
+  on:pointerenter="/activate"
+  on:focus="/activate"
+>
         <button role="listitem" class="menu-list__link button-unstyled">
           <span class="menu-list__link-title">{{ 'actions.more' | t }}</span>
         </button>
@@ -647,69 +643,72 @@
     </script>
 
     <script>
-      (function () {
-        'use strict';
+(function () {
+  'use strict';
 
-        var CLOSE_DELAY = 4000;
+  var CLOSE_DELAY = 900;
 
-        function bindDelayedClose(root) {
-          root.querySelectorAll('.menu-list__list-item').forEach(function (item) {
-            if (item._ocHoverBound) return;
-            item._ocHoverBound = true;
+  function bindDelayedClose(root) {
+    root.querySelectorAll('.oc-delay-item').forEach(function (item) {
+      if (item._ocDelayBound) return;
+      item._ocDelayBound = true;
 
-            var trigger = item.querySelector('.menu-list__link[aria-haspopup]');
-            var submenu = item.querySelector('.menu-list__submenu');
-            if (!trigger || !submenu) return;
+      var trigger = item.querySelector('.menu-list__link[aria-haspopup]');
+      var submenu = item.querySelector('.menu-list__submenu');
+      if (!trigger || !submenu) return;
 
-            var closeTimer = null;
+      var closeTimer = null;
 
-            function clearClose() {
-              if (closeTimer) {
-                clearTimeout(closeTimer);
-                closeTimer = null;
-              }
-            }
-
-            function openMenu() {
-              clearClose();
-              trigger.setAttribute('aria-expanded', 'true');
-            }
-
-            function closeMenuSoon() {
-              clearClose();
-              closeTimer = setTimeout(function () {
-                var hoveredItem = item.matches(':hover');
-                var hoveredSubmenu = submenu.matches(':hover');
-                var focusedInside = item.contains(document.activeElement);
-
-                if (!hoveredItem && !hoveredSubmenu && !focusedInside) {
-                  trigger.setAttribute('aria-expanded', 'false');
-                }
-              }, CLOSE_DELAY);
-            }
-
-            item.addEventListener('mouseenter', openMenu);
-            item.addEventListener('mouseleave', closeMenuSoon);
-
-            submenu.addEventListener('mouseenter', openMenu);
-            submenu.addEventListener('mouseleave', closeMenuSoon);
-
-            trigger.addEventListener('focus', openMenu);
-            item.addEventListener('focusout', function () {
-              closeMenuSoon();
-            });
-          });
+      function clearCloseTimer() {
+        if (closeTimer) {
+          clearTimeout(closeTimer);
+          closeTimer = null;
         }
+      }
 
-        bindDelayedClose(document);
+      function openMenu() {
+        clearCloseTimer();
+        trigger.setAttribute('aria-expanded', 'true');
+      }
 
-        var obs = new MutationObserver(function () {
-          bindDelayedClose(document);
-        });
+      function scheduleClose() {
+        clearCloseTimer();
+        closeTimer = setTimeout(function () {
+          var stillHoverItem = item.matches(':hover');
+          var stillHoverSubmenu = submenu.matches(':hover');
+          var focusInside = item.contains(document.activeElement);
 
-        obs.observe(document.body, { childList: true, subtree: true });
-      })();
-    </script>
+          if (!stillHoverItem && !stillHoverSubmenu && !focusInside) {
+            trigger.setAttribute('aria-expanded', 'false');
+          }
+        }, CLOSE_DELAY);
+      }
+
+      item.addEventListener('mouseenter', openMenu);
+      item.addEventListener('mouseleave', scheduleClose);
+
+      submenu.addEventListener('mouseenter', openMenu);
+      submenu.addEventListener('mouseleave', scheduleClose);
+
+      item.addEventListener('focusin', openMenu);
+      item.addEventListener('focusout', function () {
+        scheduleClose();
+      });
+    });
+  }
+
+  bindDelayedClose(document);
+
+  var obs = new MutationObserver(function () {
+    bindDelayedClose(document);
+  });
+
+  obs.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+})();
+</script>
 
 {% endcase %}
 
