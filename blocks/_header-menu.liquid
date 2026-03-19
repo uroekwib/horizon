@@ -113,6 +113,7 @@
                     --oc-thumb-title-font-size: {{ block_settings.thumb_title_font_size }}px;
                     --oc-thumb-height: {{ block_settings.thumb_height }}px;
                     --oc-thumb-image-width: {{ block_settings.thumb_image_width }}px;
+                    --oc-drawer-min-height: {{ block_settings.drawer_min_height }}px;
                   "
                 >
                   <div class="oc-mega__col0">
@@ -645,6 +646,71 @@
       })();
     </script>
 
+    <script>
+      (function () {
+        'use strict';
+
+        var CLOSE_DELAY = 220;
+
+        function bindDelayedClose(root) {
+          root.querySelectorAll('.menu-list__list-item').forEach(function (item) {
+            if (item._ocHoverBound) return;
+            item._ocHoverBound = true;
+
+            var trigger = item.querySelector('.menu-list__link[aria-haspopup]');
+            var submenu = item.querySelector('.menu-list__submenu');
+            if (!trigger || !submenu) return;
+
+            var closeTimer = null;
+
+            function clearClose() {
+              if (closeTimer) {
+                clearTimeout(closeTimer);
+                closeTimer = null;
+              }
+            }
+
+            function openMenu() {
+              clearClose();
+              trigger.setAttribute('aria-expanded', 'true');
+            }
+
+            function closeMenuSoon() {
+              clearClose();
+              closeTimer = setTimeout(function () {
+                var hoveredItem = item.matches(':hover');
+                var hoveredSubmenu = submenu.matches(':hover');
+                var focusedInside = item.contains(document.activeElement);
+
+                if (!hoveredItem && !hoveredSubmenu && !focusedInside) {
+                  trigger.setAttribute('aria-expanded', 'false');
+                }
+              }, CLOSE_DELAY);
+            }
+
+            item.addEventListener('mouseenter', openMenu);
+            item.addEventListener('mouseleave', closeMenuSoon);
+
+            submenu.addEventListener('mouseenter', openMenu);
+            submenu.addEventListener('mouseleave', closeMenuSoon);
+
+            trigger.addEventListener('focus', openMenu);
+            item.addEventListener('focusout', function () {
+              closeMenuSoon();
+            });
+          });
+        }
+
+        bindDelayedClose(document);
+
+        var obs = new MutationObserver(function () {
+          bindDelayedClose(document);
+        });
+
+        obs.observe(document.body, { childList: true, subtree: true });
+      })();
+    </script>
+
 {% endcase %}
 
 {% style %}
@@ -891,13 +957,6 @@
   height: 100%;
 }
 
-.menu-list__submenu-inner {
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-}
-
 .menu-list__submenu-inner,
 .overflow-menu::part(overflow-list) {
   padding-block-start: var(--submenu-padding-block-start);
@@ -907,23 +966,27 @@
   transition: var(--submenu-content-animation);
   transform: translateY(calc(var(--full-open-header-height) - var(--submenu-height)));
   max-height: calc(80vh - var(--header-height));
-  overflow-y: auto;
+  overflow: hidden;
   overflow-x: hidden;
-  scrollbar-width: thin;
-  scrollbar-color: rgb(var(--color-foreground-rgb) / var(--opacity-40)) transparent;
 }
 
 .oc-mega-inner {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
   padding: 0 !important;
   overflow: hidden !important;
   flex-wrap: nowrap !important;
+  align-items: stretch;
 }
 
 .oc-mega-panel {
   display: flex;
   width: 100%;
-  min-height: 360px;
+  min-height: var(--oc-drawer-min-height, 260px);
+  height: auto;
   max-height: calc(80vh - var(--header-height, 64px));
+  align-items: stretch;
 }
 
 .oc-mega__col0,
@@ -1000,6 +1063,7 @@
   color: var(--oc-ink-70, #374151);
   white-space: normal;
   word-break: break-word;
+  font-weight: 700;
   transition:
     background var(--oc-dur-fast) ease,
     color var(--oc-dur-fast) ease;
@@ -1101,6 +1165,7 @@
   text-overflow: ellipsis;
   border-top: 1px solid var(--oc-ink-15);
   line-height: 1.35;
+  font-weight: 600;
 }
 
 .oc-mega__tags-hd {
@@ -1213,6 +1278,19 @@
       "max": 20,
       "step": 1,
       "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Drawer height"
+    },
+    {
+      "type": "range",
+      "id": "drawer_min_height",
+      "label": "Drawer minimum height (px)",
+      "min": 220,
+      "max": 600,
+      "step": 10,
+      "default": 260
     },
     {
       "type": "header",
