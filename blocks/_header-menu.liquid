@@ -643,191 +643,106 @@
     </script>
 
     <script>
-      (function () {
-        'use strict';
+(function () {
+  'use strict';
 
-        var CLOSE_DELAY = 950;
-        var OPEN_CLASS_ATTR = 'data-oc-open';
-        var activeItem = null;
+  var CLOSE_DELAY = 950;
 
-        function getParts(item) {
-          if (!item) return null;
+  function bindDelayedClose(root) {
+    root.querySelectorAll('.oc-delay-item').forEach(function (item) {
+      if (item._ocDelayBound) return;
+      item._ocDelayBound = true;
 
-          var trigger = item.querySelector('.menu-list__link[aria-haspopup]');
-          var submenu = item.querySelector('.menu-list__submenu');
+      var trigger = item.querySelector('.menu-list__link[aria-haspopup]');
+      var submenu = item.querySelector('.menu-list__submenu');
+      if (!trigger || !submenu) return;
 
-          if (!trigger || !submenu) return null;
+      var closeTimer = null;
+      var pointerInsideSafeZone = false;
 
-          return {
-            item: item,
-            trigger: trigger,
-            submenu: submenu
-          };
+      function clearCloseTimer() {
+        if (closeTimer) {
+          clearTimeout(closeTimer);
+          closeTimer = null;
         }
+      }
 
-        function clearTimer(item) {
-          if (item && item._ocCloseTimer) {
-            clearTimeout(item._ocCloseTimer);
-            item._ocCloseTimer = null;
+      function openMenu() {
+        clearCloseTimer();
+        trigger.setAttribute('aria-expanded', 'true');
+      }
+
+      function markInside() {
+        pointerInsideSafeZone = true;
+        clearCloseTimer();
+      }
+
+      function markMaybeOutside() {
+        pointerInsideSafeZone = false;
+        scheduleClose();
+      }
+
+      function scheduleClose() {
+        clearCloseTimer();
+
+        closeTimer = setTimeout(function () {
+          var stillHoverItem = item.matches(':hover');
+          var stillHoverSubmenu = submenu.matches(':hover');
+          var stillHoverTrigger = trigger.matches(':hover');
+          var focusInside = item.contains(document.activeElement);
+
+          if (!pointerInsideSafeZone && !stillHoverItem && !stillHoverSubmenu && !stillHoverTrigger && !focusInside) {
+            trigger.setAttribute('aria-expanded', 'false');
           }
-        }
+        }, CLOSE_DELAY);
+      }
 
-        function isFocusInside(item) {
-          return !!(item && item.contains(document.activeElement));
-        }
+      item.addEventListener('mouseenter', function () {
+        markInside();
+        openMenu();
+      });
 
-        function isPointerInside(parts) {
-          if (!parts) return false;
+      trigger.addEventListener('mouseenter', function () {
+        markInside();
+        openMenu();
+      });
 
-          var itemHover = parts.item.matches(':hover');
-          var submenuHover = parts.submenu.matches(':hover');
-          var triggerHover = parts.trigger.matches(':hover');
+      submenu.addEventListener('mouseenter', function () {
+        markInside();
+        openMenu();
+      });
 
-          return itemHover || submenuHover || triggerHover;
-        }
+      item.addEventListener('mouseleave', markMaybeOutside);
+      trigger.addEventListener('mouseleave', markMaybeOutside);
+      submenu.addEventListener('mouseleave', markMaybeOutside);
 
-        function setOpen(parts, open) {
-          if (!parts) return;
+      item.addEventListener('focusin', function () {
+        markInside();
+        openMenu();
+      });
 
-          clearTimer(parts.item);
-
-          if (open) {
-            parts.item.setAttribute(OPEN_CLASS_ATTR, 'true');
-            parts.trigger.setAttribute('aria-expanded', 'true');
-            activeItem = parts.item;
-          } else {
-            parts.item.removeAttribute(OPEN_CLASS_ATTR);
-            parts.trigger.setAttribute('aria-expanded', 'false');
-
-            if (activeItem === parts.item) {
-              activeItem = null;
-            }
+      item.addEventListener('focusout', function () {
+        setTimeout(function () {
+          if (!item.contains(document.activeElement)) {
+            markMaybeOutside();
           }
-        }
+        }, 0);
+      });
+    });
+  }
 
-        function closeOthers(currentItem) {
-          document.querySelectorAll('.oc-delay-item[' + OPEN_CLASS_ATTR + '="true"]').forEach(function (item) {
-            if (item !== currentItem) {
-              var parts = getParts(item);
-              setOpen(parts, false);
-            }
-          });
-        }
+  bindDelayedClose(document);
 
-        function openNow(item) {
-          var parts = getParts(item);
-          if (!parts) return;
+  var obs = new MutationObserver(function () {
+    bindDelayedClose(document);
+  });
 
-          closeOthers(item);
-          setOpen(parts, true);
-        }
-
-        function scheduleClose(item) {
-          var parts = getParts(item);
-          if (!parts) return;
-
-          clearTimer(item);
-
-          item._ocCloseTimer = setTimeout(function () {
-            var stillInside = isPointerInside(parts);
-            var focusInside = isFocusInside(item);
-
-            if (!stillInside && !focusInside) {
-              setOpen(parts, false);
-            }
-          }, CLOSE_DELAY);
-        }
-
-        function bindItem(item) {
-          if (!item || item._ocDelayBound) return;
-          item._ocDelayBound = true;
-
-          var parts = getParts(item);
-          if (!parts) return;
-
-          item.addEventListener('mouseenter', function () {
-            openNow(item);
-          });
-
-          parts.trigger.addEventListener('mouseenter', function () {
-            openNow(item);
-          });
-
-          parts.submenu.addEventListener('mouseenter', function () {
-            openNow(item);
-          });
-
-          item.addEventListener('mouseleave', function () {
-            scheduleClose(item);
-          });
-
-          parts.trigger.addEventListener('mouseleave', function () {
-            scheduleClose(item);
-          });
-
-          parts.submenu.addEventListener('mouseleave', function () {
-            scheduleClose(item);
-          });
-
-          item.addEventListener('focusin', function () {
-            openNow(item);
-          });
-
-          item.addEventListener('focusout', function () {
-            setTimeout(function () {
-              if (!isFocusInside(item)) {
-                scheduleClose(item);
-              }
-            }, 0);
-          });
-
-          parts.trigger.addEventListener('click', function () {
-            openNow(item);
-          });
-
-          parts.submenu.addEventListener('pointerdown', function () {
-            openNow(item);
-          }, true);
-        }
-
-        function bindAll(root) {
-          root.querySelectorAll('.oc-delay-item').forEach(bindItem);
-        }
-
-        bindAll(document);
-
-        var obs = new MutationObserver(function () {
-          bindAll(document);
-        });
-
-        obs.observe(document.body, {
-          childList: true,
-          subtree: true
-        });
-
-        document.addEventListener('pointermove', function () {
-          if (!activeItem) return;
-
-          var parts = getParts(activeItem);
-          if (!parts) return;
-
-          clearTimer(activeItem);
-
-          if (!isPointerInside(parts) && !isFocusInside(activeItem)) {
-            scheduleClose(activeItem);
-          }
-        }, true);
-
-        document.addEventListener('keydown', function (e) {
-          if (e.key !== 'Escape') return;
-          if (!activeItem) return;
-
-          var parts = getParts(activeItem);
-          setOpen(parts, false);
-        });
-      })();
-    </script>
-
+  obs.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+})();
+</script>
 {% endcase %}
 
 {% style %}
