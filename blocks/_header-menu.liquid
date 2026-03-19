@@ -162,7 +162,7 @@
 
                         if l0_coll != blank
                           assign l0_handle = l0_coll.handle
-                          assign subcols = l0_coll.metafields.custom.subcol_megamenu.value
+                          assign subcols = l0_coll.metafields.custom.subcollections.value
                         endif
 
                         if subcols != blank and subcols.size > 0
@@ -286,6 +286,7 @@
     <script>
       (function () {
         'use strict';
+        if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
 
         var _cache = {};
 
@@ -659,6 +660,7 @@
     <script>
       (function () {
         'use strict';
+        if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
 
         /*
          * OC Mega Menu — Header-level hover guard
