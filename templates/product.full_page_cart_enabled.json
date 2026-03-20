@@ -224,9 +224,9 @@
             "buy_buttons_eYQEYi": {
               "type": "buy-buttons",
               "settings": {
-                "stacking": true,
-                "show_pickup_availability": false,
-                "gift_card_form": true,
+                "stacking": false,
+                "show_pickup_availability": true,
+                "gift_card_form": false,
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
@@ -241,7 +241,6 @@
                 },
                 "add-to-cart": {
                   "type": "add-to-cart",
-                  "disabled": true,
                   "static": true,
                   "settings": {
                     "style_class": "button-secondary"
@@ -250,6 +249,7 @@
                 },
                 "accelerated-checkout": {
                   "type": "accelerated-checkout",
+                  "disabled": true,
                   "static": true,
                   "settings": {},
                   "blocks": {}
@@ -460,7 +460,7 @@
       "settings": {
         "content_width": "content-center-aligned",
         "desktop_media_position": "right",
-        "equal_columns": true,
+        "equal_columns": false,
         "limit_details_width": false,
         "gap": 12,
         "enable_sticky_add_to_cart": true,
