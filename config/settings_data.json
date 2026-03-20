@@ -670,5 +670,10 @@
         }
       }
     }
+  },
+  "platform_customizations": {
+    "custom_css": [
+      "@media screen and (max-width: 749px) {.announcement-bar {display: none !important; }}"
+    ]
   }
 }
