@@ -87,7 +87,7 @@
                 "height": "fit",
                 "custom_height": 100,
                 "inherit_color_scheme": true,
-                "color_scheme": "",
+                "color_scheme": "scheme-2",
                 "background_media": "none",
                 "video_position": "cover",
                 "background_image_position": "cover",
@@ -223,9 +223,10 @@
             },
             "buy_buttons_eYQEYi": {
               "type": "buy-buttons",
+              "disabled": true,
               "settings": {
                 "stacking": false,
-                "show_pickup_availability": true,
+                "show_pickup_availability": false,
                 "gift_card_form": false,
                 "padding-block-start": 0,
                 "padding-block-end": 0,
