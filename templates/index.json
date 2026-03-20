@@ -725,7 +725,7 @@
         },
         "static-product-card": {
           "type": "_product-card",
-          "name": " tag ขายดี",
+          "name": " tag jobs",
           "static": true,
           "settings": {
             "product_card_gap": 4,
