@@ -2341,7 +2341,7 @@
               "type": "image",
               "name": "t:names.image",
               "settings": {
-                "image": "shopify://shop_images/14771108_website_38_3ee9711b-c45f-45a5-808a-8d15502adb0c.jpg",
+                "image": "shopify://shop_images/catalogue_2026_octopus_media_solutions.jpg",
                 "link": "https://drive.google.com/file/d/1G0FnUMkav24rLRe75ggqNEqbjoe7hzDC/view?usp=sharing",
                 "image_ratio": "adapt",
                 "width": "custom",
@@ -2461,7 +2461,7 @@
               "type": "button",
               "name": "t:names.button",
               "settings": {
-                "label": "Catalogue สินค้าพร้อมราคา",
+                "label": "Catalogue สินค้าพร้อมไกด์ราคา",
                 "link": "https://drive.google.com/file/d/1G0FnUMkav24rLRe75ggqNEqbjoe7hzDC/view?usp=sharing",
                 "open_in_new_tab": false,
                 "style_class": "button",
