@@ -243,14 +243,16 @@ em, i {
   display: inline;
 }
 
-u,text-decoration:underline {
-  -webkit-text-fill-color: initial;
-  -webkit-background-clip: initial;  /* ป้องกัน clip ติดมา */
-  background-clip: initial;
-  padding: 0px;
-  padding-left: 5px;
-  padding-right: 5px;
-  background: linear-gradient(108deg,rgba(223,213,254,.7) 0%,rgba(215,252,240,.7) 100%);
+u {
+  display: inline-block;          /* ← สำคัญมาก */
+  font-style: normal !important;
+  background: var(--oc-rainbow);
+  background-size: var(--oc-rainbow-size);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: oc-rainbow-text 5s linear infinite;
+  text-decoration: none;          /* ตัด underline เส้นเดิมออก */
 }
 
 /* ── Global letter-spacing ── */
