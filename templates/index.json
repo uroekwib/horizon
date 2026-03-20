@@ -1708,7 +1708,7 @@
               "type": "text",
               "name": "t:names.heading",
               "settings": {
-                "text": "<h2>10+</h2>",
+                "text": "<h3>10+</h3>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
@@ -1904,7 +1904,7 @@
               "type": "text",
               "name": "t:names.heading",
               "settings": {
-                "text": "<h3>100+</h3>",
+                "text": "<h3>500+</h3>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
