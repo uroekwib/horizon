@@ -1,11 +1,18 @@
 {%- comment -%}
   Intended for blocks and sections that provide values for all the referenced settings.
 
-  <div style="{%  render 'spacing-padding', settings: section.settings %}">
+  Example:
+  <div style="{% render 'spacing-padding', settings: section.settings %}">
 
-   Accepts:
-      settings: {block.settings || section.settings}
+  Accepts:
+    settings: { block.settings || section.settings }
 {%- endcomment -%}
 
---padding-block-start: {{ settings.padding-block-start | default: 0 }}px; --padding-block-end:{{- settings.padding-block-end | default: 0 -}}px; 
---padding-inline-start:{{ settings.padding-inline-start | default: 0 }}px; --padding-inline-end:{{- settings.padding-inline-end | default: 0 -}}px; 
+--padding-block-start: {{ settings.padding-block-start | default: 0 }}px;
+--padding-block-end: {{ settings.padding-block-end | default: 0 }}px;
+--padding-inline-start: {{ settings.padding-inline-start | default: 0 }}px;
+--padding-inline-end: {{ settings.padding-inline-end | default: 0 }}px;
+--mobile-padding-block-start: {{ settings.mobile_padding_block_start | default: settings.padding-block-start | default: 0 }}px;
+--mobile-padding-block-end: {{ settings.mobile_padding_block_end | default: settings.padding-block-end | default: 0 }}px;
+--mobile-padding-inline-start: {{ settings.mobile_padding_inline_start | default: settings.padding-inline-start | default: 0 }}px;
+--mobile-padding-inline-end: {{ settings.mobile_padding_inline_end | default: settings.padding-inline-end | default: 0 }}px;
