@@ -292,12 +292,14 @@
                 {{ 'content.pickup_not_available' | t }}
               </p>
             {% endif %}
+            {% comment %}
             <button
               on:click="/showDialog"
               class="button-unstyled pickup-location__button"
             >
               {{ 'actions.view_store_information' | t }}
             </button>
+            {% endcomment %}
           </div>
         </div>
         <dialog
