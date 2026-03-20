@@ -1,10 +1,18 @@
 {%- doc -%}
   Calculate the sizes attribute for product media images in the product media gallery.
 
-  Safer version:
-  - avoids undersized image selection
-  - adds a small safety buffer so intrinsic won't fall below rendered easily
-  - for Shopify 2.0 image_tag + widths
+  Optimised for:
+  - Shopify 2.0 image_url + image_tag
+  - More precise real-world rendered widths
+  - Better control for desktop layouts where media often does not exceed ~620px
+  - Single column, two-column grid, and large_first_image patterns
+
+  @param {object} block
+  @param {object} section
+  @param {object} settings
+  @param {boolean} [is_first_image]
+  @param {boolean} [is_single_column]
+  @param {boolean} [needs_both_sizes]
 {%- enddoc -%}
 
 {%- liquid
@@ -31,29 +39,24 @@
   assign section_gap = section.settings.gap | default: 24
   assign image_gap = block_settings.image_gap | default: 16
 
-  comment
-    Safety bump:
-    raise target widths slightly so browser does not pick an undersized srcset candidate
-  endcomment
-
   case settings.page_width
     when 'narrow'
-      assign single_equal_max = 560
-      assign single_unequal_max = 600
-      assign grid_equal_max = 280
-      assign grid_unequal_max = 300
+      assign single_equal_max = 500
+      assign single_unequal_max = 540
+      assign grid_equal_max = 240
+      assign grid_unequal_max = 260
       assign bp_xl = '1400px'
     when 'wide'
-      assign single_equal_max = 700
-      assign single_unequal_max = 760
-      assign grid_equal_max = 360
-      assign grid_unequal_max = 390
+      assign single_equal_max = 620
+      assign single_unequal_max = 660
+      assign grid_equal_max = 300
+      assign grid_unequal_max = 320
       assign bp_xl = '1600px'
     else
-      assign single_equal_max = 640
-      assign single_unequal_max = 700
-      assign grid_equal_max = 320
-      assign grid_unequal_max = 340
+      assign single_equal_max = 560
+      assign single_unequal_max = 600
+      assign grid_equal_max = 270
+      assign grid_unequal_max = 290
       assign bp_xl = '1500px'
   endcase
 
@@ -67,23 +70,23 @@
 
   if block_settings.extend_media
     assign single_max = single_max | plus: 40
-    assign grid_max = grid_max | plus: 24
+    assign grid_max = grid_max | plus: 20
   endif
 
   if calculate_single_column
     if section.settings.equal_columns
-      assign sizes = '(min-width: [bp_xl]) [single_max]px, (min-width: 1200px) [single_max]px, (min-width: 990px) calc(52vw - [section_gap]px), (min-width: 750px) calc(52vw - [section_gap]px), calc(100vw - 32px)'
+      assign sizes = '(min-width: [bp_xl]) [single_max]px, (min-width: 1200px) [single_max]px, (min-width: 990px) calc(50vw - [section_gap]px), (min-width: 750px) calc(50vw - [section_gap]px), calc(100vw - 40px)'
       assign sizes = sizes | replace: '[bp_xl]', bp_xl | replace: '[single_max]', single_max | replace: '[section_gap]', section_gap
     else
-      assign sizes = '(min-width: [bp_xl]) [single_max]px, (min-width: 1200px) [single_max]px, (min-width: 990px) calc(100vw - 24rem), (min-width: 750px) calc(100vw - 20rem), calc(100vw - 32px)'
+      assign sizes = '(min-width: [bp_xl]) [single_max]px, (min-width: 1200px) [single_max]px, (min-width: 990px) calc(100vw - 28rem), (min-width: 750px) calc(100vw - 24rem), calc(100vw - 40px)'
       assign sizes = sizes | replace: '[bp_xl]', bp_xl | replace: '[single_max]', single_max
     endif
   else
     if section.settings.equal_columns
-      assign sizes = '(min-width: [bp_xl]) [grid_max]px, (min-width: 1200px) [grid_max]px, (min-width: 990px) calc(28vw - [image_gap]px), (min-width: 750px) calc(28vw - [image_gap]px), calc(50vw - 24px)'
+      assign sizes = '(min-width: [bp_xl]) [grid_max]px, (min-width: 1200px) [grid_max]px, (min-width: 990px) calc(25vw - [image_gap]px), (min-width: 750px) calc(25vw - [image_gap]px), calc(100vw - 56px)'
       assign sizes = sizes | replace: '[bp_xl]', bp_xl | replace: '[grid_max]', grid_max | replace: '[image_gap]', image_gap
     else
-      assign sizes = '(min-width: [bp_xl]) [grid_max]px, (min-width: 1200px) [grid_max]px, (min-width: 990px) calc((100vw - 24rem) / 2 - [image_gap]px), (min-width: 750px) calc((100vw - 20rem) / 2 - [image_gap]px), calc(50vw - 24px)'
+      assign sizes = '(min-width: [bp_xl]) [grid_max]px, (min-width: 1200px) [grid_max]px, (min-width: 990px) calc((100vw - 28rem) / 2 - [image_gap]px), (min-width: 750px) calc((100vw - 24rem) / 2 - [image_gap]px), calc(100vw - 56px)'
       assign sizes = sizes | replace: '[bp_xl]', bp_xl | replace: '[grid_max]', grid_max | replace: '[image_gap]', image_gap
     endif
   endif
