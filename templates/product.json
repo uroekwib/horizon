@@ -235,12 +235,14 @@
               "blocks": {
                 "quantity": {
                   "type": "quantity",
+                  "disabled": true,
                   "static": true,
                   "settings": {},
                   "blocks": {}
                 },
                 "add-to-cart": {
                   "type": "add-to-cart",
+                  "disabled": true,
                   "static": true,
                   "settings": {
                     "style_class": "button-secondary"
