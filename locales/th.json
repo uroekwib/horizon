@@ -195,7 +195,7 @@
     "price_filter_html": "ราคาสูงสุดคือ {{ price }}",
     "blog_details_separator": "|",
     "discount_code": "รหัสส่วนลด",
-    "pickup_available_at_html": "รับสินค้าได้ที่ <b>{{ location }}</b>",
+    "pickup_available_at_html": "รับได้ที่ <b>{{ location }}</b>",
     "pickup_available_in": "รับสินค้าได้เวลา {{ pickup_time }}",
     "pickup_not_available": "ไม่สามารถรับสินค้าในขณะนี้",
     "pickup_ready_in": "{{ pickup_time }}",
