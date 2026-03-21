@@ -21,6 +21,37 @@
   {% endif %}
 {% endfor %}
 
+{% assign initial_products_limit = block.settings.products_per_page | at_most: 8 %}
+{% assign rendered_count = 0 %}
+{% assign preload_image = blank %}
+
+{% for product in collection.products %}
+  {% assign product_image = product.featured_image | default: product.featured_media.preview_image | default: product.images.first %}
+  {% if product_image and product.price > 0 %}
+    {% if preload_image == blank %}
+      {% assign preload_image = product_image %}
+    {% endif %}
+    {% assign rendered_count = rendered_count | plus: 1 %}
+    {% if rendered_count >= initial_products_limit %}
+      {% break %}
+    {% endif %}
+  {% endif %}
+{% endfor %}
+
+{% if preload_image %}
+  <link
+    rel="preload"
+    as="image"
+    href="{{ preload_image | image_url: width: 520 }}"
+    imagesrcset="
+      {{ preload_image | image_url: width: 240 }} 240w,
+      {{ preload_image | image_url: width: 360 }} 360w,
+      {{ preload_image | image_url: width: 520 }} 520w
+    "
+    imagesizes="(min-width: 1200px) 25vw, (min-width: 750px) 33vw, 50vw"
+  >
+{% endif %}
+
 {% style %}
   .ocf-{{ ai_gen_id }} * {
     letter-spacing: 0.03em;
@@ -30,8 +61,6 @@
     display: block;
     width: 100%;
     font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
-    content-visibility: auto;
-    contain-intrinsic-size: 900px;
   }
 
   .ocf__wrap-{{ ai_gen_id }} {
@@ -291,9 +320,10 @@
 
 <div
   class="ocf-{{ ai_gen_id }}"
-  data-products-per-page="{{ block.settings.products_per_page }}"
+  data-products-per-page="{{ initial_products_limit }}"
   data-active-handle="{{ collection.handle }}"
   data-desktop-cols="{{ block.settings.products_per_row_desktop }}"
+  data-initial-count="{{ rendered_count }}"
   {{ block.shopify_attributes }}
 >
   <div class="ocf__wrap-{{ ai_gen_id }}">
@@ -372,7 +402,52 @@
       </div>
     </div>
 
-    <div class="ocf__grid-{{ ai_gen_id }}" data-products-container></div>
+    <div class="ocf__grid-{{ ai_gen_id }}" data-products-container>
+      {% assign shown_count = 0 %}
+      {% for product in collection.products %}
+        {% assign featured = product.featured_image | default: product.featured_media.preview_image | default: product.images.first %}
+        {% if featured and product.price > 0 %}
+          {% assign shown_count = shown_count | plus: 1 %}
+          <a href="{{ product.url }}" class="ocf__card-{{ ai_gen_id }}">
+            <div class="ocf__card-img-wrap-{{ ai_gen_id }}">
+              <img
+                src="{{ featured | image_url: width: 360 }}"
+                srcset="
+                  {{ featured | image_url: width: 240 }} 240w,
+                  {{ featured | image_url: width: 360 }} 360w,
+                  {{ featured | image_url: width: 520 }} 520w
+                "
+                sizes="(min-width: 1200px) 25vw, (min-width: 750px) 33vw, 50vw"
+                alt="{{ product.title | escape }}"
+                class="ocf__card-img-{{ ai_gen_id }}"
+                width="520"
+                height="{{ 520 | divided_by: featured.aspect_ratio | round }}"
+                {% if shown_count == 1 %}
+                  loading="eager"
+                  fetchpriority="high"
+                {% elsif shown_count <= 4 %}
+                  loading="eager"
+                  fetchpriority="low"
+                {% else %}
+                  loading="lazy"
+                {% endif %}
+              >
+            </div>
+
+            <div class="ocf__card-body-{{ ai_gen_id }}">
+              <h3 class="ocf__card-title-{{ ai_gen_id }}">{{ product.title }}</h3>
+              <div class="ocf__card-price-{{ ai_gen_id }}">
+                เริ่มจาก {{ product.price | divided_by: 100 | round }} บาท/{{ product.metafields.custom.product_price.value | default: product.metafields.custom.product_price | default: 'ชิ้น' }}
+              </div>
+            </div>
+          </a>
+
+          {% if shown_count >= initial_products_limit %}
+            {% break %}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+    </div>
   </div>
 </div>
 
@@ -407,8 +482,9 @@
   var viewBtns = root.querySelectorAll('[data-view]');
   var counter = root.querySelector('.ocf__counter-{{ ai_gen_id }}');
 
-  var perPage = Math.min(parseInt(root.dataset.productsPerPage, 10) || 12, 8);
+  var perPage = Math.min(parseInt(root.dataset.productsPerPage, 10) || 8, 8);
   var defCols = parseInt(root.dataset.desktopCols, 10) || 4;
+  var initialCount = parseInt(root.dataset.initialCount, 10) || 0;
 
   var countMap = {};
   var countEl = document.getElementById('ocf-counts-{{ ai_gen_id }}');
@@ -429,12 +505,10 @@
     'created-desc': 'created-descending'
   };
 
-  var page = 1;
+  var page = initialCount >= perPage ? 2 : 1;
   var isLoading = false;
-  var hasMore = true;
-  var hasInitialised = false;
+  var hasMore = initialCount >= perPage;
   var observer;
-  var initObserver;
 
   function updateCounter(handle) {
     if (!counter) return;
@@ -472,45 +546,60 @@
     return div.innerHTML;
   }
 
-  function getImageHtml(img, title, eager) {
-    if (!img) return '';
-
-    var src200 = buildResponsiveImageUrl(img, 200);
-    var src280 = buildResponsiveImageUrl(img, 280);
-    var src360 = buildResponsiveImageUrl(img, 360);
-
-    return '<div class="ocf__card-img-wrap-{{ ai_gen_id }}">'
-      + '<img '
-      + 'src="' + src280 + '" '
-      + 'srcset="' + src200 + ' 200w, ' + src280 + ' 280w, ' + src360 + ' 360w" '
-      + 'sizes="(min-width: 1200px) 220px, (min-width: 750px) 25vw, 45vw" '
-      + 'alt="' + title + '" '
-      + 'class="ocf__card-img-{{ ai_gen_id }}" '
-      + 'loading="' + (eager ? 'eager' : 'lazy') + '" '
-      + 'decoding="async" '
-      + 'width="360" '
-      + 'height="270">'
-      + '</div>';
-  }
-
-  function cardHTML(p, index) {
-    var imgObj = p.featured_image || (p.images && p.images[0]) || null;
-    var img = imgObj && imgObj.src ? imgObj.src : '';
-    var price = p.variants && p.variants[0] ? parseFloat(p.variants[0].price) : 0;
-
-    var fmt = new Intl.NumberFormat('th-TH', {
+  function formatPrice(price) {
+    return new Intl.NumberFormat('th-TH', {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0
     }).format(price) + ' บาท';
+  }
+
+  function getImageHtml(img, title, eager, highPriority) {
+    if (!img) return '';
+
+    var src240 = buildResponsiveImageUrl(img, 240);
+    var src360 = buildResponsiveImageUrl(img, 360);
+    var src520 = buildResponsiveImageUrl(img, 520);
+
+    return '<div class="ocf__card-img-wrap-{{ ai_gen_id }}">'
+      + '<img '
+      + 'src="' + src360 + '" '
+      + 'srcset="' + src240 + ' 240w, ' + src360 + ' 360w, ' + src520 + ' 520w" '
+      + 'sizes="(min-width: 1200px) 25vw, (min-width: 750px) 33vw, 50vw" '
+      + 'alt="' + title + '" '
+      + 'class="ocf__card-img-{{ ai_gen_id }}" '
+      + 'loading="' + (eager ? 'eager' : 'lazy') + '" '
+      + 'fetchpriority="' + (highPriority ? 'high' : 'low') + '" '
+      + 'decoding="async" '
+      + 'width="520" '
+      + 'height="390">'
+      + '</div>';
+  }
+
+  function cardHTML(p, index, currentPage) {
+    var imgObj = p.featured_image || (p.images && p.images[0]) || null;
+    var img = '';
+
+    if (typeof imgObj === 'string') {
+      img = imgObj;
+    } else if (imgObj && imgObj.src) {
+      img = imgObj.src;
+    }
+
+    var price = p.variants && p.variants[0] ? parseFloat(p.variants[0].price) : 0;
+
+    if (!img || !price || price <= 0) {
+      return '';
+    }
 
     var title = escapeHtml(p.title);
-    var eager = page === 1 && index < 2;
+    var eager = currentPage === 1 && index < 4;
+    var highPriority = currentPage === 1 && index === 0;
 
     return '<a href="/products/' + p.handle + '" class="ocf__card-{{ ai_gen_id }}">'
-      + getImageHtml(img, title, eager)
+      + getImageHtml(img, title, eager, highPriority)
       + '<div class="ocf__card-body-{{ ai_gen_id }}">'
       + '<h3 class="ocf__card-title-{{ ai_gen_id }}">' + title + '</h3>'
-      + '<div class="ocf__card-price-{{ ai_gen_id }}">เริ่มจาก ' + fmt + '/ชิ้น</div>'
+      + '<div class="ocf__card-price-{{ ai_gen_id }}">เริ่มจาก ' + formatPrice(price) + '/ชิ้น</div>'
       + '</div>'
       + '</a>';
   }
@@ -521,17 +610,13 @@
     if (reset) {
       page = 1;
       hasMore = true;
-      grid.innerHTML = '';
-      if (counter) counter.textContent = '';
+      grid.innerHTML = skeletonHTML();
+      updateCounter(state.handle);
     }
 
     if (!state.handle || !hasMore) return;
 
     isLoading = true;
-
-    if (page === 1) {
-      grid.innerHTML = skeletonHTML();
-    }
 
     var url = '/collections/' + state.handle + '/products.json?limit=' + perPage + '&page=' + page;
     if (sortMap[state.sort]) {
@@ -561,17 +646,18 @@
         hasMore = false;
       }
 
-      if (page === 1) {
-        updateCounter(state.handle);
+      var html = data.products.map(function (product, index) {
+        return cardHTML(product, index, page);
+      }).join('');
+
+      if (!html && page === 1) {
+        grid.innerHTML = '<div class="ocf__empty-{{ ai_gen_id }}">ไม่พบสินค้าในหมวดนี้</div>';
+        hasMore = false;
+        isLoading = false;
+        return;
       }
 
-      grid.insertAdjacentHTML(
-        'beforeend',
-        data.products.map(function (product, index) {
-          return cardHTML(product, index);
-        }).join('')
-      );
-
+      grid.insertAdjacentHTML('beforeend', html);
       page += 1;
     } catch (e) {
       if (page === 1) {
@@ -587,7 +673,7 @@
   grid.after(sentinel);
 
   observer = new IntersectionObserver(function (entries) {
-    if (entries[0].isIntersecting && !isLoading && hasMore && hasInitialised) {
+    if (entries[0].isIntersecting && !isLoading && hasMore) {
       loadProducts(false);
     }
   }, { rootMargin: '300px' });
@@ -622,15 +708,7 @@
     }, { passive: true });
   });
 
-  initObserver = new IntersectionObserver(function(entries) {
-    if (entries[0].isIntersecting && !hasInitialised) {
-      hasInitialised = true;
-      loadProducts(true);
-      initObserver.disconnect();
-    }
-  }, { rootMargin: '250px' });
-
-  initObserver.observe(root);
+  updateCounter(state.handle);
 })();
 </script>
 
