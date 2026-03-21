@@ -519,24 +519,26 @@
   }
 
   function cardHTML(p) {
-    var imgObj = p.featured_image || (p.images && p.images[0]) || null;
-    var img = imgObj && imgObj.src ? imgObj.src : '';
-    var price = p.variants && p.variants[0] ? parseFloat(p.variants[0].price) : 0;
-    var fmt = new Intl.NumberFormat('th-TH', {
-      style: 'currency',
-      currency: 'THB'
-    }).format(price);
-    var suffix = metaMap[p.handle] ? ' / ' + metaMap[p.handle] : '';
-    var title = escapeHtml(p.title);
+  var imgObj = p.featured_image || (p.images && p.images[0]) || null;
+  var img = imgObj && imgObj.src ? imgObj.src : '';
+  var price = p.variants && p.variants[0] ? parseFloat(p.variants[0].price) : 0;
 
-    return '<a href="/products/' + p.handle + '" class="ocf__card-{{ ai_gen_id }}">'
-      + getImageHtml(img, title)
-      + '<div class="ocf__card-body-{{ ai_gen_id }}">'
-      + '<h3 class="ocf__card-title-{{ ai_gen_id }}">' + title + '</h3>'
-      + '<div class="ocf__card-price-{{ ai_gen_id }}">เริ่มจาก ' + fmt + suffix + '</div>'
-      + '</div>'
-      + '</a>';
-  }
+  var fmt = new Intl.NumberFormat('th-TH', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  }).format(price) + ' บาท';
+
+  var suffix = metaMap[p.handle] ? '/' + metaMap[p.handle] : '';
+  var title = escapeHtml(p.title);
+
+  return '<a href="/products/' + p.handle + '" class="ocf__card-{{ ai_gen_id }}">'
+    + getImageHtml(img, title)
+    + '<div class="ocf__card-body-{{ ai_gen_id }}">'
+    + '<h3 class="ocf__card-title-{{ ai_gen_id }}">' + title + '</h3>'
+    + '<div class="ocf__card-price-{{ ai_gen_id }}">เริ่มจาก ' + fmt + suffix + '</div>'
+    + '</div>'
+    + '</a>';
+}
 
   async function loadProducts(reset) {
     if (isLoading) return;
