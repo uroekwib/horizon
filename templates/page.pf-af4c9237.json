@@ -105,9 +105,9 @@
               "type": "text",
               "name": "t:names.description",
               "settings": {
-                "text": "<p>ตั้งแต่ขัั้นตอนออกแบบป้ายจนถึงติดตั้ง วัสดุทำป้ายคัดเลือกมาอย่างดี มั่นใจงานเชื่อมประดิษฐ์ ตรวจสอบคุณภาพทุกมิติ ป้ายร้าน ป้ายโรงงาน ป้ายบริษัทมีความสำคัญมากกับธุรกิจ เพื่อเป็นหน้าเป็นตาและสร้างตัวตน ตัวอย่างป้ายบริษัทที่นิยมทำ เช่น<a href=\"https://www.octopus.co.th/products/stainless-signage\" target=\"_self\"><em>ป้ายบริษัท สแตนเลส</em></a><em> </em><a href=\"https://www.octopus.co.th/products/signage-acrylic-decal\" target=\"_self\"><em>ป้ายบริษัทอะคริลิค</em></a><em> </em><a href=\"https://www.octopus.co.th/products/signage-zinc-composite\" target=\"_blank\"><em>อักษรโลหะ </em></a><em>อักษรไฟ ป้ายโลโก้</em></p>",
+                "text": "<p>ตั้งแต่ขัั้นตอนออกแบบป้ายจนถึงติดตั้ง วัสดุทำป้ายคัดเลือกมาอย่างดี มั่นใจงานเชื่อมประดิษฐ์ ตรวจสอบคุณภาพทุกมิติ ป้ายร้าน ป้ายโรงงาน ป้ายบริษัทมีความสำคัญมากกับธุรกิจ เพื่อเป็นหน้าเป็นตาและสร้างตัวตน</p><p>ให้เราได้ทำหน้าที่ช่วย <em>แสดงตัวตน สร้างความน่าเชื่อถือ</em> ให้แก่บริษัทของท่าน ครอบคลุมทั้งงานป้ายภายนอกและภายใน ด้วยความจริงใจในการบริการสุดฝีมือ</p>",
                 "width": "100%",
-                "max_width": "narrow",
+                "max_width": "normal",
                 "alignment": "center",
                 "type_preset": "rte",
                 "font": "var(--font-body--family)",
@@ -120,7 +120,7 @@
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
-                "padding-block-start": 26,
+                "padding-block-start": 17,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
