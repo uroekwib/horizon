@@ -21,7 +21,7 @@
   {% endif %}
 {% endfor %}
 
-{% assign initial_products_limit = block.settings.products_per_page | at_most: 8 %}
+{% assign initial_products_limit = block.settings.products_per_page | at_most: 15 %}
 {% assign rendered_count = 0 %}
 {% assign preload_image = blank %}
 
