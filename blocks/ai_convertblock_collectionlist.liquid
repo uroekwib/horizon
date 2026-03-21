@@ -472,26 +472,27 @@
     return div.innerHTML;
   }
 
-  function getImageHtml(img, title, eager) {
-    if (!img) return '';
+function getImageHtml(img, title, eager) {
+  if (!img) return '';
 
-    var src200 = buildResponsiveImageUrl(img, 200);
-    var src280 = buildResponsiveImageUrl(img, 280);
-    var src360 = buildResponsiveImageUrl(img, 360);
+  var src240 = buildResponsiveImageUrl(img, 240);
+  var src360 = buildResponsiveImageUrl(img, 360);
+  var src520 = buildResponsiveImageUrl(img, 520);
 
-    return '<div class="ocf__card-img-wrap-{{ ai_gen_id }}">'
-      + '<img '
-      + 'src="' + src280 + '" '
-      + 'srcset="' + src200 + ' 200w, ' + src280 + ' 280w, ' + src360 + ' 360w" '
-      + 'sizes="(min-width: 1200px) 220px, (min-width: 750px) 25vw, 45vw" '
-      + 'alt="' + title + '" '
-      + 'class="ocf__card-img-{{ ai_gen_id }}" '
-      + 'loading="' + (eager ? 'eager' : 'lazy') + '" '
-      + 'decoding="async" '
-      + 'width="360" '
-      + 'height="270">'
-      + '</div>';
-  }
+  return '<div class="ocf__card-img-wrap-{{ ai_gen_id }}">'
+    + '<img '
+    + 'src="' + src360 + '" '
+    + 'srcset="' + src240 + ' 240w, ' + src360 + ' 360w, ' + src520 + ' 520w" '
+    + 'sizes="(min-width: 1200px) 25vw, (min-width: 750px) 33vw, 50vw" '
+    + 'alt="' + title + '" '
+    + 'class="ocf__card-img-{{ ai_gen_id }}" '
+    + 'loading="' + (eager ? 'eager' : 'lazy') + '" '
+    + 'fetchpriority="' + (eager ? 'high' : 'low') + '" '
+    + 'decoding="async" '
+    + 'width="520" '
+    + 'height="390">'
+    + '</div>';
+}
 
   function cardHTML(p, index) {
     var imgObj = p.featured_image || (p.images && p.images[0]) || null;
