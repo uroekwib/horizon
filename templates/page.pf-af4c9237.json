@@ -4514,6 +4514,47 @@
               "block_order": [
                 "text_xPT8cr"
               ]
+            },
+            "accordion_row_AV9E9e": {
+              "type": "_accordion-row",
+              "name": "t:names.accordion_row",
+              "settings": {
+                "heading": "ป้ายบริษัทต้องขออนุญาตปิดป้ายหรือเปล่า?",
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
+              },
+              "blocks": {
+                "text_DFVVGY": {
+                  "type": "text",
+                  "name": "t:names.text",
+                  "settings": {
+                    "text": "<p>ป้ายบางประเภทที่ติดตั้งในที่สาธารณะหรือมีขนาดเกินกำหนดอาจต้องขออนุญาตปิดป้ายตาม พ.ร.บ. ป้าย พ.ศ. 2521 โดยทั่วไปป้ายภายในอาคาร (ป้าย reception, ป้ายห้อง) ไม่ต้องขออนุญาต ส่วนป้ายกลางแจ้งขนาดใหญ่หรือป้ายบนอาคารสูงอาจต้องยื่นเรื่องกับเทศบาลหรือ กทม. ทีมงานยินดีให้คำแนะนำเบื้องต้นเกี่ยวกับเรื่องนี้</p>",
+                    "width": "fit-content",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_DFVVGY"
+              ]
             }
           },
           "block_order": [
@@ -4523,7 +4564,8 @@
             "accordion_row_y8ecx6",
             "accordion_row_LMz937",
             "accordion_row_fjMKth",
-            "accordion_row_XGebTH"
+            "accordion_row_XGebTH",
+            "accordion_row_AV9E9e"
           ]
         }
       },
