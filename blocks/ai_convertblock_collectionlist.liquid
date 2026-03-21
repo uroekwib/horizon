@@ -1,6 +1,5 @@
 {% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
 
-{% comment %} ── หา active parent index จาก current collection handle ── {% endcomment %}
 {% assign active_parent_index = 0 %}
 {% for i in (1..10) %}
   {% assign col_key = 'collection_' | append: i %}
@@ -21,6 +20,23 @@
   {% endif %}
 {% endfor %}
 
+{% assign initial_products_limit = block.settings.products_per_page | at_most: 8 %}
+{% assign initial_products = collection.products | slice: 0, initial_products_limit %}
+
+{% if collection.products.first and collection.products.first.featured_image %}
+  <link
+    rel="preload"
+    as="image"
+    href="{{ collection.products.first.featured_image | image_url: width: 520 }}"
+    imagesrcset="
+      {{ collection.products.first.featured_image | image_url: width: 240 }} 240w,
+      {{ collection.products.first.featured_image | image_url: width: 360 }} 360w,
+      {{ collection.products.first.featured_image | image_url: width: 520 }} 520w
+    "
+    imagesizes="(min-width: 1200px) 25vw, (min-width: 750px) 33vw, 50vw"
+  >
+{% endif %}
+
 {% style %}
   .ocf-{{ ai_gen_id }} * {
     letter-spacing: 0.03em;
@@ -30,8 +46,6 @@
     display: block;
     width: 100%;
     font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
-    content-visibility: auto;
-    contain-intrinsic-size: 900px;
   }
 
   .ocf__wrap-{{ ai_gen_id }} {
@@ -291,9 +305,10 @@
 
 <div
   class="ocf-{{ ai_gen_id }}"
-  data-products-per-page="{{ block.settings.products_per_page }}"
+  data-products-per-page="{{ initial_products_limit }}"
   data-active-handle="{{ collection.handle }}"
   data-desktop-cols="{{ block.settings.products_per_row_desktop }}"
+  data-initial-count="{{ initial_products.size }}"
   {{ block.shopify_attributes }}
 >
   <div class="ocf__wrap-{{ ai_gen_id }}">
@@ -360,7 +375,9 @@
       </div>
 
       <div style="display:flex;align-items:center;gap:12px;">
-        <span class="ocf__counter-{{ ai_gen_id }}" style="font-size:13px;opacity:0.55;white-space:nowrap;"></span>
+        <span class="ocf__counter-{{ ai_gen_id }}" style="font-size:13px;opacity:0.55;white-space:nowrap;">
+          {{ collection.all_products_count | default: collection.products_count }} รายการ
+        </span>
         <div class="ocf__view-toggle-{{ ai_gen_id }}">
           <button type="button" class="ocf__view-btn-{{ ai_gen_id }} active" data-view="large" title="การ์ดใหญ่">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
@@ -372,7 +389,46 @@
       </div>
     </div>
 
-    <div class="ocf__grid-{{ ai_gen_id }}" data-products-container></div>
+    <div class="ocf__grid-{{ ai_gen_id }}" data-products-container>
+      {% for product in initial_products %}
+        {% assign featured = product.featured_image %}
+        <a href="{{ product.url }}" class="ocf__card-{{ ai_gen_id }}">
+          {% if featured %}
+            <div class="ocf__card-img-wrap-{{ ai_gen_id }}">
+              <img
+                src="{{ featured | image_url: width: 360 }}"
+                srcset="
+                  {{ featured | image_url: width: 240 }} 240w,
+                  {{ featured | image_url: width: 360 }} 360w,
+                  {{ featured | image_url: width: 520 }} 520w
+                "
+                sizes="(min-width: 1200px) 25vw, (min-width: 750px) 33vw, 50vw"
+                alt="{{ product.title | escape }}"
+                class="ocf__card-img-{{ ai_gen_id }}"
+                width="520"
+                height="{{ 520 | divided_by: featured.aspect_ratio | round }}"
+                {% if forloop.first %}
+                  loading="eager"
+                  fetchpriority="high"
+                {% elsif forloop.index <= 4 %}
+                  loading="eager"
+                  fetchpriority="low"
+                {% else %}
+                  loading="lazy"
+                {% endif %}
+              >
+            </div>
+          {% endif %}
+          <div class="ocf__card-body-{{ ai_gen_id }}">
+            <h3 class="ocf__card-title-{{ ai_gen_id }}">{{ product.title }}</h3>
+            {% assign formatted_price = product.price | money_without_trailing_zeros %}
+<div class="ocf__card-price-{{ ai_gen_id }}">
+  เริ่มจาก {{ formatted_price }}{% unless formatted_price contains '฿' %} บาท{% endunless %}/{{ product.metafields.custom.product_price.value | default: product.metafields.custom.product_price | default: 'ชิ้น' }}
+</div>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
   </div>
 </div>
 
@@ -407,8 +463,9 @@
   var viewBtns = root.querySelectorAll('[data-view]');
   var counter = root.querySelector('.ocf__counter-{{ ai_gen_id }}');
 
-  var perPage = Math.min(parseInt(root.dataset.productsPerPage, 10) || 12, 8);
+  var perPage = parseInt(root.dataset.productsPerPage, 10) || 8;
   var defCols = parseInt(root.dataset.desktopCols, 10) || 4;
+  var initialCount = parseInt(root.dataset.initialCount, 10) || 0;
 
   var countMap = {};
   var countEl = document.getElementById('ocf-counts-{{ ai_gen_id }}');
@@ -429,12 +486,10 @@
     'created-desc': 'created-descending'
   };
 
-  var page = 1;
+  var page = initialCount >= perPage ? 2 : 1;
   var isLoading = false;
-  var hasMore = true;
-  var hasInitialised = false;
+  var hasMore = initialCount >= perPage;
   var observer;
-  var initObserver;
 
   function updateCounter(handle) {
     if (!counter) return;
@@ -472,46 +527,48 @@
     return div.innerHTML;
   }
 
-function getImageHtml(img, title, eager) {
-  if (!img) return '';
-
-  var src240 = buildResponsiveImageUrl(img, 240);
-  var src360 = buildResponsiveImageUrl(img, 360);
-  var src520 = buildResponsiveImageUrl(img, 520);
-
-  return '<div class="ocf__card-img-wrap-{{ ai_gen_id }}">'
-    + '<img '
-    + 'src="' + src360 + '" '
-    + 'srcset="' + src240 + ' 240w, ' + src360 + ' 360w, ' + src520 + ' 520w" '
-    + 'sizes="(min-width: 1200px) 25vw, (min-width: 750px) 33vw, 50vw" '
-    + 'alt="' + title + '" '
-    + 'class="ocf__card-img-{{ ai_gen_id }}" '
-    + 'loading="' + (eager ? 'eager' : 'lazy') + '" '
-    + 'fetchpriority="' + (eager ? 'high' : 'low') + '" '
-    + 'decoding="async" '
-    + 'width="520" '
-    + 'height="390">'
-    + '</div>';
-}
-
-  function cardHTML(p, index) {
-    var imgObj = p.featured_image || (p.images && p.images[0]) || null;
-    var img = imgObj && imgObj.src ? imgObj.src : '';
-    var price = p.variants && p.variants[0] ? parseFloat(p.variants[0].price) : 0;
-
-    var fmt = new Intl.NumberFormat('th-TH', {
+  function formatPrice(price) {
+    return new Intl.NumberFormat('th-TH', {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0
     }).format(price) + ' บาท';
+  }
 
+  function getImageHtml(img, title, eager, highPriority) {
+    if (!img) return '';
+
+    var src240 = buildResponsiveImageUrl(img, 240);
+    var src360 = buildResponsiveImageUrl(img, 360);
+    var src520 = buildResponsiveImageUrl(img, 520);
+
+    return '<div class="ocf__card-img-wrap-{{ ai_gen_id }}">'
+      + '<img '
+      + 'src="' + src360 + '" '
+      + 'srcset="' + src240 + ' 240w, ' + src360 + ' 360w, ' + src520 + ' 520w" '
+      + 'sizes="(min-width: 1200px) 25vw, (min-width: 750px) 33vw, 50vw" '
+      + 'alt="' + title + '" '
+      + 'class="ocf__card-img-{{ ai_gen_id }}" '
+      + 'loading="' + (eager ? 'eager' : 'lazy') + '" '
+      + 'fetchpriority="' + (highPriority ? 'high' : 'low') + '" '
+      + 'decoding="async" '
+      + 'width="520" '
+      + 'height="390">'
+      + '</div>';
+  }
+
+  function cardHTML(p, index, currentPage) {
+    var imgObj = p.featured_image || (p.images && p.images[0]) || null;
+    var img = imgObj && imgObj.src ? imgObj.src : '';
+    var price = p.variants && p.variants[0] ? parseFloat(p.variants[0].price) : 0;
     var title = escapeHtml(p.title);
-    var eager = page === 1 && index < 2;
+    var eager = currentPage === 1 && index < 4;
+    var highPriority = currentPage === 1 && index === 0;
 
     return '<a href="/products/' + p.handle + '" class="ocf__card-{{ ai_gen_id }}">'
-      + getImageHtml(img, title, eager)
+      + getImageHtml(img, title, eager, highPriority)
       + '<div class="ocf__card-body-{{ ai_gen_id }}">'
       + '<h3 class="ocf__card-title-{{ ai_gen_id }}">' + title + '</h3>'
-      + '<div class="ocf__card-price-{{ ai_gen_id }}">เริ่มจาก ' + fmt + '/ชิ้น</div>'
+      + '<div class="ocf__card-price-{{ ai_gen_id }}">เริ่มจาก ' + formatPrice(price) + '/ชิ้น</div>'
       + '</div>'
       + '</a>';
   }
@@ -522,17 +579,13 @@ function getImageHtml(img, title, eager) {
     if (reset) {
       page = 1;
       hasMore = true;
-      grid.innerHTML = '';
-      if (counter) counter.textContent = '';
+      grid.innerHTML = skeletonHTML();
+      updateCounter(state.handle);
     }
 
     if (!state.handle || !hasMore) return;
 
     isLoading = true;
-
-    if (page === 1) {
-      grid.innerHTML = skeletonHTML();
-    }
 
     var url = '/collections/' + state.handle + '/products.json?limit=' + perPage + '&page=' + page;
     if (sortMap[state.sort]) {
@@ -562,14 +615,10 @@ function getImageHtml(img, title, eager) {
         hasMore = false;
       }
 
-      if (page === 1) {
-        updateCounter(state.handle);
-      }
-
       grid.insertAdjacentHTML(
         'beforeend',
         data.products.map(function (product, index) {
-          return cardHTML(product, index);
+          return cardHTML(product, index, page);
         }).join('')
       );
 
@@ -588,7 +637,7 @@ function getImageHtml(img, title, eager) {
   grid.after(sentinel);
 
   observer = new IntersectionObserver(function (entries) {
-    if (entries[0].isIntersecting && !isLoading && hasMore && hasInitialised) {
+    if (entries[0].isIntersecting && !isLoading && hasMore) {
       loadProducts(false);
     }
   }, { rootMargin: '300px' });
@@ -623,21 +672,13 @@ function getImageHtml(img, title, eager) {
     }, { passive: true });
   });
 
-  initObserver = new IntersectionObserver(function(entries) {
-    if (entries[0].isIntersecting && !hasInitialised) {
-      hasInitialised = true;
-      loadProducts(true);
-      initObserver.disconnect();
-    }
-  }, { rootMargin: '250px' });
-
-  initObserver.observe(root);
+  updateCounter(state.handle);
 })();
 </script>
 
 {% schema %}
 {
-  "name": "Collection Filter 2",
+  "name": "Collection Filter",
   "tag": null,
   "settings": [
     {
@@ -817,10 +858,10 @@ function getImageHtml(img, title, eager) {
       "type": "range",
       "id": "products_per_page",
       "label": "สินค้าต่อหน้า",
-      "min": 6,
-      "max": 48,
+      "min": 4,
+      "max": 50,
       "step": 2,
-      "default": 12
+      "default": 8
     },
     {
       "type": "header",
@@ -913,7 +954,7 @@ function getImageHtml(img, title, eager) {
   ],
   "presets": [
     {
-      "name": "Collection Filter 2"
+      "name": "Collection Filter"
     }
   ]
 }
