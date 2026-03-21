@@ -1,0 +1,919 @@
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% comment %} ── หา active parent index จาก current collection handle ── {% endcomment %}
+{% assign active_parent_index = 0 %}
+{% for i in (1..10) %}
+  {% assign col_key = 'collection_' | append: i %}
+  {% assign col_item = block.settings[col_key] %}
+  {% if col_item != blank %}
+    {% if col_item.handle == collection.handle %}
+      {% assign active_parent_index = i %}
+      {% break %}
+    {% endif %}
+    {% if col_item.metafields.custom.subcollections.value != blank %}
+      {% for sub in col_item.metafields.custom.subcollections.value %}
+        {% if sub.handle == collection.handle %}
+          {% assign active_parent_index = i %}
+          {% break %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+  {% endif %}
+{% endfor %}
+
+{% style %}
+  .ocf-{{ ai_gen_id }} * {
+    letter-spacing: 0.03em;
+  }
+
+  .ocf-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
+    content-visibility: auto;
+    contain-intrinsic-size: 900px;
+  }
+
+  .ocf__wrap-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .ocf__row-{{ ai_gen_id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .ocf__pill-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: {{ block.settings.pill_padding_vertical }}px {{ block.settings.pill_padding_horizontal }}px;
+    border-radius: {{ block.settings.pill_border_radius }}px;
+    background: rgba(0,0,0,0.06);
+    color: var(--color-foreground);
+    text-decoration: none;
+    font-size: {{ block.settings.pill_font_size }}px;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+    border: none;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    flex-shrink: 0;
+    min-width: fit-content;
+  }
+
+  .ocf__pill-{{ ai_gen_id }}:hover {
+    background: rgba(23,169,187,0.12);
+    color: #17a9bb;
+  }
+
+  .ocf__pill-{{ ai_gen_id }}.active {
+    background: linear-gradient(135deg, #14c9df, #17a9bb);
+    color: #fff !important;
+    box-shadow: 0 2px 10px rgba(20,201,223,0.35);
+  }
+
+  .ocf__subpill-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 14px;
+    border-radius: max({{ block.settings.pill_border_radius }}px, 999px) !important;
+    background: rgba(23,169,187,0.09);
+    border: none;
+    color: #17a9bb;
+    font-size: {{ block.settings.pill_font_size | minus: 1 }}px;
+    font-weight: 400;
+    white-space: nowrap;
+    cursor: pointer;
+    font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
+    transition: background 0.2s;
+  }
+
+  .ocf__subpill-{{ ai_gen_id }}:hover {
+    background: rgba(23,169,187,0.18);
+  }
+
+  .ocf__subpill-{{ ai_gen_id }}.active {
+    background: linear-gradient(135deg, #14c9df, #17a9bb, #818CF8, #A78BFA);
+    background-size: 300% 100%;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(20,201,223,0.28);
+    animation: ocf-subpill-shimmer-{{ ai_gen_id }} 4s ease infinite;
+  }
+
+  @keyframes ocf-subpill-shimmer-{{ ai_gen_id }} {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .ocf__subrow-wrap-{{ ai_gen_id }} {
+    display: none;
+  }
+
+  .ocf__subrow-wrap-{{ ai_gen_id }}.visible {
+    display: block;
+    border-left: 2px solid #14c9df;
+    padding-left: 16px;
+    margin-left: 4px;
+    animation: ocf-fadein 0.25s ease;
+  }
+
+  @keyframes ocf-fadein {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .ocf__toolbar-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    border-top: 1px solid rgba(0,0,0,0.08);
+    padding-top: 16px;
+    margin-top: 4px;
+  }
+
+  .ocf__sort-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+  }
+
+  .ocf__sort-select-{{ ai_gen_id }} {
+    padding: 6px 28px 6px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.12);
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%23666' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E") no-repeat right 8px center;
+    -webkit-appearance: none;
+    appearance: none;
+    font-size: 13px;
+    cursor: pointer;
+    min-width: 160px;
+    font-family: inherit;
+  }
+
+  .ocf__view-toggle-{{ ai_gen_id }} {
+    display: inline-flex;
+    gap: 4px;
+  }
+
+  .ocf__view-btn-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.12);
+    background: transparent;
+    cursor: pointer;
+    color: var(--color-foreground);
+    opacity: 0.45;
+    transition: opacity 0.2s, background 0.2s, border-color 0.2s;
+  }
+
+  .ocf__view-btn-{{ ai_gen_id }}.active {
+    background: rgba(23,169,187,0.1);
+    border-color: #17a9bb;
+    color: #17a9bb;
+    opacity: 1;
+  }
+
+  .ocf__grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(var(--ocf-cols, {{ block.settings.products_per_row_desktop }}), 1fr);
+    gap: {{ block.settings.product_grid_gap }}px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ocf__grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat({{ block.settings.products_per_row_mobile }}, 1fr) !important;
+    }
+
+    .ocf__row-{{ ai_gen_id }} {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-bottom: 4px;
+    }
+
+    .ocf__row-{{ ai_gen_id }}::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .ocf__card-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    text-decoration: none;
+    color: inherit;
+    border-radius: {{ block.settings.product_image_radius }}px;
+    background: #f3f7fa;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    border: 1.5px solid transparent;
+  }
+
+  .ocf__card-{{ ai_gen_id }}:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(20, 201, 223, 0.18);
+    border-color: rgba(20, 201, 223, 0.3);
+  }
+
+  .ocf__card-img-wrap-{{ ai_gen_id }} {
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    background: #eef3f7;
+  }
+
+  .ocf__card-img-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+
+  .ocf__card-{{ ai_gen_id }}:hover .ocf__card-img-{{ ai_gen_id }} {
+    transform: scale(1.03);
+  }
+
+  .ocf__card-body-{{ ai_gen_id }} {
+    padding: 12px 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .ocf__card-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.product_title_size }}px;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .ocf__card-price-{{ ai_gen_id }} {
+    font-size: {{ block.settings.product_price_size }}px;
+    color: #17a9bb;
+    font-weight: 400;
+  }
+
+  .ocf__empty-{{ ai_gen_id }} {
+    text-align: center;
+    padding: 48px;
+    color: #bbb;
+    font-size: 14px;
+    grid-column: 1/-1;
+  }
+
+  .ocf__icon-{{ ai_gen_id }} {
+    width: {{ block.settings.icon_size }}px;
+    height: {{ block.settings.icon_size }}px;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+
+  @keyframes ocf-shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+{% endstyle %}
+
+<div
+  class="ocf-{{ ai_gen_id }}"
+  data-products-per-page="{{ block.settings.products_per_page }}"
+  data-active-handle="{{ collection.handle }}"
+  data-desktop-cols="{{ block.settings.products_per_row_desktop }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ocf__wrap-{{ ai_gen_id }}">
+
+    <div class="ocf__row-{{ ai_gen_id }}">
+      {% for i in (1..10) %}
+        {% assign col_key = 'collection_' | append: i %}
+        {% assign icon_key = 'collection_' | append: i | append: '_icon' %}
+        {% assign col_item = block.settings[col_key] %}
+        {% assign col_icon = block.settings[icon_key] %}
+        {% if col_item != blank %}
+          <a
+            href="{{ col_item.url }}"
+            class="ocf__pill-{{ ai_gen_id }}{% if active_parent_index == i %} active{% endif %}"
+          >
+            {% if col_icon != blank %}
+              <img
+                src="{{ col_icon | image_url: width: 64 }}"
+                alt=""
+                class="ocf__icon-{{ ai_gen_id }}"
+                width="32"
+                height="32"
+                loading="lazy"
+              >
+            {% endif %}
+            <span>{{ col_item.title }}</span>
+          </a>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    {% for i in (1..10) %}
+      {% assign col_key = 'collection_' | append: i %}
+      {% assign col_item = block.settings[col_key] %}
+      {% if col_item != blank and col_item.metafields.custom.subcollections.value != blank %}
+        <div
+          class="ocf__subrow-wrap-{{ ai_gen_id }}{% if active_parent_index == i %} visible{% endif %}"
+          data-parent-index="{{ i }}"
+        >
+          <div class="ocf__row-{{ ai_gen_id }}">
+            {% for sub in col_item.metafields.custom.subcollections.value %}
+              <button
+                type="button"
+                class="ocf__subpill-{{ ai_gen_id }}{% if sub.handle == collection.handle %} active{% endif %}"
+                data-sub-handle="{{ sub.handle }}"
+              >{{ sub.title }}</button>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+
+    <div class="ocf__toolbar-{{ ai_gen_id }}">
+      <div class="ocf__sort-{{ ai_gen_id }}">
+        <label for="ocf-sort-{{ ai_gen_id }}" style="opacity:0.6;">เรียงโดย</label>
+        <select id="ocf-sort-{{ ai_gen_id }}" class="ocf__sort-select-{{ ai_gen_id }}" data-sort>
+          <option value="default">แนะนำ</option>
+          <option value="price-asc">ราคา: ต่ำ → สูง</option>
+          <option value="price-desc">ราคา: สูง → ต่ำ</option>
+          <option value="title-asc">ชื่อ A → Z</option>
+          <option value="title-desc">ชื่อ Z → A</option>
+          <option value="created-desc">ใหม่ล่าสุด</option>
+        </select>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span class="ocf__counter-{{ ai_gen_id }}" style="font-size:13px;opacity:0.55;white-space:nowrap;"></span>
+        <div class="ocf__view-toggle-{{ ai_gen_id }}">
+          <button type="button" class="ocf__view-btn-{{ ai_gen_id }} active" data-view="large" title="การ์ดใหญ่">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+          </button>
+          <button type="button" class="ocf__view-btn-{{ ai_gen_id }}" data-view="small" title="การ์ดเล็ก">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="3.5" height="3.5" rx="0.5"/><rect x="6.25" y="1" width="3.5" height="3.5" rx="0.5"/><rect x="11.5" y="1" width="3.5" height="3.5" rx="0.5"/><rect x="1" y="6.25" width="3.5" height="3.5" rx="0.5"/><rect x="6.25" y="6.25" width="3.5" height="3.5" rx="0.5"/><rect x="11.5" y="6.25" width="3.5" height="3.5" rx="0.5"/><rect x="1" y="11.5" width="3.5" height="3.5" rx="0.5"/><rect x="6.25" y="11.5" width="3.5" height="3.5" rx="0.5"/><rect x="11.5" y="11.5" width="3.5" height="3.5" rx="0.5"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="ocf__grid-{{ ai_gen_id }}" data-products-container></div>
+  </div>
+</div>
+
+<script type="application/json" id="ocf-counts-{{ ai_gen_id }}">
+{
+  {% assign count_first = true %}
+  {% for i in (1..10) %}
+    {% assign col_key = 'collection_' | append: i %}
+    {% assign col_item = block.settings[col_key] %}
+    {% if col_item != blank %}
+      {% unless count_first %},{% endunless %}
+      "{{ col_item.handle }}": {{ col_item.all_products_count | default: col_item.products_count | default: 0 }}
+      {% assign count_first = false %}
+
+      {% if col_item.metafields.custom.subcollections.value != blank %}
+        {% for sub in col_item.metafields.custom.subcollections.value %}
+          , "{{ sub.handle }}": {{ sub.all_products_count | default: sub.products_count | default: 0 }}
+        {% endfor %}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+}
+</script>
+
+<script>
+(function () {
+  var root = document.querySelector('.ocf-{{ ai_gen_id }}');
+  if (!root) return;
+
+  var grid = root.querySelector('[data-products-container]');
+  var sortEl = root.querySelector('[data-sort]');
+  var viewBtns = root.querySelectorAll('[data-view]');
+  var counter = root.querySelector('.ocf__counter-{{ ai_gen_id }}');
+
+  var perPage = Math.min(parseInt(root.dataset.productsPerPage, 10) || 12, 8);
+  var defCols = parseInt(root.dataset.desktopCols, 10) || 4;
+
+  var countMap = {};
+  var countEl = document.getElementById('ocf-counts-{{ ai_gen_id }}');
+  if (countEl) {
+    try { countMap = JSON.parse(countEl.textContent); } catch (e) {}
+  }
+
+  var state = {
+    handle: root.dataset.activeHandle || '',
+    sort: 'default'
+  };
+
+  var sortMap = {
+    'price-asc': 'price-ascending',
+    'price-desc': 'price-descending',
+    'title-asc': 'title-ascending',
+    'title-desc': 'title-descending',
+    'created-desc': 'created-descending'
+  };
+
+  var page = 1;
+  var isLoading = false;
+  var hasMore = true;
+  var hasInitialised = false;
+  var observer;
+  var initObserver;
+
+  function updateCounter(handle) {
+    if (!counter) return;
+    var total = countMap[handle];
+    counter.textContent = total != null ? total + ' รายการ' : '';
+  }
+
+  function skeletonHTML() {
+    var radius = {{ block.settings.product_image_radius }};
+    return Array(Math.min(perPage, 4)).fill(null).map(function () {
+      return '<div style="display:flex;flex-direction:column;gap:10px;">'
+        + '<div style="aspect-ratio:4/3;border-radius:' + radius + 'px;background:linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%);background-size:200% 100%;animation:ocf-shimmer 1.2s infinite;"></div>'
+        + '<div style="height:13px;width:65%;border-radius:4px;background:linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%);background-size:200% 100%;animation:ocf-shimmer 1.2s infinite 0.08s;"></div>'
+        + '<div style="height:13px;width:35%;border-radius:4px;background:linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%);background-size:200% 100%;animation:ocf-shimmer 1.2s infinite 0.16s;"></div>'
+        + '</div>';
+    }).join('');
+  }
+
+  function buildResponsiveImageUrl(url, width) {
+    if (!url) return '';
+
+    try {
+      var parsed = new URL(url, window.location.origin);
+      parsed.searchParams.set('width', width);
+      return parsed.toString();
+    } catch (e) {
+      var cleanUrl = url.replace(/([?&])width=\d+/g, '').replace(/[?&]$/, '');
+      return cleanUrl + (cleanUrl.indexOf('?') > -1 ? '&' : '?') + 'width=' + width;
+    }
+  }
+
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.textContent = str || '';
+    return div.innerHTML;
+  }
+
+  function getImageHtml(img, title, eager) {
+    if (!img) return '';
+
+    var src200 = buildResponsiveImageUrl(img, 200);
+    var src280 = buildResponsiveImageUrl(img, 280);
+    var src360 = buildResponsiveImageUrl(img, 360);
+
+    return '<div class="ocf__card-img-wrap-{{ ai_gen_id }}">'
+      + '<img '
+      + 'src="' + src280 + '" '
+      + 'srcset="' + src200 + ' 200w, ' + src280 + ' 280w, ' + src360 + ' 360w" '
+      + 'sizes="(min-width: 1200px) 220px, (min-width: 750px) 25vw, 45vw" '
+      + 'alt="' + title + '" '
+      + 'class="ocf__card-img-{{ ai_gen_id }}" '
+      + 'loading="' + (eager ? 'eager' : 'lazy') + '" '
+      + 'decoding="async" '
+      + 'width="360" '
+      + 'height="270">'
+      + '</div>';
+  }
+
+  function cardHTML(p, index) {
+    var imgObj = p.featured_image || (p.images && p.images[0]) || null;
+    var img = imgObj && imgObj.src ? imgObj.src : '';
+    var price = p.variants && p.variants[0] ? parseFloat(p.variants[0].price) : 0;
+
+    var fmt = new Intl.NumberFormat('th-TH', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(price) + ' บาท';
+
+    var title = escapeHtml(p.title);
+    var eager = page === 1 && index < 2;
+
+    return '<a href="/products/' + p.handle + '" class="ocf__card-{{ ai_gen_id }}">'
+      + getImageHtml(img, title, eager)
+      + '<div class="ocf__card-body-{{ ai_gen_id }}">'
+      + '<h3 class="ocf__card-title-{{ ai_gen_id }}">' + title + '</h3>'
+      + '<div class="ocf__card-price-{{ ai_gen_id }}">เริ่มจาก ' + fmt + '/ชิ้น</div>'
+      + '</div>'
+      + '</a>';
+  }
+
+  async function loadProducts(reset) {
+    if (isLoading) return;
+
+    if (reset) {
+      page = 1;
+      hasMore = true;
+      grid.innerHTML = '';
+      if (counter) counter.textContent = '';
+    }
+
+    if (!state.handle || !hasMore) return;
+
+    isLoading = true;
+
+    if (page === 1) {
+      grid.innerHTML = skeletonHTML();
+    }
+
+    var url = '/collections/' + state.handle + '/products.json?limit=' + perPage + '&page=' + page;
+    if (sortMap[state.sort]) {
+      url += '&sort_by=' + sortMap[state.sort];
+    }
+
+    try {
+      var res = await fetch(url, { credentials: 'same-origin' });
+      if (!res.ok) throw new Error('Fetch failed');
+
+      var data = await res.json();
+
+      if (page === 1) {
+        grid.innerHTML = '';
+      }
+
+      if (!data.products || !data.products.length) {
+        if (page === 1) {
+          grid.innerHTML = '<div class="ocf__empty-{{ ai_gen_id }}">ไม่พบสินค้าในหมวดนี้</div>';
+        }
+        hasMore = false;
+        isLoading = false;
+        return;
+      }
+
+      if (data.products.length < perPage) {
+        hasMore = false;
+      }
+
+      if (page === 1) {
+        updateCounter(state.handle);
+      }
+
+      grid.insertAdjacentHTML(
+        'beforeend',
+        data.products.map(function (product, index) {
+          return cardHTML(product, index);
+        }).join('')
+      );
+
+      page += 1;
+    } catch (e) {
+      if (page === 1) {
+        grid.innerHTML = '<div class="ocf__empty-{{ ai_gen_id }}">เกิดข้อผิดพลาด กรุณาลองใหม่</div>';
+      }
+    }
+
+    isLoading = false;
+  }
+
+  var sentinel = document.createElement('div');
+  sentinel.style.height = '1px';
+  grid.after(sentinel);
+
+  observer = new IntersectionObserver(function (entries) {
+    if (entries[0].isIntersecting && !isLoading && hasMore && hasInitialised) {
+      loadProducts(false);
+    }
+  }, { rootMargin: '300px' });
+
+  observer.observe(sentinel);
+
+  root.querySelectorAll('[data-sub-handle]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      root.querySelectorAll('[data-sub-handle]').forEach(function (b) {
+        b.classList.remove('active');
+      });
+      btn.classList.add('active');
+      state.handle = btn.dataset.subHandle;
+      loadProducts(true);
+    }, { passive: true });
+  });
+
+  if (sortEl) {
+    sortEl.addEventListener('change', function () {
+      state.sort = sortEl.value;
+      loadProducts(true);
+    });
+  }
+
+  viewBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      viewBtns.forEach(function (b) {
+        b.classList.remove('active');
+      });
+      btn.classList.add('active');
+      grid.style.setProperty('--ocf-cols', btn.dataset.view === 'small' ? defCols + 2 : defCols);
+    }, { passive: true });
+  });
+
+  initObserver = new IntersectionObserver(function(entries) {
+    if (entries[0].isIntersecting && !hasInitialised) {
+      hasInitialised = true;
+      loadProducts(true);
+      initObserver.disconnect();
+    }
+  }, { rootMargin: '250px' });
+
+  initObserver.observe(root);
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Collection Filter",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Collection 1"
+    },
+    {
+      "type": "collection",
+      "id": "collection_1",
+      "label": "Collection 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "collection_1_icon",
+      "label": "Icon"
+    },
+    {
+      "type": "header",
+      "content": "Collection 2"
+    },
+    {
+      "type": "collection",
+      "id": "collection_2",
+      "label": "Collection 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "collection_2_icon",
+      "label": "Icon"
+    },
+    {
+      "type": "header",
+      "content": "Collection 3"
+    },
+    {
+      "type": "collection",
+      "id": "collection_3",
+      "label": "Collection 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "collection_3_icon",
+      "label": "Icon"
+    },
+    {
+      "type": "header",
+      "content": "Collection 4"
+    },
+    {
+      "type": "collection",
+      "id": "collection_4",
+      "label": "Collection 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "collection_4_icon",
+      "label": "Icon"
+    },
+    {
+      "type": "header",
+      "content": "Collection 5"
+    },
+    {
+      "type": "collection",
+      "id": "collection_5",
+      "label": "Collection 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "collection_5_icon",
+      "label": "Icon"
+    },
+    {
+      "type": "header",
+      "content": "Collection 6"
+    },
+    {
+      "type": "collection",
+      "id": "collection_6",
+      "label": "Collection 6"
+    },
+    {
+      "type": "image_picker",
+      "id": "collection_6_icon",
+      "label": "Icon"
+    },
+    {
+      "type": "header",
+      "content": "Collection 7"
+    },
+    {
+      "type": "collection",
+      "id": "collection_7",
+      "label": "Collection 7"
+    },
+    {
+      "type": "image_picker",
+      "id": "collection_7_icon",
+      "label": "Icon"
+    },
+    {
+      "type": "header",
+      "content": "Collection 8"
+    },
+    {
+      "type": "collection",
+      "id": "collection_8",
+      "label": "Collection 8"
+    },
+    {
+      "type": "image_picker",
+      "id": "collection_8_icon",
+      "label": "Icon"
+    },
+    {
+      "type": "header",
+      "content": "Collection 9"
+    },
+    {
+      "type": "collection",
+      "id": "collection_9",
+      "label": "Collection 9"
+    },
+    {
+      "type": "image_picker",
+      "id": "collection_9_icon",
+      "label": "Icon"
+    },
+    {
+      "type": "header",
+      "content": "Collection 10"
+    },
+    {
+      "type": "collection",
+      "id": "collection_10",
+      "label": "Collection 10"
+    },
+    {
+      "type": "image_picker",
+      "id": "collection_10_icon",
+      "label": "Icon"
+    },
+    {
+      "type": "header",
+      "content": "Grid Layout"
+    },
+    {
+      "type": "range",
+      "id": "products_per_row_desktop",
+      "label": "คอลัมน์ desktop",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "products_per_row_mobile",
+      "label": "คอลัมน์ mobile",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "range",
+      "id": "product_grid_gap",
+      "label": "ระยะห่างการ์ด",
+      "min": 8,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "สินค้าต่อหน้า",
+      "min": 4,
+      "max": 50,
+      "step": 2,
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Pill Style"
+    },
+    {
+      "type": "range",
+      "id": "pill_font_size",
+      "label": "ขนาดตัวอักษร",
+      "min": 11,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "pill_padding_vertical",
+      "label": "Padding บน-ล่าง",
+      "min": 4,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "pill_padding_horizontal",
+      "label": "Padding ซ้าย-ขวา",
+      "min": 8,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "pill_border_radius",
+      "label": "มุมโค้ง",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "ขนาด icon",
+      "min": 12,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "header",
+      "content": "Product Card"
+    },
+    {
+      "type": "range",
+      "id": "product_image_radius",
+      "label": "มุมโค้งการ์ด",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "product_title_size",
+      "label": "ขนาดชื่อสินค้า",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "product_price_size",
+      "label": "ขนาดราคา",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection Filter"
+    }
+  ]
+}
+{% endschema %}
