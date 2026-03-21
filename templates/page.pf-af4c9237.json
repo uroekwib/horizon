@@ -4473,6 +4473,47 @@
               "block_order": [
                 "text_TLg7qz"
               ]
+            },
+            "accordion_row_XGebTH": {
+              "type": "_accordion-row",
+              "name": "t:names.accordion_row",
+              "settings": {
+                "heading": "มีบริการออกแบบ Artwork ให้ด้วยไหม?",
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
+              },
+              "blocks": {
+                "text_xPT8cr": {
+                  "type": "text",
+                  "name": "t:names.text",
+                  "settings": {
+                    "text": "<p>มีบริการออกแบบกราฟิก ทีมงานจะออกแบบ Mockup ตามข้อมูลที่ได้รับ (โลโก้ ฟอนต์ CI สี) และส่งให้คอนเฟิร์มก่อนผลิตทุกกรณี โดยไม่มีค่าใช้จ่ายเพิ่มเติมในกรณีที่ลูกค้ามี Logo/CI ให้ครบ หากต้องการออกแบบโลโก้ใหม่ หรือรีแบรนด์ มีบริการออกแบบโลโก้แยกต่างหากด้วย</p>",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_xPT8cr"
+              ]
             }
           },
           "block_order": [
@@ -4481,7 +4522,8 @@
             "accordion_row_CmXqHC",
             "accordion_row_y8ecx6",
             "accordion_row_LMz937",
-            "accordion_row_fjMKth"
+            "accordion_row_fjMKth",
+            "accordion_row_XGebTH"
           ]
         }
       },
