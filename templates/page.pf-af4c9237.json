@@ -4184,6 +4184,298 @@
         "padding-block-end": 48
       }
     },
+    "section_hN4JUx": {
+      "type": "section",
+      "blocks": {
+        "text_HrMkkU": {
+          "type": "text",
+          "name": "t:names.heading",
+          "settings": {
+            "text": "<h2>คำถามที่พบบ่อย เกี่ยวกับป้ายบริษัท (FAQ)</h2>",
+            "width": "fit-content",
+            "max_width": "narrow",
+            "alignment": "left",
+            "type_preset": "rte",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "accordion_aAgtA4": {
+          "type": "accordion",
+          "name": "t:names.accordion",
+          "settings": {
+            "icon": "caret",
+            "dividers": true,
+            "type_preset": "h5",
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "accordion_row_epfxY3": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "ป้ายบริษัทวัสดุอะไรดีที่สุด?",
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
+              },
+              "blocks": {
+                "text_xyUe9P": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>ไม่มีวัสดุที่ \"ดีที่สุด\" สำหรับทุกสถานการณ์ แต่หลักเลือกง่าย ๆ คือ หากติดตั้งกลางแจ้งระยะยาว แนะนำ<strong>สแตนเลส SS304</strong>หรือ<strong>อลูมิเนียมคอมโพสิต (ACP)</strong>เนื่องจากทนต่อแดดฝนได้ดีกว่า หากติดตั้งภายในสำนักงานและมีงบจำกัด แนะนำ<strong>อะคริลิค</strong>เพราะน้ำหนักเบา ราคาประหยัด และพิมพ์สีได้ตรง CI สำหรับองค์กรที่ต้องการความหรูหราสูงสุด แนะนำ<strong>ทองเหลืองกัดกรด</strong>หรือ<strong>สแตนเลสทอง Hairline</strong></p>",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_xyUe9P"
+              ]
+            },
+            "accordion_row_HmKXXU": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "ป้ายบริษัทราคาเริ่มต้นเท่าไหร่?",
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
+              },
+              "blocks": {
+                "text_abjKQL": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>ราคาป้ายบริษัทเริ่มต้นที่ประมาณ 2,000–4,000 บาท สำหรับป้ายอะคริลิคขนาดเล็ก ไปจนถึงหลักหมื่น–หลักแสน บาท สำหรับป้ายอักษรไฟ LED ขนาดใหญ่ติดตั้งบนอาคาร ราคาขึ้นอยู่กับ 4 ปัจจัยหลัก คือ ประเภทวัสดุ ขนาดป้าย ความซับซ้อนของดีไซน์ และการมีระบบไฟหรือไม่ แนะนำให้ติดต่อเพื่อรับใบเสนอราคาที่แม่นยำตามสเปกจริงของท่าน<br/><br/></p>",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_abjKQL"
+              ]
+            },
+            "accordion_row_CmXqHC": {
+              "type": "_accordion-row",
+              "name": "t:names.accordion_row",
+              "settings": {
+                "heading": "ฉันจะได้รับคำสั่งซื้อเมื่อไร",
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
+              },
+              "blocks": {
+                "text_VmUk9k": {
+                  "type": "text",
+                  "name": "t:names.text",
+                  "settings": {
+                    "text": "<p>เราจะดำเนินการจัดส่งคำสั่งซื้อของคุณโดยเร็วที่สุด เมื่อคำสั่งซื้อของคุณถูกจัดส่งแล้ว คุณจะได้รับอีเมลพร้อมข้อมูลเพิ่มเติม ระยะเวลาในการจัดส่งจะแตกต่างกันไปขึ้นอยู่กับตำแหน่งที่ตั้งของคุณ</p>",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_VmUk9k"
+              ]
+            },
+            "accordion_row_y8ecx6": {
+              "type": "_accordion-row",
+              "name": "t:names.accordion_row",
+              "settings": {
+                "heading": "สินค้าของคุณผลิตที่ไหน",
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
+              },
+              "blocks": {
+                "text_KhVgpG": {
+                  "type": "text",
+                  "name": "t:names.text",
+                  "settings": {
+                    "text": "<p>สินค้าของเราผลิตทั้งในประเทศและทั่วโลก เราคัดเลือกพาร์ทเนอร์การผลิตของเราอย่างพิถีพิถันเพื่อให้แน่ใจว่าสินค้าของเรามีคุณภาพสูงและราคายุติธรรม</p>",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_KhVgpG"
+              ]
+            },
+            "accordion_row_LMz937": {
+              "type": "_accordion-row",
+              "name": "t:names.accordion_row",
+              "settings": {
+                "heading": "ค่าจัดส่งราคาเท่าไร",
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
+              },
+              "blocks": {
+                "text_h68gab": {
+                  "type": "text",
+                  "name": "t:names.text",
+                  "settings": {
+                    "text": "<p>การจัดส่งจะคำนวณตามตำแหน่งที่ตั้งของคุณและสินค้าในคำสั่งซื้อของคุณ คุณจะทราบราคาค่าจัดส่งก่อนตัดสินใจซื้อเสมอ</p>",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_h68gab"
+              ]
+            }
+          },
+          "block_order": [
+            "accordion_row_epfxY3",
+            "accordion_row_HmKXXU",
+            "accordion_row_CmXqHC",
+            "accordion_row_y8ecx6",
+            "accordion_row_LMz937"
+          ]
+        }
+      },
+      "block_order": [
+        "text_HrMkkU",
+        "accordion_aAgtA4"
+      ],
+      "name": "t:names.faq_section",
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 32,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 48,
+        "padding-block-end": 48
+      }
+    },
     "pf-af4c9237": {
       "type": "pf-af4c9237",
       "disabled": true,
@@ -4199,6 +4491,7 @@
     "carousel_eKUaDW",
     "carousel_HzMMbt",
     "carousel_R9996g",
+    "section_hN4JUx",
     "pf-af4c9237"
   ]
 }
