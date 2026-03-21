@@ -48,17 +48,13 @@
   {{ block.shopify_attributes }}
 >
 
-  <div style="display: flex; align-items: baseline; gap: 0.25rem; flex-wrap: wrap;">
+<div style="display: flex; align-items: baseline; gap: 0.25rem; flex-wrap: wrap;">
   <span>เริ่มจาก</span>
-  {% render 'price',
-    show_unit_price: true,
-    product_resource: product_resource,
-    show_sale_price_first: block_settings.show_sale_price_first
-  %}
+  <span>{{ product_resource.price | money_without_trailing_zeros }}</span>
   {% if product_resource.metafields.custom.product_price != blank %}
     <span>/{{ product_resource.metafields.custom.product_price }}</span>
   {% endif %}
-  </div>
+</div>
 
   {% if block_settings.show_tax_info %}
     <div class="tax-note">
