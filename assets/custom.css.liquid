@@ -1527,112 +1527,296 @@ body.gm-menu-installed .gm-menu ul {
 /* ============================================================
    §13 TABLES
    ============================================================ */
+/* ============================================================
+   TABLE SYSTEM RESET + VC STYLE ADAPTER FOR GLOBAL NAMES
+   ใช้กับ:
+   .divtable
+   .divtable.price
+   .divtable-spec
+   .divtable-title
+   .divtable-note
+   ============================================================ */
 
+/* ---------- shared wrappers ---------- */
 .divtable,
 .divtable-spec {
-  overflow-x: auto;
   width: 100%;
   display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--oc-ink-15) transparent;
 }
 
-/* ── Standard Table ── */
-.divtable table {
-  border-collapse: collapse;
+.divtable::-webkit-scrollbar,
+.divtable-spec::-webkit-scrollbar {
+  height: 4px;
+}
+
+.divtable::-webkit-scrollbar-thumb,
+.divtable-spec::-webkit-scrollbar-thumb {
+  background: var(--oc-ink-15);
+  border-radius: 999px;
+}
+
+/* ---------- base table ---------- */
+.divtable table,
+.divtable-spec table {
   width: 100%;
-  white-space: nowrap;
+  border-collapse: collapse;
   table-layout: auto;
-  min-width: 120px;
-  box-shadow: unset;
-}
-@media (max-width: 768px) {
-  .divtable table { min-width: 550px; }
-}
-
-.divtable thead tr > th {
-  background: #bef3f3;
-  color: black;
-  font-weight: 600;
-  position: sticky;
-  padding: 0.75rem;
-  z-index: 1;
-  top: 0;
-}
-
-.divtable thead tr > :first-child,
-.divtable tbody tr > :first-child {
-  position: sticky;
-  left: 0;
-  z-index: 2;
-  min-width: 45px;
-  background-color: white;
-}
-.divtable thead tr > :first-child { background: #bef3f3; }
-
-.divtable tbody tr:nth-child(even) > td:first-child,
-.divtable tbody tr:nth-child(even) > th:first-child { background-color: #eff2f3; }
-.divtable tbody tr:nth-child(even) { background-color: #eff2f3; }
-.divtable tbody tr:nth-child(odd)  { background-color: #ffffff; }
-
-.divtable td,
-.divtable th {
-  text-align: center;
-  padding: 0.5rem 0.25rem;
   white-space: nowrap;
-  overflow: hidden;
-  min-width: 40px;
+  background: #fff;
+  box-shadow: unset;
+  min-width: 480px;
 }
 
-.p-table { margin: 0.1em 0 0 0; font-weight: 600; }
+@media (max-width: 768px) {
+  .divtable table,
+  .divtable-spec table {
+    min-width: 550px;
+  }
+}
 
-/* ── Price Matrix Table ── */
-.divtable.price table { min-width: 700px; font-size: 13px; }
-.divtable.price thead tr > th {
-  background: var(--oc-cyan-l);
-  color: var(--oc-cyan);
+.divtable th,
+.divtable td,
+.divtable-spec th,
+.divtable-spec td {
+  padding: 9px 12px;
+  font-size: 13px;
+  line-height: 1.45;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.divtable thead th,
+.divtable-spec thead th {
+  background: #f3f4f6;
+  color: var(--oc-ink);
   font-weight: 700;
   font-size: 13px;
-  padding: 8px 10px;
-}
-.divtable.price thead tr > :first-child { background: var(--oc-cyan-l); color: var(--oc-cyan); }
-.divtable.price tbody td {
-  padding: 7px 10px;
+  text-align: center;
   border-bottom: 1px solid var(--oc-ink-15);
-  cursor: pointer;
-  transition: background .1s;
 }
-.divtable.price tbody td:first-child {
-  background: #fff;
+
+.divtable thead th:first-child,
+.divtable-spec thead th:first-child,
+.divtable tbody td:first-child,
+.divtable-spec tbody td:first-child,
+.divtable-spec tbody th[scope="row"] {
+  text-align: left;
+  padding-left: 16px;
+}
+
+.divtable tbody tr,
+.divtable-spec tbody tr {
+  border-bottom: 1px solid var(--oc-ink-15);
+}
+
+.divtable tbody tr:last-child,
+.divtable-spec tbody tr:last-child {
+  border-bottom: none;
+}
+
+.divtable tbody tr:nth-child(even) td,
+.divtable-spec tbody tr:nth-child(even) td,
+.divtable-spec tbody tr:nth-child(even) th[scope="row"] {
+  background: #f9fafb;
+}
+
+.divtable tbody td:first-child,
+.divtable-spec tbody td:first-child,
+.divtable-spec tbody th[scope="row"] {
   font-weight: 700;
   color: var(--oc-ink);
   border-right: 1px solid var(--oc-ink-15);
+  background: #fff;
 }
-.divtable.price tbody tr:hover td           { background: var(--oc-purple-l) !important; }
-.divtable.price tbody tr:hover td:first-child { color: var(--oc-purple-d) !important; }
-.divtable.price td.h1 { color: #6B7280; }
-.divtable.price td.h2 { color: #17a9bb; }
-.divtable.price td.h3 { color: #0284c7; }
-.divtable.price td.h4 { color: #7C3AED; }
+
+.divtable tbody tr:nth-child(even) td:first-child,
+.divtable-spec tbody tr:nth-child(even) td:first-child,
+.divtable-spec tbody tr:nth-child(even) th[scope="row"] {
+  background: #f9fafb;
+}
+
+/* ============================================================
+   PRICE TABLE = ใช้หน้าตาแบบ VC แต่ชื่อยังเป็น .divtable.price
+   ============================================================ */
+
+.divtable.price {
+  border: 1px solid var(--oc-ink-15);
+  border-radius: var(--oc-radius-lg);
+  overflow: hidden;
+  background: #fff;
+  box-shadow: var(--oc-shadow-sm);
+}
+
+.divtable.price table {
+  min-width: 480px;
+  font-size: 13px;
+}
+
+@media (max-width: 768px) {
+  .divtable.price table {
+    min-width: 550px;
+  }
+}
+
+.divtable.price thead {
+  position: relative;
+}
+
+.divtable.price thead tr {
+  position: relative;
+}
+
+.divtable.price thead tr::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    #14c9df,
+    #17a9bb 28%,
+    #818cf8 60%,
+    #a78bfa 82%,
+    #14c9df 100%
+  );
+  background-size: 200% auto;
+  animation: oc-rainbow-move 4s linear infinite;
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+.divtable.price thead th {
+  background: #f3f4f6;
+  color: var(--oc-ink);
+  font-weight: 700;
+  font-size: 13px;
+  padding: 10px 12px;
+  text-align: center;
+  border-bottom: none;
+}
+
+.divtable.price thead th:first-child {
+  text-align: left;
+  padding-left: 16px;
+}
+
+.divtable.price tbody td {
+  padding: 9px 12px;
+  text-align: center;
+  border-bottom: 1px solid var(--oc-ink-15);
+  transition: background 0.12s ease, color 0.12s ease;
+  cursor: pointer;
+}
+
+.divtable.price tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.divtable.price tbody td:first-child {
+  text-align: left;
+  padding-left: 16px;
+  font-weight: 700;
+  color: var(--oc-ink);
+  border-right: 1px solid var(--oc-ink-15);
+  background: #fff;
+}
+
+.divtable.price tbody tr:nth-child(even) td {
+  background: #f9fafb;
+}
+
+.divtable.price tbody tr:nth-child(even) td:first-child {
+  background: #f9fafb;
+}
+
+.divtable.price tbody tr:hover td {
+  background: var(--oc-purple-l) !important;
+}
+
+.divtable.price tbody tr:hover td:first-child {
+  color: var(--oc-purple-d) !important;
+}
+
+/* heat levels */
+.divtable.price td.h1 { color: #6B7280; font-weight: 400; }
+.divtable.price td.h2 { color: #17a9bb; font-weight: 400; }
+.divtable.price td.h3 { color: #0284c7; font-weight: 400; }
+.divtable.price td.h4 { color: #7C3AED; font-weight: 400; }
+
+/* optional selected state */
 .divtable.price td.selected {
   background: var(--oc-cyan-l) !important;
   outline: 2px solid var(--oc-cyan);
   outline-offset: -2px;
   border-radius: 4px;
 }
+
+/* optional best row */
+.divtable.price tbody tr.best td:first-child::before {
+  content: '★ ';
+  font-size: 0.72em;
+  color: var(--oc-cyan-vv);
+}
+
+.divtable.price tbody tr.best td:first-child {
+  color: var(--oc-cyan);
+}
+
+/* ---------- title / note ---------- */
 .divtable-title {
-  padding: 12px 16px;
+  padding: 11px 16px;
   border-bottom: 1px solid var(--oc-ink-15);
+  background: #fff;
+  color: var(--oc-ink);
   font-weight: 700;
   font-size: 14px;
-  color: var(--oc-ink);
-  background: #fff;
 }
+
 .divtable-note {
   padding: 12px 16px;
   border-top: 1px solid var(--oc-ink-15);
-  font-size: 11px;
-  color: var(--oc-ink-40);
-  line-height: 1.7;
   background: #fff;
+  color: var(--oc-ink-40);
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+/* ============================================================
+   SPEC TABLE
+   ============================================================ */
+
+.divtable-spec {
+  border: 1px solid var(--oc-ink-15);
+  border-radius: var(--oc-radius-lg);
+  background: #fff;
+  box-shadow: var(--oc-shadow-sm);
+}
+
+.divtable-spec table {
+  min-width: 480px;
+}
+
+.divtable-spec thead th {
+  background: #f3f4f6;
+  color: var(--oc-ink);
+  font-weight: 700;
+  text-align: center;
+}
+
+.divtable-spec tbody th[scope="row"] {
+  min-width: 140px;
+}
+
+/* ---------- optional legacy helper ---------- */
+.p-table {
+  margin: 0.1em 0 0 0;
+  font-weight: 600;
 }
 
 /* ── Spec Table ── */
