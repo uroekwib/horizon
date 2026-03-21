@@ -66,20 +66,39 @@
           on:pointerenter="/activate"
           on:pointerleave="/deactivate"
         >
-          <a
-            href="{{ link.url }}"
-            data-skip-node-update="true"
-            class="menu-list__link{% if link.active %} menu-list__link--active{% endif %}"
-            {% if link.links != blank %}
-              aria-controls="submenu-{{ forloop.index }}"
-              aria-haspopup="true"
-              aria-expanded="false"
-            {% endif %}
-            {% if link.current %}aria-current="page"{% endif %}
-            ref="menuitem"
-          >
-            <span class="menu-list__link-title">{{- link.title -}}</span>
-          </a>
+          {% assign is_mega_toggle_only = false %}
+{% if link.title == 'สินค้าและบริการ' and link.links != blank %}
+  {% assign is_mega_toggle_only = true %}
+{% endif %}
+
+{% if is_mega_toggle_only %}
+  <button
+    type="button"
+    data-skip-node-update="true"
+    class="menu-list__link button-unstyled{% if link.active %} menu-list__link--active{% endif %}"
+    aria-controls="submenu-{{ forloop.index }}"
+    aria-haspopup="true"
+    aria-expanded="false"
+    ref="menuitem"
+  >
+    <span class="menu-list__link-title">{{- link.title -}}</span>
+  </button>
+{% else %}
+  <a
+    href="{{ link.url }}"
+    data-skip-node-update="true"
+    class="menu-list__link{% if link.active %} menu-list__link--active{% endif %}"
+    {% if link.links != blank %}
+      aria-controls="submenu-{{ forloop.index }}"
+      aria-haspopup="true"
+      aria-expanded="false"
+    {% endif %}
+    {% if link.current %}aria-current="page"{% endif %}
+    ref="menuitem"
+  >
+    <span class="menu-list__link-title">{{- link.title -}}</span>
+  </a>
+{% endif %}
 
           {% if link.links != blank %}
             <div class="menu-list__submenu{{ color_scheme_classes }}" ref="submenu[]">
