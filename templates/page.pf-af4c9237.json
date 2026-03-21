@@ -4396,7 +4396,7 @@
               "type": "_accordion-row",
               "name": "t:names.accordion_row",
               "settings": {
-                "heading": "ค่าจัดส่งราคาเท่าไร",
+                "heading": "ป้ายสแตนเลสกับอะคริลิคอย่างไหนดีกว่า?",
                 "open_by_default": false,
                 "icon": "none",
                 "width": 20
@@ -4406,7 +4406,7 @@
                   "type": "text",
                   "name": "t:names.text",
                   "settings": {
-                    "text": "<p>การจัดส่งจะคำนวณตามตำแหน่งที่ตั้งของคุณและสินค้าในคำสั่งซื้อของคุณ คุณจะทราบราคาค่าจัดส่งก่อนตัดสินใจซื้อเสมอ</p>",
+                    "text": "<p>ขึ้นอยู่กับการใช้งาน สแตนเลสทนทานกว่า อายุการใช้งาน 10–20 ปี เหมาะกับการใช้งานกลางแจ้งระยะยาวหรือองค์กรที่ต้องการภาพลักษณ์พรีเมียม แต่ราคาสูงกว่าและน้ำหนักมากกว่า อะคริลิคมีน้ำหนักเบา ราคาประหยัด สีสันหลากหลาย เหมาะกับป้ายในร่มและงบประมาณจำกัด แต่ทนต่อ UV กลางแจ้งได้น้อยกว่า แนะนำปรึกษาทีมงานเพื่อเลือกวัสดุที่เหมาะกับสภาพแวดล้อมและงบประมาณจริง</p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",
@@ -4432,6 +4432,47 @@
               "block_order": [
                 "text_h68gab"
               ]
+            },
+            "accordion_row_fjMKth": {
+              "type": "_accordion-row",
+              "name": "t:names.accordion_row",
+              "settings": {
+                "heading": "ป้ายสแตนเลสกับอะคริลิคอย่างไหนดีกว่า?",
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
+              },
+              "blocks": {
+                "text_TLg7qz": {
+                  "type": "text",
+                  "name": "t:names.text",
+                  "settings": {
+                    "text": "<p>ขึ้นอยู่กับการใช้งาน สแตนเลสทนทานกว่า อายุการใช้งาน 10–20 ปี เหมาะกับการใช้งานกลางแจ้งระยะยาวหรือองค์กรที่ต้องการภาพลักษณ์พรีเมียม แต่ราคาสูงกว่าและน้ำหนักมากกว่า อะคริลิคมีน้ำหนักเบา ราคาประหยัด สีสันหลากหลาย เหมาะกับป้ายในร่มและงบประมาณจำกัด แต่ทนต่อ UV กลางแจ้งได้น้อยกว่า แนะนำปรึกษาทีมงานเพื่อเลือกวัสดุที่เหมาะกับสภาพแวดล้อมและงบประมาณจริง</p>",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_TLg7qz"
+              ]
             }
           },
           "block_order": [
@@ -4439,7 +4480,8 @@
             "accordion_row_HmKXXU",
             "accordion_row_CmXqHC",
             "accordion_row_y8ecx6",
-            "accordion_row_LMz937"
+            "accordion_row_LMz937",
+            "accordion_row_fjMKth"
           ]
         }
       },
