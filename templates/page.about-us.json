@@ -772,7 +772,7 @@
               "type": "text",
               "name": "t:names.heading",
               "settings": {
-                "text": "<h1>5000+</h1>",
+                "text": "<h1>5,000+</h1>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "center",
