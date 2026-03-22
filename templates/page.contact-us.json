@@ -1028,7 +1028,7 @@
                 "link": "",
                 "image_ratio": "adapt",
                 "width": "fit-content",
-                "custom_width": 70,
+                "custom_width": 100,
                 "width_mobile": "fit-content",
                 "custom_width_mobile": 100,
                 "height": "fit",
@@ -1119,7 +1119,7 @@
               "type": "text",
               "name": "t:names.description",
               "settings": {
-                "text": "<h2><strong>Print & Display</strong> Solutions Catalogue <strong>2026</strong></h2><p>ป้าย สติ๊กเกอร์ สื่อสิ่งพิมพ์ กว่า 100 รายการ รับผลิตทําตามดีไซน์ที่ต้องการ การันตีด้วยรูปผลงานจริง วัสดุที่ใช้ผลิต และเทคโนโลยีการพิมพ์คุณภาพสูง<br/><br/></p>",
+                "text": "<h2><strong>Print & Display</strong> Solutions </h2><h2>Catalogue <strong>2026</strong></h2><p>ป้าย สติ๊กเกอร์ สื่อสิ่งพิมพ์ กว่า 100 รายการ รับผลิตทําตามดีไซน์ที่ต้องการ การันตีด้วยรูปผลงานจริง วัสดุที่ใช้ผลิต และเทคโนโลยีการพิมพ์คุณภาพสูง<br/><br/></p>",
                 "width": "fit-content",
                 "max_width": "narrow",
                 "alignment": "left",
