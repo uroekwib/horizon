@@ -20,7 +20,11 @@
 {% liquid
   assign widths = widths | default: '240, 320, 352, 384, 420, 480, 560, 640, 720, 800, 832, 960, 1120, 1280, 1440, 1600, 1920, 2200, 2560, 3200, 3840'
   assign sizes = sizes | default: '(min-width: 1200px) 640px, (min-width: 750px) 50vw, calc(100vw - 32px)'
+  if is_main_product_media
+  assign loading = 'eager'
+else
   assign loading = loading | default: 'lazy'
+endif
 
   assign image_ref_value = image_ref
   if image_ref_value == blank and settings.transition_to_main_product
