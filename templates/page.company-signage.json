@@ -2318,7 +2318,7 @@
               "type": "text",
               "name": "t:names.header",
               "settings": {
-                "text": "<h2><strong>ป้ายตกแต่ง (Decorative Signage)</strong></h2><p>ป้ายตกแต่ง (Decorative Signage) คือป้ายตกแต่งบริษัท ป้ายวิสัยทัศน์บริษัท ตัวอักษรไดคัทติดตกแต่งผนัง ป้ายชื่อองค์กร ป้ายบริษัท ป้ายชื่อ ป้ายตำแหน่ง ป้ายหน้าห้อง ป้ายเลขที่ห้อง ชื่อห้องหรือตำแหน่งได้ สามารถใช้ตกแต่งบริษัทและใช้ประโยชน์แจ้งชื่อ เลขห้อง ชื่อหรือตำแหน่งได้ ตัวอย่างงาน เช่น ป้ายองค์กร (Organization Chart) ของ Packo, ป้ายคติพจน์ \"Good Design is Obvious\" ป้าย Vision/Mission ตกแต่งผนังสำนักงาน และตัวอักษรไดคัทไวนิลแปะผนัง</p><p>ป้ายตกแต่งสำนักงานที่นิยมมากที่สุดคือ <strong>ตัวอักษรไดคัทสติ๊กเกอร์ไวนิล</strong> ซึ่งราคาประหยัด ติดตั้งง่าย และถอดออกได้เมื่อต้องการเปลี่ยนข้อความ และ <strong>ตัวอักษรอะคริลิค 3D ติดผนัง</strong> ซึ่งมีมิติ สวยงาม ดูทันสมัย เหมาะสำหรับพื้นที่ที่ต้องการสร้าง impression ให้กับผู้มาเยือน</p>",
+                "text": "<h2><strong>ป้ายตกแต่ง (Decorative Signage)</strong></h2><p>ป้ายตกแต่ง (Decorative Signage) คือป้ายตกแต่งบริษัท ป้ายวิสัยทัศน์บริษัท ตัวอักษรไดคัทติดตกแต่งผนัง ป้ายชื่อองค์กร ป้ายบริษัท ป้ายชื่อ ป้ายตำแหน่ง ป้ายหน้าห้อง ป้ายเลขที่ห้อง ชื่อห้องหรือตำแหน่งได้ สามารถใช้ตกแต่งบริษัทและใช้ประโยชน์แจ้งชื่อ เลขห้อง ชื่อหรือตำแหน่งได้</p><p>ป้ายตกแต่งสำนักงานที่นิยมมากที่สุดคือ <strong>ตัวอักษรไดคัทสติ๊กเกอร์ไวนิล</strong> ซึ่งราคาประหยัด ติดตั้งง่าย และถอดออกได้เมื่อต้องการเปลี่ยนข้อความ และ <strong>ตัวอักษรอะคริลิค 3D ติดผนัง</strong> ซึ่งมีมิติ สวยงาม ดูทันสมัย เหมาะสำหรับพื้นที่ที่ต้องการสร้าง impression ให้กับผู้มาเยือน</p>",
                 "width": "fit-content",
                 "max_width": "none",
                 "alignment": "left",
@@ -2396,6 +2396,7 @@
                   "type": "image",
                   "name": "t:names.image",
                   "settings": {
+                    "image": "shopify://shop_images/IMG-4828.jpg",
                     "link": "",
                     "image_ratio": "adapt",
                     "width": "fill",
@@ -2451,6 +2452,7 @@
                   "type": "image",
                   "name": "t:names.image",
                   "settings": {
+                    "image": "shopify://shop_images/226.jpg",
                     "link": "",
                     "image_ratio": "adapt",
                     "width": "fill",
@@ -2506,6 +2508,7 @@
                   "type": "image",
                   "name": "t:names.image",
                   "settings": {
+                    "image": "shopify://shop_images/company-branch-world-map-foamboard-sign-office-piovan-group01.jpg",
                     "link": "",
                     "image_ratio": "adapt",
                     "width": "fill",
@@ -2561,6 +2564,7 @@
                   "type": "image",
                   "name": "t:names.image",
                   "settings": {
+                    "image": "shopify://shop_images/world-map-backlit-wall-sign-office-decoration01.jpg",
                     "link": "",
                     "image_ratio": "adapt",
                     "width": "fill",
@@ -2616,6 +2620,7 @@
                   "type": "image",
                   "name": "t:names.image",
                   "settings": {
+                    "image": "shopify://shop_images/Wall_Decal_Sticker11.jpg",
                     "link": "",
                     "image_ratio": "adapt",
                     "width": "fill",
