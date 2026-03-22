@@ -169,51 +169,22 @@
             "padding-inline-end": 0
           },
           "blocks": {
-            "text_ngi3k3": {
-              "type": "text",
-              "name": "t:names.heading",
+            "image_kH8YzC": {
+              "type": "image",
+              "name": "t:names.image",
               "settings": {
-                "text": "<h2>Customer care</h2>",
-                "width": "100%",
-                "max_width": "normal",
-                "alignment": "center",
-                "type_preset": "h4",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "color": "var(--color-foreground)",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "text_A3TXej": {
-              "type": "text",
-              "name": "t:names.description",
-              "settings": {
-                "text": "<p>We're always on your side: keeping our loyal customers happy is our top priority and number one goal.</p>",
-                "width": "100%",
-                "max_width": "normal",
-                "alignment": "center",
-                "type_preset": "rte",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "color": "var(--color-foreground)",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
+                "image": "shopify://shop_images/img_1603-1666405641223.webp",
+                "link": "",
+                "image_ratio": "adapt",
+                "width": "fill",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_radius": 0,
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
@@ -223,8 +194,7 @@
             }
           },
           "block_order": [
-            "text_ngi3k3",
-            "text_A3TXej"
+            "image_kH8YzC"
           ]
         }
       },
