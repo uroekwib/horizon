@@ -1121,7 +1121,7 @@
               "settings": {
                 "text": "<h2><strong>Print & Display</strong> Solutions Catalogue <strong>2026</strong></h2><p>ป้าย สติ๊กเกอร์ สื่อสิ่งพิมพ์ กว่า 100 รายการ รับผลิตทําตามดีไซน์ที่ต้องการ การันตีด้วยรูปผลงานจริง วัสดุที่ใช้ผลิต และเทคโนโลยีการพิมพ์คุณภาพสูง<br/><br/></p>",
                 "width": "fit-content",
-                "max_width": "none",
+                "max_width": "normal",
                 "alignment": "left",
                 "type_preset": "rte",
                 "font": "var(--font-body--family)",
