@@ -101,51 +101,22 @@
             "padding-inline-end": 0
           },
           "blocks": {
-            "text_wjUPht": {
-              "type": "text",
-              "name": "t:names.heading",
+            "video_7EpkJe": {
+              "type": "video",
+              "name": "t:names.video",
               "settings": {
-                "text": "<h2>Intentional design</h2>",
-                "width": "100%",
-                "max_width": "normal",
-                "alignment": "center",
-                "type_preset": "h4",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "color": "var(--color-foreground)",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "text_CkiR9L": {
-              "type": "text",
-              "name": "t:names.description",
-              "settings": {
-                "text": "<p>We create with intention. Our products solve real problems with clean design and honest materials.</p>",
-                "width": "100%",
-                "max_width": "normal",
-                "alignment": "center",
-                "type_preset": "rte",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "color": "var(--color-foreground)",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
+                "source": "url",
+                "video_url": "https://www.youtube.com/watch?v=gKGV96SaeCM",
+                "video_autoplay": true,
+                "video_loop": true,
+                "alt": "",
+                "custom_width": 100,
+                "custom_width_mobile": 100,
+                "aspect_ratio": "16/9",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_radius": 0,
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
@@ -155,8 +126,7 @@
             }
           },
           "block_order": [
-            "text_wjUPht",
-            "text_CkiR9L"
+            "video_7EpkJe"
           ]
         },
         "group_hnz6By": {
