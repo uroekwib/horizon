@@ -581,7 +581,7 @@
         "section_width": "page-width",
         "section_height": "",
         "section_height_custom": 50,
-        "color_scheme": "",
+        "color_scheme": "scheme-3",
         "background_media": "none",
         "video_position": "cover",
         "background_image_position": "cover",
@@ -1003,6 +1003,7 @@
       "block_order": [
         "button_wjbDCN"
       ],
+      "disabled": true,
       "name": "Featured collection",
       "settings": {
         "collection": "งานติดตั้งขายดี",
