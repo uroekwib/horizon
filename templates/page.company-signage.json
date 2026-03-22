@@ -363,6 +363,7 @@
         "static-carousel-content": {
           "type": "_carousel-content",
           "name": "t:names.carousel_content",
+          "disabled": true,
           "static": true,
           "settings": {
             "inherit_color_scheme": true,
