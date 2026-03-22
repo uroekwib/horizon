@@ -444,24 +444,39 @@
           },
           "blocks": {}
         },
-        "ai_gen_block_481f8b3_ACfmyQ": {
-          "type": "ai_gen_block_481f8b3",
+        "ai_gen_block_bc1c0a1_TPFecH": {
+          "type": "ai_gen_block_bc1c0a1",
           "settings": {
-            "product_collection": "popular-products-services",
-            "products_limit": 12,
-            "desktop_width_percent": 100,
-            "grid_gap": 20,
-            "grid_gap_mobile": 12,
-            "image_border_radius": 8,
-            "title_color": "#000000",
-            "title_spacing": 8
+            "collection": "popular-products-services",
+            "product_limit": 12,
+            "grid_gap": 12,
+            "padding_top": 12,
+            "padding_bottom": 20,
+            "image_radius": 8,
+            "title_color": "#000000"
+          },
+          "blocks": {}
+        },
+        "button_RDCeMX": {
+          "type": "button",
+          "name": "t:names.button",
+          "settings": {
+            "label": "ดูสินค้าและบริการเพิ่มเติม",
+            "link": "shopify://collections/best-selling-collection",
+            "open_in_new_tab": true,
+            "style_class": "button",
+            "width": "fit-content",
+            "custom_width": 100,
+            "width_mobile": "fit-content",
+            "custom_width_mobile": 100
           },
           "blocks": {}
         }
       },
       "block_order": [
         "text_99fNhj",
-        "ai_gen_block_481f8b3_ACfmyQ"
+        "ai_gen_block_bc1c0a1_TPFecH",
+        "button_RDCeMX"
       ],
       "settings": {
         "content_direction": "column",
@@ -469,7 +484,7 @@
         "horizontal_alignment": "flex-start",
         "vertical_alignment": "center",
         "align_baseline": false,
-        "horizontal_alignment_flex_direction_column": "flex-start",
+        "horizontal_alignment_flex_direction_column": "center",
         "vertical_alignment_flex_direction_column": "center",
         "gap": 12,
         "section_width": "page-width",
@@ -488,7 +503,7 @@
         "overlay_style": "solid",
         "gradient_direction": "to top",
         "padding-block-start": 0,
-        "padding-block-end": 0
+        "padding-block-end": 44
       }
     },
     "product_list_fa6P9H": {
@@ -683,6 +698,7 @@
       "block_order": [
         "button_KxA3Kf"
       ],
+      "disabled": true,
       "name": "Featured collection",
       "settings": {
         "collection": "best-selling-collection",
