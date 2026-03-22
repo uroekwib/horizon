@@ -2540,6 +2540,7 @@
       "block_order": [
         "ai_gen_block_ef7ba01_EMJJCe"
       ],
+      "disabled": true,
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,
