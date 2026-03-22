@@ -553,7 +553,7 @@
           "name": "t:names.button",
           "settings": {
             "label": "ดูสินค้าและบริการเพิ่มเติม",
-            "link": "shopify://collections/best-selling-collection",
+            "link": "shopify://collections/signage",
             "open_in_new_tab": true,
             "style_class": "button",
             "width": "fit-content",
