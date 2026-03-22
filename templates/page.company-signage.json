@@ -2636,6 +2636,424 @@
         "padding-block-start": 48,
         "padding-block-end": 48
       }
+    },
+    "section_96bLCW": {
+      "type": "section",
+      "blocks": {
+        "text_GjAgjQ": {
+          "type": "text",
+          "name": "t:names.heading",
+          "settings": {
+            "text": "<h2>คำถามที่พบบ่อย เกี่ยวกับป้ายบริษัท (FAQ)</h2>",
+            "width": "fit-content",
+            "max_width": "narrow",
+            "alignment": "left",
+            "type_preset": "rte",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "accordion_pNhfUX": {
+          "type": "accordion",
+          "name": "t:names.accordion",
+          "settings": {
+            "icon": "caret",
+            "dividers": true,
+            "type_preset": "h5",
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "accordion_row_FMFri4": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "ป้ายบริษัทวัสดุอะไรดีที่สุด?",
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
+              },
+              "blocks": {
+                "text_xEFGTW": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>เป้าหมายของเราคือเพื่อให้ลูกค้าทุกคนพึงพอใจกับการซื้อสินค้าอย่างเต็มที่ หากไม่เป็นเช่นนั้น โปรดแจ้งให้เราทราบ แล้วเราจะพยายามอย่างเต็มที่เพื่อร่วมมือกับคุณในการแก้ไขปัญหา</p>",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_xEFGTW"
+              ]
+            },
+            "accordion_row_gWTrWR": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "ป้ายบริษัทราคาเริ่มต้นเท่าไหร่?",
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
+              },
+              "blocks": {
+                "text_FXHFaf": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>เราไม่สามารถรับคืนสินค้าบางรายการได้ สินค้าเหล่านี้จะมีการทำเครื่องหมายไว้อย่างชัดเจนก่อนการซื้อ</p>",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_FXHFaf"
+              ]
+            },
+            "accordion_row_Dhx9By": {
+              "type": "_accordion-row",
+              "name": "t:names.accordion_row",
+              "settings": {
+                "heading": "ป้ายไฟกับป้ายไม่มีไฟต่างกันอย่างไร?",
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
+              },
+              "blocks": {
+                "text_rimGbi": {
+                  "type": "text",
+                  "name": "t:names.text",
+                  "settings": {
+                    "text": "<p>เราจะดำเนินการจัดส่งคำสั่งซื้อของคุณโดยเร็วที่สุด เมื่อคำสั่งซื้อของคุณถูกจัดส่งแล้ว คุณจะได้รับอีเมลพร้อมข้อมูลเพิ่มเติม ระยะเวลาในการจัดส่งจะแตกต่างกันไปขึ้นอยู่กับตำแหน่งที่ตั้งของคุณ</p>",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_rimGbi"
+              ]
+            },
+            "accordion_row_nbaV9n": {
+              "type": "_accordion-row",
+              "name": "t:names.accordion_row",
+              "settings": {
+                "heading": "ป้ายบริษัทใช้เวลาทำนานแค่ไหน?",
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
+              },
+              "blocks": {
+                "text_GP9ntx": {
+                  "type": "text",
+                  "name": "t:names.text",
+                  "settings": {
+                    "text": "<p>สินค้าของเราผลิตทั้งในประเทศและทั่วโลก เราคัดเลือกพาร์ทเนอร์การผลิตของเราอย่างพิถีพิถันเพื่อให้แน่ใจว่าสินค้าของเรามีคุณภาพสูงและราคายุติธรรม</p>",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_GP9ntx"
+              ]
+            },
+            "accordion_row_3GUxAT": {
+              "type": "_accordion-row",
+              "name": "t:names.accordion_row",
+              "settings": {
+                "heading": "ป้ายสแตนเลสกับอะคริลิคอย่างไหนดีกว่า?",
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
+              },
+              "blocks": {
+                "text_96Wiiz": {
+                  "type": "text",
+                  "name": "t:names.text",
+                  "settings": {
+                    "text": "<p>การจัดส่งจะคำนวณตามตำแหน่งที่ตั้งของคุณและสินค้าในคำสั่งซื้อของคุณ คุณจะทราบราคาค่าจัดส่งก่อนตัดสินใจซื้อเสมอ</p>",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_96Wiiz"
+              ]
+            },
+            "accordion_row_TkiXiV": {
+              "type": "_accordion-row",
+              "name": "t:names.accordion_row",
+              "settings": {
+                "heading": "รับทำป้ายต่างจังหวัดได้ไหม?",
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
+              },
+              "blocks": {
+                "text_UcF7UR": {
+                  "type": "text",
+                  "name": "t:names.text",
+                  "settings": {
+                    "text": "<p>การจัดส่งจะคำนวณตามตำแหน่งที่ตั้งของคุณและสินค้าในคำสั่งซื้อของคุณ คุณจะทราบราคาค่าจัดส่งก่อนตัดสินใจซื้อเสมอ</p>",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_UcF7UR"
+              ]
+            },
+            "accordion_row_p4YJzN": {
+              "type": "_accordion-row",
+              "name": "t:names.accordion_row",
+              "settings": {
+                "heading": "มีบริการออกแบบ Artwork ให้ด้วยไหม?",
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
+              },
+              "blocks": {
+                "text_nL8KRX": {
+                  "type": "text",
+                  "name": "t:names.text",
+                  "settings": {
+                    "text": "<p>การจัดส่งจะคำนวณตามตำแหน่งที่ตั้งของคุณและสินค้าในคำสั่งซื้อของคุณ คุณจะทราบราคาค่าจัดส่งก่อนตัดสินใจซื้อเสมอ</p>",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_nL8KRX"
+              ]
+            },
+            "accordion_row_Aeik3d": {
+              "type": "_accordion-row",
+              "name": "t:names.accordion_row",
+              "settings": {
+                "heading": "ป้ายบริษัทต้องขออนุญาตปิดป้ายหรือเปล่า?",
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
+              },
+              "blocks": {
+                "text_ChwtGc": {
+                  "type": "text",
+                  "name": "t:names.text",
+                  "settings": {
+                    "text": "<p>ป้ายบางประเภทที่ติดตั้งในที่สาธารณะหรือมีขนาดเกินกำหนดอาจต้องขออนุญาตปิดป้ายตาม พ.ร.บ. ป้าย พ.ศ. 2521 โดยทั่วไปป้ายภายในอาคาร (ป้าย reception, ป้ายห้อง) ไม่ต้องขออนุญาต ส่วนป้ายกลางแจ้งขนาดใหญ่หรือป้ายบนอาคารสูงอาจต้องยื่นเรื่องกับเทศบาลหรือ กทม. ทีมงานยินดีให้คำแนะนำเบื้องต้นเกี่ยวกับเรื่องนี้</p>",
+                    "width": "100%",
+                    "max_width": "none",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_ChwtGc"
+              ]
+            }
+          },
+          "block_order": [
+            "accordion_row_FMFri4",
+            "accordion_row_gWTrWR",
+            "accordion_row_Dhx9By",
+            "accordion_row_nbaV9n",
+            "accordion_row_3GUxAT",
+            "accordion_row_TkiXiV",
+            "accordion_row_p4YJzN",
+            "accordion_row_Aeik3d"
+          ]
+        }
+      },
+      "block_order": [
+        "text_GjAgjQ",
+        "accordion_pNhfUX"
+      ],
+      "name": "t:names.faq_section",
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 32,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "scheme-2",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 48,
+        "padding-block-end": 48
+      }
     }
   },
   "order": [
@@ -2646,6 +3064,7 @@
     "carousel_7wcfRA",
     "carousel_mgDVbR",
     "carousel_xgW4CN",
-    "carousel_MRPUPn"
+    "carousel_MRPUPn",
+    "section_96bLCW"
   ]
 }
