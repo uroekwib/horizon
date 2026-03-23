@@ -122,13 +122,11 @@
 
 {% if video != blank %}
   <deferred-media
-    class="{{ video_class }}"
-    style="{{ video_style }}"
-    {% if video_autoplay %}
-      autoplay
-    {% endif %}
-    {{ additional_attributes }}
-  >
+  class="{{ video_class }}"
+  style="{{ video_style }}"
+  data-autoplay-on-view="{% if video_autoplay %}true{% else %}false{% endif %}"
+  {{ additional_attributes }}
+>
     {% if video_preview_image != blank %}
       <button
         class="button deferred-media__poster-button button-unstyled"
@@ -176,7 +174,7 @@
         {{ video_tag }}
       {% endif %}
     </template>
-
+    {% comment %}
     {% if video_autoplay or video_preview_image == blank %}
       {% if video_from_url %}
         {{ video_iframe }}
@@ -184,6 +182,7 @@
         {{ video_tag }}
       {% endif %}
     {% endif %}
+    {% endcomment %}
   </deferred-media>
 {% else %}
   <div
@@ -214,3 +213,45 @@
     opacity: 1;
   }
 {% endstylesheet %}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const medias = document.querySelectorAll('deferred-media[data-autoplay-on-view="true"]');
+
+  if (!('IntersectionObserver' in window) || !medias.length) return;
+
+  const observer = new IntersectionObserver((entries, obs) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+
+      const media = entry.target;
+
+      // กันรันซ้ำ
+      if (media.dataset.autoplayTriggered === 'true') {
+        obs.unobserve(media);
+        return;
+      }
+
+      media.dataset.autoplayTriggered = 'true';
+
+      // ถ้ามี method ใน component
+      if (typeof media.showDeferredMedia === 'function') {
+        media.showDeferredMedia();
+      } else {
+        // fallback: clone template content ออกมาเอง
+        const template = media.querySelector('template');
+        if (template) {
+          const content = template.content.cloneNode(true);
+          media.appendChild(content);
+        }
+      }
+
+      obs.unobserve(media);
+    });
+  }, {
+    root: null,
+    rootMargin: '0px 0px 200px 0px',
+    threshold: 0.01
+  });
+
+  medias.forEach((media) => observer.observe(media));
+});
