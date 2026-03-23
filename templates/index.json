@@ -456,27 +456,11 @@
             "title_color": "#000000"
           },
           "blocks": {}
-        },
-        "button_RDCeMX": {
-          "type": "button",
-          "name": "t:names.button",
-          "settings": {
-            "label": "ดูสินค้าและบริการเพิ่มเติม",
-            "link": "shopify://collections/best-selling-collection",
-            "open_in_new_tab": true,
-            "style_class": "button",
-            "width": "fit-content",
-            "custom_width": 100,
-            "width_mobile": "fit-content",
-            "custom_width_mobile": 100
-          },
-          "blocks": {}
         }
       },
       "block_order": [
         "text_99fNhj",
-        "ai_gen_block_bc1c0a1_TPFecH",
-        "button_RDCeMX"
+        "ai_gen_block_bc1c0a1_TPFecH"
       ],
       "settings": {
         "content_direction": "column",
@@ -2525,7 +2509,7 @@
               "type": "image",
               "name": "t:names.image",
               "settings": {
-                "image": "shopify://shop_images/catalogue_2026_octopus_media_solutions.jpg",
+                "image": "shopify://shop_images/14771108_website_57_2683b6b7-50f6-4329-9150-2e7cb2804704.png",
                 "link": "https://drive.google.com/file/d/1G0FnUMkav24rLRe75ggqNEqbjoe7hzDC/view?usp=sharing",
                 "image_ratio": "adapt",
                 "width": "custom",
