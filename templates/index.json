@@ -447,8 +447,8 @@
         "ai_gen_block_bc1c0a1_TPFecH": {
           "type": "ai_gen_block_bc1c0a1",
           "settings": {
-            "collection": "popular-products-services",
-            "product_limit": 12,
+            "collection": "popular-signage-printing",
+            "product_limit": 18,
             "grid_gap": 12,
             "padding_top": 12,
             "padding_bottom": 20,
