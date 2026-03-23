@@ -47,6 +47,7 @@
           "blocks": {}
         }
       },
+      "disabled": true,
       "settings": {
         "alignment": "flex-start",
         "color_scheme": "scheme-3",
