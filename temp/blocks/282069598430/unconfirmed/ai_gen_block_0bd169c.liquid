@@ -1,6 +1,1214 @@
+{% doc %}
+  @prompt
+    <!DOCTYPE html>
+    <html lang="th">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Section 1 — ป้ายอิงค์เจ็ท</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #f3f7fa; font-family: 'Noto Sans Thai', -apple-system, sans-serif; color: #1A202C; }
+    
+    :root {
+      --c1: #17a9bb; --c1v: #14c9df; --c1l: #e3f8fb;
+      --ink: #1A202C; --ink15: #E5E7EB;
+    }
+    
+    .gs { max-width: 1160px; margin: 0 auto; padding: 48px 20px 56px; }
+    
+    /* HEADER */
+    .sh {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .sh-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+      padding: 5px 13px; border-radius: 99px; white-space: nowrap;
+      background: var(--c1l); color: var(--c1); border: 1px solid rgba(23,169,187,.3);
+    }
+    .sh-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--c1); }
+    .sh-line { height: 1px; background: var(--ink15); }
+    .sh-title { font-size: clamp(17px,2.4vw,22px); font-weight: 800; letter-spacing: -.025em; white-space: nowrap; }
+    .sh-title em { font-style: normal; background: linear-gradient(90deg,#14c9df,#17a9bb); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    
+    /* LAYOUT */
+    .ig-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 8px;
+      height: 260px;
+      margin-bottom: 8px;
+    }
+    .ig-bottom {
+      display: flex; gap: 8px;
+      overflow-x: auto; padding-bottom: 6px;
+      scrollbar-width: thin; scrollbar-color: rgba(20,201,223,.3) transparent;
+    }
+    .ig-bottom::-webkit-scrollbar { height: 3px; }
+    .ig-bottom::-webkit-scrollbar-thumb { background: rgba(20,201,223,.3); border-radius: 99px; }
+    
+    /* ITEM */
+    .gi {
+      position: relative; overflow: hidden; border-radius: 12px;
+      background: #dde5ef; cursor: pointer; flex-shrink: 0;
+    }
+    .gi img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      transition: transform .5s cubic-bezier(.16,1,.3,1);
+    }
+    .gi:hover img { transform: scale(1.08); }
+    
+    .gi-cap {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 32px 11px 10px;
+      background: linear-gradient(to top, rgba(8,8,20,.76) 0%, transparent 100%);
+      color: #fff; font-size: 11px; font-weight: 700; line-height: 1.35;
+      transform: translateY(6px); opacity: 0;
+      transition: transform .22s, opacity .22s;
+    }
+    .gi:hover .gi-cap { transform: translateY(0); opacity: 1; }
+    .gi.hero .gi-cap { opacity: 1; transform: none; font-size: 14px; padding: 48px 16px 14px; }
+    
+    .gi-tag {
+      position: absolute; top: 9px; left: 9px;
+      font-size: 9px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+      padding: 3px 8px; border-radius: 99px;
+      background: rgba(20,201,223,.88); color: #fff;
+      border: 1px solid rgba(255,255,255,.25);
+    }
+    
+    /* scroll row items */
+    .ig-bottom .gi { width: 160px; height: 130px; flex: 0 0 160px; }
+    
+    @media (max-width: 900px) {
+      .ig-top { grid-template-columns: 1.5fr 1fr 1fr; height: 200px; }
+      .ig-top .gi:last-child { display: none; }
+    }
+    @media (max-width: 580px) {
+      .ig-top { grid-template-columns: 1fr 1fr; height: 160px; }
+      .ig-top .gi:nth-child(3), .ig-top .gi:last-child { display: none; }
+      .sh { grid-template-columns: 1fr; gap: 8px; }
+      .sh-line { display: none; }
+      .gs { padding: 32px 14px 40px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .gi img, .gi-cap { transition: none; }
+    }
+    </style>
+    </head>
+    <body>
+    <div class="gs">
+    
+      <div class="sh">
+        <div class="sh-pill"><span class="sh-dot"></span>Digital Print</div>
+        <div class="sh-line"></div>
+        <h2 class="sh-title">ป้ายอิงค์เจ็ท <em>งานพิมพ์ดิจิตอลยอดนิยม</em></h2>
+      </div>
+    
+      <!-- Top: hero + 3 medium -->
+      <div class="ig-top">
+        <div class="gi hero">
+          <img src="https://cdn.shopify.com/s/files/1/0098/2653/3433/files/website_15_c36f5cad-08bb-4ade-9c71-ebe5ca862c4b.jpg?v=1736848895" alt="ระบบโป่งแฝดญี่ปุ่น">
+          <div class="gi-tag">ยอดนิยม</div>
+          <div class="gi-cap">ระบบโป่งแฝดญี่ปุ่น ป้ายไวโรแบนเนอร์</div>
+        </div>
+        <div class="gi">
+          <img src="https://cdn.shopify.com/s/files/1/0098/2653/3433/files/website_2_98aa8b57-8e3d-4d80-a00d-d71a5c7fc7c9.jpg?v=1736848895" alt="Backdrop แบคดร็อป">
+          <div class="gi-cap">Backdrop แบคดร็อป สำเร็จรูป</div>
+        </div>
+        <div class="gi">
+          <img src="https://cdn.shopify.com/s/files/1/0098/2653/3433/files/website_4_53da87ac-ae1a-4d09-a87f-07db4d9e7c42.jpg?v=1736848895" alt="Roll Up">
+          <div class="gi-cap">ป้ายโรลอัพ · Roll Up ป้ายตั้งพื้น</div>
+        </div>
+        <div class="gi">
+          <img src="https://cdn.shopify.com/s/files/1/0098/2653/3433/files/website_5_cf2a79eb-3f73-465b-9e7d-69d50d36e1e4.jpg?v=1736848895" alt="Standee Die-Cut">
+          <div class="gi-cap">สแตนดี้ โลโก้ (Standee Die-Cut)</div>
+        </div>
+      </div>
+    
+      <!-- Bottom sc, Update the lower card section so it becomes a controlled horizontal carousel instead of a free horizontal scrollbar.
+    
+    Requirements:
+    
+    1. Dynamic number of cards
+    - The lower card list must support adding or removing cards easily
+    - The layout should adapt automatically based on the number of cards
+    - Do not hardcode a fixed number of cards
+    - Cards should be generated from a repeatable data structure or block list
+    
+    2. Replace scrollbar with arrow buttons
+    - Remove the horizontal scrollbar
+    - Add left and right navigation buttons
+    - Place the buttons clearly at the left and right side of the lower card row
+    - Buttons should scroll the card track smoothly by one group or one card at a time
+    - Disable or fade the left button when at the beginning
+    - Disable or fade the right button when at the end
+    
+    3. Desktop behaviour
+    - Show a clean horizontal carousel row
+    - Cards remain aligned in one row
+    - Navigation is controlled by left/right buttons only
+    - Keep spacing between cards consistent
+    
+    4. Mobile behaviour
+    - Still allow swipe on mobile
+    - Keep left/right buttons visible if appropriate, or simplify for small screens
+    - Cards should remain responsive and readable
+    - Show fewer cards per view on mobile
+    
+    5. Card layout
+    - Keep all lower cards the same size
+    - Same image ratio
+    - Same title area height
+    - Maintain clean alignment even when card count changes
+    
+    6. Technical structure
+    - Build the lower card section as a reusable slider / carousel
+    - Use a repeatable card item structure
+    - Make it easy to add, remove, or reorder cards from settings or data
+    - Keep the code clean and scalable
+    
+    7. Visual style
+    - Keep the same overall design language
+    - Clean, modern, and premium
+    - Arrow buttons should look neat and minimal, not bulky
+    - Use subtle hover effect on the buttons
+    
+    Important:
+    The lower card section must no longer rely on a visible scrollbar.
+    Use left/right navigation buttons as the main interaction.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-inkjet-gallery-{{ ai_gen_id }} {
+    display: block;
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: {{ block.settings.section_padding_top }}px 20px {{ block.settings.section_padding_bottom }}px;
+    background: {{ block.settings.background_color }};
+    width: {{ block.settings.desktop_width_percent }}%;
+  }
+
+  .ai-inkjet-header-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .ai-inkjet-pill-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 5px 13px;
+    border-radius: 99px;
+    white-space: nowrap;
+    background: {{ block.settings.pill_background }};
+    color: {{ block.settings.pill_text_color }};
+    border: 1px solid {{ block.settings.pill_border_color }};
+  }
+
+  .ai-inkjet-dot-{{ ai_gen_id }} {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: {{ block.settings.pill_dot_color }};
+  }
+
+  .ai-inkjet-line-{{ ai_gen_id }} {
+    height: 1px;
+    background: {{ block.settings.divider_color }};
+  }
+
+  .ai-inkjet-title-{{ ai_gen_id }} {
+    font-size: clamp(17px, 2.4vw, {{ block.settings.title_font_size }}px);
+    font-weight: {{ block.settings.title_font_weight }};
+    letter-spacing: -0.025em;
+    white-space: nowrap;
+    color: {{ block.settings.title_color }};
+  }
+
+  .ai-inkjet-title-{{ ai_gen_id }} em {
+    font-style: normal;
+    background: {{ block.settings.gradient_color_1 }};
+    background: linear-gradient(90deg, {{ block.settings.gradient_color_1 }}, {{ block.settings.gradient_color_2 }});
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .ai-inkjet-top-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 8px;
+    height: {{ block.settings.top_grid_height }}px;
+    margin-bottom: 8px;
+  }
+
+  .ai-inkjet-carousel-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    margin-top: 8px;
+  }
+
+  .ai-inkjet-carousel-container-{{ ai_gen_id }} {
+    overflow: hidden;
+    position: relative;
+  }
+
+  .ai-inkjet-carousel-track-{{ ai_gen_id }} {
+    display: flex;
+    gap: 8px;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    touch-action: pan-y;
+  }
+
+  .ai-inkjet-nav-button-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: {{ block.settings.nav_button_background }};
+    border: 1px solid {{ block.settings.nav_button_border }};
+    color: {{ block.settings.nav_button_color }};
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .ai-inkjet-nav-button-{{ ai_gen_id }}:hover:not(:disabled) {
+    background: {{ block.settings.nav_button_hover_background }};
+    color: {{ block.settings.nav_button_hover_color }};
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .ai-inkjet-nav-button-{{ ai_gen_id }}:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .ai-inkjet-nav-button-{{ ai_gen_id }}.prev {
+    left: -20px;
+  }
+
+  .ai-inkjet-nav-button-{{ ai_gen_id }}.next {
+    right: -20px;
+  }
+
+  .ai-inkjet-nav-button-{{ ai_gen_id }} svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .ai-inkjet-item-{{ ai_gen_id }} {
+    position: relative;
+    overflow: hidden;
+    border-radius: {{ block.settings.item_border_radius }}px;
+    background: {{ block.settings.item_placeholder_bg }};
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .ai-inkjet-item-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .ai-inkjet-item-{{ ai_gen_id }}:hover img {
+    transform: scale(1.08);
+  }
+
+  .ai-inkjet-caption-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 32px 11px 10px;
+    background: linear-gradient(to top, {{ block.settings.caption_overlay_color }} 0%, transparent 100%);
+    color: {{ block.settings.caption_text_color }};
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.35;
+    transform: translateY(6px);
+    opacity: 0;
+    transition: transform 0.22s, opacity 0.22s;
+  }
+
+  .ai-inkjet-item-{{ ai_gen_id }}:hover .ai-inkjet-caption-{{ ai_gen_id }} {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .ai-inkjet-item-{{ ai_gen_id }}.hero .ai-inkjet-caption-{{ ai_gen_id }} {
+    opacity: 1;
+    transform: none;
+    font-size: 14px;
+    padding: 48px 16px 14px;
+  }
+
+  .ai-inkjet-tag-{{ ai_gen_id }} {
+    position: absolute;
+    top: 9px;
+    left: 9px;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 99px;
+    background: {{ block.settings.tag_background }};
+    color: {{ block.settings.tag_text_color }};
+    border: 1px solid {{ block.settings.tag_border_color }};
+  }
+
+  .ai-inkjet-carousel-track-{{ ai_gen_id }} .ai-inkjet-item-{{ ai_gen_id }} {
+    width: {{ block.settings.bottom_item_width }}px;
+    height: {{ block.settings.bottom_item_height }}px;
+    flex: 0 0 {{ block.settings.bottom_item_width }}px;
+  }
+
+  .ai-inkjet-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: {{ block.settings.item_placeholder_bg }};
+  }
+
+  .ai-inkjet-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 500px;
+    max-height: 500px;
+  }
+
+  @media (max-width: 900px) {
+    .ai-inkjet-top-{{ ai_gen_id }} {
+      grid-template-columns: 1.5fr 1fr 1fr;
+      height: 200px;
+    }
+    .ai-inkjet-top-{{ ai_gen_id }} .ai-inkjet-item-{{ ai_gen_id }}:nth-child(4) {
+      display: none;
+    }
+  }
+
+  @media (max-width: 580px) {
+    .ai-inkjet-top-{{ ai_gen_id }} {
+      grid-template-columns: 1fr 1fr;
+      height: 160px;
+    }
+    .ai-inkjet-top-{{ ai_gen_id }} .ai-inkjet-item-{{ ai_gen_id }}:nth-child(3),
+    .ai-inkjet-top-{{ ai_gen_id }} .ai-inkjet-item-{{ ai_gen_id }}:nth-child(4) {
+      display: none;
+    }
+    .ai-inkjet-header-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    .ai-inkjet-line-{{ ai_gen_id }} {
+      display: none;
+    }
+    .ai-inkjet-gallery-{{ ai_gen_id }} {
+      padding: 32px 14px 40px;
+    }
+    .ai-inkjet-nav-button-{{ ai_gen_id }}.prev {
+      left: 0;
+    }
+    .ai-inkjet-nav-button-{{ ai_gen_id }}.next {
+      right: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ai-inkjet-item-{{ ai_gen_id }} img,
+    .ai-inkjet-caption-{{ ai_gen_id }},
+    .ai-inkjet-carousel-track-{{ ai_gen_id }} {
+      transition: none;
+    }
+  }
+{% endstyle %}
+
+<inkjet-gallery-{{ ai_gen_id }} class="ai-inkjet-gallery-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-inkjet-header-{{ ai_gen_id }}">
+    <div class="ai-inkjet-pill-{{ ai_gen_id }}">
+      <span class="ai-inkjet-dot-{{ ai_gen_id }}"></span>
+      {{ block.settings.pill_text }}
+    </div>
+    <div class="ai-inkjet-line-{{ ai_gen_id }}"></div>
+    <h2 class="ai-inkjet-title-{{ ai_gen_id }}">
+      {{ block.settings.title_text }} <em>{{ block.settings.title_gradient_text }}</em>
+    </h2>
+  </div>
+
+  <div class="ai-inkjet-top-{{ ai_gen_id }}">
+    {% for i in (1..4) %}
+      {% liquid
+        assign image_key = 'top_image_' | append: i
+        assign caption_key = 'top_caption_' | append: i
+        assign url_key = 'top_url_' | append: i
+        assign show_tag_key = 'top_show_tag_' | append: i
+
+        assign image = block.settings[image_key]
+        assign caption = block.settings[caption_key]
+        assign url = block.settings[url_key]
+        assign show_tag = block.settings[show_tag_key]
+      %}
+
+      {% if url != blank %}
+        <a href="{{ url }}" class="ai-inkjet-item-{{ ai_gen_id }} {% if i == 1 %}hero{% endif %}">
+      {% else %}
+        <div class="ai-inkjet-item-{{ ai_gen_id }} {% if i == 1 %}hero{% endif %}">
+      {% endif %}
+
+        {% if image != blank %}
+          <img
+            src="{{ image | image_url: width: 800 }}"
+            alt="{{ image.alt | escape }}"
+            loading="lazy"
+            width="{{ image.width }}"
+            height="{{ image.height }}"
+          >
+        {% else %}
+          <div class="ai-inkjet-placeholder-{{ ai_gen_id }}">
+            {{ 'image' | placeholder_svg_tag }}
+          </div>
+        {% endif %}
+
+        {% if show_tag and i == 1 %}
+          <div class="ai-inkjet-tag-{{ ai_gen_id }}">{{ block.settings.tag_text }}</div>
+        {% endif %}
+
+        {% if caption != blank %}
+          <div class="ai-inkjet-caption-{{ ai_gen_id }}">{{ caption }}</div>
+        {% endif %}
+
+      {% if url != blank %}
+        </a>
+      {% else %}
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  <div class="ai-inkjet-carousel-wrapper-{{ ai_gen_id }}">
+    <button
+      class="ai-inkjet-nav-button-{{ ai_gen_id }} prev"
+      aria-label="Previous"
+      data-carousel-prev
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+    </button>
+
+    <div class="ai-inkjet-carousel-container-{{ ai_gen_id }}" data-carousel-container>
+      <div class="ai-inkjet-carousel-track-{{ ai_gen_id }}" data-carousel-track>
+        {% for i in (1..12) %}
+          {% liquid
+            assign image_key = 'bottom_image_' | append: i
+            assign caption_key = 'bottom_caption_' | append: i
+            assign url_key = 'bottom_url_' | append: i
+
+            assign image = block.settings[image_key]
+            assign caption = block.settings[caption_key]
+            assign url = block.settings[url_key]
+          %}
+
+          {% if image != blank or caption != blank %}
+            {% if url != blank %}
+              <a href="{{ url }}" class="ai-inkjet-item-{{ ai_gen_id }}" data-carousel-item>
+            {% else %}
+              <div class="ai-inkjet-item-{{ ai_gen_id }}" data-carousel-item>
+            {% endif %}
+
+              {% if image != blank %}
+                <img
+                  src="{{ image | image_url: width: 400 }}"
+                  alt="{{ image.alt | escape }}"
+                  loading="lazy"
+                  width="{{ image.width }}"
+                  height="{{ image.height }}"
+                >
+              {% else %}
+                <div class="ai-inkjet-placeholder-{{ ai_gen_id }}">
+                  {{ 'image' | placeholder_svg_tag }}
+                </div>
+              {% endif %}
+
+              {% if caption != blank %}
+                <div class="ai-inkjet-caption-{{ ai_gen_id }}">{{ caption }}</div>
+              {% endif %}
+
+            {% if url != blank %}
+              </a>
+            {% else %}
+              </div>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+
+    <button
+      class="ai-inkjet-nav-button-{{ ai_gen_id }} next"
+      aria-label="Next"
+      data-carousel-next
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </button>
+  </div>
+</inkjet-gallery-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class InkjetGallery{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.currentIndex = 0;
+        this.itemsPerView = 5;
+        this.touchStartX = 0;
+        this.touchEndX = 0;
+      }
+
+      connectedCallback() {
+        this.track = this.querySelector('[data-carousel-track]');
+        this.container = this.querySelector('[data-carousel-container]');
+        this.prevButton = this.querySelector('[data-carousel-prev]');
+        this.nextButton = this.querySelector('[data-carousel-next]');
+        this.items = Array.from(this.querySelectorAll('[data-carousel-item]'));
+
+        if (!this.track || this.items.length === 0) return;
+
+        this.calculateItemsPerView();
+        this.updateButtons();
+
+        this.prevButton.addEventListener('click', () => this.prev());
+        this.nextButton.addEventListener('click', () => this.next());
+
+        this.track.addEventListener('touchstart', (e) => this.handleTouchStart(e), { passive: true });
+        this.track.addEventListener('touchend', (e) => this.handleTouchEnd(e), { passive: true });
+
+        window.addEventListener('resize', () => this.handleResize());
+      }
+
+      calculateItemsPerView() {
+        const containerWidth = this.container.offsetWidth;
+        const itemWidth = this.items[0].offsetWidth;
+        const gap = 8;
+        this.itemsPerView = Math.floor((containerWidth + gap) / (itemWidth + gap));
+        if (this.itemsPerView < 1) this.itemsPerView = 1;
+      }
+
+      getMaxIndex() {
+        return Math.max(0, this.items.length - this.itemsPerView);
+      }
+
+      updatePosition() {
+        const itemWidth = this.items[0].offsetWidth;
+        const gap = 8;
+        const offset = this.currentIndex * (itemWidth + gap);
+        this.track.style.transform = `translateX(-${offset}px)`;
+      }
+
+      updateButtons() {
+        const maxIndex = this.getMaxIndex();
+        this.prevButton.disabled = this.currentIndex === 0;
+        this.nextButton.disabled = this.currentIndex >= maxIndex;
+      }
+
+      prev() {
+        if (this.currentIndex > 0) {
+          this.currentIndex--;
+          this.updatePosition();
+          this.updateButtons();
+        }
+      }
+
+      next() {
+        const maxIndex = this.getMaxIndex();
+        if (this.currentIndex < maxIndex) {
+          this.currentIndex++;
+          this.updatePosition();
+          this.updateButtons();
+        }
+      }
+
+      handleTouchStart(e) {
+        this.touchStartX = e.changedTouches[0].screenX;
+      }
+
+      handleTouchEnd(e) {
+        this.touchEndX = e.changedTouches[0].screenX;
+        this.handleSwipe();
+      }
+
+      handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = this.touchStartX - this.touchEndX;
+
+        if (Math.abs(diff) > swipeThreshold) {
+          if (diff > 0) {
+            this.next();
+          } else {
+            this.prev();
+          }
+        }
+      }
+
+      handleResize() {
+        this.calculateItemsPerView();
+        const maxIndex = this.getMaxIndex();
+        if (this.currentIndex > maxIndex) {
+          this.currentIndex = maxIndex;
+        }
+        this.updatePosition();
+        this.updateButtons();
+      }
+    }
+
+    customElements.define('inkjet-gallery-{{ ai_gen_id }}', InkjetGallery{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Inkjet gallery",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#f3f7fa"
+    },
+    {
+      "type": "header",
+      "content": "Header"
+    },
+    {
+      "type": "text",
+      "id": "pill_text",
+      "label": "Pill text",
+      "default": "Digital Print"
+    },
+    {
+      "type": "color",
+      "id": "pill_background",
+      "label": "Pill background",
+      "default": "#e3f8fb"
+    },
+    {
+      "type": "color",
+      "id": "pill_text_color",
+      "label": "Pill text",
+      "default": "#17a9bb"
+    },
+    {
+      "type": "color",
+      "id": "pill_border_color",
+      "label": "Pill border",
+      "default": "#17a9bb"
+    },
+    {
+      "type": "color",
+      "id": "pill_dot_color",
+      "label": "Pill dot",
+      "default": "#17a9bb"
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider",
+      "default": "#E5E7EB"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "title_text",
+      "label": "Title",
+      "default": "ป้ายอิงค์เจ็ท"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "title_gradient_text",
+      "label": "Title gradient text",
+      "default": "งานพิมพ์ดิจิตอลยอดนิยม"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "label": "Title size",
+      "min": 14,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 22
+    },
+    {
+      "type": "select",
+      "id": "title_font_weight",
+      "label": "Title weight",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "600", "label": "Semibold" },
+        { "value": "700", "label": "Bold" },
+        { "value": "800", "label": "Extra bold" }
+      ],
+      "default": "800"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#1A202C"
+    },
+    {
+      "type": "color",
+      "id": "gradient_color_1",
+      "label": "Gradient start",
+      "default": "#14c9df"
+    },
+    {
+      "type": "color",
+      "id": "gradient_color_2",
+      "label": "Gradient end",
+      "default": "#17a9bb"
+    },
+    {
+      "type": "header",
+      "content": "Top grid"
+    },
+    {
+      "type": "range",
+      "id": "top_grid_height",
+      "label": "Height",
+      "min": 160,
+      "max": 400,
+      "step": 20,
+      "unit": "px",
+      "default": 260
+    },
+    {
+      "type": "image_picker",
+      "id": "top_image_1",
+      "label": "Image 1 (hero)"
+    },
+    {
+      "type": "text",
+      "id": "top_caption_1",
+      "label": "Caption 1"
+    },
+    {
+      "type": "url",
+      "id": "top_url_1",
+      "label": "Link 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "top_show_tag_1",
+      "label": "Show tag on image 1",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "top_image_2",
+      "label": "Image 2"
+    },
+    {
+      "type": "text",
+      "id": "top_caption_2",
+      "label": "Caption 2"
+    },
+    {
+      "type": "url",
+      "id": "top_url_2",
+      "label": "Link 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "top_image_3",
+      "label": "Image 3"
+    },
+    {
+      "type": "text",
+      "id": "top_caption_3",
+      "label": "Caption 3"
+    },
+    {
+      "type": "url",
+      "id": "top_url_3",
+      "label": "Link 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "top_image_4",
+      "label": "Image 4"
+    },
+    {
+      "type": "text",
+      "id": "top_caption_4",
+      "label": "Caption 4"
+    },
+    {
+      "type": "url",
+      "id": "top_url_4",
+      "label": "Link 4"
+    },
+    {
+      "type": "header",
+      "content": "Bottom carousel"
+    },
+    {
+      "type": "range",
+      "id": "bottom_item_width",
+      "label": "Item width",
+      "min": 100,
+      "max": 240,
+      "step": 10,
+      "unit": "px",
+      "default": 160
+    },
+    {
+      "type": "range",
+      "id": "bottom_item_height",
+      "label": "Item height",
+      "min": 80,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "default": 130
+    },
+    {
+      "type": "image_picker",
+      "id": "bottom_image_1",
+      "label": "Image 1"
+    },
+    {
+      "type": "text",
+      "id": "bottom_caption_1",
+      "label": "Caption 1"
+    },
+    {
+      "type": "url",
+      "id": "bottom_url_1",
+      "label": "Link 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "bottom_image_2",
+      "label": "Image 2"
+    },
+    {
+      "type": "text",
+      "id": "bottom_caption_2",
+      "label": "Caption 2"
+    },
+    {
+      "type": "url",
+      "id": "bottom_url_2",
+      "label": "Link 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "bottom_image_3",
+      "label": "Image 3"
+    },
+    {
+      "type": "text",
+      "id": "bottom_caption_3",
+      "label": "Caption 3"
+    },
+    {
+      "type": "url",
+      "id": "bottom_url_3",
+      "label": "Link 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "bottom_image_4",
+      "label": "Image 4"
+    },
+    {
+      "type": "text",
+      "id": "bottom_caption_4",
+      "label": "Caption 4"
+    },
+    {
+      "type": "url",
+      "id": "bottom_url_4",
+      "label": "Link 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "bottom_image_5",
+      "label": "Image 5"
+    },
+    {
+      "type": "text",
+      "id": "bottom_caption_5",
+      "label": "Caption 5"
+    },
+    {
+      "type": "url",
+      "id": "bottom_url_5",
+      "label": "Link 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "bottom_image_6",
+      "label": "Image 6"
+    },
+    {
+      "type": "text",
+      "id": "bottom_caption_6",
+      "label": "Caption 6"
+    },
+    {
+      "type": "url",
+      "id": "bottom_url_6",
+      "label": "Link 6"
+    },
+    {
+      "type": "image_picker",
+      "id": "bottom_image_7",
+      "label": "Image 7"
+    },
+    {
+      "type": "text",
+      "id": "bottom_caption_7",
+      "label": "Caption 7"
+    },
+    {
+      "type": "url",
+      "id": "bottom_url_7",
+      "label": "Link 7"
+    },
+    {
+      "type": "image_picker",
+      "id": "bottom_image_8",
+      "label": "Image 8"
+    },
+    {
+      "type": "text",
+      "id": "bottom_caption_8",
+      "label": "Caption 8"
+    },
+    {
+      "type": "url",
+      "id": "bottom_url_8",
+      "label": "Link 8"
+    },
+    {
+      "type": "image_picker",
+      "id": "bottom_image_9",
+      "label": "Image 9"
+    },
+    {
+      "type": "text",
+      "id": "bottom_caption_9",
+      "label": "Caption 9"
+    },
+    {
+      "type": "url",
+      "id": "bottom_url_9",
+      "label": "Link 9"
+    },
+    {
+      "type": "image_picker",
+      "id": "bottom_image_10",
+      "label": "Image 10"
+    },
+    {
+      "type": "text",
+      "id": "bottom_caption_10",
+      "label": "Caption 10"
+    },
+    {
+      "type": "url",
+      "id": "bottom_url_10",
+      "label": "Link 10"
+    },
+    {
+      "type": "image_picker",
+      "id": "bottom_image_11",
+      "label": "Image 11"
+    },
+    {
+      "type": "text",
+      "id": "bottom_caption_11",
+      "label": "Caption 11"
+    },
+    {
+      "type": "url",
+      "id": "bottom_url_11",
+      "label": "Link 11"
+    },
+    {
+      "type": "image_picker",
+      "id": "bottom_image_12",
+      "label": "Image 12"
+    },
+    {
+      "type": "text",
+      "id": "bottom_caption_12",
+      "label": "Caption 12"
+    },
+    {
+      "type": "url",
+      "id": "bottom_url_12",
+      "label": "Link 12"
+    },
+    {
+      "type": "header",
+      "content": "Navigation buttons"
+    },
+    {
+      "type": "color",
+      "id": "nav_button_background",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "nav_button_border",
+      "label": "Border",
+      "default": "#E5E7EB"
+    },
+    {
+      "type": "color",
+      "id": "nav_button_color",
+      "label": "Icon color",
+      "default": "#1A202C"
+    },
+    {
+      "type": "color",
+      "id": "nav_button_hover_background",
+      "label": "Hover background",
+      "default": "#14c9df"
+    },
+    {
+      "type": "color",
+      "id": "nav_button_hover_color",
+      "label": "Hover icon color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "range",
+      "id": "item_border_radius",
+      "label": "Item border radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "color",
+      "id": "item_placeholder_bg",
+      "label": "Placeholder background",
+      "default": "#dde5ef"
+    },
+    {
+      "type": "color",
+      "id": "caption_overlay_color",
+      "label": "Caption overlay",
+      "default": "rgba(8, 8, 20, 0.76)"
+    },
+    {
+      "type": "color",
+      "id": "caption_text_color",
+      "label": "Caption text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "text",
+      "id": "tag_text",
+      "label": "Tag text",
+      "default": "ยอดนิยม"
+    },
+    {
+      "type": "color",
+      "id": "tag_background",
+      "label": "Tag background",
+      "default": "rgba(20, 201, 223, 0.88)"
+    },
+    {
+      "type": "color",
+      "id": "tag_text_color",
+      "label": "Tag text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "tag_border_color",
+      "label": "Tag border",
+      "default": "rgba(255, 255, 255, 0.25)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Inkjet gallery"
+    }
+  ]
+}
 {% endschema %}
