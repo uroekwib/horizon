@@ -2083,3 +2083,13 @@ button.shopify-payment-button__button--unbranded:hover {
 
 /******* only mobile only **********/
 
+.mobile-only {
+    display: none;
+}
+
+/* Mobile Styles: Show the element when the screen width is 768px or less */
+@media only screen and (max-width: 768px) {
+    .mobile-only {
+        display: block; /* Or display: inline, inline-block, flex, etc., depending on the element type you want to show */
+    }
+}
