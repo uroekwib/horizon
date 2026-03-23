@@ -1,6 +1,999 @@
+{% doc %}
+  @prompt
+    Prompt (Enhanced – with images, links, eye-catching design)
+    
+    Design a high-impact, modern website section for a signage company to showcase the “Pole Sign Installation Process”.
+    
+    The section must feel premium, visually engaging, and conversion-focused.
+    
+    Structure:
+    
+    Full-width section with soft gradient background (light grey → subtle blue)
+    Title (centered): “Pole Sign Installation Process”
+    Subtitle: “From foundation to final installation — executed by professional team with quality control at every step”
+    
+    Step Layout:
+    Use a horizontal scroll (desktop: grid 5–6 cards, mobile: swipe carousel)
+    
+    Each step card includes:
+    
+    Large image (top, rounded corners)
+    Step number badge (01, 02, 03… floating on image)
+    Step title
+    Short description (1 line)
+    Clickable link (view more / related service)
+    
+    Example Content (embed directly):
+    
+    Step 01 – Foundation Work
+    Image: /images/pole-sign-foundation.jpg
+    Description: “Concrete footing and anchor preparation for structural stability”
+    Link: /collections/signage
+    
+    Step 02 – Steel Structure
+    Image: /images/pole-sign-structure.jpg
+    Description: “Fabrication and installation of galvanized steel frame”
+    Link: /collections/signage
+    
+    Step 03 – Cladding & Panel
+    Image: /images/pole-sign-cladding.jpg
+    Description: “Install ACP / metal panel with precision alignment”
+    Link: /collections/signage
+    
+    Step 04 – Electrical System
+    Image: /images/pole-sign-lighting.jpg
+    Description: “LED system wiring with safety standard and testing”
+    Link: /collections/signage
+    
+    Step 05 – Final Installation
+    Image: /images/pole-sign-install.jpg
+    Description: “On-site crane installation and finishing inspection”
+    Link: /pages/contact
+    
+    Design Style:
+    
+    Card style: glassmorphism or soft shadow (premium feel)
+    Hover effect:
+    Image zoom slightly
+    Card elevate (translateY -5px)
+    Show “View Details →” CTA
+    Add gradient overlay on image (dark fade bottom for text readability)
+    Use accent color (brand blue) for step numbers and links
+    Add subtle line/connector between steps (timeline feel)
+    
+    Extra UX Enhancements:
+    
+    Auto-scroll hint (arrow or partial cut card on right)
+    Animate cards on scroll (fade-up stagger)
+    Add CTA below section:
+    Button: “Request Quotation” → /pages/contact
+    Add trust badges below:
+    “✔ Experienced Team”
+    “✔ Nationwide Installation”
+    “✔ Engineering Support”
+    
+    Mood Reference:
+    
+    Apple-level clean layout + construction industry strength
+    Mix of minimal + industrial + high-end presentation, Update the section so the background can be selected dynamically.
+    
+    Add background customization options for this section, including:
+    - solid color background
+    - soft gradient background
+    - full-width background image
+    - background image with dark overlay
+    - optional glass / blur style effect
+    
+    Make the background editable through section settings or class-based style variants.
+    
+    Example variants:
+    - bg-solid
+    - bg-gradient
+    - bg-image
+    - bg-overlay
+    - bg-glass
+    
+    Ensure text remains readable on all background types.
+    Maintain the same premium, modern, eye-catching design.
+    Keep the Pole Sign Installation Process layout, card structure, spacing, and responsive behaviour unchanged.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-pole-sign-process-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    position: relative;
+    padding: 80px 20px;
+  }
+
+  .ai-pole-sign-process__bg-layer-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+
+  .ai-pole-sign-process__bg-solid-{{ ai_gen_id }} {
+    background: {{ block.settings.bg_solid_color }};
+  }
+
+  .ai-pole-sign-process__bg-gradient-{{ ai_gen_id }} {
+    background: linear-gradient({{ block.settings.gradient_angle }}deg, {{ block.settings.gradient_color_1 }} 0%, {{ block.settings.gradient_color_2 }} 100%);
+  }
+
+  .ai-pole-sign-process__bg-image-{{ ai_gen_id }} {
+    background-image: url('{{ block.settings.bg_image | image_url: width: 2000 }}');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .ai-pole-sign-process__bg-overlay-{{ ai_gen_id }} {
+    background: rgba(0, 0, 0, {{ block.settings.overlay_opacity }});
+  }
+
+  .ai-pole-sign-process__bg-glass-{{ ai_gen_id }} {
+    backdrop-filter: blur({{ block.settings.glass_blur }}px);
+    background: rgba(255, 255, 255, {{ block.settings.glass_opacity }});
+  }
+
+  .ai-pole-sign-process__container-{{ ai_gen_id }} {
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .ai-pole-sign-process__header-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+
+  .ai-pole-sign-process__title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_size }}px;
+    color: {{ block.settings.title_color }};
+    margin: 0 0 16px;
+    font-weight: 600;
+    text-shadow: {{ block.settings.text_shadow_enabled | default: false | if: '0 2px 8px rgba(0, 0, 0, 0.3)', 'none' }};
+  }
+
+  .ai-pole-sign-process__subtitle-{{ ai_gen_id }} {
+    font-size: {{ block.settings.subtitle_size }}px;
+    color: {{ block.settings.subtitle_color }};
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+    text-shadow: {{ block.settings.text_shadow_enabled | default: false | if: '0 1px 4px rgba(0, 0, 0, 0.3)', 'none' }};
+  }
+
+  .ai-pole-sign-process__steps-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ai-pole-sign-process__steps-{{ ai_gen_id }} {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 20px 0 40px;
+    scrollbar-width: thin;
+    scrollbar-color: {{ block.settings.accent_color }} #e0e0e0;
+  }
+
+  .ai-pole-sign-process__steps-{{ ai_gen_id }}::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .ai-pole-sign-process__steps-{{ ai_gen_id }}::-webkit-scrollbar-track {
+    background: #e0e0e0;
+    border-radius: 4px;
+  }
+
+  .ai-pole-sign-process__steps-{{ ai_gen_id }}::-webkit-scrollbar-thumb {
+    background: {{ block.settings.accent_color }};
+    border-radius: 4px;
+  }
+
+  .ai-pole-sign-process__step-card-{{ ai_gen_id }} {
+    flex: 0 0 320px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border-radius: {{ block.settings.card_border_radius }}px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .ai-pole-sign-process__step-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  }
+
+  .ai-pole-sign-process__image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: 240px;
+    overflow: hidden;
+    background: #f0f0f0;
+  }
+
+  .ai-pole-sign-process__image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .ai-pole-sign-process__step-card-{{ ai_gen_id }}:hover .ai-pole-sign-process__image-{{ ai_gen_id }} {
+    transform: scale(1.05);
+  }
+
+  .ai-pole-sign-process__image-overlay-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+    pointer-events: none;
+  }
+
+  .ai-pole-sign-process__step-badge-{{ ai_gen_id }} {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    width: 48px;
+    height: 48px;
+    background: {{ block.settings.accent_color }};
+    color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 18px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 2;
+  }
+
+  .ai-pole-sign-process__card-content-{{ ai_gen_id }} {
+    padding: 24px;
+  }
+
+  .ai-pole-sign-process__step-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.step_title_size }}px;
+    color: {{ block.settings.step_title_color }};
+    margin: 0 0 12px;
+    font-weight: 600;
+  }
+
+  .ai-pole-sign-process__step-description-{{ ai_gen_id }} {
+    font-size: {{ block.settings.step_description_size }}px;
+    color: {{ block.settings.step_description_color }};
+    line-height: 1.6;
+    margin: 0 0 16px;
+  }
+
+  .ai-pole-sign-process__step-link-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: {{ block.settings.accent_color }};
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: all 0.3s ease;
+  }
+
+  .ai-pole-sign-process__step-card-{{ ai_gen_id }}:hover .ai-pole-sign-process__step-link-{{ ai_gen_id }} {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .ai-pole-sign-process__step-link-{{ ai_gen_id }}:hover {
+    gap: 12px;
+  }
+
+  .ai-pole-sign-process__cta-section-{{ ai_gen_id }} {
+    text-align: center;
+    margin-top: 60px;
+  }
+
+  .ai-pole-sign-process__cta-button-{{ ai_gen_id }} {
+    display: inline-block;
+    padding: 16px 40px;
+    background: {{ block.settings.cta_bg }};
+    color: {{ block.settings.cta_text }};
+    text-decoration: none;
+    border-radius: {{ block.settings.cta_radius }}px;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  .ai-pole-sign-process__cta-button-{{ ai_gen_id }}:hover {
+    background: {{ block.settings.cta_hover_bg }};
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
+
+  .ai-pole-sign-process__trust-badges-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 40px;
+    flex-wrap: wrap;
+  }
+
+  .ai-pole-sign-process__badge-item-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: {{ block.settings.badge_color }};
+  }
+
+  .ai-pole-sign-process__badge-icon-{{ ai_gen_id }} {
+    width: 20px;
+    height: 20px;
+    color: {{ block.settings.accent_color }};
+  }
+
+  .ai-pole-sign-process__placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f0f0f0;
+  }
+
+  .ai-pole-sign-process__placeholder-{{ ai_gen_id }} svg {
+    width: 80px;
+    height: 80px;
+    opacity: 0.3;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-pole-sign-process-{{ ai_gen_id }} {
+      padding: 60px 16px;
+    }
+
+    .ai-pole-sign-process__title-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.title_size }}px * 0.7);
+    }
+
+    .ai-pole-sign-process__subtitle-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.subtitle_size }}px * 0.9);
+    }
+
+    .ai-pole-sign-process__step-card-{{ ai_gen_id }} {
+      flex: 0 0 280px;
+    }
+
+    .ai-pole-sign-process__trust-badges-{{ ai_gen_id }} {
+      gap: 20px;
+    }
+  }
+{% endstyle %}
+
+<pole-sign-process-{{ ai_gen_id }} class="ai-pole-sign-process-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  {% if block.settings.bg_type == 'solid' %}
+    <div class="ai-pole-sign-process__bg-layer-{{ ai_gen_id }} ai-pole-sign-process__bg-solid-{{ ai_gen_id }}"></div>
+  {% elsif block.settings.bg_type == 'gradient' %}
+    <div class="ai-pole-sign-process__bg-layer-{{ ai_gen_id }} ai-pole-sign-process__bg-gradient-{{ ai_gen_id }}"></div>
+  {% elsif block.settings.bg_type == 'image' %}
+    {% if block.settings.bg_image != blank %}
+      <div class="ai-pole-sign-process__bg-layer-{{ ai_gen_id }} ai-pole-sign-process__bg-image-{{ ai_gen_id }}"></div>
+    {% else %}
+      <div class="ai-pole-sign-process__bg-layer-{{ ai_gen_id }} ai-pole-sign-process__bg-gradient-{{ ai_gen_id }}"></div>
+    {% endif %}
+  {% elsif block.settings.bg_type == 'image_overlay' %}
+    {% if block.settings.bg_image != blank %}
+      <div class="ai-pole-sign-process__bg-layer-{{ ai_gen_id }} ai-pole-sign-process__bg-image-{{ ai_gen_id }}"></div>
+      <div class="ai-pole-sign-process__bg-layer-{{ ai_gen_id }} ai-pole-sign-process__bg-overlay-{{ ai_gen_id }}"></div>
+    {% else %}
+      <div class="ai-pole-sign-process__bg-layer-{{ ai_gen_id }} ai-pole-sign-process__bg-gradient-{{ ai_gen_id }}"></div>
+    {% endif %}
+  {% elsif block.settings.bg_type == 'glass' %}
+    <div class="ai-pole-sign-process__bg-layer-{{ ai_gen_id }} ai-pole-sign-process__bg-glass-{{ ai_gen_id }}"></div>
+  {% endif %}
+
+  <div class="ai-pole-sign-process__container-{{ ai_gen_id }}">
+    <div class="ai-pole-sign-process__header-{{ ai_gen_id }}">
+      {% if block.settings.title != blank %}
+        <h2 class="ai-pole-sign-process__title-{{ ai_gen_id }}">{{ block.settings.title }}</h2>
+      {% endif %}
+      {% if block.settings.subtitle != blank %}
+        <p class="ai-pole-sign-process__subtitle-{{ ai_gen_id }}">{{ block.settings.subtitle }}</p>
+      {% endif %}
+    </div>
+
+    <div class="ai-pole-sign-process__steps-wrapper-{{ ai_gen_id }}">
+      <div class="ai-pole-sign-process__steps-{{ ai_gen_id }}">
+        {% for i in (1..5) %}
+          {% liquid
+            assign step_enabled_key = 'step_' | append: i | append: '_enabled'
+            assign step_title_key = 'step_' | append: i | append: '_title'
+            assign step_description_key = 'step_' | append: i | append: '_description'
+            assign step_image_key = 'step_' | append: i | append: '_image'
+            assign step_link_key = 'step_' | append: i | append: '_link'
+
+            assign step_enabled = block.settings[step_enabled_key]
+            assign step_title = block.settings[step_title_key]
+            assign step_description = block.settings[step_description_key]
+            assign step_image = block.settings[step_image_key]
+            assign step_link = block.settings[step_link_key]
+          %}
+
+          {% if step_enabled %}
+            <div class="ai-pole-sign-process__step-card-{{ ai_gen_id }}">
+              <div class="ai-pole-sign-process__image-wrapper-{{ ai_gen_id }}">
+                {% if step_image != blank %}
+                  <img
+                    src="{{ step_image | image_url: width: 640 }}"
+                    alt="{{ step_title | escape }}"
+                    class="ai-pole-sign-process__image-{{ ai_gen_id }}"
+                    loading="lazy"
+                    width="640"
+                    height="480"
+                  >
+                {% else %}
+                  <div class="ai-pole-sign-process__placeholder-{{ ai_gen_id }}">
+                    {{ 'image' | placeholder_svg_tag }}
+                  </div>
+                {% endif %}
+                <div class="ai-pole-sign-process__image-overlay-{{ ai_gen_id }}"></div>
+                <div class="ai-pole-sign-process__step-badge-{{ ai_gen_id }}">
+                  {% if i < 10 %}0{% endif %}{{ i }}
+                </div>
+              </div>
+
+              <div class="ai-pole-sign-process__card-content-{{ ai_gen_id }}">
+                {% if step_title != blank %}
+                  <h3 class="ai-pole-sign-process__step-title-{{ ai_gen_id }}">{{ step_title }}</h3>
+                {% endif %}
+                {% if step_description != blank %}
+                  <p class="ai-pole-sign-process__step-description-{{ ai_gen_id }}">{{ step_description }}</p>
+                {% endif %}
+                {% if step_link != blank %}
+                  <a href="{{ step_link }}" class="ai-pole-sign-process__step-link-{{ ai_gen_id }}">
+                    View Details
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+
+    {% if block.settings.show_cta %}
+      <div class="ai-pole-sign-process__cta-section-{{ ai_gen_id }}">
+        {% if block.settings.cta_label != blank and block.settings.cta_link != blank %}
+          <a href="{{ block.settings.cta_link }}" class="ai-pole-sign-process__cta-button-{{ ai_gen_id }}">
+            {{ block.settings.cta_label }}
+          </a>
+        {% endif %}
+
+        {% if block.settings.show_trust_badges %}
+          <div class="ai-pole-sign-process__trust-badges-{{ ai_gen_id }}">
+            <div class="ai-pole-sign-process__badge-item-{{ ai_gen_id }}">
+              <svg class="ai-pole-sign-process__badge-icon-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>{{ block.settings.badge_1_text }}</span>
+            </div>
+            <div class="ai-pole-sign-process__badge-item-{{ ai_gen_id }}">
+              <svg class="ai-pole-sign-process__badge-icon-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>{{ block.settings.badge_2_text }}</span>
+            </div>
+            <div class="ai-pole-sign-process__badge-item-{{ ai_gen_id }}">
+              <svg class="ai-pole-sign-process__badge-icon-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>{{ block.settings.badge_3_text }}</span>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</pole-sign-process-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class PoleSignProcess{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.stepsContainer = this.querySelector('.ai-pole-sign-process__steps-{{ ai_gen_id }}');
+        this.setupScrollHint();
+      }
+
+      setupScrollHint() {
+        if (!this.stepsContainer) return;
+
+        const isScrollable = this.stepsContainer.scrollWidth > this.stepsContainer.clientWidth;
+        
+        if (isScrollable) {
+          this.stepsContainer.scrollLeft = 0;
+        }
+      }
+    }
+
+    customElements.define('pole-sign-process-{{ ai_gen_id }}', PoleSignProcess{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Pole sign process",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "select",
+      "id": "bg_type",
+      "label": "Background type",
+      "options": [
+        {
+          "value": "solid",
+          "label": "Solid color"
+        },
+        {
+          "value": "gradient",
+          "label": "Gradient"
+        },
+        {
+          "value": "image",
+          "label": "Image"
+        },
+        {
+          "value": "image_overlay",
+          "label": "Image with overlay"
+        },
+        {
+          "value": "glass",
+          "label": "Glass effect"
+        }
+      ],
+      "default": "gradient"
+    },
+    {
+      "type": "color",
+      "id": "bg_solid_color",
+      "label": "Solid color",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "gradient_color_1",
+      "label": "Gradient start",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "gradient_color_2",
+      "label": "Gradient end",
+      "default": "#e1edf5"
+    },
+    {
+      "type": "range",
+      "id": "gradient_angle",
+      "label": "Gradient angle",
+      "min": 0,
+      "max": 360,
+      "step": 15,
+      "unit": "deg",
+      "default": 135
+    },
+    {
+      "type": "image_picker",
+      "id": "bg_image",
+      "label": "Background image"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "default": 0.5
+    },
+    {
+      "type": "range",
+      "id": "glass_blur",
+      "label": "Glass blur",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "glass_opacity",
+      "label": "Glass opacity",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "default": 0.5
+    },
+    {
+      "type": "header",
+      "content": "Section header"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Pole Sign Installation Process"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title size",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#000000"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "From foundation to final installation — executed by professional team with quality control at every step"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "label": "Subtitle size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle color",
+      "default": "#666666"
+    },
+    {
+      "type": "checkbox",
+      "id": "text_shadow_enabled",
+      "label": "Enable text shadow",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Step 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "step_1_enabled",
+      "label": "Enable step 1",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "step_1_title",
+      "label": "Title",
+      "default": "Foundation Work"
+    },
+    {
+      "type": "textarea",
+      "id": "step_1_description",
+      "label": "Description",
+      "default": "Concrete footing and anchor preparation for structural stability"
+    },
+    {
+      "type": "image_picker",
+      "id": "step_1_image",
+      "label": "Image"
+    },
+    {
+      "type": "url",
+      "id": "step_1_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Step 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "step_2_enabled",
+      "label": "Enable step 2",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "step_2_title",
+      "label": "Title",
+      "default": "Steel Structure"
+    },
+    {
+      "type": "textarea",
+      "id": "step_2_description",
+      "label": "Description",
+      "default": "Fabrication and installation of galvanized steel frame"
+    },
+    {
+      "type": "image_picker",
+      "id": "step_2_image",
+      "label": "Image"
+    },
+    {
+      "type": "url",
+      "id": "step_2_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Step 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "step_3_enabled",
+      "label": "Enable step 3",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "step_3_title",
+      "label": "Title",
+      "default": "Cladding & Panel"
+    },
+    {
+      "type": "textarea",
+      "id": "step_3_description",
+      "label": "Description",
+      "default": "Install ACP / metal panel with precision alignment"
+    },
+    {
+      "type": "image_picker",
+      "id": "step_3_image",
+      "label": "Image"
+    },
+    {
+      "type": "url",
+      "id": "step_3_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Step 4"
+    },
+    {
+      "type": "checkbox",
+      "id": "step_4_enabled",
+      "label": "Enable step 4",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "step_4_title",
+      "label": "Title",
+      "default": "Electrical System"
+    },
+    {
+      "type": "textarea",
+      "id": "step_4_description",
+      "label": "Description",
+      "default": "LED system wiring with safety standard and testing"
+    },
+    {
+      "type": "image_picker",
+      "id": "step_4_image",
+      "label": "Image"
+    },
+    {
+      "type": "url",
+      "id": "step_4_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Step 5"
+    },
+    {
+      "type": "checkbox",
+      "id": "step_5_enabled",
+      "label": "Enable step 5",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "step_5_title",
+      "label": "Title",
+      "default": "Final Installation"
+    },
+    {
+      "type": "textarea",
+      "id": "step_5_description",
+      "label": "Description",
+      "default": "On-site crane installation and finishing inspection"
+    },
+    {
+      "type": "image_picker",
+      "id": "step_5_image",
+      "label": "Image"
+    },
+    {
+      "type": "url",
+      "id": "step_5_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card style"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Card border radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "step_title_size",
+      "label": "Step title size",
+      "min": 14,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "step_title_color",
+      "label": "Step title color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "step_description_size",
+      "label": "Description size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "step_description_color",
+      "label": "Description color",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color",
+      "default": "#14c3d8"
+    },
+    {
+      "type": "header",
+      "content": "Call to action"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cta",
+      "label": "Show CTA section",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button text",
+      "default": "Request Quotation"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button link"
+    },
+    {
+      "type": "color",
+      "id": "cta_bg",
+      "label": "Button background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "cta_hover_bg",
+      "label": "Hover background",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "cta_text",
+      "label": "Button text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "cta_radius",
+      "label": "Button radius",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Trust badges"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust_badges",
+      "label": "Show trust badges",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "badge_1_text",
+      "label": "Badge 1 text",
+      "default": "Experienced Team"
+    },
+    {
+      "type": "text",
+      "id": "badge_2_text",
+      "label": "Badge 2 text",
+      "default": "Nationwide Installation"
+    },
+    {
+      "type": "text",
+      "id": "badge_3_text",
+      "label": "Badge 3 text",
+      "default": "Engineering Support"
+    },
+    {
+      "type": "color",
+      "id": "badge_color",
+      "label": "Badge text color",
+      "default": "#333333"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Pole sign process"
+    }
+  ],
+  "tag": null
+}
 {% endschema %}
