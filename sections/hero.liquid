@@ -186,7 +186,7 @@
       <div class="{{ media_wrapper_mobile_class }}">
         {{
           section.settings.image_1_mobile
-          | image_url: width: 1600
+          | image_url: width: 1200
           | image_tag:
             width: section.settings.image_1_mobile.width,
             widths: mobile_widths,
@@ -290,7 +290,7 @@
       <div class="{{ media_wrapper_mobile_class }}">
         {{
           section.settings.image_2_mobile
-          | image_url: width: 1600
+          | image_url: width: 1200
           | image_tag:
             width: section.settings.image_2_mobile.width,
             widths: mobile_widths,
@@ -373,7 +373,7 @@
     {% if section.settings.custom_mobile_media == true and fallback_to_desktop == false %}
       {% if media_1_mobile == 'image' %}
         {{ section.settings.image_1_mobile
-          | image_url: width: 1600
+          | image_url: width: 1200
           | image_tag: width: section.settings.image_1_mobile.width,
             widths: mobile_widths,
             height: section.settings.image_1_mobile.height,
@@ -384,7 +384,7 @@
       {% endif %}
       {% if media_2_mobile == 'image' %}
         {{ section.settings.image_2_mobile
-          | image_url: width: 1600
+          | image_url: width: 1200
           | image_tag: width: section.settings.image_2_mobile.width,
             widths: mobile_widths,
             height: section.settings.image_2_mobile.height,
@@ -400,7 +400,7 @@
     {% if section.settings.custom_mobile_media == true and fallback_to_desktop == false %}
       {% if media_2_mobile == 'image' %}
         {{ section.settings.image_2_mobile
-          | image_url: width: 1600
+          | image_url: width: 1200
           | image_tag: width: section.settings.image_2_mobile.width,
             widths: mobile_widths,
             height: section.settings.image_2_mobile.height,
@@ -410,7 +410,7 @@
         }}
       {% elsif media_1_mobile == 'image' %}
         {{ section.settings.image_1_mobile
-          | image_url: width: 1600
+          | image_url: width: 1200
           | image_tag: width: section.settings.image_1_mobile.width,
             widths: mobile_widths,
             height: section.settings.image_1_mobile.height,
@@ -423,7 +423,7 @@
       {% if media_count > 0 %}
         {% if media_2 == 'image' %}
           {{ section.settings.image_2
-            | image_url: width: 1600
+            | image_url: width: 1200
             | image_tag: width: section.settings.image_2.width,
               widths: widths,
               height: section.settings.image_2.height,
@@ -433,7 +433,7 @@
             }}
         {% elsif media_1 == 'image' %}
           {{ section.settings.image_1
-            | image_url: width: 1600
+            | image_url: width: 1200
             | image_tag: width: section.settings.image_1.width,
               widths: widths,
               height: section.settings.image_1.height,
