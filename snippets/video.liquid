@@ -122,11 +122,13 @@
 
 {% if video != blank %}
   <deferred-media
-  class="{{ video_class }}"
-  style="{{ video_style }}"
-  data-autoplay-on-view="{% if video_autoplay %}true{% else %}false{% endif %}"
-  {{ additional_attributes }}
->
+    class="{{ video_class }}"
+    style="{{ video_style }}"
+    {% if video_autoplay %}
+      autoplay
+    {% endif %}
+    {{ additional_attributes }}
+  >
     {% if video_preview_image != blank %}
       <button
         class="button deferred-media__poster-button button-unstyled"
@@ -174,7 +176,7 @@
         {{ video_tag }}
       {% endif %}
     </template>
-    {% comment %}
+
     {% if video_autoplay or video_preview_image == blank %}
       {% if video_from_url %}
         {{ video_iframe }}
@@ -182,7 +184,6 @@
         {{ video_tag }}
       {% endif %}
     {% endif %}
-    {% endcomment %}
   </deferred-media>
 {% else %}
   <div
@@ -213,4 +214,3 @@
     opacity: 1;
   }
 {% endstylesheet %}
-
