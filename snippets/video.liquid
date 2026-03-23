@@ -3,7 +3,7 @@
 
   Shared parameters:
 
-  @param {boolean} [video_autoplay] - Whether the video should autoplay
+  @param {boolean} [video_autoplay] - Whether the video should autoplay when near viewport
   @param {boolean} [video_loop] - Whether the video should loop
   @param {string} [video_class] - Additional classes for the video element
   @param {string} [video_style] - Additional inline styles
@@ -45,10 +45,6 @@
     if video_type == 'youtube'
       assign video_src = 'https://www.youtube.com/embed/VIDEO_ID?' | replace: 'VIDEO_ID', video
 
-      if video_autoplay == false and video_preview_image != blank
-        assign video_src = video_src | append: '&autoplay=1'
-      endif
-
       if video_autoplay
         assign video_src = video_src | append: '&autoplay=1&mute=1'
       endif
@@ -56,39 +52,41 @@
       if video_loop
         assign video_src = video_src | append: '&playlist=' | append: video | append: '&loop=1'
       endif
+
       if disable_controls
         assign video_src = video_src | append: '&controls=0'
         assign video_src = video_src | append: '&enablejsapi=1'
       endif
+
       assign class = 'js-youtube'
     else
       assign video_src = 'https://player.vimeo.com/video/VIDEO_ID?' | replace: 'VIDEO_ID', video
 
-      if video_autoplay == false and video_preview_image != blank
-        assign video_src = video_src | append: '&autoplay=1'
-      endif
-
       if video_autoplay
         assign video_src = video_src | append: '&autoplay=1&muted=1'
       endif
+
       if video_loop
         assign video_src = video_src | append: '&loop=1'
       endif
+
       if disable_controls
         assign video_src = video_src | append: '&controls=0'
         assign video_src = video_src | append: '&api=1'
       endif
+
       assign class = 'js-vimeo'
     endif
   %}
+
   {% capture video_iframe %}
-      <iframe
-        src="{{ video_src }}"
-        class="{{ class }}"
-        allow="autoplay; encrypted-media"
-        allowfullscreen
-        title="{{ video_alt | escape }}"
-      ></iframe>
+    <iframe
+      src="{{ video_src }}"
+      class="{{ class }}"
+      allow="autoplay; encrypted-media"
+      allowfullscreen
+      title="{{ video_alt | escape }}"
+    ></iframe>
   {% endcapture %}
 {% else %}
   {% liquid
@@ -105,17 +103,17 @@
     {% if video.host == 'youtube' %}
       {{
         video
-        | external_video_url: autoplay: true, loop: video_loop, playlist: video.external_id, mute: '1', controls: controls, enablejsapi: enable_js_api
+        | external_video_url: autoplay: video_autoplay, loop: video_loop, playlist: video.external_id, mute: '1', controls: controls, enablejsapi: enable_js_api
         | external_video_tag: data-video-type: 'youtube'
       }}
     {% elsif video.host == 'vimeo' %}
       {{
         video
-        | external_video_url: autoplay: true, loop: video_loop, muted: '1', controls: controls, api: enable_js_api
+        | external_video_url: autoplay: video_autoplay, loop: video_loop, muted: '1', controls: controls, api: enable_js_api
         | external_video_tag: data-video-type: 'vimeo'
       }}
     {% else %}
-      {{ video | video_tag: image_size: '2500x', autoplay: true, loop: video_loop, muted: true, controls: controls }}
+      {{ video | video_tag: image_size: '2500x', autoplay: video_autoplay, loop: video_loop, muted: true, controls: controls, preload: 'none' }}
     {% endif %}
   {% endcapture %}
 {% endif %}
@@ -124,9 +122,8 @@
   <deferred-media
     class="{{ video_class }}"
     style="{{ video_style }}"
-    {% if video_autoplay %}
-      autoplay
-    {% endif %}
+    data-autoplay-on-view="{% if video_autoplay %}true{% else %}false{% endif %}"
+    data-autoplay-root-margin="0px 0px 300px 0px"
     {{ additional_attributes }}
   >
     {% if video_preview_image != blank %}
@@ -176,14 +173,6 @@
         {{ video_tag }}
       {% endif %}
     </template>
-
-    {% if video_autoplay or video_preview_image == blank %}
-      {% if video_from_url %}
-        {{ video_iframe }}
-      {% else %}
-        {{ video_tag }}
-      {% endif %}
-    {% endif %}
   </deferred-media>
 {% else %}
   <div
@@ -191,7 +180,7 @@
     class="{%- if video_class -%}{{ video_class }} {%- endif -%}video-placeholder-wrapper"
     style="{%- if video_style -%}{{ video_style }} {%- endif -%}--video-placeholder-width: {{ block_settings.custom_width | default: 100 }}%;"
   >
-    {% if video_preview_image != blank and video_autoplay == false %}
+    {% if video_preview_image != blank %}
       {{ video_preview_image | image_url: width: 3840 | image_tag: widths: widths, sizes: sizes, loading: loading }}
     {% else %}
       {{ 'hero-apparel-3' | placeholder_svg_tag }}
@@ -214,3 +203,44 @@
     opacity: 1;
   }
 {% endstylesheet %}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const medias = document.querySelectorAll('deferred-media[data-autoplay-on-view="true"]');
+    if (!('IntersectionObserver' in window) || !medias.length) return;
+
+    const observer = new IntersectionObserver(function (entries, obs) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+
+        const media = entry.target;
+        if (media.dataset.autoplayTriggered === 'true') {
+          obs.unobserve(media);
+          return;
+        }
+
+        media.dataset.autoplayTriggered = 'true';
+
+        if (typeof media.showDeferredMedia === 'function') {
+          media.showDeferredMedia();
+        } else {
+          const template = media.querySelector('template');
+          if (template) {
+            const content = template.content.cloneNode(true);
+            media.appendChild(content);
+          }
+        }
+
+        obs.unobserve(media);
+      });
+    }, {
+      root: null,
+      rootMargin: '0px 0px 300px 0px',
+      threshold: 0.01
+    });
+
+    medias.forEach(function (media) {
+      observer.observe(media);
+    });
+  });
+</script>
