@@ -1,6 +1,561 @@
+{% doc %}
+  @prompt
+    x-scrollable button links pill shape with dynamic color setting for scheme and font size , sticky when scroll down the page, sticky under headersection, ไม้อง sticky ดีกว่า ไม่เวิร์ค, ขอเผื่อ 14 links, อยากได้เส้นไกด์แนวตั้งหนา 2 px มุมมน แต่งซ้ายสุดเท่ ๆ ก่อนเริ่ม pills, เส้น guide ชิดไปทางซ้ายกว่านี้ได้มั้ย เหมือนมัน indent เข้ามานิดหน่อยไม่ได้ระยะเท่า section อื่น
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-pill-links-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+  }
+
+  .ai-pill-links-wrapper-{{ ai_gen_id }} {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: {{ block.settings.color_scheme.settings.border }} transparent;
+    position: relative;
+  }
+
+  .ai-pill-links-wrapper-{{ ai_gen_id }}::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .ai-pill-links-wrapper-{{ ai_gen_id }}::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .ai-pill-links-wrapper-{{ ai_gen_id }}::-webkit-scrollbar-thumb {
+    background-color: {{ block.settings.color_scheme.settings.border }};
+    border-radius: 3px;
+  }
+
+  .ai-pill-links-guide-{{ ai_gen_id }} {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2px;
+    height: calc(100% - {{ block.settings.padding_vertical | times: 2 }}px);
+    background-color: {{ block.settings.guide_color }};
+    border-radius: 1px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .ai-pill-links-container-{{ ai_gen_id }} {
+    display: inline-flex;
+    gap: {{ block.settings.gap }}px;
+    padding: {{ block.settings.padding_vertical }}px {{ block.settings.padding_horizontal }}px;
+    min-width: 100%;
+    padding-left: calc(2px + {{ block.settings.guide_spacing }}px);
+  }
+
+  .ai-pill-link-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: {{ block.settings.pill_padding_vertical }}px {{ block.settings.pill_padding_horizontal }}px;
+    background-color: {{ block.settings.color_scheme.settings.variant_background_color }};
+    color: {{ block.settings.color_scheme.settings.variant_text_color }};
+    border: {{ block.settings.border_width }}px solid {{ block.settings.color_scheme.settings.variant_border_color }};
+    border-radius: 100px;
+    text-decoration: none;
+    white-space: nowrap;
+    font-size: {{ block.settings.font_size }}px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .ai-pill-link-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.color_scheme.settings.variant_hover_background_color }};
+    color: {{ block.settings.color_scheme.settings.variant_hover_text_color }};
+    border-color: {{ block.settings.color_scheme.settings.variant_hover_border_color }};
+  }
+
+  .ai-pill-link-{{ ai_gen_id }}.active {
+    background-color: {{ block.settings.color_scheme.settings.selected_variant_background_color }};
+    color: {{ block.settings.color_scheme.settings.selected_variant_text_color }};
+    border-color: {{ block.settings.color_scheme.settings.selected_variant_border_color }};
+  }
+
+  .ai-pill-link-{{ ai_gen_id }}.active:hover {
+    background-color: {{ block.settings.color_scheme.settings.selected_variant_hover_background_color }};
+    color: {{ block.settings.color_scheme.settings.selected_variant_hover_text_color }};
+    border-color: {{ block.settings.color_scheme.settings.selected_variant_hover_border_color }};
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-pill-links-wrapper-{{ ai_gen_id }} {
+      width: {{ block.settings.desktop_width_percent }}%;
+      margin: 0 auto;
+    }
+  }
+{% endstyle %}
+
+<pill-links-{{ ai_gen_id }} class="ai-pill-links-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-pill-links-wrapper-{{ ai_gen_id }}">
+    <div class="ai-pill-links-guide-{{ ai_gen_id }}"></div>
+    <div class="ai-pill-links-container-{{ ai_gen_id }}">
+      {% for i in (1..14) %}
+        {% liquid
+          assign link_enabled_key = 'link_' | append: i | append: '_enabled'
+          assign link_text_key = 'link_' | append: i | append: '_text'
+          assign link_url_key = 'link_' | append: i | append: '_url'
+          
+          assign link_enabled = block.settings[link_enabled_key]
+          assign link_text = block.settings[link_text_key]
+          assign link_url = block.settings[link_url_key]
+        %}
+
+        {% if link_enabled and link_text != blank %}
+          <a
+            href="{{ link_url }}"
+            class="ai-pill-link-{{ ai_gen_id }}"
+            data-link-index="{{ i }}"
+          >
+            {{ link_text }}
+          </a>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</pill-links-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class PillLinks{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.links = this.querySelectorAll('.ai-pill-link-{{ ai_gen_id }}');
+        this.currentUrl = window.location.pathname;
+        
+        this.highlightActiveLink();
+      }
+
+      highlightActiveLink() {
+        this.links.forEach((link) => {
+          const linkUrl = new URL(link.href).pathname;
+          if (linkUrl === this.currentUrl) {
+            link.classList.add('active');
+          }
+        });
+      }
+    }
+
+    customElements.define('pill-links-{{ ai_gen_id }}', PillLinks{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Pill links",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Font size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "pill_padding_vertical",
+      "label": "Pill vertical padding",
+      "min": 4,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "pill_padding_horizontal",
+      "label": "Pill horizontal padding",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Gap between pills",
+      "min": 4,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "Container vertical padding",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "label": "Container horizontal padding",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Guide line"
+    },
+    {
+      "type": "color",
+      "id": "guide_color",
+      "label": "Guide color",
+      "default": "#14c3d8"
+    },
+    {
+      "type": "range",
+      "id": "guide_spacing",
+      "label": "Spacing from guide",
+      "min": 4,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Link 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "link_1_enabled",
+      "label": "Enable link 1",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "link_1_text",
+      "label": "Text",
+      "default": "All products"
+    },
+    {
+      "type": "url",
+      "id": "link_1_url",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Link 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "link_2_enabled",
+      "label": "Enable link 2",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "link_2_text",
+      "label": "Text",
+      "default": "Banners"
+    },
+    {
+      "type": "url",
+      "id": "link_2_url",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Link 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "link_3_enabled",
+      "label": "Enable link 3",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "link_3_text",
+      "label": "Text",
+      "default": "Standees"
+    },
+    {
+      "type": "url",
+      "id": "link_3_url",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Link 4"
+    },
+    {
+      "type": "checkbox",
+      "id": "link_4_enabled",
+      "label": "Enable link 4",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "link_4_text",
+      "label": "Text",
+      "default": "Displays"
+    },
+    {
+      "type": "url",
+      "id": "link_4_url",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Link 5"
+    },
+    {
+      "type": "checkbox",
+      "id": "link_5_enabled",
+      "label": "Enable link 5",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "link_5_text",
+      "label": "Text"
+    },
+    {
+      "type": "url",
+      "id": "link_5_url",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Link 6"
+    },
+    {
+      "type": "checkbox",
+      "id": "link_6_enabled",
+      "label": "Enable link 6",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "link_6_text",
+      "label": "Text"
+    },
+    {
+      "type": "url",
+      "id": "link_6_url",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Link 7"
+    },
+    {
+      "type": "checkbox",
+      "id": "link_7_enabled",
+      "label": "Enable link 7",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "link_7_text",
+      "label": "Text"
+    },
+    {
+      "type": "url",
+      "id": "link_7_url",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Link 8"
+    },
+    {
+      "type": "checkbox",
+      "id": "link_8_enabled",
+      "label": "Enable link 8",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "link_8_text",
+      "label": "Text"
+    },
+    {
+      "type": "url",
+      "id": "link_8_url",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Link 9"
+    },
+    {
+      "type": "checkbox",
+      "id": "link_9_enabled",
+      "label": "Enable link 9",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "link_9_text",
+      "label": "Text"
+    },
+    {
+      "type": "url",
+      "id": "link_9_url",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Link 10"
+    },
+    {
+      "type": "checkbox",
+      "id": "link_10_enabled",
+      "label": "Enable link 10",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "link_10_text",
+      "label": "Text"
+    },
+    {
+      "type": "url",
+      "id": "link_10_url",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Link 11"
+    },
+    {
+      "type": "checkbox",
+      "id": "link_11_enabled",
+      "label": "Enable link 11",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "link_11_text",
+      "label": "Text"
+    },
+    {
+      "type": "url",
+      "id": "link_11_url",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Link 12"
+    },
+    {
+      "type": "checkbox",
+      "id": "link_12_enabled",
+      "label": "Enable link 12",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "link_12_text",
+      "label": "Text"
+    },
+    {
+      "type": "url",
+      "id": "link_12_url",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Link 13"
+    },
+    {
+      "type": "checkbox",
+      "id": "link_13_enabled",
+      "label": "Enable link 13",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "link_13_text",
+      "label": "Text"
+    },
+    {
+      "type": "url",
+      "id": "link_13_url",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Link 14"
+    },
+    {
+      "type": "checkbox",
+      "id": "link_14_enabled",
+      "label": "Enable link 14",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "link_14_text",
+      "label": "Text"
+    },
+    {
+      "type": "url",
+      "id": "link_14_url",
+      "label": "Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Pill links"
+    }
+  ]
+}
 {% endschema %}
