@@ -953,7 +953,7 @@
         "ai_gen_block_d793960_qXDFVG": {
           "type": "ai_gen_block_d793960",
           "settings": {
-            "color_scheme": "scheme-1",
+            "color_scheme": "scheme-4",
             "font_size": 14,
             "pill_padding_vertical": 6,
             "pill_padding_horizontal": 16,
@@ -3380,9 +3380,9 @@
   "order": [
     "177235722811693327",
     "section_N7HmhE",
-    "carousel_g9LNig",
     "1774326673af0d2b21",
     "17741882289ab2f2d0",
+    "carousel_g9LNig",
     "blocks_8nzwqU",
     "product_list_fa6P9H",
     "product_list_dHfazk",
