@@ -415,6 +415,97 @@
         "padding-block-end": 40
       }
     },
+    "17741882289ab2f2d0": {
+      "type": "_blocks",
+      "blocks": {
+        "text_99fNhj": {
+          "type": "text",
+          "name": "t:names.heading",
+          "settings": {
+            "text": "<h2>ป้ายอิงค์เจ็ท งานพิมพ์ดิจิตอลยอดนิยม</h2>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "rte",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 32,
+            "padding-block-end": 12,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "ai_gen_block_bc1c0a1_TPFecH": {
+          "type": "ai_gen_block_bc1c0a1",
+          "settings": {
+            "collection": "popular-signage-printing",
+            "product_limit": 18,
+            "grid_gap": 12,
+            "padding_top": 12,
+            "padding_bottom": 20,
+            "image_radius": 8,
+            "title_color": "#000000"
+          },
+          "blocks": {}
+        },
+        "button_C83GXU": {
+          "type": "button",
+          "name": "t:names.button",
+          "settings": {
+            "label": "ดูสินค้าและบริการเพิ่มเติม",
+            "link": "shopify://collections/all",
+            "open_in_new_tab": false,
+            "style_class": "button",
+            "width": "fit-content",
+            "custom_width": 100,
+            "width_mobile": "fit-content",
+            "custom_width_mobile": 100
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "text_99fNhj",
+        "ai_gen_block_bc1c0a1_TPFecH",
+        "button_C83GXU"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 0,
+        "padding-block-end": 44
+      }
+    },
     "carousel_g9LNig": {
       "type": "carousel",
       "blocks": {
@@ -1039,97 +1130,6 @@
         "gradient_direction": "to top",
         "padding-block-start": 0,
         "padding-block-end": 32
-      }
-    },
-    "17741882289ab2f2d0": {
-      "type": "_blocks",
-      "blocks": {
-        "text_99fNhj": {
-          "type": "text",
-          "name": "t:names.heading",
-          "settings": {
-            "text": "<h2>ป้ายอิงค์เจ็ท งานพิมพ์ดิจิตอลยอดนิยม</h2>",
-            "width": "fit-content",
-            "max_width": "normal",
-            "alignment": "left",
-            "type_preset": "rte",
-            "font": "var(--font-body--family)",
-            "font_size": "1rem",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "pretty",
-            "color": "var(--color-foreground)",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 32,
-            "padding-block-end": 12,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
-        "ai_gen_block_bc1c0a1_TPFecH": {
-          "type": "ai_gen_block_bc1c0a1",
-          "settings": {
-            "collection": "popular-signage-printing",
-            "product_limit": 18,
-            "grid_gap": 12,
-            "padding_top": 12,
-            "padding_bottom": 20,
-            "image_radius": 8,
-            "title_color": "#000000"
-          },
-          "blocks": {}
-        },
-        "button_C83GXU": {
-          "type": "button",
-          "name": "t:names.button",
-          "settings": {
-            "label": "ดูสินค้าและบริการเพิ่มเติม",
-            "link": "shopify://collections/all",
-            "open_in_new_tab": false,
-            "style_class": "button",
-            "width": "fit-content",
-            "custom_width": 100,
-            "width_mobile": "fit-content",
-            "custom_width_mobile": 100
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "text_99fNhj",
-        "ai_gen_block_bc1c0a1_TPFecH",
-        "button_C83GXU"
-      ],
-      "settings": {
-        "content_direction": "column",
-        "vertical_on_mobile": true,
-        "horizontal_alignment": "flex-start",
-        "vertical_alignment": "center",
-        "align_baseline": false,
-        "horizontal_alignment_flex_direction_column": "center",
-        "vertical_alignment_flex_direction_column": "center",
-        "gap": 12,
-        "section_width": "page-width",
-        "section_height": "",
-        "section_height_custom": 50,
-        "color_scheme": "",
-        "background_media": "none",
-        "video_position": "cover",
-        "background_image_position": "cover",
-        "border": "none",
-        "border_width": 1,
-        "border_opacity": 100,
-        "border_radius": 0,
-        "toggle_overlay": false,
-        "overlay_color": "#00000026",
-        "overlay_style": "solid",
-        "gradient_direction": "to top",
-        "padding-block-start": 0,
-        "padding-block-end": 44
       }
     },
     "blocks_8nzwqU": {
@@ -3380,9 +3380,9 @@
   "order": [
     "177235722811693327",
     "section_N7HmhE",
-    "1774326673af0d2b21",
     "17741882289ab2f2d0",
     "carousel_g9LNig",
+    "1774326673af0d2b21",
     "blocks_8nzwqU",
     "product_list_fa6P9H",
     "product_list_dHfazk",
