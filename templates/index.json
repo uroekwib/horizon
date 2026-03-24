@@ -1082,11 +1082,27 @@
             "title_color": "#000000"
           },
           "blocks": {}
+        },
+        "button_C83GXU": {
+          "type": "button",
+          "name": "t:names.button",
+          "settings": {
+            "label": "ดูสินค้าและบริการเพิ่มเติม",
+            "link": "shopify://collections/all",
+            "open_in_new_tab": false,
+            "style_class": "button",
+            "width": "fit-content",
+            "custom_width": 100,
+            "width_mobile": "fit-content",
+            "custom_width_mobile": 100
+          },
+          "blocks": {}
         }
       },
       "block_order": [
         "text_99fNhj",
-        "ai_gen_block_bc1c0a1_TPFecH"
+        "ai_gen_block_bc1c0a1_TPFecH",
+        "button_C83GXU"
       ],
       "settings": {
         "content_direction": "column",
