@@ -542,7 +542,7 @@
                   "name": "t:names.image",
                   "settings": {
                     "image": "shopify://shop_images/Label_Silver-492823.jpg",
-                    "link": "",
+                    "link": "shopify://pages/sticker-label",
                     "image_ratio": "portrait",
                     "width": "fill",
                     "custom_width": 100,
@@ -625,7 +625,7 @@
                   "name": "t:names.image",
                   "settings": {
                     "image": "shopify://shop_images/balenciaga.webp",
-                    "link": "",
+                    "link": "https://www.barrisol-thailand.com",
                     "image_ratio": "portrait",
                     "width": "fill",
                     "custom_width": 100,
@@ -708,7 +708,7 @@
                   "name": "t:names.image",
                   "settings": {
                     "image": "shopify://shop_images/mini_truck_mobile_service_cockpit_car_wrap.jpg",
-                    "link": "",
+                    "link": "shopify://products/sticker-car-wrap",
                     "image_ratio": "portrait",
                     "width": "fill",
                     "custom_width": 100,
@@ -791,7 +791,7 @@
                   "name": "t:names.image",
                   "settings": {
                     "image": "shopify://shop_images/IMG_2006.png",
-                    "link": "",
+                    "link": "https://alphadigital.co",
                     "image_ratio": "portrait",
                     "width": "fill",
                     "custom_width": 100,
@@ -874,7 +874,7 @@
                   "name": "t:names.image",
                   "settings": {
                     "image": "shopify://shop_images/img_1603-1666405641223.webp",
-                    "link": "",
+                    "link": "shopify://pages/company-signage",
                     "image_ratio": "portrait",
                     "width": "fill",
                     "custom_width": 100,
@@ -934,7 +934,6 @@
           ]
         }
       },
-      "disabled": true,
       "name": "t:names.carousel",
       "settings": {
         "columns": 4,
@@ -942,8 +941,8 @@
         "section_width": "page-width",
         "columns_gap": 12,
         "color_scheme": "scheme-2",
-        "icons_style": "arrow",
-        "icons_shape": "none",
+        "icons_style": "chevron",
+        "icons_shape": "circle",
         "padding-block-start": 48,
         "padding-block-end": 18
       }
@@ -953,6 +952,7 @@
       "blocks": {
         "ai_gen_block_d793960_qXDFVG": {
           "type": "ai_gen_block_d793960",
+          "disabled": true,
           "settings": {
             "color_scheme": "scheme-1",
             "font_size": 14,
@@ -1014,7 +1014,6 @@
       "block_order": [
         "ai_gen_block_d793960_qXDFVG"
       ],
-      "disabled": true,
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,
