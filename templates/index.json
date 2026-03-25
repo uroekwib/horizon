@@ -1034,7 +1034,7 @@
         "color_scheme": "scheme-2",
         "icons_style": "chevron",
         "icons_shape": "circle",
-        "padding-block-start": 18,
+        "padding-block-start": 32,
         "padding-block-end": 18
       }
     },
