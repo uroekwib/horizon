@@ -554,7 +554,7 @@
               "type": "text",
               "name": "t:names.header",
               "settings": {
-                "text": "<h2><em>สินค้าไฮไลท์พิเศษ</em></h2>",
+                "text": "<h2><em>สินค้าและงานบริการไฮไลท์พิเศษ</em></h2>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -1085,6 +1085,7 @@
         },
         "ai_gen_block_d793960_qXDFVG": {
           "type": "ai_gen_block_d793960",
+          "disabled": true,
           "settings": {
             "color_scheme": "scheme-6",
             "font_size": 14,
