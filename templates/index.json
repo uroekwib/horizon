@@ -1041,10 +1041,52 @@
     "1774326673af0d2b21": {
       "type": "_blocks",
       "blocks": {
+        "ai_gen_block_c65fe7f_CM9Cce": {
+          "type": "ai_gen_block_c65fe7f",
+          "settings": {
+            "guide_color": "#14c3d8",
+            "guide_height": 32,
+            "guide_gap": 16,
+            "color_scheme": "scheme-6",
+            "font_size": 14,
+            "padding_vertical": 6,
+            "padding_horizontal": 24,
+            "border_width": 0,
+            "link_1_text": "3D Print พิมพ์สามมิติ",
+            "link_1_url": "shopify://collections/3d-print-service",
+            "link_2_text": "Inkjet Print พิมพ์อิงค์เจ็ท",
+            "link_2_url": "shopify://collections/พิมพ์อิงค์เจ็ท",
+            "link_3_text": "Digital Print พิมพ์ดิจิตอล",
+            "link_3_url": "",
+            "link_4_text": "Digital Die-Cut ตัดไดคัท",
+            "link_4_url": "",
+            "link_5_text": "Wrap Sticker ติดสินค้า",
+            "link_5_url": "",
+            "link_6_text": "Etching กัดกรดลงสี",
+            "link_6_url": "",
+            "link_7_text": "Installation งานติดตั้ง",
+            "link_7_url": "",
+            "link_8_text": "",
+            "link_8_url": "",
+            "link_9_text": "",
+            "link_9_url": "",
+            "link_10_text": "",
+            "link_10_url": "",
+            "link_11_text": "",
+            "link_11_url": "",
+            "link_12_text": "",
+            "link_12_url": "",
+            "link_13_text": "",
+            "link_13_url": "",
+            "link_14_text": "",
+            "link_14_url": ""
+          },
+          "blocks": {}
+        },
         "ai_gen_block_d793960_qXDFVG": {
           "type": "ai_gen_block_d793960",
           "settings": {
-            "color_scheme": "scheme-4",
+            "color_scheme": "scheme-6",
             "font_size": 14,
             "pill_padding_vertical": 6,
             "pill_padding_horizontal": 16,
@@ -1102,6 +1144,7 @@
         }
       },
       "block_order": [
+        "ai_gen_block_c65fe7f_CM9Cce",
         "ai_gen_block_d793960_qXDFVG"
       ],
       "settings": {
