@@ -578,6 +578,14 @@
       + '</div>';
   }
 
+  function formatPrice(price) {
+  return '฿' + new Intl.NumberFormat('th-TH', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  }).format(price);
+}
+
+
   function cardHTML(p, index, currentPage) {
     var imgObj = p.featured_image || (p.images && p.images[0]) || null;
     var img = '';
