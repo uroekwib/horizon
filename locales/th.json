@@ -185,7 +185,7 @@
       "other": "{{ count }} รายการ"
     },
     "errors": "ข้อผิดพลาด",
-    "price_from": "จาก {{ price }}",
+    "price_from": "เริ่มจาก {{ price }}",
     "featured_products": "สินค้าที่แนะนำ",
     "no_products_found": "ไม่พบสินค้า",
     "use_fewer_filters_html": "ลองใช้ตัวกรองน้อยลง หรือ<a class=\"{{ class }}\" href=\"{{ link }}\">ล้างตัวกรองทั้งหมด</a>",
