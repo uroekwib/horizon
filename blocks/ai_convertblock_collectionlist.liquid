@@ -320,6 +320,7 @@
 
 <div
   class="ocf-{{ ai_gen_id }}"
+  data-i18n-price-from="{{ 'content.price_from' | t: price: '__PRICE__' | escape }}"
   data-products-per-page="{{ initial_products_limit }}"
   data-active-handle="{{ collection.handle }}"
   data-desktop-cols="{{ block.settings.products_per_row_desktop }}"
@@ -596,13 +597,16 @@
     var title = escapeHtml(p.title);
     var eager = currentPage === 1 && index < 4;
     var highPriority = currentPage === 1 && index === 0;
+    var priceFromTpl = root.dataset.i18nPriceFrom || 'เริ่มจาก __PRICE__';
+
 
     return '<a href="/products/' + p.handle + '" class="ocf__card-{{ ai_gen_id }}">'
       + getImageHtml(img, title, eager, highPriority)
       + '<div class="ocf__card-body-{{ ai_gen_id }}">'
       + '<h3 class="ocf__card-title-{{ ai_gen_id }}">' + title + '</h3>'
-      + '<div class="ocf__card-price-{{ ai_gen_id }}">เริ่มจาก ' + formatPrice(price) + '/ชิ้น</div>'
-      + '</div>'
+     '<div class="ocf__card-price-{{ ai_gen_id }}">'
++ priceFromTpl.replace('__PRICE__', formatPrice(price)) + '/ชิ้น'
+ + '</div>'
       + '</a>';
   }
 
