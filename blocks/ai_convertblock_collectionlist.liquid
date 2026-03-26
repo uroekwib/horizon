@@ -436,10 +436,11 @@
 
             <div class="ocf__card-body-{{ ai_gen_id }}">
               <h3 class="ocf__card-title-{{ ai_gen_id }}">{{ product.title }}</h3>
-              <div class="ocf__card-price-{{ ai_gen_id }}">
-                {%- assign unit = product.metafields.custom.product_price.value | default: product.metafields.custom.product_price | default: 'blocks.per_unit_default' | t -%}
-                {{ 'content.price_from' | t: price: product.price | money_without_trailing_zeros }}/ {{ product.metafields.custom.product_price.value | default: product.metafields.custom.product_price | default: 'ชิ้น' }}
-              </div>
+             <div class="ocf__card-price-{{ ai_gen_id }}">
+  {%- assign formatted_price = product.price | money_without_trailing_zeros -%}
+  {{ 'content.price_from' | t: price: formatted_price }}/{{ product.metafields.custom.product_price.value | default: product.metafields.custom.product_price | default: 'ชิ้น' }}
+</div>
+
             </div>
           </a>
 
