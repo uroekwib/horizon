@@ -57,10 +57,6 @@
   {% endif %}
 </span>
 
-  <span>{{ product_resource.price | money_without_trailing_zeros }}</span>
-  {% if product_resource.metafields.custom.product_price != blank %}
-    <span>/{{ product_resource.metafields.custom.product_price }}</span>
-  {% endif %}
 </div>
 
   {% if block_settings.show_tax_info %}
