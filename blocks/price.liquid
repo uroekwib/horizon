@@ -49,7 +49,14 @@
 >
 
 <div style="display: flex; align-items: baseline; gap: 0.25rem; flex-wrap: wrap;">
-  <span>{{ 'product.price.from' | t }}</span>
+  <span style="display: inline-flex; align-items: baseline; gap: 0.25rem; flex-wrap: wrap;">
+  {%- assign formatted_price = product_resource.price | money_without_trailing_zeros -%}
+  <span>{{ 'content.price_from' | t: price: formatted_price }}</span>
+  {% if product_resource.metafields.custom.product_price != blank %}
+    <span>/{{ product_resource.metafields.custom.product_price }}</span>
+  {% endif %}
+</span>
+
   <span>{{ product_resource.price | money_without_trailing_zeros }}</span>
   {% if product_resource.metafields.custom.product_price != blank %}
     <span>/{{ product_resource.metafields.custom.product_price }}</span>
