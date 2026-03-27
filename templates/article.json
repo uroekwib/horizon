@@ -59,8 +59,8 @@
           "static": true,
           "settings": {
             "image_ratio": "adapt",
-            "width": "fit-content",
-            "custom_width": 100,
+            "width": "custom",
+            "custom_width": 50,
             "width_mobile": "fit-content",
             "custom_width_mobile": 100,
             "height": "fill",
