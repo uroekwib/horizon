@@ -2470,7 +2470,7 @@
           "name": "t:names.button",
           "settings": {
             "label": "วัสดุทำป้ายยอดนิยม",
-            "link": "shopify://collections/all",
+            "link": "shopify://blogs/how-to/signage-materials",
             "open_in_new_tab": false,
             "style_class": "button",
             "width": "fit-content",
