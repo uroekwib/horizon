@@ -3370,8 +3370,28 @@
     "1772340576b1154f8e": {
       "type": "_blocks",
       "blocks": {
+        "ai_convertblock_selectedblogs_Jxtmxq": {
+          "type": "ai_convertblock_selectedblogs",
+          "name": "Selected Blogs",
+          "settings": {
+            "blog": "how-to",
+            "heading": "บทความล่าสุด",
+            "heading_size": 32,
+            "view_all_label": "ดูทั้งหมด",
+            "view_all_url": "shopify://blogs/how-to",
+            "container_width": 1400,
+            "card_background": "#ffffff",
+            "card_border_radius": 12,
+            "heading_color": "#000000",
+            "title_color": "#000000",
+            "excerpt_color": "#666666",
+            "link_color": "#000000"
+          },
+          "blocks": {}
+        },
         "ai_gen_block_ef7ba01_EMJJCe": {
           "type": "ai_gen_block_ef7ba01",
+          "disabled": true,
           "settings": {
             "blog": "how-to",
             "heading": "บทความล่าสุด",
@@ -3390,6 +3410,7 @@
         }
       },
       "block_order": [
+        "ai_convertblock_selectedblogs_Jxtmxq",
         "ai_gen_block_ef7ba01_EMJJCe"
       ],
       "settings": {
