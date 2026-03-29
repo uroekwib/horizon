@@ -32,7 +32,6 @@
     {%- render 'color-schemes' -%}
     {{ 'custom.css' | asset_url | stylesheet_tag }}
 
-
     {% if request.design_mode %}
       {%- render 'theme-editor' -%}
     {% endif %}
@@ -132,9 +131,11 @@
     {% render 'search-modal' %}
 
     {% if settings.quick_add or settings.mobile_quick_add %}
-      {% render 'quick-add-modal' %}
+      {% if template.name == 'product' %}
+        {% render 'quick-add-modal' %}
+      {% endif %}
     {% endif %}
-    
+
     {% section 'social-bar' %}
   </body>
 </html>
