@@ -386,7 +386,7 @@
         box-shadow: inset 0 0 0 1.5px hsl(0 0% 0% / 0.15);
 
         @supports not (view-timeline-axis: inline) {
-          &[aria-selected='true'] {
+          &[aria-pressed='true'] {
             --color: var(--color-active);
           }
         }
@@ -396,7 +396,7 @@
         }
       }
 
-      &[aria-selected='true'] {
+      &[aria-pressed='true'] {
         --color: var(--color-active);
 
         &::after {
