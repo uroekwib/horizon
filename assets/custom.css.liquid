@@ -111,6 +111,16 @@
   --grid-desktop-horizontal-spacing: 20px;
 }
 
+/* ── Fix: margin หลัง <style> tag ใน product description (Horizon base.css override) ── */
+.text-block > style + * { margin-block-start: 1rem; }
+.text-block > h2        { margin-block-start: 1.8rem; }
+.text-block > h3        { margin-block-start: 1.4rem; }
+.text-block > .divline  { margin-block-start: 2rem; }
+.text-block > .oc-hd-bar,
+.text-block > .oc-feat-strip,
+.text-block > .oc-step-row,
+.text-block > .divtable-spec,
+.text-block > .divtable { margin-block-start: 1.8rem; }
 
 /* ============================================================
    §3  BRAND TOKENS (Octopus CI)
