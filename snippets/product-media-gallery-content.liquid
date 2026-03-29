@@ -551,7 +551,7 @@
                     on:pointerenter="/handleThumbnailPointerEnter/{{ forloop.index0 }}"
                     style="--aspect-ratio: {{ aspect_ratio }}; --gallery-aspect-ratio: {{ aspect_ratio }};"
                     {% if forloop.first %}
-                      aria-selected="true"
+                      aria-pressed="{{ forloop.first }}"
                     {% endif %}
                   >
                     {{
