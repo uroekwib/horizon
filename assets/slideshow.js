@@ -931,6 +931,9 @@ export class Slideshow extends Component {
       slides.forEach((slide) => {
         const isVisible = visibleSlides.includes(slide);
         slide.setAttribute('aria-hidden', `${!isVisible}`);
+        slide.querySelectorAll('a, button, input, select, textarea, [tabindex]').forEach((el) => {
+        el.setAttribute('tabindex', isVisible ? '0' : '-1');
+        });
       });
     });
 
