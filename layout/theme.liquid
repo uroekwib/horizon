@@ -24,8 +24,10 @@
       >
     {% endif %}
 
-    <link rel="preload" href="{{ 'GoogleSans-Bold.woff2' | asset_url }}" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="{{ 'NotoSansThai-Bold.woff2' | asset_url }}" as="font" type="font/woff2" crossorigin>
+    {{ 'GoogleSans-Bold.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2' }}
+    {{ 'NotoSansThai-Bold.woff' | asset_url | preload_tag: as: 'font', type: 'font/woff' }}
+    {{ 'GoogleSans-Regular.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2' }}
+    {{ 'NotoSansThai-Regular.woff' | asset_url | preload_tag: as: 'font', type: 'font/woff' }}
     {%- render 'meta-tags' -%}
     {%- render 'stylesheets' -%}
     {%- render 'fonts' -%}
