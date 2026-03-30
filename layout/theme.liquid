@@ -24,9 +24,11 @@
       >
     {% endif %}
 
+    <link rel="preload" href="{{ 'GoogleSans-Bold.woff2' | asset_url }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ 'NotoSansThai-Bold.woff2' | asset_url }}" as="font" type="font/woff2" crossorigin>
     {%- render 'meta-tags' -%}
     {%- render 'stylesheets' -%}
-    {%- render 'fonts' -%}
+    {% comment %}{%- render 'fonts' -%}{% endcomment %}
     {%- render 'scripts' -%}
     {%- render 'theme-styles-variables' -%}
     {%- render 'color-schemes' -%}
