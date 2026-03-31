@@ -75,7 +75,8 @@
               ref="menuitem"
             >
               <span class="menu-list__link-title">{{- link.title -}}</span>
-               </button>
+              <svg class="oc-nav__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px; height:14px; margin-left:4px; opacity:0.5; transition: transform 0.25s;"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
           {% else %}
             <a
               href="{{ link.url }}"
@@ -237,7 +238,7 @@
             class: overflow_class,
             ref: 'overflowMenu',
             children: children,
-            minimum-items: 5,
+            minimum-items: 2,
             data-testid: 'header-menu-overflow-list',
             attributes: 'data-skip-node-update'
           %}
@@ -580,26 +581,6 @@
 
 @keyframes oc-sub-in { from { opacity: 0; transform: translateX(5px); } to { opacity: 1; transform: translateX(0); } }
 @keyframes oc-card-in { from { opacity: 0; transform: translateX(5px); } to { opacity: 1; transform: translateX(0); } }
-
-
-/* 1. บีบระยะห่างระหว่างเมนูให้ชิดขึ้นเล็กน้อย เพื่อเพิ่มพื้นที่หายใจ */
-.menu-list {
-  column-gap: 15px !important; /* ลดจากค่า Default ถ้ามันกว้างไป */
-  justify-content: flex-start !important;
-}
-
-/* 2. บังคับไม่ให้ปุ่ม More (เพิ่มเติม) โผล่มาถ้าไม่จำเป็นจริงๆ */
-header-menu {
-  width: 100%;
-}
-
-/* 3. ปรับให้เมนู "สินค้าและบริการ" มีขนาดที่แน่นอน (Fixed Width) 
-   เพื่อให้ JS คำนวณง่ายขึ้น ไม่ต้องเดา */
-.oc-nav-trigger {
-  padding: 0 5px !important;
-  min-width: max-content; /* บังคับให้กว้างเท่าเนื้อหาข้างในพอดี */
-}
-
 {% endstylesheet %}
 
 {% schema %}
