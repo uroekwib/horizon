@@ -58,22 +58,26 @@
           {% assign is_mega_toggle_only = true %}
         {% endif %}
 
+        <!-- คืนค่า on:pointerenter / on:pointerleave ของธีมกลับมา เพื่อป้องกันบั๊ก 'เพิ่มเติม' -->
         <li
           class="menu-list__list-item"
           role="presentation"
           on:focus="/activate"
           on:blur="/deactivate"
+          on:pointerenter="/activate"
+          on:pointerleave="/deactivate"
         >
           {% if is_mega_toggle_only %}
             <button
               type="button"
               data-skip-node-update="true"
-              class="menu-list__link button-unstyled{% if link.active %} menu-list__link--active{% endif %} oc-nav-trigger"
+              class="menu-list__link button-unstyled{% if link.active %} menu-list__link--active{% endif %}"
               aria-controls="submenu-{{ forloop.index }}"
               aria-haspopup="true"
               aria-expanded="false"
               ref="menuitem"
             >
+              <!-- เอาลูกศรออก ตามรีเควส -->
               <span class="menu-list__link-title">{{- link.title -}}</span>
             </button>
           {% else %}
@@ -97,7 +101,8 @@
             <div class="menu-list__submenu {{ color_scheme_classes }}" ref="submenu[]">
               <div
                 id="submenu-{{ forloop.index }}"
-                class="menu-list__submenu-inner oc-mega-wrapper {{ page_width_class }}"
+                class="menu-list__submenu-inner oc-mega-inner {{ page_width_class }}"
+                style="{% render 'submenu-font-styles', settings: block_settings %}"
               >
                 <!-- ═══ MEGA PANEL V4 ═══ -->
                 <div class="oc-mega__wrap" data-product-limit="{{ block_settings.product_limit | default: 12 }}">
@@ -125,7 +130,9 @@
                                 {%- when 'booth' -%}<svg viewBox="0 0 24 24"><path d="M3 3h18v18H3z" fill="none"/><path d="M3 9h18"/><path d="M9 3v18"/></svg>
                                 {%- when 'photo' -%}<svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
                                 {%- when 'digital' -%}<svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><polygon points="10 8 16 12 10 16 10 8" fill="none"/></svg>
-                                {%- else -%}<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+                                {%- else -%}
+                                <!-- ไอคอนสำรองสำหรับหมวดที่ชื่อ Handle ไม่ตรง -->
+                                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
                               {%- endcase -%}
                             </span>
                             {{- l0.title -}}
@@ -210,6 +217,8 @@
         slot="more"
         on:focus="/activate"
         on:blur="/deactivate"
+        on:pointerenter="/activate"
+        on:pointerleave="/deactivate"
       >
         <button role="listitem" class="menu-list__link button-unstyled">
           <span class="menu-list__link-title">{{ 'actions.more' | t }}</span>
@@ -326,7 +335,7 @@
           
           var catTimer = null;
           var subCatTimer = null;
-          var CAT_DELAY = 300; // หน่วงเปลี่ยนหมวดหลัก
+          var CAT_DELAY = 300; // หน่วงเปลี่ยนหมวดหลักให้นุ่มขึ้น
           var SUB_DELAY = 250; // หน่วงเปลี่ยนหมวดย่อย
 
           // 1. Hover Category (Col 1)
@@ -391,7 +400,7 @@
                 return;
               }
 
-              // ใช้แค่ 4 ตัวแรกเป็นการ์ด ส่วนที่เหลือเป็น Pill
+              // ใช้แค่ 4 ตัวแรกเป็นการ์ด (4 รูปต่อแถว) ส่วนที่เหลือเป็น Pill Button
               var thumbs = products.slice(0, 4);
               var rest = products.slice(4);
 
@@ -411,12 +420,13 @@
                 }
                 html += '<div class="oc-mega__card-body">';
                 html += '<div class="oc-mega__card-name">' + esc(p.title) + '</div>';
+                // ซ่อนราคาตามที่รีเควส
                 html += '</div></a>';
               });
               html += '</div>';
 
               if (rest.length > 0) {
-                 html += '<div class="oc-mega__tags-hd" style="margin-top:16px;">สินค้าอื่นๆ ในหมวดนี้</div>';
+                 html += '<div class="oc-mega__tags-hd" style="margin-top:16px;">รายการสินค้าอื่นๆ</div>';
                  html += '<div class="oc-mega__tags">';
                  rest.forEach(function(p) {
                    html += '<a href="/products/' + esc(p.handle) + '" class="oc-mega__tag">' + esc(p.title) + '</a>';
@@ -454,115 +464,48 @@
               if (pane) pane.classList.toggle('scrolled-end', el.scrollTop + el.clientHeight >= el.scrollHeight - 4);
             });
           });
-        }
 
-        /* ── 5. Original Header Hover Guard (The proven safe logic) ── */
-        var OPEN_DELAY  = 200;  // หน่วงตอนเปิดเมนู ป้องกันเฉี่ยว
-        var CLOSE_DELAY = 350;  // หน่วงตอนปิดเมนู ช่วยให้ไม่กระพริบ
-        var openTimer  = null;
-        var closeTimer = null;
-        var overlay = document.getElementById('megaOverlay');
-
-        function clearOpen()  { if (openTimer)  { clearTimeout(openTimer);  openTimer  = null; } }
-        function clearClose() { if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; } }
-
-        function getOpenTrigger() {
-          return document.querySelector('.menu-list__list-item .menu-list__link[aria-haspopup][aria-expanded="true"]');
-        }
-
-        function closeAll() {
-          document.querySelectorAll('.menu-list__list-item .menu-list__link[aria-haspopup][aria-expanded="true"]').forEach(function (t) { 
-            t.setAttribute('aria-expanded', 'false'); 
-          });
-          if(overlay) overlay.classList.remove('active');
-        }
-
-        function bindItems(root) {
-          if (!isDesktopMenu()) return;
-          root.querySelectorAll('.menu-list__list-item').forEach(function (item) {
-            if (item._ocHoverBound) return;
-            item._ocHoverBound = true;
-
-            var trigger = item.querySelector('.menu-list__link[aria-haspopup]');
-            if (!trigger) return;
-
-            item.addEventListener('mouseenter', function () {
-              clearOpen();
-              clearClose(); 
-
-              if (trigger.getAttribute('aria-expanded') === 'true') return;
-
-              if (getOpenTrigger()) {
-                closeAll();
-                trigger.setAttribute('aria-expanded', 'true');
-                if(overlay) {
-                  var headerContainer = document.querySelector('sticky-header, #header-component');
-                  if(headerContainer) overlay.style.top = headerContainer.getBoundingClientRect().bottom + 'px';
-                  overlay.classList.add('active');
-                }
-              } else {
-                openTimer = setTimeout(function () {
-                  trigger.setAttribute('aria-expanded', 'true');
-                  if(overlay) {
-                    var headerContainer = document.querySelector('sticky-header, #header-component');
-                    if(headerContainer) overlay.style.top = headerContainer.getBoundingClientRect().bottom + 'px';
+          // 5. ควบคุม Overlay ดำ โดยอิงตาม Native JS ของ Theme
+          // ไม่ต้องเขียนโค้ดเปิด-ปิดเมนูเองอีกต่อไป ให้ธีมจัดการความนิ่ง 100%
+          var triggers = document.querySelectorAll('.menu-list__list-item > button[aria-haspopup="true"]');
+          var overlay = document.getElementById('megaOverlay');
+          
+          if (overlay && triggers.length > 0) {
+            var observer = new MutationObserver(function(mutations) {
+              mutations.forEach(function(mutation) {
+                if (mutation.attributeName === 'aria-expanded') {
+                  var isExpanded = mutation.target.getAttribute('aria-expanded') === 'true';
+                  if (isExpanded) {
+                    var header = document.getElementById('header-component');
+                    var top = header ? header.getBoundingClientRect().bottom : 64;
+                    overlay.style.top = top + 'px';
                     overlay.classList.add('active');
+                  } else {
+                    overlay.classList.remove('active');
                   }
-                }, OPEN_DELAY);
-              }
+                }
+              });
             });
-
-            item.addEventListener('focusin', function () {
-              clearOpen(); clearClose();
-              trigger.setAttribute('aria-expanded', 'true');
-              if(overlay) overlay.classList.add('active');
+            triggers.forEach(function(trigger) {
+              observer.observe(trigger, { attributes: true });
             });
-
-            item.addEventListener('focusout', function () {
-              setTimeout(function () {
-                if (!item.contains(document.activeElement)) closeAll();
-              }, 150);
-            });
-          });
+          }
         }
 
-        function attachHeaderGuard() {
-          if (!isDesktopMenu()) return;
-          var hdr = document.getElementById('header-component');
-          if (!hdr || hdr._ocGuardBound) return;
-          hdr._ocGuardBound = true;
-
-          hdr.addEventListener('mouseover', function () { clearClose(); });
-          hdr.addEventListener('mouseleave', function () {
-            clearOpen();
-            closeTimer = setTimeout(closeAll, CLOSE_DELAY);
-          });
-        }
-
-        if (document.readyState === 'loading') { 
-          document.addEventListener('DOMContentLoaded', function() {
-            initV4MegaMenu();
-            bindItems(document);
-            attachHeaderGuard();
-          }); 
-        } else { 
-          setTimeout(function() {
-            initV4MegaMenu();
-            bindItems(document);
-            attachHeaderGuard();
-          }, 100); 
-        }
-
-        var obs = new MutationObserver(function () {
-          bindItems(document);
-          attachHeaderGuard();
-        });
-        obs.observe(document.body, { childList: true, subtree: true });
-
+        if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initV4MegaMenu); } else { setTimeout(initV4MegaMenu, 100); }
       })();
     </script>
 
 {% endcase %}
+
+{% style %}
+  /* ปิดไม่ให้ Header กลายเป็นสีเทาเมื่อเมนูเปิด! บังคับให้เป็นสีขาวสะอาดตาเสมอ */
+  .header__underlay {
+    --color-submenu: 255 255 255 !important; 
+    opacity: 0 !important;
+    display: none !important;
+  }
+{% endstyle %}
 
 {% stylesheet %}
 /* ═══ CSS Variables & Reset V4 ═══ */
@@ -585,12 +528,6 @@
   --oc-radius-pill: 999px;
 }
 
-/* ── Prevent Theme Underlay from Making Header Grey ── */
-.header__underlay { 
-  background-color: transparent !important; 
-  box-shadow: none !important; 
-}
-
 /* Original Menu list resets */
 .header__drawer { --header-drawer-min-height: 60px; display: flex; min-height: var(--header-drawer-min-height); align-items: center; }
 #header-component[data-menu-style='drawer'] .header__drawer { display: flex; min-height: var(--header-drawer-min-height); }
@@ -598,10 +535,11 @@
 
 /* ═══ MEGA MENU V4 ═══ */
 .oc-overlay { position: fixed; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0); z-index: 998; pointer-events: none; transition: background 0.35s; }
-.oc-overlay.active { background: rgba(0,0,0,0.15); }
+.oc-overlay.active { background: rgba(0,0,0,0.15); pointer-events: auto; }
 
+.oc-mega-inner { position: relative; display: flex; justify-content: space-between; padding: 0 !important; width: 100%; margin: 0 auto; box-sizing: border-box; }
 .oc-mega-wrapper { width: 100%; background: transparent !important; box-shadow: none !important; }
-.oc-mega__wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1000;}
+.oc-mega__wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1000; width: 100%;}
 .oc-mega__panel { background: #fff; border-radius: 0 0 var(--oc-radius-lg) var(--oc-radius-lg); box-shadow: var(--oc-shadow-lg); border: 1px solid rgba(0,0,0,0.06); border-top: 0; overflow: hidden; display: flex; height: 420px; text-align: left; }
 
 /* ── COL 1 ── */
