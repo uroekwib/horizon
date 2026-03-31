@@ -75,6 +75,7 @@
               ref="menuitem"
             >
               <span class="menu-list__link-title">{{- link.title -}}</span>
+              <svg class="oc-nav__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px; height:14px; margin-left:4px; opacity:0.5; transition: transform 0.25s;"><path d="M6 9l6 6 6-6"/></svg>
             </button>
           {% else %}
             <a
@@ -111,22 +112,22 @@
                           {%- liquid
                             assign l0_coll = l0.object
                             assign l0_handle = l0.handle
-                            assign l0_title_down = l0.title | downcase
                             if l0_coll != blank
                               assign l0_handle = l0_coll.handle
                             endif
                           -%}
                           <button class="oc-mega__cat{% if forloop.first %} active{% endif %}" data-cat="{{ l0_handle }}" data-url="{{ l0.url }}">
                             <span class="oc-mega__cat-ico">
-                              {%- if l0_handle contains 'signage' or l0_handle contains 'sign' or l0_title_down contains 'ป้าย' -%}<svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-                              {%- elsif l0_handle contains 'sticker' or l0_title_down contains 'สติ๊ก' -%}<svg viewBox="0 0 24 24"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-                              {%- elsif l0_handle contains 'label' or l0_title_down contains 'ลาก' -%}<svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-                              {%- elsif l0_handle contains 'posm' or l0_handle contains 'promotion' or l0_title_down contains 'posm' or l0_title_down contains 'ส่งเสริม' -%}<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                              {%- elsif l0_handle contains 'booth' or l0_title_down contains 'บูธ' or l0_title_down contains 'booth' -%}<svg viewBox="0 0 24 24"><path d="M3 3h18v18H3z" fill="none"/><path d="M3 9h18"/><path d="M9 3v18"/></svg>
-                              {%- elsif l0_handle contains 'photo' or l0_handle contains 'photography' or l0_title_down contains 'ถ่ายภาพ' -%}<svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                              {%- elsif l0_handle contains 'digital' or l0_title_down contains 'digital' -%}<svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><polygon points="10 8 16 12 10 16 10 8" fill="none"/></svg>
-                              {%- else -%}<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                              {%- endif -%}
+                              {%- case l0_handle -%}
+                                {%- when 'signage' -%}<svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                                {%- when 'sticker' -%}<svg viewBox="0 0 24 24"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                {%- when 'label' -%}<svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                                {%- when 'posm' -%}<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                                {%- when 'booth' -%}<svg viewBox="0 0 24 24"><path d="M3 3h18v18H3z" fill="none"/><path d="M3 9h18"/><path d="M9 3v18"/></svg>
+                                {%- when 'photo' -%}<svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                                {%- when 'digital' -%}<svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><polygon points="10 8 16 12 10 16 10 8" fill="none"/></svg>
+                                {%- else -%}<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                              {%- endcase -%}
                             </span>
                             {{- l0.title -}}
                             <svg class="oc-mega__cat-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
@@ -325,8 +326,7 @@
           
           var activeCat = cats[0] ? cats[0].dataset.cat : null;
           var activeSubHandle = null;
-          var lastRequestedSubHandle = null;
-          var CAT_DELAY = 260, SUB_DELAY = 220, MENU_CLOSE_DELAY = 280, MENU_SWITCH_DELAY = 180, catTimer = null, subTimer = null, closeTimer = null, openTimer = null;
+          var CAT_DELAY = 120, catTimer = null;
 
           // 1. Hover Category (Col 1)
           function switchCat(catKey) {
@@ -355,67 +355,51 @@
           // 2. Hover Sub-Category (Col 2)
           document.querySelectorAll('.oc-mega__sub').forEach(function(subLink) {
             subLink.addEventListener('mouseenter', function() {
-              var el = this;
-              clearTimeout(subTimer);
-              subTimer = setTimeout(function() {
-                loadProductsUI(el.dataset.sub, el.getAttribute('href'), el.innerText);
-              }, SUB_DELAY);
-            });
-            subLink.addEventListener('mouseleave', function() {
-              clearTimeout(subTimer);
+              loadProductsUI(this.dataset.sub, this.getAttribute('href'), this.innerText);
             });
           });
 
           // 3. Render AJAX Data into V4 HTML Structure
           function loadProductsUI(handle, url, titleName) {
-            if (!handle || activeSubHandle === handle || lastRequestedSubHandle === handle) return;
-            lastRequestedSubHandle = handle;
+            if (!handle || activeSubHandle === handle) return;
+            activeSubHandle = handle;
             prodBox.setAttribute('aria-busy', 'true');
 
+            // Set View All Link dynamically
             viewAllBtn.setAttribute('href', url || '#');
             viewAllBtn.innerHTML = 'ดู ' + esc(titleName || 'ทั้งหมด') + ' <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
 
             fetchProducts(handle, productLimit).then(function(products) {
-              if (lastRequestedSubHandle !== handle) return;
-              activeSubHandle = handle;
+              if (activeSubHandle !== handle) return; // Ignore if user hovered somewhere else
               prodBox.setAttribute('aria-busy', 'false');
-
+              
               if (!products || !products.length) {
                 prodScroll.innerHTML = '<div style="padding:20px; font-size:13px; color:var(--oc-ink-40);">ไม่พบสินค้าแนะนำในหมวดนี้</div>';
                 return;
               }
 
-              var featured = products.slice(0, 4);
-              var pills = products.slice(4, 12);
               var html = '<div class="oc-mega__prod-grid">';
-              featured.forEach(function(p, index) {
+              products.forEach(function(p, index) {
                 var rawImg = getProductImage(p);
-                var src = rawImg ? resizeImg(rawImg, 360, 270) : null;
+                var src = rawImg ? resizeImg(rawImg, 400, 300) : null; // 4:3 Ratio
                 var pUrl = '/products/' + esc(p.handle);
-                var delay = (index * 0.04) + 0.04;
+                var delay = (index * 0.04) + 0.04; // Animation stagger
 
                 html += '<a href="' + pUrl + '" class="oc-mega__card" style="animation-delay: '+delay+'s;">';
                 if (src) {
                   html += '<img class="oc-mega__card-img" src="' + esc(src) + '" alt="' + esc(p.title) + '" loading="lazy">';
                 } else {
-                  html += '<div class="oc-mega__card-img oc-mega__card-img--fallback" aria-hidden="true">📦</div>';
+                  html += '<div class="oc-mega__card-img" style="display:flex;align-items:center;justify-content:center;font-size:20px;">📦</div>';
                 }
                 html += '<div class="oc-mega__card-body">';
                 html += '<div class="oc-mega__card-name">' + esc(p.title) + '</div>';
+                var priceStr = p.price ? 'เริ่ม ฿' + (p.price / 100).toLocaleString() : 'สอบถามราคา';
+                html += '<div class="oc-mega__card-price">' + priceStr + '</div>';
                 html += '</div></a>';
               });
               html += '</div>';
 
-              if (pills.length) {
-                html += '<div class="oc-mega__pill-block">';
-                html += '<div class="oc-mega__pill-head">สินค้าเพิ่มเติม</div>';
-                html += '<div class="oc-mega__pill-list">';
-                pills.forEach(function(p) {
-                  html += '<a href="/products/' + esc(p.handle) + '" class="oc-mega__pill">' + esc(p.title) + '</a>';
-                });
-                html += '</div></div>';
-              }
-
+              // Force reflow to re-trigger CSS animations
               prodScroll.innerHTML = html;
               prodScroll.classList.remove('oc-animate-trigger');
               void prodScroll.offsetWidth;
@@ -452,38 +436,33 @@
           var hoverTimer = null;
           
           function openMegaMenu(triggerNode) {
-            clearTimeout(closeTimer);
-            clearTimeout(openTimer);
-            var currentOpen = document.querySelector('.oc-nav-trigger[aria-expanded="true"]');
-            var doOpen = function() {
-              if (currentOpen && currentOpen !== triggerNode) currentOpen.setAttribute('aria-expanded', 'false');
-              triggerNode.setAttribute('aria-expanded', 'true');
-              overlay.classList.add('active');
-            };
-            if (currentOpen && currentOpen !== triggerNode) {
-              openTimer = setTimeout(doOpen, MENU_SWITCH_DELAY);
-            } else {
-              doOpen();
-            }
+            clearTimeout(hoverTimer);
+            if (triggerNode.getAttribute('aria-expanded') === 'true') return;
+            triggerNode.setAttribute('aria-expanded', 'true');
+            overlay.classList.add('active');
+            document.querySelector('.oc-header')?.classList.add('has-shadow');
           }
 
           function closeMegaMenu(triggerNode) {
-            clearTimeout(openTimer);
-            clearTimeout(closeTimer);
-            closeTimer = setTimeout(function() {
+            // Delay ช่วยให้เมาส์ข้ามช่องว่างระหว่างปุ่มลงเมนูได้โดยไม่กระพริบ
+            hoverTimer = setTimeout(function() {
               triggerNode.setAttribute('aria-expanded', 'false');
               overlay.classList.remove('active');
-            }, MENU_CLOSE_DELAY);
+            }, 180); 
           }
 
           triggers.forEach(function(trigger) {
             trigger.addEventListener('click', function(e) { e.preventDefault(); });
+            
+            // เมื่อเมาส์เข้าปุ่ม
             trigger.addEventListener('mouseenter', function() { openMegaMenu(trigger); });
+            // เมื่อเมาส์ออกจากปุ่ม
             trigger.addEventListener('mouseleave', function() { closeMegaMenu(trigger); });
 
+            // เมื่อเมาส์เข้าไปในตัวกล่อง Mega Menu ยึดให้มันเปิดค้างไว้
             var submenu = trigger.nextElementSibling;
             if (submenu) {
-              submenu.addEventListener('mouseenter', function() { clearTimeout(closeTimer); clearTimeout(openTimer); });
+              submenu.addEventListener('mouseenter', function() { clearTimeout(hoverTimer); });
               submenu.addEventListener('mouseleave', function() { closeMegaMenu(trigger); });
             }
           });
@@ -537,21 +516,14 @@
   visibility: visible; opacity: 1; transform: translateY(0); pointer-events: auto;
 }
 
+.oc-nav-trigger[aria-expanded="true"] .oc-nav__chev { transform: rotate(180deg) !important; opacity: 1 !important; }
 
 /* ═══ MEGA MENU V4 ═══ */
 .oc-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0); z-index: 998; pointer-events: none; transition: background 0.35s; }
-.oc-overlay.active { background: rgba(0,0,0,0.08); }
-
-
-#header-component,
-#header-component .header,
-#header-component .header__wrapper,
-#header-component .header__inner,
-#header-component .shopify-section-header-sticky,
-.oc-header { background: #fff !important; }
+.oc-overlay.active { background: rgba(0,0,0,0.10); /* FIXED: Removed pointer-events: auto to prevent stealing hover */ }
 
 .oc-mega-wrapper { width: 100%; background: transparent !important; box-shadow: none !important; }
-.oc-mega__wrap { max-width: 1400px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1000;}
+.oc-mega__wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1000;}
 .oc-mega__panel { background: #fff; border-radius: 0 0 var(--oc-radius-lg) var(--oc-radius-lg); box-shadow: var(--oc-shadow-lg); border: 1px solid rgba(0,0,0,0.06); border-top: 0; overflow: hidden; display: flex; height: 420px; text-align: left; }
 
 /* ── COL 1 ── */
@@ -590,18 +562,13 @@
 .oc-mega__products[aria-busy="true"] { opacity: 0.5; pointer-events: none; }
 .oc-mega__prod-pane { display: flex; flex-direction: column; flex: 1; min-height: 0; }
 .oc-mega__prod-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 12px 16px; scrollbar-width: thin; scrollbar-color: rgba(167,139,250,0.2) transparent; }
-.oc-mega__prod-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; align-content: start; }
-.oc-mega__card { display: flex; flex-direction: column; align-items: center; border-radius: 8px; overflow: hidden; border: 1px solid var(--oc-ink-15); text-decoration: none; color: var(--oc-ink-70); transition: border-color 0.18s, box-shadow 0.18s, background 0.15s; background: #fff; min-width: 0; }
+.oc-mega__prod-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; align-content: start; }
+.oc-mega__card { display: flex; flex-direction: column; align-items: center; border-radius: 8px; overflow: hidden; border: 1px solid var(--oc-ink-15); text-decoration: none; color: var(--oc-ink-70); transition: border-color 0.18s, box-shadow 0.18s, background 0.15s; background: #fff; }
 .oc-mega__card:hover { border-color: rgba(20,201,223,0.3); box-shadow: 0 2px 10px rgba(20,201,223,0.08); background: rgba(20,201,223,0.02); }
 .oc-mega__card-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; background: var(--oc-ink-05); }
 .oc-mega__card-body { padding: 6px 8px; width: 100%; }
 .oc-mega__card-name { font-size: 11px; font-weight: 600; color: var(--oc-ink); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.oc-mega__card-img--fallback { display:flex; align-items:center; justify-content:center; font-size:20px; }
-.oc-mega__pill-block { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--oc-ink-15); }
-.oc-mega__pill-head { margin: 0 0 8px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--oc-ink-40); }
-.oc-mega__pill-list { display:flex; flex-wrap:wrap; gap:6px; }
-.oc-mega__pill { display:inline-flex; align-items:center; max-width:100%; padding: 5px 10px; border-radius: var(--oc-radius-pill); background:#f8fbfc; border:1px solid #d8edf1; color: var(--oc-ink-70); text-decoration:none; font-size:11px; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.oc-mega__pill:hover { background: rgba(20,201,223,0.06); border-color: rgba(20,201,223,0.28); color: var(--oc-cyan); }
+.oc-mega__card-price { font-size: 10.5px; font-weight: 700; color: var(--oc-cyan); margin-top: 1px; }
 
 /* ── Animation Classes ── */
 .oc-mega__sub-pane.active .oc-mega__sub { animation: oc-sub-in 0.22s var(--oc-ease-expo) backwards; }
@@ -614,14 +581,6 @@
 
 @keyframes oc-sub-in { from { opacity: 0; transform: translateX(5px); } to { opacity: 1; transform: translateX(0); } }
 @keyframes oc-card-in { from { opacity: 0; transform: translateX(5px); } to { opacity: 1; transform: translateX(0); } }
-@media screen and (max-width: 1279px) {
-  .oc-mega__prod-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-}
-
-@media screen and (max-width: 989px) {
-  .oc-mega__prod-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-
 {% endstylesheet %}
 
 {% schema %}
