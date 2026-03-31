@@ -470,6 +470,7 @@
             openTimer = setTimeout(function() {
                triggerNode.setAttribute('aria-expanded', 'true');
                
+               var submenu = triggerNode.nextElementSibling;
                var headerContainer = document.querySelector('.header-wrapper, sticky-header, .header, #header-component');
                var topPos = '64px';
                if(headerContainer) {
@@ -479,6 +480,13 @@
                
                overlay.style.top = topPos;
                overlay.classList.add('active');
+
+               if(submenu) {
+                 submenu.style.top = topPos;
+                 submenu.classList.add('is-visible');
+                 void submenu.offsetWidth;
+                 submenu.classList.add('is-animating');
+               }
             }, OPEN_DELAY);
           }
 
@@ -486,6 +494,16 @@
             clearTimeout(openTimer);
             hoverTimer = setTimeout(function() {
               triggerNode.setAttribute('aria-expanded', 'false');
+              
+              var submenu = triggerNode.nextElementSibling;
+              if(submenu) {
+                submenu.classList.remove('is-animating');
+                setTimeout(function() {
+                  if (triggerNode.getAttribute('aria-expanded') === 'false') {
+                    submenu.classList.remove('is-visible');
+                  }
+                }, 280); 
+              }
               overlay.classList.remove('active');
             }, CLOSE_DELAY); 
           }
@@ -541,24 +559,32 @@
 @media screen and (min-width: 750px) { #header-component[data-menu-style='menu'] .header__drawer { display: none; min-height: 0; } }
 
 
-/* ✅ THE REAL FIX FOR "เพิ่มเติม" (More) Glitch ✅
-   การใส่ position: static ให้กับ list-item คือเวทมนตร์ที่ป้องกันไม่ให้สคริปต์ของ Theme 
-   นำความกว้าง 1100px ของ Mega Menu ไปคำนวณรวมกับปุ่มเมนูหลักครับ!
+/* ✅ THE FIX FOR "เพิ่มเติม" (More) Glitch ✅
+   ใช้การซ่อน (display: none) และบังคับให้เมนูลอยแบบ fixed เข้ากับหน้าจอ
+   ทำให้สคริปต์ของธีมไม่เห็นความกว้างของเมนูนี้เลย!
 */
-.menu-list__list-item { 
-  position: static !important; 
-}
-
 .oc-nav-trigger + .oc-v4-submenu-container {
+  display: none !important;
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100vw !important;
   clip-path: none !important;
-  visibility: hidden; position: absolute; width: 100%; left: 0;
-  top: 100%; z-index: var(--layer-header-menu, 999);
+  opacity: 0; 
+  transform: translateY(-4px); 
   transition: opacity 0.28s var(--oc-ease-smooth), transform 0.28s var(--oc-ease-expo);
-  opacity: 0; transform: translateY(-4px); pointer-events: none;
+  pointer-events: none;
+  z-index: 999;
 }
 
-.oc-nav-trigger[aria-expanded="true"] + .oc-v4-submenu-container {
-  visibility: visible; opacity: 1; transform: translateY(0); pointer-events: auto;
+.oc-nav-trigger + .oc-v4-submenu-container.is-visible {
+  display: block !important;
+}
+
+.oc-nav-trigger + .oc-v4-submenu-container.is-animating {
+  opacity: 1; 
+  transform: translateY(0); 
+  pointer-events: auto;
 }
 
 /* ═══ MEGA MENU V4 ═══ */
