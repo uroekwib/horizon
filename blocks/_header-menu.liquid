@@ -526,12 +526,12 @@
 
           visible.forEach(function (p, i) {
             var rawImg = getProductImage(p);
-            var src = rawImg ? resizeImg(rawImg, 160, 120) : null;
+            var src = rawImg ? resizeImg(rawImg, 400, 300) : null;
             var productUrl = '/products/' + esc(p.handle);
 
             html += '<a href="' + productUrl + '" class="oc-mega__card" style="animation-delay:' + (i * 0.04 + 0.04) + 's">';
             if (src) {
-              html += '<img class="oc-mega__card-img" src="' + esc(src) + '" alt="' + esc(p.title) + '" loading="lazy" width="160" height="120">';
+              html += '<img class="oc-mega__card-img" src="' + esc(src) + '" alt="' + esc(p.title) + '" loading="lazy" width="400" height="300">';
             } else {
               html += '<div class="oc-mega__card-img oc-mega__card-img--ph"></div>';
             }
@@ -945,7 +945,7 @@
 .oc-mega-panel {
   display: flex;
   width: 100%;
-  height: var(--oc-drawer-min-height, 480px);
+  height: var(--oc-drawer-min-height, 580px);
   max-height: calc(80vh - var(--header-height, 64px));
   align-items: stretch;
 }
@@ -1406,10 +1406,10 @@
       "type": "range",
       "id": "drawer_min_height",
       "label": "Drawer minimum height (px)",
-      "min": 220,
-      "max": 600,
+      "min": 300,
+      "max": 700,
       "step": 10,
-      "default": 480
+      "default": 580
     },
     {
       "type": "header",
