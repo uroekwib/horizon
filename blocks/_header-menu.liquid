@@ -592,6 +592,11 @@
 @keyframes oc-sub-in { from { opacity: 0; transform: translateX(5px); } to { opacity: 1; transform: translateX(0); } }
 @keyframes oc-card-in { from { opacity: 0; transform: translateX(5px); } to { opacity: 1; transform: translateX(0); } }
 
+/* --- บังคับไม่ให้เมนูตกไปอยู่ "เพิ่มเติม" --- */
+.menu-list { column-gap: 15px !important; justify-content: flex-start !important; }
+header-menu { width: 100%; }
+.oc-nav-trigger { min-width: max-content; padding-right: 5px; }
+
 {% endstylesheet %}
 
 {% schema %}
