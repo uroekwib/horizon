@@ -383,7 +383,7 @@
                       "type": "custom-liquid",
                       "name": "t:names.custom_liquid",
                       "settings": {
-                        "custom_liquid": "{% render 'oc-quote-form' %}"
+                        "custom_liquid": "{% assign form_id = product.metafields.custom.quote_form_id | default: 1 %}\n{% assign form_url = 'https://alphadigital.media/form.php?form=' | append: form_id %}\n\n<div style=\"width:100%;margin-top:16px\">\n  <iframe\n    id=\"oc-quote-frame\"\n    src=\"{{ form_url }}\"\n    width=\"100%\"\n    height=\"860\"\n    frameborder=\"0\"\n    scrolling=\"no\"\n    loading=\"lazy\"\n    style=\"display:block;border:none;overflow:hidden;border-radius:12px;transition:height .3s ease\">\n  </iframe>\n</div>\n\n<script>\nwindow.addEventListener('message', function(e) {\n  if (e.data && e.data.type === 'oc-form-height') {\n    var f = document.getElementById('oc-quote-frame');\n    if (f) f.style.height = (e.data.height + 40) + 'px';\n  }\n});\n</script>"
                       },
                       "blocks": {}
                     },
