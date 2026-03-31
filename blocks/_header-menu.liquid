@@ -73,10 +73,9 @@
               aria-haspopup="true"
               aria-expanded="false"
               ref="menuitem"
-              style="display: inline-flex; align-items: center; white-space: nowrap;"
             >
               <span class="menu-list__link-title">{{- link.title -}}</span>
-              <svg class="oc-nav__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px; height:14px; margin-left:5px; flex-shrink:0; opacity:0.5; transition: transform 0.25s;"><path d="M6 9l6 6 6-6"/></svg>
+              <svg class="oc-nav__chev" viewBox="0 0 1 1" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:1px; height:1px; margin-left:4px; opacity:0.5; transition: transform 0.25s;"><path d="M6 9l6 6 6-6"/></svg>
             </button>
           {% else %}
             <a
@@ -101,9 +100,11 @@
                 id="submenu-{{ forloop.index }}"
                 class="menu-list__submenu-inner oc-mega-wrapper {{ page_width_class }}"
               >
-                <div class="oc-mega__wrap" data-product-limit="{{ block_settings.product_limit | default: 8 }}">
+                <!-- ═══ MEGA PANEL V4 ═══ -->
+                <div class="oc-mega__wrap" data-product-limit="{{ block_settings.product_limit | default: 6 }}">
                   <div class="oc-mega__panel">
 
+                    <!-- ── COL 1: Categories ── -->
                     <div class="oc-mega__cats">
                       <div class="oc-mega__cats-head">หมวดสินค้า</div>
                       <div class="oc-mega__cats-scroll">
@@ -135,6 +136,7 @@
                       </div>
                     </div>
 
+                    <!-- ── COL 2: Sub-categories ── -->
                     <div class="oc-mega__subs">
                       {% for l0 in link.links %}
                         {%- liquid
@@ -182,10 +184,12 @@
                       {% endfor %}
                     </div>
 
+                    <!-- ── COL 3: Dynamic Products ── -->
                     <div class="oc-mega__products" id="ocMegaProductsBox" aria-busy="false">
                       <div class="oc-mega__prod-pane active">
                         <div class="oc-mega__prod-head"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> สินค้าแนะนำ</div>
                         <div class="oc-mega__prod-scroll" id="ocMegaProductsScroll">
+                          <!-- V4 HTML Injected via JS -->
                           <div class="oc-mega__loading-skeleton" style="padding:20px; text-align:center; color: var(--oc-ink-40); font-size:12px;">กำลังเตรียมข้อมูล...</div>
                         </div>
                         <a href="#" class="oc-mega__prod-viewall" id="ocMegaProductsViewAll">ดูทั้งหมด <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
@@ -234,7 +238,7 @@
             class: overflow_class,
             ref: 'overflowMenu',
             children: children,
-            minimum-items: 4,
+            minimum-items: 2,
             data-testid: 'header-menu-overflow-list',
             attributes: 'data-skip-node-update'
           %}
@@ -243,6 +247,7 @@
       <script src="{{ 'header-menu.js' | asset_url }}" type="module" fetchpriority="low"></script>
     </header-menu>
 
+    <!-- Overlay สำหรับ V4 -->
     <div class="oc-overlay" id="megaOverlay"></div>
 
     <script>
@@ -317,7 +322,7 @@
           var prodScroll = document.getElementById('ocMegaProductsScroll');
           var viewAllBtn = document.getElementById('ocMegaProductsViewAll');
           var prodBox = document.getElementById('ocMegaProductsBox');
-          var productLimit = parseInt(wrap.dataset.productLimit || 8, 10);
+          var productLimit = parseInt(wrap.dataset.productLimit || 6, 10);
           
           var activeCat = cats[0] ? cats[0].dataset.cat : null;
           var activeSubHandle = null;
@@ -354,7 +359,7 @@
             });
           });
 
-          // 3. Render AJAX Data into V4 HTML Structure (Cards + Text Pills)
+          // 3. Render AJAX Data into V4 HTML Structure
           function loadProductsUI(handle, url, titleName) {
             if (!handle || activeSubHandle === handle) return;
             activeSubHandle = handle;
@@ -374,36 +379,24 @@
               }
 
               var html = '<div class="oc-mega__prod-grid">';
-              
-              // โชว์แค่ 4 การ์ดแบบมีรูปภาพ
-              products.slice(0, 4).forEach(function(p, index) {
+              products.forEach(function(p, index) {
                 var rawImg = getProductImage(p);
-                var src = rawImg ? resizeImg(rawImg, 240, 180) : null; // ขนาดรูปกระชับเพื่อโหลดไวขึ้น
+                var src = rawImg ? resizeImg(rawImg, 400, 300) : null; // 4:3 Ratio
                 var pUrl = '/products/' + esc(p.handle);
                 var delay = (index * 0.04) + 0.04; // Animation stagger
 
                 html += '<a href="' + pUrl + '" class="oc-mega__card" style="animation-delay: '+delay+'s;">';
                 if (src) {
-                  html += '<img class="oc-mega__card-img" src="' + esc(src) + '" alt="' + esc(p.title) + '" loading="eager">';
+                  html += '<img class="oc-mega__card-img" src="' + esc(src) + '" alt="' + esc(p.title) + '" loading="lazy">';
                 } else {
                   html += '<div class="oc-mega__card-img" style="display:flex;align-items:center;justify-content:center;font-size:20px;">📦</div>';
                 }
                 html += '<div class="oc-mega__card-body">';
                 html += '<div class="oc-mega__card-name">' + esc(p.title) + '</div>';
+                
                 html += '</div></a>';
               });
               html += '</div>';
-
-              // โชว์สินค้าที่เหลือ (รายการที่ 5-8) เป็น Text Pills แบบไม่มีรูป
-              if (products.length > 4) {
-                html += '<div class="oc-mega__prod-pills">';
-                products.slice(4, 8).forEach(function(p, index) {
-                  var pUrl = '/products/' + esc(p.handle);
-                  var delay = ((index + 4) * 0.04) + 0.04;
-                  html += '<a href="' + pUrl + '" class="oc-mega__pill" style="animation-delay: '+delay+'s;">' + esc(p.title) + '</a>';
-                });
-                html += '</div>';
-              }
 
               // Force reflow to re-trigger CSS animations
               prodScroll.innerHTML = html;
@@ -574,11 +567,7 @@
 .oc-mega__card-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; background: var(--oc-ink-05); }
 .oc-mega__card-body { padding: 6px 8px; width: 100%; }
 .oc-mega__card-name { font-size: 11px; font-weight: 600; color: var(--oc-ink); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-
-/* Text Pills Styles */
-.oc-mega__prod-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--oc-ink-15); }
-.oc-mega__pill { display: inline-block; padding: 6px 12px; background: var(--oc-ink-05); border: 1px solid var(--oc-ink-15); border-radius: var(--oc-radius-pill); font-size: 11px; font-weight: 500; color: var(--oc-ink-70); text-decoration: none; transition: all 0.2s; white-space: nowrap; }
-.oc-mega__pill:hover { background: #fff; border-color: var(--oc-cyan); color: var(--oc-cyan); transform: translateY(-1px); box-shadow: 0 2px 5px rgba(20,201,223,0.1); }
+.oc-mega__card-price { font-size: 10.5px; font-weight: 700; color: var(--oc-cyan); margin-top: 1px; }
 
 /* ── Animation Classes ── */
 .oc-mega__sub-pane.active .oc-mega__sub { animation: oc-sub-in 0.22s var(--oc-ease-expo) backwards; }
@@ -587,15 +576,12 @@
 .oc-mega__sub-pane.active .oc-mega__sub:nth-child(3) { animation-delay: 0.06s; }
 .oc-mega__sub-pane.active .oc-mega__sub:nth-child(4) { animation-delay: 0.08s; }
 .oc-mega__sub-pane.active .oc-mega__sub:nth-child(5) { animation-delay: 0.10s; }
-.oc-animate-trigger .oc-mega__card, .oc-animate-trigger .oc-mega__pill { animation: oc-card-in 0.25s var(--oc-ease-expo) backwards; }
+.oc-animate-trigger .oc-mega__card { animation: oc-card-in 0.25s var(--oc-ease-expo) backwards; }
 
 @keyframes oc-sub-in { from { opacity: 0; transform: translateX(5px); } to { opacity: 1; transform: translateX(0); } }
 @keyframes oc-card-in { from { opacity: 0; transform: translateX(5px); } to { opacity: 1; transform: translateX(0); } }
 
-/* --- บังคับไม่ให้เมนูตกไปอยู่ "เพิ่มเติม" --- */
-.menu-list { column-gap: 15px !important; justify-content: flex-start !important; }
-header-menu { width: 100%; }
-.oc-nav-trigger { min-width: max-content; padding-right: 5px; }
+
 
 {% endstylesheet %}
 
