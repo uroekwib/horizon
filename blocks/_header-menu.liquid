@@ -1,6 +1,6 @@
 {%- doc -%}
   Octopus Media header menu block
-  V4 Mega Menu Integration - Fixed Flickering Issue & Refined UX
+  V4 Mega Menu Integration - Fixed Overflow Glitch & Refined UX
   Variants:
    - 'mobile'   → mobile drawer (Horizon native)
    - default    → desktop nav + 3-column mega drawer (V4 UI)
@@ -94,7 +94,7 @@
           {% endif %}
 
           {% if link.links != blank and is_mega_toggle_only %}
-            <div class="menu-list__submenu oc-v4-submenu-container {{ color_scheme_classes }}" ref="submenu[]">
+            <div class="menu-list__submenu {{ color_scheme_classes }}" ref="submenu[]">
               <div
                 id="submenu-{{ forloop.index }}"
                 class="menu-list__submenu-inner oc-mega-wrapper {{ page_width_class }}"
@@ -314,8 +314,6 @@
           if (!wrap || wrap._ocInit) return;
           wrap._ocInit = true;
 
-          var triggers = document.querySelectorAll('.oc-nav-trigger');
-          var overlay = document.getElementById('megaOverlay');
           var cats = document.querySelectorAll('.oc-mega__cat');
           var subPanes = document.querySelectorAll('.oc-mega__sub-pane');
           var prodScroll = document.getElementById('ocMegaProductsScroll');
@@ -323,19 +321,13 @@
           var prodBox = document.getElementById('ocMegaProductsBox');
           
           var productLimit = parseInt(wrap.dataset.productLimit || 12, 10); 
-          
           var activeCat = cats[0] ? cats[0].dataset.cat : null;
           var activeSubHandle = null;
           
-          // ตัวแปรหน่วงเวลา UX (Hover Delays)
           var catTimer = null;
           var subCatTimer = null;
-          var hoverTimer = null;
-          var openTimer = null;
-          var CAT_DELAY = 350; 
-          var SUB_DELAY = 300; 
-          var OPEN_DELAY = 300; 
-          var CLOSE_DELAY = 350;
+          var CAT_DELAY = 300; // หน่วงเปลี่ยนหมวดหลัก
+          var SUB_DELAY = 250; // หน่วงเปลี่ยนหมวดย่อย
 
           // 1. Hover Category (Col 1)
           function switchCat(catKey) {
@@ -399,6 +391,7 @@
                 return;
               }
 
+              // ใช้แค่ 4 ตัวแรกเป็นการ์ด ส่วนที่เหลือเป็น Pill
               var thumbs = products.slice(0, 4);
               var rest = products.slice(4);
 
@@ -461,54 +454,111 @@
               if (pane) pane.classList.toggle('scrolled-end', el.scrollTop + el.clientHeight >= el.scrollHeight - 4);
             });
           });
-
-          // 5. Drawer Toggle Logic
-          function openMegaMenu(triggerNode) {
-            clearTimeout(hoverTimer);
-            if (triggerNode.getAttribute('aria-expanded') === 'true') return;
-            
-            openTimer = setTimeout(function() {
-               triggerNode.setAttribute('aria-expanded', 'true');
-               
-               var headerContainer = document.querySelector('.header-wrapper, sticky-header, .header, #header-component');
-               var topPos = '64px';
-               if(headerContainer) {
-                 var hRect = headerContainer.getBoundingClientRect();
-                 topPos = hRect.bottom + 'px';
-               }
-               
-               overlay.style.top = topPos;
-               overlay.classList.add('active');
-            }, OPEN_DELAY);
-          }
-
-          function closeMegaMenu(triggerNode) {
-            clearTimeout(openTimer);
-            hoverTimer = setTimeout(function() {
-              triggerNode.setAttribute('aria-expanded', 'false');
-              overlay.classList.remove('active');
-            }, CLOSE_DELAY); 
-          }
-
-          triggers.forEach(function(trigger) {
-            trigger.addEventListener('click', function(e) { e.preventDefault(); });
-            
-            trigger.addEventListener('mouseenter', function() { openMegaMenu(trigger); });
-            trigger.addEventListener('mouseleave', function() { closeMegaMenu(trigger); });
-
-            var submenu = trigger.nextElementSibling;
-            if (submenu) {
-              submenu.addEventListener('mouseenter', function() { 
-                clearTimeout(hoverTimer); 
-                clearTimeout(openTimer);
-              });
-              submenu.addEventListener('mouseleave', function() { closeMegaMenu(trigger); });
-            }
-          });
-
         }
 
-        if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initV4MegaMenu); } else { setTimeout(initV4MegaMenu, 100); }
+        /* ── 5. Original Header Hover Guard (The proven safe logic) ── */
+        var OPEN_DELAY  = 200;  // หน่วงตอนเปิดเมนู ป้องกันเฉี่ยว
+        var CLOSE_DELAY = 350;  // หน่วงตอนปิดเมนู ช่วยให้ไม่กระพริบ
+        var openTimer  = null;
+        var closeTimer = null;
+        var overlay = document.getElementById('megaOverlay');
+
+        function clearOpen()  { if (openTimer)  { clearTimeout(openTimer);  openTimer  = null; } }
+        function clearClose() { if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; } }
+
+        function getOpenTrigger() {
+          return document.querySelector('.menu-list__list-item .menu-list__link[aria-haspopup][aria-expanded="true"]');
+        }
+
+        function closeAll() {
+          document.querySelectorAll('.menu-list__list-item .menu-list__link[aria-haspopup][aria-expanded="true"]').forEach(function (t) { 
+            t.setAttribute('aria-expanded', 'false'); 
+          });
+          if(overlay) overlay.classList.remove('active');
+        }
+
+        function bindItems(root) {
+          if (!isDesktopMenu()) return;
+          root.querySelectorAll('.menu-list__list-item').forEach(function (item) {
+            if (item._ocHoverBound) return;
+            item._ocHoverBound = true;
+
+            var trigger = item.querySelector('.menu-list__link[aria-haspopup]');
+            if (!trigger) return;
+
+            item.addEventListener('mouseenter', function () {
+              clearOpen();
+              clearClose(); 
+
+              if (trigger.getAttribute('aria-expanded') === 'true') return;
+
+              if (getOpenTrigger()) {
+                closeAll();
+                trigger.setAttribute('aria-expanded', 'true');
+                if(overlay) {
+                  var headerContainer = document.querySelector('sticky-header, #header-component');
+                  if(headerContainer) overlay.style.top = headerContainer.getBoundingClientRect().bottom + 'px';
+                  overlay.classList.add('active');
+                }
+              } else {
+                openTimer = setTimeout(function () {
+                  trigger.setAttribute('aria-expanded', 'true');
+                  if(overlay) {
+                    var headerContainer = document.querySelector('sticky-header, #header-component');
+                    if(headerContainer) overlay.style.top = headerContainer.getBoundingClientRect().bottom + 'px';
+                    overlay.classList.add('active');
+                  }
+                }, OPEN_DELAY);
+              }
+            });
+
+            item.addEventListener('focusin', function () {
+              clearOpen(); clearClose();
+              trigger.setAttribute('aria-expanded', 'true');
+              if(overlay) overlay.classList.add('active');
+            });
+
+            item.addEventListener('focusout', function () {
+              setTimeout(function () {
+                if (!item.contains(document.activeElement)) closeAll();
+              }, 150);
+            });
+          });
+        }
+
+        function attachHeaderGuard() {
+          if (!isDesktopMenu()) return;
+          var hdr = document.getElementById('header-component');
+          if (!hdr || hdr._ocGuardBound) return;
+          hdr._ocGuardBound = true;
+
+          hdr.addEventListener('mouseover', function () { clearClose(); });
+          hdr.addEventListener('mouseleave', function () {
+            clearOpen();
+            closeTimer = setTimeout(closeAll, CLOSE_DELAY);
+          });
+        }
+
+        if (document.readyState === 'loading') { 
+          document.addEventListener('DOMContentLoaded', function() {
+            initV4MegaMenu();
+            bindItems(document);
+            attachHeaderGuard();
+          }); 
+        } else { 
+          setTimeout(function() {
+            initV4MegaMenu();
+            bindItems(document);
+            attachHeaderGuard();
+          }, 100); 
+        }
+
+        var obs = new MutationObserver(function () {
+          bindItems(document);
+          attachHeaderGuard();
+        });
+        obs.observe(document.body, { childList: true, subtree: true });
+
       })();
     </script>
 
@@ -535,35 +585,20 @@
   --oc-radius-pill: 999px;
 }
 
+/* ── Prevent Theme Underlay from Making Header Grey ── */
+.header__underlay { 
+  background-color: transparent !important; 
+  box-shadow: none !important; 
+}
+
 /* Original Menu list resets */
 .header__drawer { --header-drawer-min-height: 60px; display: flex; min-height: var(--header-drawer-min-height); align-items: center; }
 #header-component[data-menu-style='drawer'] .header__drawer { display: flex; min-height: var(--header-drawer-min-height); }
 @media screen and (min-width: 750px) { #header-component[data-menu-style='menu'] .header__drawer { display: none; min-height: 0; } }
 
-
-/* ✅ THE REAL FIX FOR "เพิ่มเติม" (More) Glitch ✅
-   การใส่ position: static ให้กับ list-item คือเวทมนตร์ที่ป้องกันไม่ให้สคริปต์ของ Theme 
-   นำความกว้าง 1100px ของ Mega Menu ไปคำนวณรวมกับปุ่มเมนูหลักครับ!
-*/
-.menu-list__list-item { 
-  position: static !important; 
-}
-
-.oc-nav-trigger + .oc-v4-submenu-container {
-  clip-path: none !important;
-  visibility: hidden; position: absolute; width: 100%; left: 0;
-  top: 100%; z-index: var(--layer-header-menu, 999);
-  transition: opacity 0.28s var(--oc-ease-smooth), transform 0.28s var(--oc-ease-expo);
-  opacity: 0; transform: translateY(-4px); pointer-events: none;
-}
-
-.oc-nav-trigger[aria-expanded="true"] + .oc-v4-submenu-container {
-  visibility: visible; opacity: 1; transform: translateY(0); pointer-events: auto;
-}
-
 /* ═══ MEGA MENU V4 ═══ */
 .oc-overlay { position: fixed; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0); z-index: 998; pointer-events: none; transition: background 0.35s; }
-.oc-overlay.active { background: rgba(0,0,0,0.10); }
+.oc-overlay.active { background: rgba(0,0,0,0.15); }
 
 .oc-mega-wrapper { width: 100%; background: transparent !important; box-shadow: none !important; }
 .oc-mega__wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1000;}
@@ -610,12 +645,12 @@
 .oc-mega__card:hover { border-color: rgba(20,201,223,0.3); box-shadow: 0 2px 10px rgba(20,201,223,0.08); background: rgba(20,201,223,0.02); }
 .oc-mega__card-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; background: var(--oc-ink-05); }
 .oc-mega__card-body { padding: 6px 8px; width: 100%; }
-.oc-mega__card-name { font-size: 11px; font-weight: 600; color: var(--oc-ink); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.oc-mega__card-name { font-size: 11px; font-weight: 600; color: var(--oc-ink); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-align: center; }
 
 /* Tags / Pills */
 .oc-mega__tags-hd { font-size: 9px; font-weight: 700; color: var(--oc-ink-40); text-transform: uppercase; letter-spacing: 0.07em; margin: 0 0 5px; }
 .oc-mega__tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
-.oc-mega__tag { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: var(--oc-radius-pill); background: var(--oc-ink-05); border: 1px solid var(--oc-ink-15); font-size: 11px; color: var(--oc-ink-40); text-decoration: none; white-space: nowrap; transition: background 0.15s, border-color 0.15s, color 0.15s; }
+.oc-mega__tag { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: var(--oc-radius-pill); background: var(--oc-ink-05); border: 1px solid var(--oc-ink-15); font-size: 11px; color: var(--oc-ink-40); text-decoration: none; white-space: nowrap; transition: background 0.15s, border-color 0.15s, color 0.15s; }
 .oc-mega__tag:hover { background: var(--oc-cyan-l, rgba(20,201,223,0.1)); border-color: var(--oc-cyan); color: var(--oc-cyan); }
 
 /* ── Animation Classes ── */
