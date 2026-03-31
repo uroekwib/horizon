@@ -580,6 +580,20 @@
 
 @keyframes oc-sub-in { from { opacity: 0; transform: translateX(5px); } to { opacity: 1; transform: translateX(0); } }
 @keyframes oc-card-in { from { opacity: 0; transform: translateX(5px); } to { opacity: 1; transform: translateX(0); } }
+/* ใส่พื้นหลังเทาอ่อนรอไว้เลย */
+.oc-mega__card-img {
+  background: #f0f0f0;
+  min-height: 120px; /* ป้องกันกล่องยุบตัวตอนรูปยังไม่มา */
+  display: block;
+}
+
+/* ใส่ Shimmer แอนิเมชั่น (ทางเลือก) */
+.oc-mega__products[aria-busy="true"] .oc-mega__card {
+  opacity: 0.8;
+  filter: grayscale(1);
+}
+
+
 {% endstylesheet %}
 
 {% schema %}
