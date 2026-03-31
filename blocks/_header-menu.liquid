@@ -547,18 +547,16 @@
 @media screen and (min-width: 750px) { #header-component[data-menu-style='menu'] .header__drawer { display: none; min-height: 0; } }
 
 /* Shopify Native Overrides to support V4 - Targeted ONLY to V4 Submenu to prevent breaking standard menus */
-.menu-list__list-item { position: static !important; } 
+/* Removed: .menu-list__list-item { position: static !important; }  <-- นี่คือตัวการที่ทำให้ธีมคำนวณพื้นที่ผิดและรวบเป็น "เพิ่มเติม" */
 
 .oc-nav-trigger + .oc-v4-submenu-container {
   clip-path: none !important;
-  visibility: hidden; position: absolute; width: 100%; left: 0;
-  top: 100%; z-index: var(--layer-header-menu, 999);
-  transition: opacity 0.28s var(--oc-ease-smooth), transform 0.28s var(--oc-ease-expo);
+  transition: opacity 0.28s var(--oc-ease-smooth), transform 0.28s var(--oc-ease-expo), visibility 0.28s !important;
   opacity: 0; transform: translateY(-4px); pointer-events: none;
 }
 
 .oc-nav-trigger[aria-expanded="true"] + .oc-v4-submenu-container {
-  visibility: visible; opacity: 1; transform: translateY(0); pointer-events: auto;
+  visibility: visible !important; opacity: 1; transform: translateY(0); pointer-events: auto;
 }
 
 /* ═══ MEGA MENU V4 ═══ */
