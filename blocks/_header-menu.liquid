@@ -68,10 +68,8 @@
           role="presentation"
           on:focus="/activate"
           on:blur="/deactivate"
-          {% unless is_mega_toggle_only %}
-            on:pointerenter="/activate"
-            on:pointerleave="/deactivate"
-          {% endunless %}
+          on:pointerenter="/activate"
+          on:pointerleave="/deactivate"
         >
 
 {% if is_mega_toggle_only %}
@@ -570,19 +568,14 @@
 
     <script>
       /* ══════════════════════════════════════════════════════════════
-         OC MEGA MENU — JS Block 2: Hover guard (SOLE controller)
+         OC Mega Menu — Hover guard (supplements Horizon, not replaces)
          ─────────────────────────────────────────────────────────────
-         The mega trigger <li> has NO on:pointerenter/on:pointerleave
-         (removed in Liquid). This script is the ONLY thing that
-         controls open/close of the mega menu via aria-expanded.
-         ──────────────────────────────────────────────────────────────
-         UX from demo v4:
-         • 250ms open delay (prevent accidental hover)
-         • 350ms close delay (forgiving diagonal mouse movement)
-         • Instant switch if another menu already open
-         • header mouseover = cancel close timer
-         • header mouseleave = schedule close
-         • ESC = close all
+         Horizon handles open via on:pointerenter="/activate" (native)
+         This guard ONLY handles:
+         • Prevent accidental open: delay before first open
+         • Forgiving close: header mouseleave → delayed close
+         • ESC key: close all
+         Does NOT intercept clicks — Horizon handles clicks natively.
          ══════════════════════════════════════════════════════════════ */
       (function () {
         'use strict';
@@ -592,8 +585,8 @@
           return hdr && hdr.getAttribute('data-menu-style') === 'menu';
         }
 
-        var OPEN_DELAY  = 250;
-        var CLOSE_DELAY = 350;
+        var OPEN_DELAY  = 200;
+        var CLOSE_DELAY = 400;
         var openTimer  = null;
         var closeTimer = null;
 
@@ -601,18 +594,19 @@
         function clearClose() { if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; } }
 
         function getOpenTrigger() {
-          return document.querySelector('.menu-list__list-item .menu-list__link[aria-haspopup][aria-expanded="true"]');
+          return document.querySelector(
+            '.menu-list__list-item .menu-list__link[aria-haspopup][aria-expanded="true"]'
+          );
         }
 
         function closeAll() {
-          document.querySelectorAll('.menu-list__list-item .menu-list__link[aria-haspopup][aria-expanded="true"]')
-            .forEach(function (t) { t.setAttribute('aria-expanded', 'false'); });
+          document.querySelectorAll(
+            '.menu-list__list-item .menu-list__link[aria-haspopup][aria-expanded="true"]'
+          ).forEach(function (t) { t.setAttribute('aria-expanded', 'false'); });
         }
 
-        /* ── Per-item: handle open / switch ── */
         function bindItems(root) {
           if (!isDesktopMenu()) return;
-
           root.querySelectorAll('.menu-list__list-item').forEach(function (item) {
             if (item._ocHoverBound) return;
             item._ocHoverBound = true;
@@ -620,58 +614,25 @@
             var trigger = item.querySelector('.menu-list__link[aria-haspopup]');
             if (!trigger) return;
 
-            var isMega = item.classList.contains('oc-mega-trigger-li');
-
+            /* mouseenter: cancel any pending close, let Horizon open natively */
             item.addEventListener('mouseenter', function () {
               clearOpen();
               clearClose();
 
-              if (trigger.getAttribute('aria-expanded') === 'true') return;
-
-              if (getOpenTrigger()) {
-                /* Another menu is open → switch instantly */
-                closeAll();
-                trigger.setAttribute('aria-expanded', 'true');
-              } else {
-                /* Nothing open → delay before opening */
+              /* If nothing is open yet, add a small delay before Horizon opens it
+                 by briefly preventing the expanded state */
+              if (!getOpenTrigger()) {
+                trigger.setAttribute('aria-expanded', 'false');
                 openTimer = setTimeout(function () {
                   trigger.setAttribute('aria-expanded', 'true');
                 }, OPEN_DELAY);
               }
             });
 
-            /*
-             * mouseleave on the mega <li>:
-             * Horizon normally handles this via on:pointerleave="/deactivate"
-             * but we REMOVED that from the mega <li>.
-             * For non-mega items, Horizon still handles it.
-             * For the mega item, we do NOTHING here — let the header-level
-             * guard handle the close with its forgiving CLOSE_DELAY.
-             */
-
-            /* Click toggle for mega trigger */
-            if (isMega) {
-              trigger.addEventListener('click', function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-                clearOpen();
-                clearClose();
-                if (trigger.getAttribute('aria-expanded') === 'true') {
-                  trigger.setAttribute('aria-expanded', 'false');
-                } else {
-                  closeAll();
-                  trigger.setAttribute('aria-expanded', 'true');
-                }
-              });
-            }
-
-            /* Keyboard / focus */
+            /* focusin/out for keyboard */
             item.addEventListener('focusin', function () {
-              clearOpen();
-              clearClose();
-              trigger.setAttribute('aria-expanded', 'true');
+              clearOpen(); clearClose();
             });
-
             item.addEventListener('focusout', function () {
               setTimeout(function () {
                 if (!item.contains(document.activeElement)) {
@@ -682,41 +643,30 @@
           });
         }
 
-        /* ── Header-level guard: forgiving close ── */
         function attachHeaderGuard() {
           if (!isDesktopMenu()) return;
           var hdr = document.getElementById('header-component');
           if (!hdr || hdr._ocGuardBound) return;
           hdr._ocGuardBound = true;
 
-          /* Mouse still within header (panel, logo, search etc) → cancel close */
-          hdr.addEventListener('mouseover', function () {
-            clearClose();
-          });
+          /* cursor still in header → cancel close */
+          hdr.addEventListener('mouseover', function () { clearClose(); });
 
-          /* Mouse truly left header → schedule close with delay */
+          /* cursor left header → schedule close */
           hdr.addEventListener('mouseleave', function () {
             clearOpen();
             closeTimer = setTimeout(closeAll, CLOSE_DELAY);
           });
 
-          /* ESC closes everything */
+          /* ESC closes all */
           document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') {
-              clearOpen();
-              clearClose();
-              closeAll();
-            }
+            if (e.key === 'Escape') { clearOpen(); clearClose(); closeAll(); }
           });
         }
 
         bindItems(document);
         attachHeaderGuard();
-
-        var obs = new MutationObserver(function () {
-          bindItems(document);
-          attachHeaderGuard();
-        });
+        var obs = new MutationObserver(function () { bindItems(document); attachHeaderGuard(); });
         obs.observe(document.body, { childList: true, subtree: true });
       })();
     </script>
@@ -995,7 +945,7 @@
 .oc-mega-panel {
   display: flex;
   width: 100%;
-  height: var(--oc-drawer-min-height, 420px);
+  height: var(--oc-drawer-min-height, 480px);
   max-height: calc(80vh - var(--header-height, 64px));
   align-items: stretch;
 }
@@ -1290,10 +1240,10 @@
 }
 .oc-mega__col2-foot[hidden] { display: none; }
 
-/* ── Product grid: 2-col with 4:3 cards ── */
+/* ── Product grid: 4-col desktop cards ── */
 .oc-mega__prod-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(4, 1fr);
   gap: 6px;
   align-content: start;
 }
@@ -1459,7 +1409,7 @@
       "min": 220,
       "max": 600,
       "step": 10,
-      "default": 260
+      "default": 480
     },
     {
       "type": "header",
