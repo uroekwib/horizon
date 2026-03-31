@@ -1,6 +1,6 @@
 {%- doc -%}
   Octopus Media header menu block
-  V4 Mega Menu Integration - Fixed Flickering Issue & Refined UX
+  V4 Mega Menu Integration - Fixed Flickering Issue
   Variants:
    - 'mobile'   → mobile drawer (Horizon native)
    - default    → desktop nav + 3-column mega drawer (V4 UI)
@@ -53,17 +53,17 @@
 
     {% capture children %}
       {% for link in block_settings.menu.links %}
-        {% assign is_mega_toggle_only = false %}
-        {% if link.title == 'สินค้าและบริการ' and link.links != blank %}
-          {% assign is_mega_toggle_only = true %}
-        {% endif %}
-
         <li
           class="menu-list__list-item"
           role="presentation"
           on:focus="/activate"
           on:blur="/deactivate"
         >
+          {% assign is_mega_toggle_only = false %}
+          {% if link.title == 'สินค้าและบริการ' and link.links != blank %}
+            {% assign is_mega_toggle_only = true %}
+          {% endif %}
+
           {% if is_mega_toggle_only %}
             <button
               type="button"
@@ -75,6 +75,7 @@
               ref="menuitem"
             >
               <span class="menu-list__link-title">{{- link.title -}}</span>
+              <svg class="oc-nav__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px; height:14px; margin-left:4px; opacity:0.5; transition: transform 0.25s;"><path d="M6 9l6 6 6-6"/></svg>
             </button>
           {% else %}
             <a
@@ -100,7 +101,7 @@
                 class="menu-list__submenu-inner oc-mega-wrapper {{ page_width_class }}"
               >
                 <!-- ═══ MEGA PANEL V4 ═══ -->
-                <div class="oc-mega__wrap" data-product-limit="{{ block_settings.product_limit | default: 12 }}">
+                <div class="oc-mega__wrap" data-product-limit="{{ block_settings.product_limit | default: 6 }}">
                   <div class="oc-mega__panel">
 
                     <!-- ── COL 1: Categories ── -->
@@ -125,7 +126,7 @@
                                 {%- when 'booth' -%}<svg viewBox="0 0 24 24"><path d="M3 3h18v18H3z" fill="none"/><path d="M3 9h18"/><path d="M9 3v18"/></svg>
                                 {%- when 'photo' -%}<svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
                                 {%- when 'digital' -%}<svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><polygon points="10 8 16 12 10 16 10 8" fill="none"/></svg>
-                                {%- else -%}<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+                                {%- else -%}<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                               {%- endcase -%}
                             </span>
                             {{- l0.title -}}
@@ -321,21 +322,11 @@
           var prodScroll = document.getElementById('ocMegaProductsScroll');
           var viewAllBtn = document.getElementById('ocMegaProductsViewAll');
           var prodBox = document.getElementById('ocMegaProductsBox');
-          
-          var productLimit = parseInt(wrap.dataset.productLimit || 12, 10); 
+          var productLimit = parseInt(wrap.dataset.productLimit || 6, 10);
           
           var activeCat = cats[0] ? cats[0].dataset.cat : null;
           var activeSubHandle = null;
-          
-          // ตัวแปรหน่วงเวลา UX (Hover Delays)
-          var catTimer = null;
-          var subCatTimer = null;
-          var hoverTimer = null;
-          var openTimer = null;
-          var CAT_DELAY = 350; 
-          var SUB_DELAY = 300; 
-          var OPEN_DELAY = 300; 
-          var CLOSE_DELAY = 350;
+          var CAT_DELAY = 120, catTimer = null;
 
           // 1. Hover Category (Col 1)
           function switchCat(catKey) {
@@ -345,6 +336,7 @@
             cats.forEach(function(b) { b.classList.toggle('active', b.dataset.cat === catKey); });
             subPanes.forEach(function(p) { p.classList.toggle('active', p.dataset.pane === catKey); });
             
+            // Trigger Load for the first sub-item of this category
             var activePane = document.querySelector('.oc-mega__sub-pane[data-pane="'+catKey+'"]');
             if (activePane) {
               var firstSub = activePane.querySelector('.oc-mega__sub');
@@ -356,28 +348,14 @@
           }
 
           cats.forEach(function(btn) {
-            btn.addEventListener('mouseenter', function() { 
-              var k = btn.dataset.cat; 
-              clearTimeout(catTimer); 
-              catTimer = setTimeout(function(){ switchCat(k); }, CAT_DELAY); 
-            });
+            btn.addEventListener('mouseenter', function() { var k = btn.dataset.cat; clearTimeout(catTimer); catTimer = setTimeout(function(){ switchCat(k); }, CAT_DELAY); });
             btn.addEventListener('mouseleave', function() { clearTimeout(catTimer); });
           });
 
           // 2. Hover Sub-Category (Col 2)
           document.querySelectorAll('.oc-mega__sub').forEach(function(subLink) {
             subLink.addEventListener('mouseenter', function() {
-              clearTimeout(subCatTimer);
-              var handle = this.dataset.sub;
-              var href = this.getAttribute('href');
-              var titleName = this.innerText;
-              
-              subCatTimer = setTimeout(function() {
-                loadProductsUI(handle, href, titleName);
-              }, SUB_DELAY);
-            });
-            subLink.addEventListener('mouseleave', function() {
-              clearTimeout(subCatTimer);
+              loadProductsUI(this.dataset.sub, this.getAttribute('href'), this.innerText);
             });
           });
 
@@ -387,11 +365,12 @@
             activeSubHandle = handle;
             prodBox.setAttribute('aria-busy', 'true');
 
+            // Set View All Link dynamically
             viewAllBtn.setAttribute('href', url || '#');
             viewAllBtn.innerHTML = 'ดู ' + esc(titleName || 'ทั้งหมด') + ' <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
 
             fetchProducts(handle, productLimit).then(function(products) {
-              if (activeSubHandle !== handle) return;
+              if (activeSubHandle !== handle) return; // Ignore if user hovered somewhere else
               prodBox.setAttribute('aria-busy', 'false');
               
               if (!products || !products.length) {
@@ -399,16 +378,12 @@
                 return;
               }
 
-              var thumbs = products.slice(0, 4);
-              var rest = products.slice(4);
-
-              var html = '<div class="oc-mega__prod-grid" style="grid-template-columns: repeat(4, 1fr); gap: 8px;">';
-              
-              thumbs.forEach(function(p, index) {
+              var html = '<div class="oc-mega__prod-grid">';
+              products.forEach(function(p, index) {
                 var rawImg = getProductImage(p);
-                var src = rawImg ? resizeImg(rawImg, 400, 300) : null;
+                var src = rawImg ? resizeImg(rawImg, 400, 300) : null; // 4:3 Ratio
                 var pUrl = '/products/' + esc(p.handle);
-                var delay = (index * 0.04) + 0.04;
+                var delay = (index * 0.04) + 0.04; // Animation stagger
 
                 html += '<a href="' + pUrl + '" class="oc-mega__card" style="animation-delay: '+delay+'s;">';
                 if (src) {
@@ -418,19 +393,13 @@
                 }
                 html += '<div class="oc-mega__card-body">';
                 html += '<div class="oc-mega__card-name">' + esc(p.title) + '</div>';
+                var priceStr = p.price ? 'เริ่ม ฿' + (p.price / 100).toLocaleString() : 'สอบถามราคา';
+                html += '<div class="oc-mega__card-price">' + priceStr + '</div>';
                 html += '</div></a>';
               });
               html += '</div>';
 
-              if (rest.length > 0) {
-                 html += '<div class="oc-mega__tags-hd" style="margin-top:16px;">สินค้าอื่นๆ ในหมวดนี้</div>';
-                 html += '<div class="oc-mega__tags">';
-                 rest.forEach(function(p) {
-                   html += '<a href="/products/' + esc(p.handle) + '" class="oc-mega__tag">' + esc(p.title) + '</a>';
-                 });
-                 html += '</div>';
-              }
-
+              // Force reflow to re-trigger CSS animations
               prodScroll.innerHTML = html;
               prodScroll.classList.remove('oc-animate-trigger');
               void prodScroll.offsetWidth;
@@ -438,6 +407,7 @@
             });
           }
 
+          // Initial Load for first active cat
           var initActivePane = document.querySelector('.oc-mega__sub-pane.active');
           if (initActivePane) {
              var firstSub = initActivePane.querySelector('.oc-mega__sub');
@@ -462,64 +432,37 @@
             });
           });
 
-          // 5. Drawer Toggle Logic
+          // 5. Drawer Toggle Logic (FIXED HOVER FLICKER)
+          var hoverTimer = null;
+          
           function openMegaMenu(triggerNode) {
             clearTimeout(hoverTimer);
             if (triggerNode.getAttribute('aria-expanded') === 'true') return;
-            
-            openTimer = setTimeout(function() {
-               triggerNode.setAttribute('aria-expanded', 'true');
-               
-               var submenu = triggerNode.nextElementSibling;
-               var headerContainer = document.querySelector('.header-wrapper, sticky-header, .header, #header-component');
-               var topPos = '64px';
-               if(headerContainer) {
-                 var hRect = headerContainer.getBoundingClientRect();
-                 topPos = hRect.bottom + 'px';
-               }
-               
-               overlay.style.top = topPos;
-               overlay.classList.add('active');
-
-               if(submenu) {
-                 submenu.style.top = topPos;
-                 submenu.classList.add('is-visible');
-                 void submenu.offsetWidth;
-                 submenu.classList.add('is-animating');
-               }
-            }, OPEN_DELAY);
+            triggerNode.setAttribute('aria-expanded', 'true');
+            overlay.classList.add('active');
+            document.querySelector('.oc-header')?.classList.add('has-shadow');
           }
 
           function closeMegaMenu(triggerNode) {
-            clearTimeout(openTimer);
+            // Delay ช่วยให้เมาส์ข้ามช่องว่างระหว่างปุ่มลงเมนูได้โดยไม่กระพริบ
             hoverTimer = setTimeout(function() {
               triggerNode.setAttribute('aria-expanded', 'false');
-              
-              var submenu = triggerNode.nextElementSibling;
-              if(submenu) {
-                submenu.classList.remove('is-animating');
-                setTimeout(function() {
-                  if (triggerNode.getAttribute('aria-expanded') === 'false') {
-                    submenu.classList.remove('is-visible');
-                  }
-                }, 280); 
-              }
               overlay.classList.remove('active');
-            }, CLOSE_DELAY); 
+            }, 180); 
           }
 
           triggers.forEach(function(trigger) {
             trigger.addEventListener('click', function(e) { e.preventDefault(); });
             
+            // เมื่อเมาส์เข้าปุ่ม
             trigger.addEventListener('mouseenter', function() { openMegaMenu(trigger); });
+            // เมื่อเมาส์ออกจากปุ่ม
             trigger.addEventListener('mouseleave', function() { closeMegaMenu(trigger); });
 
+            // เมื่อเมาส์เข้าไปในตัวกล่อง Mega Menu ยึดให้มันเปิดค้างไว้
             var submenu = trigger.nextElementSibling;
             if (submenu) {
-              submenu.addEventListener('mouseenter', function() { 
-                clearTimeout(hoverTimer); 
-                clearTimeout(openTimer);
-              });
+              submenu.addEventListener('mouseenter', function() { clearTimeout(hoverTimer); });
               submenu.addEventListener('mouseleave', function() { closeMegaMenu(trigger); });
             }
           });
@@ -558,38 +501,26 @@
 #header-component[data-menu-style='drawer'] .header__drawer { display: flex; min-height: var(--header-drawer-min-height); }
 @media screen and (min-width: 750px) { #header-component[data-menu-style='menu'] .header__drawer { display: none; min-height: 0; } }
 
+/* Shopify Native Overrides to support V4 - Targeted ONLY to V4 Submenu to prevent breaking standard menus */
+.menu-list__list-item { position: static !important; } 
 
-/* ✅ THE FIX FOR "เพิ่มเติม" (More) Glitch ✅
-   ใช้การซ่อน (display: none) และบังคับให้เมนูลอยแบบ fixed เข้ากับหน้าจอ
-   ทำให้สคริปต์ของธีมไม่เห็นความกว้างของเมนูนี้เลย!
-*/
 .oc-nav-trigger + .oc-v4-submenu-container {
-  display: none !important;
-  position: fixed !important;
-  left: 0 !important;
-  right: 0 !important;
-  width: 100vw !important;
   clip-path: none !important;
-  opacity: 0; 
-  transform: translateY(-4px); 
+  visibility: hidden; position: absolute; width: 100%; left: 0;
+  top: 100%; z-index: var(--layer-header-menu, 999);
   transition: opacity 0.28s var(--oc-ease-smooth), transform 0.28s var(--oc-ease-expo);
-  pointer-events: none;
-  z-index: 999;
+  opacity: 0; transform: translateY(-4px); pointer-events: none;
 }
 
-.oc-nav-trigger + .oc-v4-submenu-container.is-visible {
-  display: block !important;
+.oc-nav-trigger[aria-expanded="true"] + .oc-v4-submenu-container {
+  visibility: visible; opacity: 1; transform: translateY(0); pointer-events: auto;
 }
 
-.oc-nav-trigger + .oc-v4-submenu-container.is-animating {
-  opacity: 1; 
-  transform: translateY(0); 
-  pointer-events: auto;
-}
+.oc-nav-trigger[aria-expanded="true"] .oc-nav__chev { transform: rotate(180deg) !important; opacity: 1 !important; }
 
 /* ═══ MEGA MENU V4 ═══ */
-.oc-overlay { position: fixed; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0); z-index: 998; pointer-events: none; transition: background 0.35s; }
-.oc-overlay.active { background: rgba(0,0,0,0.10); }
+.oc-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0); z-index: 998; pointer-events: none; transition: background 0.35s; }
+.oc-overlay.active { background: rgba(0,0,0,0.10); /* FIXED: Removed pointer-events: auto to prevent stealing hover */ }
 
 .oc-mega-wrapper { width: 100%; background: transparent !important; box-shadow: none !important; }
 .oc-mega__wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1000;}
@@ -631,18 +562,13 @@
 .oc-mega__products[aria-busy="true"] { opacity: 0.5; pointer-events: none; }
 .oc-mega__prod-pane { display: flex; flex-direction: column; flex: 1; min-height: 0; }
 .oc-mega__prod-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 12px 16px; scrollbar-width: thin; scrollbar-color: rgba(167,139,250,0.2) transparent; }
-.oc-mega__prod-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; align-content: start; }
+.oc-mega__prod-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; align-content: start; }
 .oc-mega__card { display: flex; flex-direction: column; align-items: center; border-radius: 8px; overflow: hidden; border: 1px solid var(--oc-ink-15); text-decoration: none; color: var(--oc-ink-70); transition: border-color 0.18s, box-shadow 0.18s, background 0.15s; background: #fff; }
 .oc-mega__card:hover { border-color: rgba(20,201,223,0.3); box-shadow: 0 2px 10px rgba(20,201,223,0.08); background: rgba(20,201,223,0.02); }
 .oc-mega__card-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; background: var(--oc-ink-05); }
 .oc-mega__card-body { padding: 6px 8px; width: 100%; }
 .oc-mega__card-name { font-size: 11px; font-weight: 600; color: var(--oc-ink); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-
-/* Tags / Pills */
-.oc-mega__tags-hd { font-size: 9px; font-weight: 700; color: var(--oc-ink-40); text-transform: uppercase; letter-spacing: 0.07em; margin: 0 0 5px; }
-.oc-mega__tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
-.oc-mega__tag { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: var(--oc-radius-pill); background: var(--oc-ink-05); border: 1px solid var(--oc-ink-15); font-size: 11px; color: var(--oc-ink-40); text-decoration: none; white-space: nowrap; transition: background 0.15s, border-color 0.15s, color 0.15s; }
-.oc-mega__tag:hover { background: var(--oc-cyan-l, rgba(20,201,223,0.1)); border-color: var(--oc-cyan); color: var(--oc-cyan); }
+.oc-mega__card-price { font-size: 10.5px; font-weight: 700; color: var(--oc-cyan); margin-top: 1px; }
 
 /* ── Animation Classes ── */
 .oc-mega__sub-pane.active .oc-mega__sub { animation: oc-sub-in 0.22s var(--oc-ease-expo) backwards; }
@@ -710,7 +636,7 @@
       "min": 4,
       "max": 20,
       "step": 1,
-      "default": 12
+      "default": 8
     },
     {
       "type": "header",
