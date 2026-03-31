@@ -58,18 +58,19 @@
 
     {% capture children %}
       {% for link in block_settings.menu.links %}
+          {% assign is_mega_toggle_only = false %}
+          {% if link.title == 'สินค้าและบริการ' and link.links != blank %}
+            {% assign is_mega_toggle_only = true %}
+          {% endif %}
+
         <li
-          class="menu-list__list-item"
+          class="menu-list__list-item{% if is_mega_toggle_only %} oc-mega-trigger-li{% endif %}"
           role="presentation"
           on:focus="/activate"
           on:blur="/deactivate"
           on:pointerenter="/activate"
           on:pointerleave="/deactivate"
         >
-          {% assign is_mega_toggle_only = false %}
-{% if link.title == 'สินค้าและบริการ' and link.links != blank %}
-  {% assign is_mega_toggle_only = true %}
-{% endif %}
 
 {% if is_mega_toggle_only %}
   <button
@@ -80,6 +81,7 @@
     aria-haspopup="true"
     aria-expanded="false"
     ref="menuitem"
+    data-oc-mega-trigger
   >
     <span class="menu-list__link-title">{{- link.title -}}</span>
   </button>
@@ -108,7 +110,7 @@
                 style="{% render 'submenu-font-styles', settings: block_settings %}"
               >
                 <div
-                  class="oc-mega-panel oc-mega-v4"
+                  class="oc-mega-panel"
                   style="
                     --oc-col0-width: {{ block_settings.col0_width }}px;
                     --oc-col1-width: {{ block_settings.col1_width }}px;
@@ -120,9 +122,9 @@
                     --oc-drawer-min-height: {{ block_settings.drawer_min_height }}px;
                   "
                 >
-                  <div class="oc-mega__cats">
-                    <div class="oc-mega__cats-head">{{ link.title }}</div>
-                    <div class="oc-mega__cats-scroll" role="tablist" aria-label="{{ link.title | escape }}">
+                  <div class="oc-mega__col0">
+                    <div class="oc-mega__col-hd">{{ link.title }}</div>
+                    <ul class="oc-mega__l0-list list-unstyled" role="listbox">
                       {% for l0 in link.links %}
                         {%- liquid
                           assign l0_coll = l0.object
@@ -131,30 +133,22 @@
                             assign l0_handle = l0_coll.handle
                           endif
                         -%}
-                        <button
-                          type="button"
-                          class="oc-mega__cat{% if forloop.first %} active{% endif %}"
+                        <li
+                          class="oc-mega__l0-item{% if forloop.first %} on{% endif %}"
                           data-grp="{{ forloop.index0 }}"
                           data-coll="{{ l0_handle }}"
                           data-url="{{ l0.url }}"
-                          role="tab"
+                          role="option"
                           aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
-                          tabindex="{% if forloop.first %}0{% else %}-1{% endif %}"
+                          tabindex="0"
                         >
-                          <span class="oc-mega__cat-label">{{- l0.title -}}</span>
-                          <span class="oc-mega__cat-arrow" aria-hidden="true">›</span>
-                        </button>
+                          {{- l0.title -}}
+                        </li>
                       {% endfor %}
-                    </div>
-                    <div class="oc-mega__cats-foot">
-                      <a href="{{ link.url }}" class="oc-mega__alllink">
-                        <span>{{ 'actions.view_all' | t | default: 'ดูทั้งหมด' }}</span>
-                        <span aria-hidden="true">→</span>
-                      </a>
-                    </div>
+                    </ul>
                   </div>
 
-                  <div class="oc-mega__subs">
+                  <div class="oc-mega__col1">
                     {% for l0 in link.links %}
                       {%- liquid
                         assign l0_coll = l0.object
@@ -173,25 +167,26 @@
                       -%}
 
                       <div
-                        class="oc-mega__sub-pane{% if forloop.first %} active{% endif %}"
+                        class="oc-mega__l1-group{% unless forloop.first %} oc-hidden{% endunless %}"
                         data-grp="{{ forloop.index0 }}"
                         data-handle="{{ l0_handle }}"
+                        role="listbox"
+                        aria-label="{{ l0.title | escape }}"
                       >
-                        <div class="oc-mega__sub-head">{{ l0.title }}</div>
-                        <div class="oc-mega__sub-scroll" role="listbox" aria-label="{{ l0.title | escape }}">
+                        <div class="oc-mega__col-hd">{{ l0.title }}</div>
+                        <ul class="oc-mega__l1-list list-unstyled">
                           {% if has_meta %}
                             {% for subcol in subcols %}
-                              <button
-                                type="button"
-                                class="oc-mega__sub{% if forloop.first and forloop.parentloop.first %} active{% endif %}"
+                              <li
+                                class="oc-mega__l1-item{% if forloop.first and forloop.parentloop.first %} on{% endif %}"
                                 data-coll="{{ subcol.handle }}"
                                 data-url="{{ subcol.url }}"
                                 role="option"
                                 aria-selected="{% if forloop.first and forloop.parentloop.first %}true{% else %}false{% endif %}"
+                                tabindex="0"
                               >
-                                <span class="oc-mega__sub-dot" aria-hidden="true"></span>
-                                <span class="oc-mega__sub-label">{{- subcol.title -}}</span>
-                              </button>
+                                {{- subcol.title -}}
+                              </li>
                             {% endfor %}
                           {% else %}
                             {% for l1 in l0.links %}
@@ -202,41 +197,45 @@
                                   assign l1_handle = l1_coll.handle
                                 endif
                               -%}
-                              <button
-                                type="button"
-                                class="oc-mega__sub{% if forloop.first and forloop.parentloop.first %} active{% endif %}"
+                              <li
+                                class="oc-mega__l1-item{% if forloop.first and forloop.parentloop.first %} on{% endif %}"
                                 data-coll="{{ l1_handle }}"
                                 data-url="{{ l1.url }}"
                                 role="option"
                                 aria-selected="{% if forloop.first and forloop.parentloop.first %}true{% else %}false{% endif %}"
+                                tabindex="0"
                               >
-                                <span class="oc-mega__sub-dot" aria-hidden="true"></span>
-                                <span class="oc-mega__sub-label">{{- l1.title -}}</span>
-                              </button>
+                                {{- l1.title -}}
+                              </li>
                             {% endfor %}
                           {% endif %}
-                        </div>
-                        <a href="{{ l0.url }}" class="oc-mega__sub-seeall">
-                          <span>{{ 'actions.view_all' | t | default: 'ดูทั้งหมด' }}</span>
-                          <span aria-hidden="true">→</span>
-                        </a>
+                        </ul>
                       </div>
                     {% endfor %}
                   </div>
 
-                  <div class="oc-mega__products">
-                    <div class="oc-mega__prod-head">
-                      <span>{{ 'general.search.products' | t | default: 'สินค้าแนะนำ' }}</span>
+                  <div class="oc-mega__col2">
+                    <div class="oc-mega__col2-hd">
+                      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="var(--oc-purple,#A78BFA)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                      {%- if request.locale.iso_code == 'th' -%}สินค้าแนะนำ{%- else -%}Featured{%- endif -%}
                     </div>
-                    <div
-                      class="oc-mega__product-panel"
-                      data-card-count="{{ block_settings.mega_thumb_count }}"
-                      data-product-limit="{{ block_settings.product_limit }}"
-                      aria-live="polite"
-                      aria-busy="false"
-                    ></div>
+                    <div class="oc-mega__col2-scroll">
+                      <div
+                        class="oc-mega__product-panel"
+                        data-thumb-count="{{ block_settings.mega_thumb_count }}"
+                        data-product-limit="{{ block_settings.product_limit }}"
+                        aria-live="polite"
+                        aria-busy="false"
+                      ></div>
+                    </div>
+                    <a href="#" class="oc-mega__col2-foot" data-oc-viewall hidden>
+                      {%- if request.locale.iso_code == 'th' -%}ดูทั้งหมด{%- else -%}View all{%- endif -%}
+                      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </a>
                   </div>
                 </div>
+              </div>
+            </div>
           {% endif %}
         </li>
       {% endfor %}
@@ -292,6 +291,9 @@
 
 
     <script>
+      /* ══════════════════════════════════════════════════════════════
+         OC MEGA MENU — JS Block 1: Product panel + category interaction
+         ══════════════════════════════════════════════════════════════ */
       (function () {
         'use strict';
 
@@ -301,331 +303,280 @@
         }
 
         var _cache = {};
+        var CAT_HOVER_DELAY = 100;
 
         function esc(s) {
-          return String(s || '')
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;');
+          return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
         }
 
         function normalizeShopifyImage(src) {
           if (!src) return null;
           src = String(src);
-
           if (src.indexOf('//') === 0) src = window.location.protocol + src;
-
           if (src.indexOf('http') !== 0 && src.indexOf('//') !== 0) {
             src = src.indexOf('/') === 0 ? window.location.origin + src : window.location.origin + '/' + src;
           }
-
           return src;
         }
 
         function resizeImg(src, width, height) {
           src = normalizeShopifyImage(src);
           if (!src) return null;
-
           src = src.replace(/_(pico|icon|thumb|small|compact|medium|large|grande|original|\d+x\d*)(?=\.[a-zA-Z]{3,4}(\?[^.]*)?$)/, '');
           return src.replace(/(\.[a-zA-Z]{3,4})(\?[^.]*)?$/, '_' + width + 'x' + height + '$1$2');
         }
 
         function getProductImage(product) {
           if (!product) return null;
-
           if (typeof product.featured_image === 'string' && product.featured_image) return product.featured_image;
-
           if (product.featured_image && typeof product.featured_image === 'object') {
             if (product.featured_image.src) return product.featured_image.src;
             if (product.featured_image.url) return product.featured_image.url;
           }
-
           if (Array.isArray(product.images) && product.images.length) {
             var first = product.images[0];
             if (typeof first === 'string') return first;
             if (first && first.src) return first.src;
-            if (first && first.url) return first.url;
           }
-
           if (product.image && product.image.src) return product.image.src;
-
           return null;
-        }
-
-        function formatMoneyFromCents(cents) {
-          if (typeof cents !== 'number') return '';
-          try {
-            return new Intl.NumberFormat('th-TH', {
-              style: 'currency',
-              currency: 'THB',
-              maximumFractionDigits: 0
-            }).format(cents / 100);
-          } catch (e) {
-            return '';
-          }
         }
 
         function fetchProducts(handle, limit) {
           if (!handle) return Promise.resolve([]);
-
-          var cacheKey = handle + '::' + limit;
-
-          if (Array.isArray(_cache[cacheKey])) {
-            return Promise.resolve(_cache[cacheKey]);
-          }
-
-          if (_cache[cacheKey] && typeof _cache[cacheKey].then === 'function') {
-            return _cache[cacheKey];
-          }
-
-          _cache[cacheKey] = fetch('/collections/' + encodeURIComponent(handle) + '/products.json?limit=' + encodeURIComponent(limit), {
+          var key = handle + '::' + limit;
+          if (Array.isArray(_cache[key])) return Promise.resolve(_cache[key]);
+          if (_cache[key] && typeof _cache[key].then === 'function') return _cache[key];
+          _cache[key] = fetch('/collections/' + encodeURIComponent(handle) + '/products.json?limit=' + encodeURIComponent(limit), {
             credentials: 'same-origin'
           })
-            .then(function (res) {
-              if (!res.ok) throw new Error('Fetch failed: ' + res.status);
-              return res.json();
-            })
-            .then(function (data) {
-              var products = Array.isArray(data.products) ? data.products : [];
-              _cache[cacheKey] = products;
-              return products;
-            })
-            .catch(function () {
-              _cache[cacheKey] = [];
-              return [];
-            });
-
-          return _cache[cacheKey];
+          .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+          .then(function (d) { var p = Array.isArray(d.products) ? d.products : []; _cache[key] = p; return p; })
+          .catch(function () { _cache[key] = []; return []; });
+          return _cache[key];
         }
 
-        function OcMegaV4(panel) {
+        /* ═══ OcMega Constructor ═══ */
+        function OcMega(panel) {
           this.panel = panel;
           this.productPanel = panel.querySelector('.oc-mega__product-panel');
-          this.catItems = Array.from(panel.querySelectorAll('.oc-mega__cat'));
-          this.subPanes = Array.from(panel.querySelectorAll('.oc-mega__sub-pane'));
-          this.cardCount = parseInt(this.productPanel.dataset.cardCount || 4, 10);
+          this.col2 = panel.closest('.oc-mega-panel') ? panel.closest('.oc-mega-panel').querySelector('.oc-mega__col2') : null;
+          this.viewallBtn = this.col2 ? this.col2.querySelector('[data-oc-viewall]') : null;
+          this.thumbCount = parseInt(this.productPanel.dataset.thumbCount || 4, 10);
           this.productLimit = parseInt(this.productPanel.dataset.productLimit || 8, 10);
-
-          var styles = getComputedStyle(this.panel);
-          this.thumbImageWidth = parseInt(styles.getPropertyValue('--oc-thumb-image-width') || 500, 10);
-          this.thumbImageHeight = Math.round(this.thumbImageWidth * 3 / 4);
-
-          this.activeHandle = '';
+          this.activeHandle = null;
+          this.booted = false;
+          this._catTimer = null;
           this.bind();
-          this.boot();
+          this.watchOpen();
         }
 
-        OcMegaV4.prototype.bind = function () {
+        OcMega.prototype.watchOpen = function () {
           var self = this;
-
-          this.catItems.forEach(function (cat) {
-            var activate = function () {
-              self.selectCategory(Number(cat.dataset.grp), cat);
-            };
-
-            cat.addEventListener('mouseenter', activate);
-            cat.addEventListener('focus', activate);
-            cat.addEventListener('click', function (e) {
-              e.preventDefault();
-              activate();
-            });
-
-            cat.addEventListener('keydown', function (e) {
-              var idx = self.catItems.indexOf(cat);
-              var nextIdx = idx;
-
-              if (e.key === 'ArrowDown' || e.key === 'ArrowRight') nextIdx = Math.min(self.catItems.length - 1, idx + 1);
-              if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') nextIdx = Math.max(0, idx - 1);
-
-              if (nextIdx !== idx) {
-                e.preventDefault();
-                self.catItems[nextIdx].focus();
-              }
-
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                activate();
+          var submenu = this.panel.closest('.menu-list__submenu');
+          var menuItem = submenu ? submenu.closest('.menu-list__list-item') : null;
+          var trigger = menuItem ? menuItem.querySelector('[aria-haspopup]') : null;
+          if (!trigger) { self.boot(); return; }
+          var mo = new MutationObserver(function (mutations) {
+            mutations.forEach(function (m) {
+              if (m.attributeName === 'aria-expanded' && trigger.getAttribute('aria-expanded') === 'true' && !self.booted) {
+                self.boot();
+                mo.disconnect();
               }
             });
           });
+          mo.observe(trigger, { attributes: true, attributeFilter: ['aria-expanded'] });
+        };
 
+        /* ── Event bindings with intent delay ── */
+        OcMega.prototype.bind = function () {
+          var self = this;
+
+          /* Col 0: hover with CAT_HOVER_DELAY to prevent flicker */
           this.panel.addEventListener('mouseenter', function (e) {
-            var sub = e.target.closest('.oc-mega__sub');
-            if (sub) self.selectSub(sub);
+            var l0 = e.target.closest('.oc-mega__l0-item');
+            var l1 = e.target.closest('.oc-mega__l1-item');
+            if (l0) {
+              clearTimeout(self._catTimer);
+              self._catTimer = setTimeout(function () {
+                self.selectL0(Number(l0.dataset.grp), l0);
+              }, CAT_HOVER_DELAY);
+            }
+            if (l1) self.selectL1(l1);
           }, true);
 
-          this.panel.addEventListener('focusin', function (e) {
-            var sub = e.target.closest('.oc-mega__sub');
-            if (sub) self.selectSub(sub);
-          });
+          this.panel.addEventListener('mouseleave', function (e) {
+            if (e.target.closest('.oc-mega__l0-item')) clearTimeout(self._catTimer);
+          }, true);
 
+          /* Click: instant switch */
           this.panel.addEventListener('click', function (e) {
-            var sub = e.target.closest('.oc-mega__sub');
-            if (!sub) return;
-            e.preventDefault();
-            self.selectSub(sub);
+            var l0 = e.target.closest('.oc-mega__l0-item');
+            var l1 = e.target.closest('.oc-mega__l1-item');
+            if (l0) { e.preventDefault(); clearTimeout(self._catTimer); self.selectL0(Number(l0.dataset.grp), l0); }
+            if (l1) { e.preventDefault(); self.selectL1(l1); }
+          });
+
+          this.panel.addEventListener('focusin', function (e) {
+            var l0 = e.target.closest('.oc-mega__l0-item');
+            var l1 = e.target.closest('.oc-mega__l1-item');
+            if (l0) self.selectL0(Number(l0.dataset.grp), l0);
+            if (l1) self.selectL1(l1);
+          });
+
+          /* Keyboard: arrows navigate, Enter/Space select */
+          this.panel.addEventListener('keydown', function (e) {
+            var item = e.target.closest('.oc-mega__l0-item, .oc-mega__l1-item');
+            if (!item) return;
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              if (item.classList.contains('oc-mega__l0-item')) self.selectL0(Number(item.dataset.grp), item);
+              else self.selectL1(item);
+            }
+            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+              e.preventDefault();
+              var list = item.closest('ul');
+              if (!list) return;
+              var items = Array.from(list.querySelectorAll('.oc-mega__l0-item, .oc-mega__l1-item'));
+              var idx = items.indexOf(item);
+              var next = items[idx + (e.key === 'ArrowDown' ? 1 : -1)];
+              if (next) next.focus();
+            }
           });
         };
 
-        OcMegaV4.prototype.boot = function () {
-          if (!this.catItems.length) return;
-          this.selectCategory(0, this.catItems[0]);
+        OcMega.prototype.boot = function () {
+          if (this.booted) return;
+          this.booted = true;
+          var firstL0 = this.panel.querySelector('.oc-mega__l0-item');
+          if (firstL0) { this.selectL0(Number(firstL0.dataset.grp || 0), firstL0); return; }
+          this.render([], '', '');
         };
 
-        OcMegaV4.prototype.selectCategory = function (grp, cat) {
-          this.catItems.forEach(function (item, idx) {
-            var isActive = idx === grp && item === cat;
-            item.classList.toggle('active', isActive);
-            item.setAttribute('aria-selected', isActive ? 'true' : 'false');
-            item.setAttribute('tabindex', isActive ? '0' : '-1');
-          });
-
-          this.subPanes.forEach(function (pane) {
-            pane.classList.toggle('active', Number(pane.dataset.grp) === grp);
-          });
-
-          var activePane = this.panel.querySelector('.oc-mega__sub-pane.active');
-          var firstSub = activePane ? activePane.querySelector('.oc-mega__sub') : null;
-
-          if (firstSub) {
-            this.selectSub(firstSub);
-            this.prefetchNext(activePane, firstSub);
-          } else {
-            this.render([], '', cat ? cat.dataset.url : '');
-          }
-        };
-
-        OcMegaV4.prototype.selectSub = function (sub) {
-          var activePane = sub.closest('.oc-mega__sub-pane');
-          if (!activePane) return;
-
-          activePane.querySelectorAll('.oc-mega__sub').forEach(function (item) {
-            var isActive = item === sub;
-            item.classList.toggle('active', isActive);
-            item.setAttribute('aria-selected', isActive ? 'true' : 'false');
-          });
-
-          this.loadProducts(sub.dataset.coll, sub.dataset.url || activePane.dataset.url || '');
-        };
-
-        OcMegaV4.prototype.prefetchNext = function (pane, current) {
-          var next = current && current.nextElementSibling ? current.nextElementSibling : null;
-          if (next && next.dataset && next.dataset.coll) {
-            fetchProducts(next.dataset.coll, this.productLimit);
-          }
-        };
-
-        OcMegaV4.prototype.loadProducts = function (handle, collUrl) {
+        OcMega.prototype.selectL0 = function (grp, activeEl) {
           var self = this;
+          this.panel.querySelectorAll('.oc-mega__l0-item').forEach(function (el) {
+            var on = el === activeEl;
+            el.classList.toggle('on', on);
+            el.setAttribute('aria-selected', on ? 'true' : 'false');
+          });
+          this.panel.querySelectorAll('.oc-mega__l1-group').forEach(function (g) {
+            g.classList.toggle('oc-hidden', Number(g.dataset.grp) !== grp);
+          });
+          var activeGroup = this.panel.querySelector('.oc-mega__l1-group[data-grp="' + grp + '"]');
+          if (!activeGroup) { this.render([], '', activeEl ? activeEl.dataset.url : ''); return; }
+          var firstL1 = activeGroup.querySelector('.oc-mega__l1-item');
+          this.panel.querySelectorAll('.oc-mega__l1-item').forEach(function (el) {
+            var on = el === firstL1;
+            el.classList.toggle('on', on);
+            el.setAttribute('aria-selected', on ? 'true' : 'false');
+          });
+          if (firstL1) self.loadProducts(firstL1.dataset.coll, firstL1.dataset.url);
+          else self.render([], '', activeEl ? activeEl.dataset.url : '');
+        };
 
-          if (!handle) {
-            self.render([], handle, collUrl);
-            return;
-          }
+        OcMega.prototype.selectL1 = function (item) {
+          this.panel.querySelectorAll('.oc-mega__l1-item').forEach(function (el) {
+            var on = el === item;
+            el.classList.toggle('on', on);
+            el.setAttribute('aria-selected', on ? 'true' : 'false');
+          });
+          this.loadProducts(item.dataset.coll, item.dataset.url);
+        };
 
-          if (self.activeHandle === handle && self.productPanel.innerHTML.trim() !== '') {
-            return;
-          }
+        OcMega.prototype.prefetch = function (handle) {
+          if (!handle) return;
+          fetchProducts(handle, this.productLimit);
+        };
 
+        OcMega.prototype.loadProducts = function (handle, collUrl) {
+          var self = this;
+          if (!handle) { self.render([], handle, collUrl); return; }
+          if (self.activeHandle === handle && self.productPanel.innerHTML.trim() !== '') return;
           self.activeHandle = handle;
           self.productPanel.setAttribute('aria-busy', 'true');
-          self.productPanel.innerHTML = '<div class="oc-mega__prod-scroll"><p class="oc-mega__loading">กำลังโหลด…</p></div>';
-
+          self.productPanel.innerHTML = '<p class="oc-mega__loading">กำลังโหลด…</p>';
           fetchProducts(handle, self.productLimit).then(function (products) {
             if (self.activeHandle !== handle) return;
             self.render(products, handle, collUrl);
           });
         };
 
-        OcMegaV4.prototype.render = function (products, handle, collUrl) {
+        /* ═══ Render: 2-col grid cards (matching demo v4) ═══ */
+        OcMega.prototype.render = function (products, handle, collUrl) {
           var pp = this.productPanel;
-          var cardCount = this.cardCount;
+          var tc = this.thumbCount;
           var url = collUrl || (handle ? '/collections/' + handle : '#');
-          var imageW = this.thumbImageWidth;
-          var imageH = this.thumbImageHeight;
 
           pp.setAttribute('aria-busy', 'false');
 
+          /* Update footer "ดูทั้งหมด" */
+          if (this.viewallBtn) {
+            if (url && url !== '#') { this.viewallBtn.href = url; this.viewallBtn.hidden = false; }
+            else { this.viewallBtn.hidden = true; }
+          }
+
           if (!products || !products.length) {
-            pp.innerHTML =
-              '<div class="oc-mega__prod-scroll">' +
-                '<p class="oc-mega__empty">ไม่พบสินค้าในหมวดนี้</p>' +
-              '</div>' +
-              (url !== '#'
-                ? '<a href="' + esc(url) + '" class="oc-mega__prod-viewall"><span>ดูทั้งหมด</span><span aria-hidden="true">→</span></a>'
-                : '');
+            pp.innerHTML = '<p class="oc-mega__empty">ไม่พบสินค้าในหมวดนี้</p>';
             return;
           }
 
-          var cards = products.slice(0, cardCount);
-          var html = '<div class="oc-mega__prod-scroll"><div class="oc-mega__prod-grid">';
+          var visible = products.slice(0, tc);
+          var html = '<div class="oc-mega__prod-grid">';
 
-          cards.forEach(function (p) {
+          visible.forEach(function (p, i) {
             var rawImg = getProductImage(p);
-            var src = rawImg ? resizeImg(rawImg, imageW, imageH) : null;
+            var src = rawImg ? resizeImg(rawImg, 160, 120) : null;
             var productUrl = '/products/' + esc(p.handle);
-            var price = '';
-            if (typeof p.price_min === 'number') price = formatMoneyFromCents(p.price_min);
-            else if (Array.isArray(p.variants) && p.variants.length && typeof p.variants[0].price === 'number') price = formatMoneyFromCents(p.variants[0].price);
-            else if (Array.isArray(p.variants) && p.variants.length && p.variants[0].price) price = formatMoneyFromCents(parseInt(p.variants[0].price, 10));
 
-            html += '<a href="' + productUrl + '" class="oc-mega__card">';
+            html += '<a href="' + productUrl + '" class="oc-mega__card" style="animation-delay:' + (i * 0.04 + 0.04) + 's">';
             if (src) {
-              html += '<img class="oc-mega__card-img" src="' + esc(src) + '" alt="' + esc(p.title) + '" loading="lazy" width="320" height="240">';
+              html += '<img class="oc-mega__card-img" src="' + esc(src) + '" alt="' + esc(p.title) + '" loading="lazy" width="160" height="120">';
             } else {
               html += '<div class="oc-mega__card-img oc-mega__card-img--ph"></div>';
             }
             html += '<div class="oc-mega__card-body">';
-            html += '<div class="oc-mega__card-name">' + esc(p.title) + '</div>';
-            if (price) html += '<div class="oc-mega__card-price">' + esc(price) + '</div>';
+            html += '<span class="oc-mega__card-name">' + esc(p.title) + '</span>';
             html += '</div></a>';
           });
 
-          html += '</div></div>';
-          html += '<a href="' + esc(url) + '" class="oc-mega__prod-viewall"><span>ดูทั้งหมด</span><span aria-hidden="true">→</span></a>';
+          html += '</div>';
           pp.innerHTML = html;
         };
 
         function tryInit() {
           if (!isDesktopMenu()) return;
-          document.querySelectorAll('.oc-mega-v4').forEach(function (panel) {
-            if (!panel._ocMegaV4) {
-              panel._ocMegaV4 = new OcMegaV4(panel);
-            }
+          document.querySelectorAll('.oc-mega-panel').forEach(function (panel) {
+            if (!panel._ocMega) panel._ocMega = new OcMega(panel);
           });
         }
-
         tryInit();
-
         var obs = new MutationObserver(function (mutations) {
           var found = mutations.some(function (m) {
             return Array.from(m.addedNodes).some(function (n) {
-              return n.nodeType === 1 && (
-                n.matches('.oc-mega-v4') ||
-                (n.querySelector && n.querySelector('.oc-mega-v4'))
-              );
+              return n.nodeType === 1 && (n.matches && n.matches('.oc-mega-panel') || n.querySelector && n.querySelector('.oc-mega-panel'));
             });
           });
-
           if (found) tryInit();
         });
-
         obs.observe(document.body, { childList: true, subtree: true });
-
         if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', function () {
-            tryInit();
-            setTimeout(tryInit, 300);
-          });
-        } else {
-          setTimeout(tryInit, 100);
-          setTimeout(tryInit, 300);
-        }
+          document.addEventListener('DOMContentLoaded', function () { tryInit(); setTimeout(tryInit, 500); setTimeout(tryInit, 1200); });
+        } else { setTimeout(tryInit, 100); setTimeout(tryInit, 500); setTimeout(tryInit, 1200); }
       })();
     </script>
 
     <script>
+      /* ══════════════════════════════════════════════════════════════
+         OC Mega Menu — Hover guard (supplements Horizon, not replaces)
+         ─────────────────────────────────────────────────────────────
+         Horizon handles open via on:pointerenter="/activate" (native)
+         This guard ONLY handles:
+         • Prevent accidental open: delay before first open
+         • Forgiving close: header mouseleave → delayed close
+         • ESC key: close all
+         Does NOT intercept clicks — Horizon handles clicks natively.
+         ══════════════════════════════════════════════════════════════ */
       (function () {
         'use strict';
 
@@ -634,33 +585,28 @@
           return hdr && hdr.getAttribute('data-menu-style') === 'menu';
         }
 
-        var OPEN_DELAY = 140;
-        var CLOSE_DELAY = 520;
-        var openTimer = null;
+        var OPEN_DELAY  = 200;
+        var CLOSE_DELAY = 400;
+        var openTimer  = null;
         var closeTimer = null;
 
-        function clearOpen() { if (openTimer) { clearTimeout(openTimer); openTimer = null; } }
+        function clearOpen()  { if (openTimer)  { clearTimeout(openTimer);  openTimer  = null; } }
         function clearClose() { if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; } }
 
         function getOpenTrigger() {
-          return document.querySelector('.menu-list__list-item .menu-list__link[aria-haspopup][aria-expanded="true"]');
+          return document.querySelector(
+            '.menu-list__list-item .menu-list__link[aria-haspopup][aria-expanded="true"]'
+          );
         }
 
         function closeAll() {
-          document.querySelectorAll('.menu-list__list-item .menu-list__link[aria-haspopup][aria-expanded="true"]').forEach(function (t) {
-            t.setAttribute('aria-expanded', 'false');
-          });
-        }
-
-        function openTrigger(trigger) {
-          if (!trigger) return;
-          closeAll();
-          trigger.setAttribute('aria-expanded', 'true');
+          document.querySelectorAll(
+            '.menu-list__list-item .menu-list__link[aria-haspopup][aria-expanded="true"]'
+          ).forEach(function (t) { t.setAttribute('aria-expanded', 'false'); });
         }
 
         function bindItems(root) {
           if (!isDesktopMenu()) return;
-
           root.querySelectorAll('.menu-list__list-item').forEach(function (item) {
             if (item._ocHoverBound) return;
             item._ocHoverBound = true;
@@ -668,41 +614,31 @@
             var trigger = item.querySelector('.menu-list__link[aria-haspopup]');
             if (!trigger) return;
 
+            /* mouseenter: cancel any pending close, let Horizon open natively */
             item.addEventListener('mouseenter', function () {
               clearOpen();
               clearClose();
 
-              if (trigger.getAttribute('aria-expanded') === 'true') return;
-
-              if (getOpenTrigger()) {
-                openTrigger(trigger);
-              } else {
+              /* If nothing is open yet, add a small delay before Horizon opens it
+                 by briefly preventing the expanded state */
+              if (!getOpenTrigger()) {
+                trigger.setAttribute('aria-expanded', 'false');
                 openTimer = setTimeout(function () {
-                  openTrigger(trigger);
+                  trigger.setAttribute('aria-expanded', 'true');
                 }, OPEN_DELAY);
               }
             });
 
+            /* focusin/out for keyboard */
             item.addEventListener('focusin', function () {
-              clearOpen();
-              clearClose();
-              openTrigger(trigger);
+              clearOpen(); clearClose();
             });
-
-            item.addEventListener('keydown', function (e) {
-              if ((e.key === 'Enter' || e.key === ' ') && document.activeElement === trigger) {
-                e.preventDefault();
-                if (trigger.getAttribute('aria-expanded') === 'true') {
+            item.addEventListener('focusout', function () {
+              setTimeout(function () {
+                if (!item.contains(document.activeElement)) {
                   trigger.setAttribute('aria-expanded', 'false');
-                } else {
-                  openTrigger(trigger);
                 }
-              }
-
-              if (e.key === 'Escape') {
-                trigger.setAttribute('aria-expanded', 'false');
-                trigger.focus();
-              }
+              }, 150);
             });
           });
         }
@@ -713,36 +649,27 @@
           if (!hdr || hdr._ocGuardBound) return;
           hdr._ocGuardBound = true;
 
-          hdr.addEventListener('mouseover', function () {
-            clearClose();
-          });
+          /* cursor still in header → cancel close */
+          hdr.addEventListener('mouseover', function () { clearClose(); });
 
+          /* cursor left header → schedule close */
           hdr.addEventListener('mouseleave', function () {
             clearOpen();
             closeTimer = setTimeout(closeAll, CLOSE_DELAY);
           });
 
+          /* ESC closes all */
           document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') {
-              clearOpen();
-              clearClose();
-              closeAll();
-            }
+            if (e.key === 'Escape') { clearOpen(); clearClose(); closeAll(); }
           });
         }
 
         bindItems(document);
         attachHeaderGuard();
-
-        var obs = new MutationObserver(function () {
-          bindItems(document);
-          attachHeaderGuard();
-        });
-
+        var obs = new MutationObserver(function () { bindItems(document); attachHeaderGuard(); });
         obs.observe(document.body, { childList: true, subtree: true });
       })();
     </script>
-
 
 {% endcase %}
 
@@ -815,11 +742,11 @@
   cursor: pointer;
   height: 100%;
   margin-block: 0;
-}
 
-.menu-list__link:hover,
-.menu-list__link:focus {
-  color: var(--menu-top-level-font-color);
+  &:hover,
+  &:focus {
+    color: var(--menu-top-level-font-color);
+  }
 }
 
 @media screen and (min-width: 750px) {
@@ -853,8 +780,10 @@
 
 .menu-list:where(:has(.menu-list__list-item:hover)),
 .menu-list:where(:has(.menu-list__list-item:focus-within)),
-.menu-list:where(:has(.menu-list__list-item:not([aria-hidden='true']) .menu-list__link--active)) .menu-list__link {
-  color: rgb(var(--menu-top-level-font-color-rgb) / var(--opacity-subdued-text));
+.menu-list:where(:has(.menu-list__list-item:not([aria-hidden='true']) .menu-list__link--active)) {
+  .menu-list__link {
+    color: rgb(var(--menu-top-level-font-color-rgb) / var(--opacity-subdued-text));
+  }
 }
 
 .menu-list:not(:has(.menu-list__list-item:hover)) .menu-list__link--active,
@@ -882,9 +811,11 @@
   background-color: transparent;
 }
 
-.header__row[style*='--border-bottom-width: 0px'] .menu-list__submenu.color-scheme-matches-parent,
-.header__row[style*='--border-bottom-width: 0px'] .overflow-menu.color-scheme-matches-parent::part(overflow) {
-  --submenu-padding-block-start: 0px;
+.header__row[style*='--border-bottom-width: 0px'] {
+  .menu-list__submenu.color-scheme-matches-parent,
+  .overflow-menu.color-scheme-matches-parent::part(overflow) {
+    --submenu-padding-block-start: 0px;
+  }
 }
 
 .menu-list__list-item:where(:not([slot='overflow'])) > .menu-list__submenu,
@@ -902,9 +833,11 @@
   transition: clip-path var(--submenu-animation-speed) var(--ease-out-cubic);
 }
 
-[data-submenu-overlap-bottom-row] .menu-list__list-item:where(:not([slot='overflow'])) > .menu-list__submenu,
-[data-submenu-overlap-bottom-row] .overflow-menu::part(overflow) {
-  clip-path: rect(var(--top-row-height) 100% var(--full-open-header-height) 0);
+[data-submenu-overlap-bottom-row] {
+  .menu-list__list-item:where(:not([slot='overflow'])) > .menu-list__submenu,
+  .overflow-menu::part(overflow) {
+    clip-path: rect(var(--top-row-height) 100% var(--full-open-header-height) 0);
+  }
 }
 
 .menu-list__list-item:has([aria-expanded='true']) > .menu-list__submenu,
@@ -936,32 +869,32 @@
   --menu-top-level-font-color-rgb: var(--color-foreground-rgb);
   display: contents;
   white-space: normal;
-}
 
-.menu-list__list-item:is([slot='overflow']) .menu-list__link {
-  grid-area: left;
-  grid-row: auto;
-  height: min-content;
-  font-size: var(--font-size--xl);
-  transition: var(--submenu-content-animation);
-}
+  .menu-list__link {
+    grid-area: left;
+    grid-row: auto;
+    height: min-content;
+    font-size: var(--font-size--xl);
+    transition: var(--submenu-content-animation);
+  }
 
-.menu-list__list-item:is([slot='overflow']) .menu-list__submenu {
-  visibility: hidden;
-  grid-row: 1;
-  grid-area: right;
-  grid-row-end: span calc(var(--overflow-count) + 1);
-  padding-inline-start: var(--menu-horizontal-gap);
-}
+  .menu-list__submenu {
+    visibility: hidden;
+    grid-row: 1;
+    grid-area: right;
+    grid-row-end: span calc(var(--overflow-count) + 1);
+    padding-inline-start: var(--menu-horizontal-gap);
+  }
 
-.menu-list__list-item:is([slot='overflow']) .menu-list__submenu-inner {
-  transform: none;
-  grid-column: unset;
-  padding-block: 0;
-}
+  .menu-list__submenu-inner {
+    transform: none;
+    grid-column: unset;
+    padding-block: 0;
+  }
 
-.menu-list__list-item:is([slot='overflow']) .menu-list__link[aria-expanded='true'] + .menu-list__submenu {
-  visibility: visible;
+  .menu-list__link[aria-expanded='true'] + .menu-list__submenu {
+    visibility: visible;
+  }
 }
 
 .header-menu {
@@ -976,15 +909,27 @@
   opacity: var(--submenu-content-opacity);
   transition: var(--submenu-content-animation);
   transform: translateY(calc(var(--full-open-header-height) - var(--submenu-height)));
-  max-height: calc(82vh - var(--header-height));
+  max-height: calc(80vh - var(--header-height));
   overflow: hidden;
   overflow-x: hidden;
 }
 
+
+/* ══════════════════════════════════════════════════════════════
+   OC MEGA MENU v3 — CSS rewrite matching demo v4 exactly
+   ──────────────────────────────────────────────────────────────
+   GAP 1 ✅ L0 items: dot indicator via ::before (instead of SVG icons)
+   GAP 2 ✅ L1 items: dot indicator via ::before
+   GAP 3 ✅ Col headers sticky: flex-column structure, header outside scroll
+   GAP 4 ✅ Fade hint: mask-image on scrollable areas
+   GAP 5 ✅ Stagger animation: l1-items + product cards
+   GAP 6 ✅ Visual polish: spacing, radius, colors matching demo CI tokens
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Mega panel container ── */
 .oc-mega-inner {
   position: relative;
   display: flex;
-  justify-content: space-between;
   padding-block: 0 !important;
   padding-inline: 0 !important;
   overflow: hidden !important;
@@ -996,323 +941,358 @@
   box-sizing: border-box;
 }
 
+/* ── FIXED height panel — no jumping between categories ── */
 .oc-mega-panel {
-  --oc-cyan: #17a9bb;
-  --oc-cyan-vv: #14c9df;
-  --oc-indigo: #818CF8;
-  --oc-purple: #A78BFA;
-  --oc-purple-d: #7C3AED;
-  --oc-ink: #1A202C;
-  --oc-ink-70: #374151;
-  --oc-ink-40: #6B7280;
-  --oc-ink-15: #E5E7EB;
-  --oc-ink-05: #F9FAFB;
-  --oc-radius: 14px;
-  --oc-radius-lg: 22px;
-  --oc-radius-pill: 999px;
-  --oc-glass-shadow: 0 20px 60px rgba(100,100,160,0.18);
   display: flex;
   width: 100%;
-  min-height: max(var(--oc-drawer-min-height, 260px), 420px);
-  max-height: calc(82vh - var(--header-height, 64px));
-  background: #fff;
-  border: 1px solid rgba(0,0,0,0.06);
-  border-top: 0;
-  border-radius: 0 0 var(--oc-radius-lg) var(--oc-radius-lg);
-  box-shadow: var(--oc-glass-shadow);
+  height: var(--oc-drawer-min-height, 480px);
+  max-height: calc(80vh - var(--header-height, 64px));
+  align-items: stretch;
+}
+
+/* ══ SHARED: All 3 cols use flex-column ══
+   header(flex-shrink:0) → scrollable-list(flex:1) → footer(flex-shrink:0) */
+.oc-mega__col0,
+.oc-mega__col1,
+.oc-mega__col2 {
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
 }
 
-.oc-mega__cats {
-  width: min(var(--oc-col0-width, 230px), 260px);
-  min-width: 190px;
-  background: var(--oc-ink-05);
+/* ══ COL 0: Categories ══ */
+.oc-mega__col0 {
+  width: var(--oc-col0-width, 230px);
+  flex-shrink: 0;
   border-right: 1px solid var(--oc-ink-15);
-  display: flex;
-  flex-direction: column;
 }
 
-.oc-mega__cats-head,
-.oc-mega__sub-head,
-.oc-mega__prod-head {
-  font-size: 11px;
+/* ── Col headers: sticky (outside scroll) ── */
+.oc-mega__col-hd {
+  font-size: 10px;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
   color: var(--oc-ink-40);
-  padding: 14px 20px 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  padding: 12px 14px 8px;
   border-bottom: 1px solid var(--oc-ink-15);
+  white-space: normal;
+  flex-shrink: 0;   /* ← stays put, does NOT scroll */
+}
+.oc-mega__col0 .oc-mega__col-hd { background: rgb(var(--color-background, 255 255 255)); }
+.oc-mega__col1 .oc-mega__col-hd { background: var(--oc-ink-05); }
+
+/* ── L0 list: scrollable ── */
+.oc-mega__l0-list {
+  list-style: none;
+  padding: 6px;
+  margin: 0;
+  flex: 1;           /* ← fills remaining space */
+  min-height: 0;     /* ← allows flex child to shrink */
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(20,201,223,0.2) transparent;
+}
+.oc-mega__l0-list::-webkit-scrollbar { width: 4px; }
+.oc-mega__l0-list::-webkit-scrollbar-thumb { background: rgba(20,201,223,0.2); border-radius: 4px; }
+
+/* ── L0 items: dot + text + arrow ── */
+.oc-mega__l0-item {
+  padding: 9px 10px 9px 12px;
+  border-radius: 8px;
+  line-height: 1.4;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1px;
+  color: var(--oc-ink-70, #374151);
+  white-space: normal;
+  word-break: break-word;
+  font-size: var(--oc-l0-font-size, 13px);
+  font-weight: 600;
+  position: relative;
+  transition: background 0.12s, color 0.12s;
+}
+
+/* GAP 1: Dot indicator before text (replaces missing SVG icon) */
+.oc-mega__l0-item::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  min-width: 6px;
+  border-radius: 999px;
+  background: var(--oc-ink-15, #E5E7EB);
+  transition: background 0.15s, transform 0.15s;
   flex-shrink: 0;
 }
 
-.oc-mega__prod-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+/* Arrow after text */
+.oc-mega__l0-item::after {
+  content: '›';
+  font-size: 14px;
+  line-height: 1;
+  color: var(--oc-ink-15);
+  flex-shrink: 0;
+  margin-left: auto;
+  transition: color 0.12s;
 }
 
-.oc-mega__cats-scroll,
-.oc-mega__sub-scroll,
-.oc-mega__prod-scroll {
+/* L0 hover */
+.oc-mega__l0-item:hover {
+  background: rgba(20,201,223,0.06);
+  color: var(--oc-ink, #1A202C);
+}
+.oc-mega__l0-item:hover::before {
+  background: var(--oc-cyan, #17a9bb);
+  transform: scale(1.2);
+}
+
+/* L0 active */
+.oc-mega__l0-item.on {
+  background: var(--oc-cyan-l, #e3f8fb);
+  color: var(--oc-cyan, #17a9bb);
+}
+.oc-mega__l0-item.on::before {
+  background: var(--oc-cyan, #17a9bb);
+  transform: scale(1.3);
+}
+.oc-mega__l0-item.on::after {
+  color: var(--oc-cyan, #17a9bb);
+}
+
+/* GAP 1: Active left cyan bar (matching demo) */
+.oc-mega__l0-item.on {
+  padding-left: 14px;
+  border-left: 3px solid transparent;
+  border-image: linear-gradient(180deg, var(--oc-cyan-vv, #14c9df), var(--oc-cyan, #17a9bb)) 1;
+  border-radius: 0 8px 8px 0;
+}
+
+/* ══ COL 1: Sub-categories ══ */
+.oc-mega__col1 {
+  width: var(--oc-col1-width, 230px);
+  flex-shrink: 0;
+  border-right: 1px solid var(--oc-ink-15);
+  background: var(--oc-ink-05);
+}
+
+/* Each group is a flex column too */
+.oc-mega__l1-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.oc-mega__l1-group.oc-hidden {
+  display: none;
+}
+
+/* ── L1 list: scrollable ── */
+.oc-mega__l1-list {
+  list-style: none;
+  padding: 6px 8px;
+  margin: 0;
   flex: 1;
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: thin;
-  scrollbar-color: rgba(20, 201, 223, 0.25) transparent;
+  scrollbar-color: rgba(20,201,223,0.25) transparent;
+}
+.oc-mega__l1-list::-webkit-scrollbar { width: 4px; }
+.oc-mega__l1-list::-webkit-scrollbar-track { background: transparent; }
+.oc-mega__l1-list::-webkit-scrollbar-thumb { background: rgba(20,201,223,0.25); border-radius: 4px; }
+
+/* GAP 4: Fade hint on scrollable L1 list */
+.oc-mega__l1-list {
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 24px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 24px), transparent 100%);
 }
 
-.oc-mega__cats-scroll::-webkit-scrollbar,
-.oc-mega__sub-scroll::-webkit-scrollbar,
-.oc-mega__prod-scroll::-webkit-scrollbar {
-  width: 4px;
-}
-
-.oc-mega__cats-scroll::-webkit-scrollbar-thumb,
-.oc-mega__sub-scroll::-webkit-scrollbar-thumb,
-.oc-mega__prod-scroll::-webkit-scrollbar-thumb {
-  background: rgba(20, 201, 223, 0.25);
-  border-radius: 99px;
-}
-
-.oc-mega__cats-scroll { padding: 6px 0; }
-.oc-mega__sub-scroll { padding: 6px 8px; }
-.oc-mega__prod-scroll { padding: 12px 16px; }
-
-.oc-mega__cat,
-.oc-mega__sub {
-  width: 100%;
-  border: 0;
-  background: transparent;
-  text-align: left;
+/* ── L1 items: dot + text ── */
+.oc-mega__l1-item {
+  padding: 8px 10px;
+  border-radius: 8px;
+  line-height: 1.4;
   cursor: pointer;
-  font: inherit;
-}
-
-.oc-mega__cat {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 11px 14px 11px 18px;
-  color: var(--oc-ink-70);
-  font-size: var(--oc-l0-font-size, 13px);
-  font-weight: 500;
-  position: relative;
-  transition: background .12s ease, color .12s ease;
-}
-
-.oc-mega__cat-label,
-.oc-mega__sub-label {
-  min-width: 0;
-  white-space: normal;
-  word-break: break-word;
-}
-
-.oc-mega__cat:hover,
-.oc-mega__cat.active {
-  background: #fff;
-  color: var(--oc-cyan);
-}
-
-.oc-mega__cat.active {
-  font-weight: 600;
-}
-
-.oc-mega__cat.active::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 6px;
-  bottom: 6px;
-  width: 3px;
-  border-radius: 0 3px 3px 0;
-  background: linear-gradient(180deg, var(--oc-cyan-vv), var(--oc-cyan));
-}
-
-.oc-mega__cat-arrow {
-  margin-left: auto;
-  opacity: .38;
-  transform: translateX(-2px);
-  transition: opacity .15s ease, transform .15s ease;
-}
-
-.oc-mega__cat.active .oc-mega__cat-arrow {
-  opacity: .8;
-  transform: translateX(0);
-}
-
-.oc-mega__cats-foot,
-.oc-mega__sub-seeall,
-.oc-mega__prod-viewall {
-  height: 42px;
-  border-top: 1px solid var(--oc-ink-15);
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-.oc-mega__alllink,
-.oc-mega__sub-seeall,
-.oc-mega__prod-viewall {
-  width: 100%;
-  padding-inline: 18px;
-  text-decoration: none;
-  color: var(--oc-cyan);
-  font-size: 12px;
-  font-weight: 600;
-  gap: 6px;
-  transition: background .15s ease, gap .2s ease;
-}
-
-.oc-mega__alllink {
-  display: inline-flex;
-  align-items: center;
-}
-
-.oc-mega__sub-seeall,
-.oc-mega__prod-viewall {
-  justify-content: center;
-}
-
-.oc-mega__alllink:hover,
-.oc-mega__sub-seeall:hover,
-.oc-mega__prod-viewall:hover {
-  background: rgba(20, 201, 223, .04);
-  gap: 10px;
-}
-
-.oc-mega__subs {
-  width: min(var(--oc-col1-width, 230px), 300px);
-  min-width: 220px;
-  border-right: 1px solid var(--oc-ink-15);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.oc-mega__sub-pane {
-  display: none;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-}
-
-.oc-mega__sub-pane.active {
-  display: flex;
-}
-
-.oc-mega__sub {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  color: var(--oc-ink-70);
+  margin-bottom: 1px;
+  color: var(--oc-ink-70, #374151);
+  white-space: normal;
+  word-break: break-word;
   font-size: var(--oc-l1-font-size, 13px);
   font-weight: 500;
-  transition: background .12s ease, color .12s ease, transform .12s ease;
+  transition: background 0.12s, color 0.12s, transform 0.12s;
 }
 
-.oc-mega__sub:hover,
-.oc-mega__sub.active {
-  background: rgba(20, 201, 223, .06);
-  color: var(--oc-ink);
-  transform: translateX(2px);
-}
-
-.oc-mega__sub.active {
-  color: var(--oc-cyan);
-}
-
-.oc-mega__sub-dot {
+/* GAP 2: Dot indicator before text */
+.oc-mega__l1-item::before {
+  content: '';
   width: 5px;
   height: 5px;
   min-width: 5px;
-  border-radius: 99px;
-  background: var(--oc-ink-15);
-  transition: background .12s ease, transform .12s ease;
+  border-radius: 999px;
+  background: var(--oc-ink-15, #E5E7EB);
+  transition: background 0.12s, transform 0.12s;
+  flex-shrink: 0;
 }
 
-.oc-mega__sub:hover .oc-mega__sub-dot,
-.oc-mega__sub.active .oc-mega__sub-dot {
-  background: var(--oc-cyan);
-  transform: scale(1.35);
+.oc-mega__l1-item:hover {
+  background: rgba(20,201,223,0.05);
+  color: var(--oc-ink, #1A202C);
+  transform: translateX(2px);
+}
+.oc-mega__l1-item:hover::before {
+  background: var(--oc-cyan, #17a9bb);
+  transform: scale(1.4);
 }
 
-.oc-mega__products {
+.oc-mega__l1-item.on {
+  background: var(--oc-purple-l, #F3F0FF);
+  color: var(--oc-purple-d, #7C3AED);
+}
+.oc-mega__l1-item.on::before {
+  background: var(--oc-purple-d, #7C3AED);
+  transform: scale(1.3);
+}
+
+/* GAP 5: Stagger animation on L1 items */
+.oc-mega__l1-group:not(.oc-hidden) .oc-mega__l1-item {
+  animation: oc-mega-sub-in 0.22s cubic-bezier(0.16,1,0.3,1) backwards;
+}
+.oc-mega__l1-group:not(.oc-hidden) .oc-mega__l1-item:nth-child(1)  { animation-delay: 0.02s; }
+.oc-mega__l1-group:not(.oc-hidden) .oc-mega__l1-item:nth-child(2)  { animation-delay: 0.04s; }
+.oc-mega__l1-group:not(.oc-hidden) .oc-mega__l1-item:nth-child(3)  { animation-delay: 0.06s; }
+.oc-mega__l1-group:not(.oc-hidden) .oc-mega__l1-item:nth-child(4)  { animation-delay: 0.08s; }
+.oc-mega__l1-group:not(.oc-hidden) .oc-mega__l1-item:nth-child(5)  { animation-delay: 0.10s; }
+.oc-mega__l1-group:not(.oc-hidden) .oc-mega__l1-item:nth-child(6)  { animation-delay: 0.12s; }
+.oc-mega__l1-group:not(.oc-hidden) .oc-mega__l1-item:nth-child(7)  { animation-delay: 0.14s; }
+.oc-mega__l1-group:not(.oc-hidden) .oc-mega__l1-item:nth-child(8)  { animation-delay: 0.16s; }
+.oc-mega__l1-group:not(.oc-hidden) .oc-mega__l1-item:nth-child(9)  { animation-delay: 0.18s; }
+.oc-mega__l1-group:not(.oc-hidden) .oc-mega__l1-item:nth-child(10) { animation-delay: 0.20s; }
+.oc-mega__l1-group:not(.oc-hidden) .oc-mega__l1-item:nth-child(11) { animation-delay: 0.22s; }
+.oc-mega__l1-group:not(.oc-hidden) .oc-mega__l1-item:nth-child(12) { animation-delay: 0.24s; }
+
+@keyframes oc-mega-sub-in {
+  from { opacity: 0; transform: translateX(5px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ══ COL 2: Products ══ */
+.oc-mega__col2 {
   flex: 1;
   min-width: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
 }
 
-.oc-mega__product-panel {
+/* Col2 header "สินค้าแนะนำ" */
+.oc-mega__col2-hd {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--oc-ink-40);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 12px 16px 8px;
+  border-bottom: 1px solid var(--oc-ink-15);
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* Col2 scroll area */
+.oc-mega__col2-scroll {
   flex: 1;
   min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px 12px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(167,139,250,0.2) transparent;
 }
+.oc-mega__col2-scroll::-webkit-scrollbar { width: 4px; }
+.oc-mega__col2-scroll::-webkit-scrollbar-track { background: transparent; }
+.oc-mega__col2-scroll::-webkit-scrollbar-thumb { background: rgba(167,139,250,0.2); border-radius: 4px; }
 
+/* Col2 footer "ดูทั้งหมด" — only footer in the menu */
+.oc-mega__col2-foot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 16px;
+  border-top: 1px solid var(--oc-ink-15);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--oc-cyan, #17a9bb);
+  text-decoration: none;
+  flex-shrink: 0;
+  height: 42px;
+  transition: background 0.15s, gap 0.2s;
+}
+.oc-mega__col2-foot:hover {
+  background: rgba(20,201,223,0.04);
+  gap: 10px;
+  color: var(--oc-cyan, #17a9bb);
+}
+.oc-mega__col2-foot[hidden] { display: none; }
+
+/* ── Product grid: 4-col desktop cards ── */
 .oc-mega__prod-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
   align-content: start;
 }
 
 .oc-mega__card {
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--oc-ink-15);
-  border-radius: 10px;
+  border-radius: 8px;
   overflow: hidden;
+  border: 1px solid var(--oc-ink-15, #E5E7EB);
   text-decoration: none;
-  color: var(--oc-ink-70);
-  background: #fff;
-  transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+  color: var(--oc-ink-70, #374151);
+  background: var(--color-background, #fff);
+  transition: border-color 0.18s, box-shadow 0.18s;
+  animation: oc-mega-card-in 0.25s cubic-bezier(0.16,1,0.3,1) backwards;
 }
-
 .oc-mega__card:hover {
-  border-color: rgba(20, 201, 223, .3);
-  box-shadow: 0 2px 12px rgba(20, 201, 223, .1);
-  transform: translateY(-1px);
+  border-color: rgba(20,201,223,0.3);
+  box-shadow: 0 2px 10px rgba(20,201,223,0.08);
 }
 
 .oc-mega__card-img {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 4/3;
   object-fit: cover;
   display: block;
-  background: var(--oc-ink-05);
+  background: var(--oc-ink-05, #F9FAFB);
 }
-
 .oc-mega__card-img--ph {
-  min-height: 120px;
+  background: linear-gradient(135deg, var(--oc-ink-05) 0%, var(--oc-ink-15) 100%);
 }
 
-.oc-mega__card-body {
-  width: 100%;
-  padding: 8px 9px 10px;
-}
+.oc-mega__card-body { padding: 5px 7px; }
 
 .oc-mega__card-name {
-  font-size: max(11px, var(--oc-thumb-title-font-size, 11px));
+  font-size: 10.5px;
   font-weight: 600;
-  line-height: 1.35;
-  color: var(--oc-ink);
+  color: var(--oc-ink, #1A202C);
+  line-height: 1.3;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  min-height: 2.7em;
 }
 
-.oc-mega__card-price {
-  margin-top: 3px;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--oc-cyan);
+/* Stagger animation on cards */
+@keyframes oc-mega-card-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .oc-mega__loading,
@@ -1323,81 +1303,42 @@
   margin: 0;
 }
 
+/* ══ Responsive ══ */
 @media screen and (max-width: 1199px) {
-  .oc-mega__cats {
-    width: min(var(--oc-col0-width, 230px), 220px);
-  }
-
-  .oc-mega__subs {
-    width: min(var(--oc-col1-width, 230px), 250px);
-  }
+  .oc-mega__col0 { width: min(var(--oc-col0-width, 230px), 200px); }
+  .oc-mega__col1 { width: min(var(--oc-col1-width, 230px), 200px); }
 }
 
 @media screen and (max-width: 989px) {
-  .oc-mega-panel {
-    flex-direction: column;
-    max-height: min(80vh, 760px);
-  }
-
-  .oc-mega__cats,
-  .oc-mega__subs {
+  .oc-mega-panel { flex-direction: column; height: auto; max-height: none; }
+  .oc-mega__col0,
+  .oc-mega__col1 {
     width: 100%;
-    min-width: 0;
-    border-right: 0;
+    border-right: none;
     border-bottom: 1px solid var(--oc-ink-15);
   }
-
-  .oc-mega__cats {
-    background: #fff;
+  .oc-mega__col0 { max-height: 160px; }
+  .oc-mega__col1 { max-height: 200px; }
+  .oc-mega__l0-list,
+  .oc-mega__l1-list {
+    mask-image: none;
+    -webkit-mask-image: none;
   }
-
-  .oc-mega__cats-head {
-    display: none;
-  }
-
-  .oc-mega__cats-scroll {
-    display: flex;
-    flex-direction: row;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding: 8px;
-    gap: 4px;
-  }
-
-  .oc-mega__cat {
-    flex: 0 0 auto;
-    white-space: nowrap;
-    padding: 8px 14px;
-    border-radius: 999px;
-    background: var(--oc-ink-05);
-  }
-
-  .oc-mega__cat.active::before,
-  .oc-mega__cat-arrow {
-    display: none;
-  }
-
-  .oc-mega__prod-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
+  /* Tablet: 4-col product grid */
+  .oc-mega__prod-grid { grid-template-columns: repeat(4, 1fr); }
 }
 
-@media screen and (max-width: 640px) {
-  .oc-mega__prod-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+@media screen and (max-width: 480px) {
+  /* Mobile: 2-col product grid */
+  .oc-mega__prod-grid { grid-template-columns: 1fr 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .menu-list__submenu,
-  .menu-list__submenu-inner,
-  .oc-mega__cat,
-  .oc-mega__sub,
-  .oc-mega__card,
-  .oc-mega__alllink,
-  .oc-mega__sub-seeall,
-  .oc-mega__prod-viewall {
+  .oc-mega__l0-item,
+  .oc-mega__l1-item,
+  .oc-mega__card {
     transition: none !important;
+    animation: none !important;
   }
 }
 {% endstylesheet %}
@@ -1468,7 +1409,7 @@
       "min": 220,
       "max": 600,
       "step": 10,
-      "default": 260
+      "default": 480
     },
     {
       "type": "header",
