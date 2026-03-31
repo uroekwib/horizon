@@ -512,11 +512,29 @@
   opacity: 0; transform: translateY(-4px); pointer-events: none;
 }
 
+.oc-nav-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  white-space: nowrap;
+}
+.oc-nav-trigger .menu-list__link-title {
+  display: inline-block;
+}
+
 .oc-nav-trigger[aria-expanded="true"] + .oc-v4-submenu-container {
   visibility: visible; opacity: 1; transform: translateY(0); pointer-events: auto;
 }
 
-.oc-nav-trigger[aria-expanded="true"] .oc-nav__chev { transform: rotate(180deg) !important; opacity: 1 !important; }
+.oc-nav-trigger .oc-nav__chev {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+.oc-nav-trigger[aria-expanded="true"] .oc-nav__chev { transform: none !important; opacity: 0 !important; }
 
 /* ═══ MEGA MENU V4 ═══ */
 .oc-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0); z-index: 998; pointer-events: none; transition: background 0.35s; }
