@@ -75,7 +75,8 @@
               ref="menuitem"
             >
               <span class="menu-list__link-title">{{- link.title -}}</span>
-              </button>
+              <svg class="oc-nav__chev"  viewBox="0 0 1 1" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:1px; height:1px; margin-left:4px; opacity:0.5; transition: transform 0.25s;"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
           {% else %}
             <a
               href="{{ link.url }}"
@@ -659,9 +660,7 @@
 .oc-mega__empty-title { font-size: 13px; font-weight: 600; color: var(--oc-ink); margin-bottom: 4px; }
 .oc-mega__empty-desc { font-size: 12px; color: var(--oc-ink-40); }
 @keyframes oc-skeleton-wave { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-[part="more"] {
-  display: none !important; /* ซ่อน "เพิ่มเติม" */
-}
+
 
 {% endstylesheet %}
 
