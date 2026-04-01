@@ -6,10 +6,6 @@
    - default    → desktop nav + 3-column mega drawer (V4 UI)
 {%- enddoc -%}
 
-
-
-
-
 {% liquid
   assign block_settings = block.settings
 %}
@@ -64,7 +60,7 @@
           on:blur="/deactivate"
         >
           {% assign is_mega_toggle_only = false %}
-          {% if link.title == 'สินค้าและบริการ'or link.title == 'Product & Service' and link.links != blank %}
+          {% if link.title == 'สินค้าและบริการ' or link.title == 'Product & Service' and link.links != blank %}
             {% assign is_mega_toggle_only = true %}
           {% endif %}
 
@@ -79,7 +75,7 @@
               ref="menuitem"
             >
               <span class="menu-list__link-title">{{- link.title -}}</span>
-               </button>
+            </button>
           {% else %}
             <a
               href="{{ link.url }}"
@@ -103,7 +99,7 @@
                 id="submenu-{{ forloop.index }}"
                 class="menu-list__submenu-inner oc-mega-wrapper {{ page_width_class }}"
               >
-                <div class="oc-mega__wrap" 
+                <div class="oc-mega__wrap"
                      style="
                        --oc-col0-width: {{ block_settings.col0_width | default: 230 }}px;
                        --oc-col1-width: {{ block_settings.col1_width | default: 230 }}px;
@@ -116,11 +112,24 @@
                      data-thumb-count="{{ block_settings.mega_thumb_count | default: 4 }}"
                      data-pill-count="{{ block_settings.mega_pill_count | default: 4 }}"
                      data-product-limit="{{ block_settings.mega_thumb_count | plus: block_settings.mega_pill_count | default: 8 }}"
-                     data-img-width="{{ block_settings.thumb_image_width | default: 160 }}">
+                     data-img-width="{{ block_settings.thumb_image_width | default: 160 }}"
+                     data-i18n='{
+                       "loading": {{ 'blocks.menu.mega_loading_cat' | t | json }},
+                       "empty_title": {{ 'blocks.menu.mega_empty_title' | t | json }},
+                       "empty_desc": {{ 'blocks.menu.mega_empty_desc' | t | json }},
+                       "empty_no_sub": {{ 'blocks.menu.mega_empty_no_sub' | t | json }},
+                       "empty_no_sub_desc": {{ 'blocks.menu.mega_empty_no_sub_desc' | t | json }},
+                       "error_title": {{ 'blocks.menu.mega_error_title' | t | json }},
+                       "error_desc": {{ 'blocks.menu.mega_error_desc' | t | json }},
+                       "no_featured": {{ 'blocks.menu.mega_no_featured_title' | t | json }},
+                       "no_featured_desc": {{ 'blocks.menu.mega_no_featured_desc' | t | json }},
+                       "see_all": {{ 'blocks.menu.mega_see_all' | t | json }},
+                       "view_all_prefix": {{ 'blocks.menu.mega_view_all_prefix' | t | json }}
+                     }'>
                   <div class="oc-mega__panel">
 
                     <div class="oc-mega__cats">
-                      <div class="oc-mega__cats-head">หมวดสินค้า</div>
+                      <div class="oc-mega__cats-head">{{ 'blocks.menu.mega_cats_heading' | t }}</div>
                       <div class="oc-mega__cats-scroll">
                         {% for l0 in link.links %}
                           {%- liquid
@@ -217,18 +226,18 @@
                               {% endfor %}
                             {% endif %}
                           </div>
-                          <a href="{{ l0.url }}" class="oc-mega__sub-seeall">ดูทั้งหมด <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+                          <a href="{{ l0.url }}" class="oc-mega__sub-seeall">{{ 'blocks.menu.mega_see_all' | t }} <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
                         </div>
                       {% endfor %}
                     </div>
 
                     <div class="oc-mega__products" id="ocMegaProductsBox" aria-busy="false">
                       <div class="oc-mega__prod-pane active">
-                        <div class="oc-mega__prod-head"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> สินค้าแนะนำ</div>
+                        <div class="oc-mega__prod-head"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> {{ 'blocks.menu.mega_featured_heading' | t }}</div>
                         <div class="oc-mega__prod-scroll" id="ocMegaProductsScroll">
-                          <div class="oc-mega__loading-skeleton" style="padding:20px; text-align:center; color: var(--oc-ink-40); font-size:12px;">กำลังเตรียมข้อมูล...</div>
+                          <div class="oc-mega__loading-skeleton" style="padding:20px; text-align:center; color: var(--oc-ink-40); font-size:12px;">{{ 'blocks.menu.mega_loading' | t }}</div>
                         </div>
-                        <a href="#" class="oc-mega__prod-viewall" id="ocMegaProductsViewAll">ดูทั้งหมด <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+                        <a href="#" class="oc-mega__prod-viewall" id="ocMegaProductsViewAll">{{ 'blocks.menu.mega_see_all' | t }} <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
                       </div>
                     </div>
 
@@ -341,6 +350,10 @@
       if (!wrap || wrap._ocInit) return;
       wrap._ocInit = true;
 
+      /* ── i18n ── */
+      var i18n = {};
+      try { i18n = JSON.parse(wrap.dataset.i18n || '{}'); } catch(e) {}
+
       var triggers = document.querySelectorAll('.oc-nav-trigger');
       var overlay = document.getElementById('megaOverlay');
       var cats = document.querySelectorAll('.oc-mega__cat');
@@ -366,11 +379,11 @@
         var cards = '', pills = '';
         for (var i = 0; i < thumbCount; i++) { cards += '<div class="oc-mega__card oc-mega__card--skeleton" aria-hidden="true"><div class="oc-mega__card-img oc-skeleton-box"></div><div class="oc-mega__card-body"><div class="oc-skeleton-line oc-skeleton-line--title"></div><div class="oc-skeleton-line oc-skeleton-line--meta"></div></div></div>'; }
         for (var j = 0; j < pillCount; j++) { pills += '<div class="oc-mega__pill oc-mega__pill--skeleton" aria-hidden="true"><span class="oc-skeleton-line oc-skeleton-line--pill"></span></div>'; }
-        return '<div class="oc-mega__loading-state"><div class="oc-mega__loading-copy">กำลังโหลดสินค้าในหมวด ' + esc(titleName || 'นี้') + '…</div><div class="oc-mega__prod-grid">' + cards + '</div><div class="oc-mega__pill-grid">' + pills + '</div></div>';
+        return '<div class="oc-mega__loading-state"><div class="oc-mega__loading-copy">' + esc(i18n.loading || 'Loading') + ' ' + esc(titleName || '') + '…</div><div class="oc-mega__prod-grid">' + cards + '</div><div class="oc-mega__pill-grid">' + pills + '</div></div>';
       }
 
       function renderEmptyState(title, desc) {
-        return '<div class="oc-mega__empty-state"><div class="oc-mega__empty-title">' + esc(title || 'ยังไม่มีสินค้าในหมวดนี้') + '</div><div class="oc-mega__empty-desc">' + esc(desc || 'สามารถกดดูทั้งหมดเพื่อดูสินค้าเพิ่มเติมได้') + '</div></div>';
+        return '<div class="oc-mega__empty-state"><div class="oc-mega__empty-title">' + esc(title || '') + '</div><div class="oc-mega__empty-desc">' + esc(desc || '') + '</div></div>';
       }
 
       function renderProducts(products) {
@@ -399,7 +412,7 @@
 
       function setViewAll(url, titleName) {
         viewAllBtn.setAttribute('href', url || '#');
-        viewAllBtn.innerHTML = 'ดู ' + esc(titleName || 'ทั้งหมด') + ' <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+        viewAllBtn.innerHTML = esc(i18n.view_all_prefix || 'View') + ' ' + esc(titleName || i18n.see_all || 'All') + ' <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
       }
 
       function prefetchProducts(handle) { if (handle) fetchProducts(handle, productLimit); }
@@ -421,7 +434,7 @@
             clearTimeout(loadingTimer);
             prodBox.setAttribute('aria-busy', 'false');
             prodBox.classList.remove('is-loading');
-            if (!products || !products.length) { prodScroll.innerHTML = renderEmptyState('ยังไม่มีสินค้าแนะนำในหมวดนี้', 'กดดูทั้งหมดเพื่อดูสินค้าในหมวดนี้เพิ่มเติม'); return; }
+            if (!products || !products.length) { prodScroll.innerHTML = renderEmptyState(i18n.no_featured, i18n.no_featured_desc); return; }
             prodScroll.innerHTML = renderProducts(products);
             prodScroll.classList.remove('oc-animate-trigger');
             void prodScroll.offsetWidth;
@@ -451,7 +464,7 @@
             clearTimeout(loadingTimer);
             prodBox.setAttribute('aria-busy', 'false');
             prodBox.classList.remove('is-loading');
-            prodScroll.innerHTML = renderEmptyState('โหลดสินค้าไม่สำเร็จ', 'ลองเลือกหมวดใหม่อีกครั้ง หรือกดดูทั้งหมดได้เลย');
+            prodScroll.innerHTML = renderEmptyState(i18n.error_title, i18n.error_desc);
           });
       }
 
@@ -462,7 +475,7 @@
         var paneTitleEl = activePane.querySelector('.oc-mega__sub-head');
         var paneTitle = paneTitleEl ? paneTitleEl.innerText : '';
         if (firstSub) { loadProductsUI(firstSub.dataset.sub, firstSub.getAttribute('href'), paneTitle || firstSub.innerText); }
-        else { activeSubHandle = null; setViewAll('#', paneTitle || 'ทั้งหมด'); prodBox.setAttribute('aria-busy', 'false'); prodBox.classList.remove('is-loading'); prodScroll.innerHTML = renderEmptyState('ยังไม่มีหมวดย่อยในส่วนนี้', 'สามารถกดดูทั้งหมดเพื่อเข้าสู่หน้าหมวดหลักได้'); }
+        else { activeSubHandle = null; setViewAll('#', paneTitle || i18n.see_all || 'All'); prodBox.setAttribute('aria-busy', 'false'); prodBox.classList.remove('is-loading'); prodScroll.innerHTML = renderEmptyState(i18n.empty_no_sub, i18n.empty_no_sub_desc); }
       }
 
       function switchCat(catKey) {
@@ -551,7 +564,7 @@
         var initTitleEl = initActivePane.querySelector('.oc-mega__sub-head');
         var initTitle = initTitleEl ? initTitleEl.innerText : '';
         if (firstSub) { loadProductsUI(firstSub.dataset.sub, firstSub.getAttribute('href'), initTitle || firstSub.innerText); }
-        else { prodScroll.innerHTML = renderEmptyState('ยังไม่มีหมวดย่อยในส่วนนี้', 'สามารถกดดูทั้งหมดเพื่อเข้าสู่หน้าหมวดหลักได้'); }
+        else { prodScroll.innerHTML = renderEmptyState(i18n.empty_no_sub, i18n.empty_no_sub_desc); }
       }
       requestAnimationFrame(checkSubScroll);
 
@@ -663,8 +676,6 @@
 .oc-mega__empty-title { font-size: 13px; font-weight: 600; color: var(--oc-ink); margin-bottom: 4px; }
 .oc-mega__empty-desc { font-size: 12px; color: var(--oc-ink-40); }
 @keyframes oc-skeleton-wave { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
-
 {% endstylesheet %}
 
 {% schema %}
