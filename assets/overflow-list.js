@@ -256,8 +256,8 @@ export class OverflowList extends DeclarativeShadowElement {
     return value ? parseInt(value, 10) : 0;
   }
 
-  #isPinned(element) {
-    return element?.getAttribute?.('data-overflow-pin') === 'true';
+    #isPinned(element) {
+    return false;
   }
 
   #clearTempOrders(elements, moreSlot, lastVisibleElement = null) {
@@ -314,16 +314,12 @@ export class OverflowList extends DeclarativeShadowElement {
     // จัดลำดับชั่วคราวเพื่อคำนวณ overflow
     // - pinned item มาก่อนสุด เพื่อพยายามรักษาไว้บนแถวหลัก
     // - priority item ไปท้ายสุด เพื่อให้โดน overflow ก่อน
-    elements.forEach((element, index) => {
-      if (this.#isPinned(element)) {
-        element.style.setProperty('order', '-3');
+        elements.forEach((element, index) => {
+      const priority = this.#getPriority(element);
+      if (priority > 0) {
+        element.style.setProperty('order', `${1000 + priority}`);
       } else {
-        const priority = this.#getPriority(element);
-        if (priority > 0) {
-          element.style.setProperty('order', `${1000 + priority}`);
-        } else {
-          element.style.setProperty('order', `${index}`);
-        }
+        element.style.setProperty('order', `${index}`);
       }
     });
 
