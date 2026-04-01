@@ -508,16 +508,36 @@
         btn.addEventListener('mouseleave', function () { clearTimeout(catTimer); });
       });
 
+      var subHoverTimer = null;
+      var SUB_HOVER_DELAY = 150; // แนะนำให้ใช้แค่ 150-200 ครับ (ถ้า 2000 ลูกค้าจะคิดว่าเว็บค้าง)
+
       subLinks.forEach(function (subLink) {
         subLink.addEventListener('mouseenter', function () {
-          var subHandle = this.dataset.sub, subUrl = this.getAttribute('href'), subTitle = this.innerText.trim();
+          var el = this;
+          var subHandle = el.dataset.sub;
+          
+          // 1. สั่งโหลดข้อมูลมารอไว้หลังบ้านทันที (ไม่ต้องหน่วงเวลา)
           prefetchProducts(subHandle);
-          loadProductsUI(subHandle, subUrl, subTitle);
-          /* OPT-B: Prefetch next 2 siblings */
-          var next = this.nextElementSibling;
+          var next = el.nextElementSibling;
           if (next && next.dataset && next.dataset.sub) prefetchProducts(next.dataset.sub);
           var next2 = next ? next.nextElementSibling : null;
           if (next2 && next2.dataset && next2.dataset.sub) prefetchProducts(next2.dataset.sub);
+
+          // 2. รีเซ็ตเวลาจับใหม่ทุกครั้งที่เมาส์ขยับไปโดน Subcol ตัวอื่น
+          clearTimeout(subHoverTimer);
+          
+          // 3. หน่วงเวลาเฉพาะตอนสั่ง "เปลี่ยนการแสดงผล UI"
+          subHoverTimer = setTimeout(function() {
+            var subUrl = el.getAttribute('href'), 
+                subTitle = el.innerText.trim();
+            
+            loadProductsUI(subHandle, subUrl, subTitle);
+          }, SUB_HOVER_DELAY);
+        });
+
+        // สำคัญ: ถ้าลากเมาส์ออกก่อนเวลาที่ตั้งไว้ ให้ยกเลิกคำสั่งเปลี่ยน UI ทันที
+        subLink.addEventListener('mouseleave', function () {
+          clearTimeout(subHoverTimer);
         });
       });
 
