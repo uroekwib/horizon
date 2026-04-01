@@ -264,6 +264,17 @@ export class OverflowList extends DeclarativeShadowElement {
     // Reset all elements to the default slot so we can check which ones overflow.
     this.#moveItemsToDefaultSlot();
 
+    // ==========================================
+    // เพิ่มโค้ดส่วนนี้เพื่อปิดฟังก์ชัน Overflow/More ทิ้งถาวร
+    // ==========================================
+    moreSlot.hidden = true; // ซ่อนปุ่ม "เพิ่มเติม"
+    placeholder.hidden = true;
+    list.style.setProperty('overflow', 'unset');
+    this.style.setProperty('--overflow-count', '0');
+    this.#observeChanges();
+    return; // สั่งจบการทำงานทันที ไม่ต้องคำนวณหาเมนูล้นอีกต่อไป
+    // ==========================================
+
     const elements = defaultSlot.assignedElements();
     const lastElement = elements[elements.length - 1];
 
@@ -385,21 +396,3 @@ if (!customElements.get('overflow-list')) {
   customElements.define('overflow-list', OverflowList);
 }
 
-/* ทำให้ 'เพิ่มเติม' หรือ moreSlot ไม่แสดง และไม่ทำงานเลย */
-document.addEventListener('DOMContentLoaded', () => {
-  const moreSlot = document.querySelector('[part="more"]');
-  const overflowMenu = document.querySelector('[part="overflow"]');
-  
-  if (moreSlot) {
-    // ซ่อน 'เพิ่มเติม' หรือ moreSlot
-    moreSlot.style.display = 'none';
-    // ปิดไม่ให้คลิก 'เพิ่มเติม'
-    moreSlot.disabled = true;
-    moreSlot.style.pointerEvents = 'none';
-  }
-
-  // ทำให้ 'overflow' menu ไม่ทำงาน
-  if (overflowMenu) {
-    overflowMenu.style.display = 'none'; // ซ่อน overflow ทั้งหมด
-  }
-});
