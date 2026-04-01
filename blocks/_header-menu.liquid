@@ -520,7 +520,39 @@
           if (next2 && next2.dataset && next2.dataset.sub) prefetchProducts(next2.dataset.sub);
         });
       });
+var subHoverTimer = null;
+      var SUB_HOVER_DELAY = 150; // ปรับความหน่วงตรงนี้ (150-200 มิลลิวินาที กำลังดีสำหรับ UX)
 
+      subLinks.forEach(function (subLink) {
+        subLink.addEventListener('mouseenter', function () {
+          var el = this; // เก็บ context ของ element นี้ไว้
+          
+          // เคลียร์ timer เก่าทิ้งเผื่อลากเมาส์ผ่านหลายตัวติดกัน
+          clearTimeout(subHoverTimer);
+          
+          // เริ่มจับเวลาใหม่
+          subHoverTimer = setTimeout(function() {
+            var subHandle = el.dataset.sub, 
+                subUrl = el.getAttribute('href'), 
+                subTitle = el.innerText.trim();
+            
+            prefetchProducts(subHandle);
+            loadProductsUI(subHandle, subUrl, subTitle);
+            
+            /* OPT-B: Prefetch next 2 siblings */
+            var next = el.nextElementSibling;
+            if (next && next.dataset && next.dataset.sub) prefetchProducts(next.dataset.sub);
+            var next2 = next ? next.nextElementSibling : null;
+            if (next2 && next2.dataset && next2.dataset.sub) prefetchProducts(next2.dataset.sub);
+          }, SUB_HOVER_DELAY);
+        });
+
+        // สำคัญมาก: ถ้าลากเมาส์ออกก่อนหมดเวลา ให้ยกเลิกคำสั่งโหลดทันที
+        subLink.addEventListener('mouseleave', function () {
+          clearTimeout(subHoverTimer);
+        });
+      });
+      
       function checkSubScroll() {
         document.querySelectorAll('.oc-mega__sub-pane.active').forEach(function (pane) {
           var scroll = pane.querySelector('.oc-mega__sub-scroll');
