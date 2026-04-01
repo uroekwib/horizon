@@ -251,6 +251,23 @@ export class OverflowList extends DeclarativeShadowElement {
     this.setAttribute('disabled', 'true');
   }
 
+  #getPriority(element) {
+    const value = element?.getAttribute?.('data-overflow-priority');
+    return value ? parseInt(value, 10) : 0;
+  }
+
+  #isPinned(element) {
+    return element?.getAttribute?.('data-overflow-pin') === 'true';
+  }
+
+  #clearTempOrders(elements, moreSlot, lastVisibleElement = null) {
+    elements.forEach((element) => {
+      element.style.removeProperty('order');
+    });
+    moreSlot.style.removeProperty('order');
+    lastVisibleElement?.style.removeProperty('order');
+  }
+
   /**
    * Reflow items based on available space within the list.
    * @param {number} [listHeight] Initial height of the list
@@ -287,11 +304,28 @@ export class OverflowList extends DeclarativeShadowElement {
     list.style.setProperty('flex-wrap', 'wrap');
     placeholder.hidden = true;
 
-    // Putting the "More" item (and lastVisibleElement, if provided) at the start of the list lets us see which items will fit on the same row.
+    // วาง More ไว้ต้นแถวเหมือนเดิม
     moreSlot.style.setProperty('order', '-1');
     moreSlot.hidden = false;
 
-    lastVisibleElement?.style.setProperty('order', '-1');
+    // ถ้ามี lastVisibleElement ให้มาก่อน More
+    lastVisibleElement?.style.setProperty('order', '-2');
+
+    // จัดลำดับชั่วคราวเพื่อคำนวณ overflow
+    // - pinned item มาก่อนสุด เพื่อพยายามรักษาไว้บนแถวหลัก
+    // - priority item ไปท้ายสุด เพื่อให้โดน overflow ก่อน
+    elements.forEach((element, index) => {
+      if (this.#isPinned(element)) {
+        element.style.setProperty('order', '-3');
+      } else {
+        const priority = this.#getPriority(element);
+        if (priority > 0) {
+          element.style.setProperty('order', `${1000 + priority}`);
+        } else {
+          element.style.setProperty('order', `${index}`);
+        }
+      }
+    });
 
     const moreSlotRect = moreSlot.getBoundingClientRect();
 
@@ -310,10 +344,8 @@ export class OverflowList extends DeclarativeShadowElement {
       }
     });
 
-    if (hasOverflow) {
-      moreSlot.style.removeProperty('order');
-    }
-    lastVisibleElement?.style.removeProperty('order');
+    // เอา order ชั่วคราวออก เพื่อให้ลำดับแสดงผลจริงเหมือนเดิม
+    this.#clearTempOrders(elements, moreSlot, lastVisibleElement);
 
     // Move the elements to the correct slot.
     for (const element of elements) {
