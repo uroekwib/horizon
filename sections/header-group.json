@@ -97,8 +97,7 @@
       },
       "custom_css": [
         ".menu-list__link-title {font-weight: 700; font-size: 16px;}",
-        "textarea,input:not([type=\"checkbox\"], [type=\"radio\"]) {background-color: unset;}",
-        ".button-unstyled {transform: translateY(2px);}"
+        "textarea,input:not([type=\"checkbox\"], [type=\"radio\"]) {background-color: unset;}"
       ],
       "settings": {
         "logo_position": "left",
