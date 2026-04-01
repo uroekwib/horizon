@@ -423,6 +423,25 @@
             prodScroll.classList.remove('oc-animate-trigger');
             void prodScroll.offsetWidth;
             prodScroll.classList.add('oc-animate-trigger');
+
+            /* OPT-D: Prefetch images for next likely sub */
+            var _ap = document.querySelector('.oc-mega__sub-pane.active');
+            if (_ap) {
+              var _allSubs = _ap.querySelectorAll('.oc-mega__sub');
+              for (var _si = 0; _si < _allSubs.length; _si++) {
+                if (_allSubs[_si].dataset.sub === handle && _allSubs[_si + 1]) {
+                  var _nh = _allSubs[_si + 1].dataset.sub;
+                  var _nk = _nh + '::' + productLimit;
+                  if (Array.isArray(_cache[_nk])) {
+                    _cache[_nk].slice(0, thumbCount).forEach(function(np) {
+                      var _img = getProductImage(np);
+                      if (_img) { var _pre = new Image(); _pre.src = resizeImg(_img, imgWidth, Math.round(imgWidth * 0.75)); }
+                    });
+                  }
+                  break;
+                }
+              }
+            }
           })
           .catch(function () {
             if (requestId !== activeRequestId) return;
@@ -457,9 +476,13 @@
           var catKey = btn.dataset.cat;
           clearTimeout(catTimer);
           catTimer = setTimeout(function () { switchCat(catKey); }, CAT_DELAY);
+          /* OPT: Prefetch ALL subs in this cat (not just first) */
           var pane = document.querySelector('.oc-mega__sub-pane[data-pane="' + catKey + '"]');
-          var firstSub = pane && pane.querySelector('.oc-mega__sub');
-          if (firstSub) prefetchProducts(firstSub.dataset.sub);
+          if (pane) {
+            pane.querySelectorAll('.oc-mega__sub').forEach(function(s) {
+              prefetchProducts(s.dataset.sub);
+            });
+          }
         });
         btn.addEventListener('mouseleave', function () { clearTimeout(catTimer); });
       });
@@ -469,6 +492,11 @@
           var subHandle = this.dataset.sub, subUrl = this.getAttribute('href'), subTitle = this.innerText.trim();
           prefetchProducts(subHandle);
           loadProductsUI(subHandle, subUrl, subTitle);
+          /* OPT-B: Prefetch next 2 siblings */
+          var next = this.nextElementSibling;
+          if (next && next.dataset && next.dataset.sub) prefetchProducts(next.dataset.sub);
+          var next2 = next ? next.nextElementSibling : null;
+          if (next2 && next2.dataset && next2.dataset.sub) prefetchProducts(next2.dataset.sub);
         });
       });
 
@@ -482,6 +510,21 @@
       }
       document.querySelectorAll('.oc-mega__sub-scroll').forEach(function (el) {
         el.addEventListener('scroll', function () { var pane = el.closest('.oc-mega__sub-pane'); if (pane) pane.classList.toggle('scrolled-end', el.scrollTop + el.clientHeight >= el.scrollHeight - 4); });
+      });
+
+      /* OPT-A: Prefetch ALL subs of first cat on trigger hover (before menu opens) */
+      var triggerPrefetched = false;
+      triggers.forEach(function(t) {
+        t.addEventListener('mouseenter', function() {
+          if (triggerPrefetched) return;
+          triggerPrefetched = true;
+          var firstPane = document.querySelector('.oc-mega__sub-pane.active');
+          if (firstPane) {
+            firstPane.querySelectorAll('.oc-mega__sub').forEach(function(s) {
+              prefetchProducts(s.dataset.sub);
+            });
+          }
+        });
       });
 
       var hoverTimer = null;
@@ -508,6 +551,15 @@
         else { prodScroll.innerHTML = renderEmptyState('ยังไม่มีหมวดย่อยในส่วนนี้', 'สามารถกดดูทั้งหมดเพื่อเข้าสู่หน้าหมวดหลักได้'); }
       }
       requestAnimationFrame(checkSubScroll);
+
+      /* OPT-E: Idle warmup — prefetch first sub of every cat */
+      var idleCb = window.requestIdleCallback || function(fn) { setTimeout(fn, 200); };
+      idleCb(function() {
+        subPanes.forEach(function(pane) {
+          var firstSub = pane.querySelector('.oc-mega__sub');
+          if (firstSub) prefetchProducts(firstSub.dataset.sub);
+        });
+      });
     }
 
     if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initV4MegaMenu); } else { setTimeout(initV4MegaMenu, 100); }
