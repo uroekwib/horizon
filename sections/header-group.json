@@ -78,7 +78,6 @@
           "settings": {
             "menu": "main-menu",
             "page_width_preset": "narrow",
-            "icon_1_image": "shopify://shop_images/PRODUCT_icon_signage_active.svg",
             "drawer_accordion": true,
             "mega_thumb_count": 4,
             "mega_pill_count": 4,
