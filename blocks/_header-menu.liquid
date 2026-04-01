@@ -61,9 +61,6 @@
   {% if forloop.index <= 3 %}
     data-overflow-priority="{{ 100 | minus: forloop.index }}"
   {% endif %}
-  {% if link.title == 'สินค้าและบริการ' and link.links != blank %}
-    data-overflow-pin="true"
-  {% endif %}
 >
 
           {% if is_mega_toggle_only %}
