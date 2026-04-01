@@ -12,43 +12,6 @@
 
 {% liquid
   assign block_settings = block.settings
-  if request.locale.iso_code == 'en'
-    assign txt_categories = 'Categories'
-    assign txt_see_all = 'See All'
-    assign txt_recommended = 'Recommended Products'
-    assign txt_loading = 'Loading data...'
-    
-    assign js_load_cat = 'Loading products in '
-    assign js_load_this = 'this category'
-    assign js_empty_title = 'No products found'
-    assign js_empty_desc = 'Click See All to view more products'
-    assign js_see = 'See '
-    assign js_all = 'All'
-    assign js_no_rec_title = 'No recommended products'
-    assign js_no_rec_desc = 'Click See All to view more products in this category'
-    assign js_err_title = 'Failed to load products'
-    assign js_err_desc = 'Please try again or click See All'
-    assign js_no_sub_title = 'No subcategories'
-    assign js_no_sub_desc = 'Click See All to go to the main category'
-  else
-    assign txt_categories = 'หมวดสินค้า'
-    assign txt_see_all = 'ดูทั้งหมด'
-    assign txt_recommended = 'สินค้าแนะนำ'
-    assign txt_loading = 'กำลังเตรียมข้อมูล...'
-    
-    assign js_load_cat = 'กำลังโหลดสินค้าในหมวด '
-    assign js_load_this = 'นี้'
-    assign js_empty_title = 'ยังไม่มีสินค้าในหมวดนี้'
-    assign js_empty_desc = 'สามารถกดดูทั้งหมดเพื่อดูสินค้าเพิ่มเติมได้'
-    assign js_see = 'ดู '
-    assign js_all = 'ทั้งหมด'
-    assign js_no_rec_title = 'ยังไม่มีสินค้าแนะนำในหมวดนี้'
-    assign js_no_rec_desc = 'กดดูทั้งหมดเพื่อดูสินค้าในหมวดนี้เพิ่มเติม'
-    assign js_err_title = 'โหลดสินค้าไม่สำเร็จ'
-    assign js_err_desc = 'ลองเลือกหมวดใหม่อีกครั้ง หรือกดดูทั้งหมดได้เลย'
-    assign js_no_sub_title = 'ยังไม่มีหมวดย่อยในส่วนนี้'
-    assign js_no_sub_desc = 'สามารถกดดูทั้งหมดเพื่อเข้าสู่หน้าหมวดหลักได้'
-  endif
 %}
 
 {% case variant %}
