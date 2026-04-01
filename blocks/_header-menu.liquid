@@ -126,7 +126,37 @@
                               assign l0_handle = l0_coll.handle
                             endif
 
-                           
+                           assign custom_icon_image = blank
+                            case forloop.index
+                              when 1
+                                if block_settings.icon_1_image != blank
+                                  assign custom_icon_image = block_settings.icon_1_image
+                                endif
+                              when 2
+                                if block_settings.icon_2_image != blank
+                                  assign custom_icon_image = block_settings.icon_2_image
+                                endif
+                              when 3
+                                if block_settings.icon_3_image != blank
+                                  assign custom_icon_image = block_settings.icon_3_image
+                                endif
+                              when 4
+                                if block_settings.icon_4_image != blank
+                                  assign custom_icon_image = block_settings.icon_4_image
+                                endif
+                              when 5
+                                if block_settings.icon_5_image != blank
+                                  assign custom_icon_image = block_settings.icon_5_image
+                                endif
+                              when 6
+                                if block_settings.icon_6_image != blank
+                                  assign custom_icon_image = block_settings.icon_6_image
+                                endif
+                              when 7
+                                if block_settings.icon_7_image != blank
+                                  assign custom_icon_image = block_settings.icon_7_image
+                                endif
+                            endcase
                           -%}
                           <button class="oc-mega__cat{% if forloop.first %} active{% endif %}" data-cat="{{ l0_handle }}" data-url="{{ l0.url }}">
                            {%- if custom_icon_image != blank -%}
