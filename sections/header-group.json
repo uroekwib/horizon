@@ -88,8 +88,8 @@
             "col0_width": 250,
             "col1_width": 280,
             "top_menu_font_size": 16,
-            "l0_font_size": 14,
-            "l1_font_size": 14,
+            "l0_font_size": 13,
+            "l1_font_size": 13,
             "color_scheme": "scheme-2"
           },
           "blocks": {}
