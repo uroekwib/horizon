@@ -288,7 +288,7 @@ export class OverflowList extends DeclarativeShadowElement {
     placeholder.hidden = true;
 
     // Putting the "More" item (and lastVisibleElement, if provided) at the start of the list lets us see which items will fit on the same row.
-    moreSlot.style.setProperty('order', '100');
+    moreSlot.style.setProperty('order', '-1');
     moreSlot.hidden = false;
 
     lastVisibleElement?.style.setProperty('order', '-1');
