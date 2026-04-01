@@ -64,7 +64,7 @@
           on:blur="/deactivate"
         >
           {% assign is_mega_toggle_only = false %}
-          {% if link.title == 'สินค้าและบริการ' and link.links != blank %}
+          {% if link.title == 'สินค้าและบริการ'or link.title == 'Product & Service' and link.links != blank %}
             {% assign is_mega_toggle_only = true %}
           {% endif %}
 
