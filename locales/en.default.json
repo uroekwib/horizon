@@ -98,6 +98,22 @@
     "sort": "Sort"
   },
   "blocks": {
+     "menu": {
+    "mega_cats_heading": "Categories",
+    "mega_loading": "Loading...",
+    "mega_loading_cat": "Loading products in",
+    "mega_featured_heading": "Featured Products",
+    "mega_see_all": "See all",
+    "mega_view_all_prefix": "View",
+    "mega_empty_title": "No products in this category",
+    "mega_empty_desc": "Click See All to explore more",
+    "mega_empty_no_sub": "No subcategories here",
+    "mega_empty_no_sub_desc": "Click See All to visit the main category",
+    "mega_no_featured_title": "No featured products yet",
+    "mega_no_featured_desc": "Click See All to browse this category",
+    "mega_error_title": "Could not load products",
+    "mega_error_desc": "Try selecting another category or click See All"
+  },
     "contact_form": {
       "name": "Name",
       "email": "Email",
