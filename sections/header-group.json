@@ -78,9 +78,16 @@
           "settings": {
             "menu": "main-menu",
             "page_width_preset": "narrow",
+            "icon_1_handle": "",
+            "icon_2_handle": "",
+            "icon_3_handle": "",
+            "icon_4_handle": "",
+            "icon_5_handle": "",
+            "icon_6_handle": "",
+            "icon_7_handle": "",
             "drawer_accordion": true,
             "mega_thumb_count": 5,
-            "product_limit": 14,
+            "mega_pill_count": 4,
             "drawer_min_height": 280,
             "thumb_height": 72,
             "thumb_image_width": 320,
@@ -97,7 +104,8 @@
       },
       "custom_css": [
         ".menu-list__link-title {font-weight: 700; font-size: 16px;}",
-        "textarea,input:not([type=\"checkbox\"], [type=\"radio\"]) {background-color: unset;}"
+        "textarea,input:not([type=\"checkbox\"], [type=\"radio\"]) {background-color: unset;}",
+        ".button-unstyled {position: relative; top: 1px!important;}"
       ],
       "settings": {
         "logo_position": "left",
