@@ -1,9 +1,6 @@
 {%- doc -%}
   Octopus Media header menu block
-  V4 Mega Menu Integration - Fixed Flickering Issue
-  Variants:
-   - 'mobile'   → mobile drawer (Horizon native)
-   - default    → desktop nav + 3-column mega drawer (V4 UI)
+  V4 Mega Menu — cards + pills from schema
 {%- enddoc -%}
 
 {% liquid
@@ -13,16 +10,8 @@
 {% case variant %}
 
   {% when 'mobile' %}
-    <div
-      class="header__drawer"
-      ref="headerDrawerContainer"
-      data-hydration-key="header-drawer-mobile"
-      {{ block.shopify_attributes }}
-    >
-      {% render 'header-drawer',
-        linklist: block_settings.menu,
-        data_header_drawer_type: 'mobile-drawer'
-      %}
+    <div class="header__drawer" ref="headerDrawerContainer" data-hydration-key="header-drawer-mobile" {{ block.shopify_attributes }}>
+      {% render 'header-drawer', linklist: block_settings.menu, data_header_drawer_type: 'mobile-drawer' %}
     </div>
 
   {% else %}
@@ -32,14 +21,12 @@
       assign cs_key = 'color_scheme_' | append: section.settings.menu_row
       assign current_cs = block_settings.color_scheme
       assign parent_cs = section.settings[cs_key]
-
       if parent_cs.id != current_cs.id
         assign color_scheme_classes = ' color-' | append: current_cs
       endif
       if parent_cs.settings.background.rgb == current_cs.settings.background.rgb
         assign color_scheme_classes = color_scheme_classes | append: ' color-scheme-matches-parent'
       endif
-
       assign page_width_class = 'page-width-wide'
       case block_settings.page_width_preset
         when 'normal'
@@ -53,58 +40,29 @@
 
     {% capture children %}
       {% for link in block_settings.menu.links %}
-        <li
-          class="menu-list__list-item"
-          role="presentation"
-          on:focus="/activate"
-          on:blur="/deactivate"
-        >
+        <li class="menu-list__list-item" role="presentation" on:focus="/activate" on:blur="/deactivate">
           {% assign is_mega_toggle_only = false %}
           {% if link.title == 'สินค้าและบริการ' and link.links != blank %}
             {% assign is_mega_toggle_only = true %}
           {% endif %}
 
           {% if is_mega_toggle_only %}
-            <button
-              type="button"
-              data-skip-node-update="true"
-              class="menu-list__link button-unstyled{% if link.active %} menu-list__link--active{% endif %} oc-nav-trigger"
-              aria-controls="submenu-{{ forloop.index }}"
-              aria-haspopup="true"
-              aria-expanded="false"
-              ref="menuitem"
-            >
+            <button type="button" data-skip-node-update="true" class="menu-list__link button-unstyled{% if link.active %} menu-list__link--active{% endif %} oc-nav-trigger" aria-controls="submenu-{{ forloop.index }}" aria-haspopup="true" aria-expanded="false" ref="menuitem">
               <span class="menu-list__link-title">{{- link.title -}}</span>
-              <svg class="oc-nav__chev" viewBox="0 0 1 1" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:1px; height:1px; margin-left:4px; opacity:0.5; transition: transform 0.25s;"><path d="M6 9l6 6 6-6"/></svg>
             </button>
           {% else %}
-            <a
-              href="{{ link.url }}"
-              data-skip-node-update="true"
-              class="menu-list__link{% if link.active %} menu-list__link--active{% endif %}"
-              {% if link.links != blank %}
-                aria-controls="submenu-{{ forloop.index }}"
-                aria-haspopup="true"
-                aria-expanded="false"
-              {% endif %}
-              {% if link.current %}aria-current="page"{% endif %}
-              ref="menuitem"
-            >
+            <a href="{{ link.url }}" data-skip-node-update="true" class="menu-list__link{% if link.active %} menu-list__link--active{% endif %}" {% if link.links != blank %}aria-controls="submenu-{{ forloop.index }}" aria-haspopup="true" aria-expanded="false"{% endif %} {% if link.current %}aria-current="page"{% endif %} ref="menuitem">
               <span class="menu-list__link-title">{{- link.title -}}</span>
             </a>
           {% endif %}
 
           {% if link.links != blank and is_mega_toggle_only %}
             <div class="menu-list__submenu oc-v4-submenu-container {{ color_scheme_classes }}" ref="submenu[]">
-              <div
-                id="submenu-{{ forloop.index }}"
-                class="menu-list__submenu-inner oc-mega-wrapper {{ page_width_class }}"
-              >
-                <!-- ═══ MEGA PANEL V4 ═══ -->
-                <div class="oc-mega__wrap" data-product-limit="{{ block_settings.product_limit | default: 6 }}">
+              <div id="submenu-{{ forloop.index }}" class="menu-list__submenu-inner oc-mega-wrapper {{ page_width_class }}">
+                <div class="oc-mega__wrap" data-product-limit="{{ block_settings.product_limit | default: 8 }}" data-card-count="{{ block_settings.mega_thumb_count | default: 4 }}" data-pill-count="{{ block_settings.mega_pill_count | default: 4 }}">
                   <div class="oc-mega__panel">
 
-                    <!-- ── COL 1: Categories ── -->
+                    <!-- COL 1: Categories -->
                     <div class="oc-mega__cats">
                       <div class="oc-mega__cats-head">หมวดสินค้า</div>
                       <div class="oc-mega__cats-scroll">
@@ -117,17 +75,7 @@
                             endif
                           -%}
                           <button class="oc-mega__cat{% if forloop.first %} active{% endif %}" data-cat="{{ l0_handle }}" data-url="{{ l0.url }}">
-                            <span class="oc-mega__cat-ico">
-                              {%- case l0_handle -%}
-                                {%- when 'signage' -%}<svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-                                {%- when 'sticker' -%}<svg viewBox="0 0 24 24"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-                                {%- when 'label' -%}<svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-                                {%- when 'posm' -%}<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                                {%- when 'booth' -%}<svg viewBox="0 0 24 24"><path d="M3 3h18v18H3z" fill="none"/><path d="M3 9h18"/><path d="M9 3v18"/></svg>
-                                {%- when 'photo' -%}<svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                                {%- when 'digital' -%}<svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><polygon points="10 8 16 12 10 16 10 8" fill="none"/></svg>{%- else -%}<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                              {%- endcase -%}
-                            </span>
+                            <span class="oc-mega__cat-ico">{%- case l0_handle -%}{%- when 'signage' -%}<svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>{%- when 'sticker' -%}<svg viewBox="0 0 24 24"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>{%- when 'sticker-label' -%}<svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>{%- when 'posm-pop-display' -%}<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>{%- when 'display-booth' -%}<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" fill="none"/><path d="M3 9h18"/><path d="M9 3v18"/></svg>{%- when 'photography' -%}<svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>{%- when 'digital-signage' -%}<svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><polygon points="10 8 16 12 10 16 10 8" fill="none"/></svg>{%- when 'advertise-sign' -%}<svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10"/></svg>{%- when 'company-signs' -%}<svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>{%- when 'backdrop' -%}<svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M2 12h20"/></svg>{%- when 'promotion_material' -%}<svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>{%- when 'booth_equipment' -%}<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" fill="none"/><path d="M3 9h18"/><path d="M9 3v18"/></svg>{%- when 'clear-stickers' -%}<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>{%- else -%}<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>{%- endcase -%}</span>
                             {{- l0.title -}}
                             <svg class="oc-mega__cat-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
                           </button>
@@ -135,7 +83,7 @@
                       </div>
                     </div>
 
-                    <!-- ── COL 2: Sub-categories ── -->
+                    <!-- COL 2: Sub-categories -->
                     <div class="oc-mega__subs">
                       {% for l0 in link.links %}
                         {%- liquid
@@ -143,25 +91,20 @@
                           assign l0_handle = l0.handle
                           assign subcols = blank
                           assign has_meta = false
-
                           if l0_coll != blank
                             assign l0_handle = l0_coll.handle
                             assign subcols = l0_coll.metafields.custom.subcol_megamenu.value
                           endif
-
                           if subcols != blank and subcols.size > 0
                             assign has_meta = true
                           endif
                         -%}
-
                         <div class="oc-mega__sub-pane{% if forloop.first %} active{% endif %}" data-pane="{{ l0_handle }}">
                           <div class="oc-mega__sub-head">{{ l0.title }}</div>
                           <div class="oc-mega__sub-scroll">
                             {% if has_meta %}
                               {% for subcol in subcols %}
-                                <a href="{{ subcol.url }}" class="oc-mega__sub" data-sub="{{ subcol.handle }}">
-                                  <span class="oc-mega__sub-dot"></span>{{- subcol.title -}}
-                                </a>
+                                <a href="{{ subcol.url }}" class="oc-mega__sub" data-sub="{{ subcol.handle }}"><span class="oc-mega__sub-dot"></span>{{- subcol.title -}}</a>
                               {% endfor %}
                             {% else %}
                               {% for l1 in l0.links %}
@@ -172,9 +115,7 @@
                                     assign l1_handle = l1_coll.handle
                                   endif
                                 -%}
-                                <a href="{{ l1.url }}" class="oc-mega__sub" data-sub="{{ l1_handle }}">
-                                  <span class="oc-mega__sub-dot"></span>{{- l1.title -}}
-                                </a>
+                                <a href="{{ l1.url }}" class="oc-mega__sub" data-sub="{{ l1_handle }}"><span class="oc-mega__sub-dot"></span>{{- l1.title -}}</a>
                               {% endfor %}
                             {% endif %}
                           </div>
@@ -183,13 +124,12 @@
                       {% endfor %}
                     </div>
 
-                    <!-- ── COL 3: Dynamic Products ── -->
+                    <!-- COL 3: Products -->
                     <div class="oc-mega__products" id="ocMegaProductsBox" aria-busy="false">
                       <div class="oc-mega__prod-pane active">
                         <div class="oc-mega__prod-head"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> สินค้าแนะนำ</div>
                         <div class="oc-mega__prod-scroll" id="ocMegaProductsScroll">
-                          <!-- V4 HTML Injected via JS -->
-                          <div class="oc-mega__loading-skeleton" style="padding:20px; text-align:center; color: var(--oc-ink-40); font-size:12px;">กำลังเตรียมข้อมูล...</div>
+                          <div style="padding:20px;text-align:center;color:var(--oc-ink-40);font-size:12px;">กำลังเตรียมข้อมูล...</div>
                         </div>
                         <a href="#" class="oc-mega__prod-viewall" id="ocMegaProductsViewAll">ดูทั้งหมด <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
                       </div>
@@ -197,117 +137,40 @@
 
                   </div>
                 </div>
-
               </div>
             </div>
           {% endif %}
         </li>
       {% endfor %}
 
-      <li
-        class="menu-list__list-item"
-        role="presentation"
-        slot="more"
-        on:focus="/activate"
-        on:blur="/deactivate"
-      >
-        <button role="listitem" class="menu-list__link button-unstyled">
-          <span class="menu-list__link-title">{{ 'actions.more' | t }}</span>
-        </button>
+      <li class="menu-list__list-item" role="presentation" slot="more" on:focus="/activate" on:blur="/deactivate">
+        <button role="listitem" class="menu-list__link button-unstyled"><span class="menu-list__link-title">{{ 'actions.more' | t }}</span></button>
       </li>
     {% endcapture %}
 
-    <header-menu
-      ref="headerMenu"
-      class="header-menu"
-      {{ block.shopify_attributes }}
-      data-hydration-key="header-menu"
-    >
+    <header-menu ref="headerMenu" class="header-menu" {{ block.shopify_attributes }} data-hydration-key="header-menu">
       <div class="header-menu__inner">
-        <nav
-          class="menu-list"
-          aria-label="{{ 'accessibility.header_navigation_label' | t }}"
-          style="
-            {% render 'menu-font-styles', settings: block_settings %}
-            --oc-top-menu-font-size: {{ block_settings.top_menu_font_size }}px;
-          "
-        >
+        <nav class="menu-list" aria-label="{{ 'accessibility.header_navigation_label' | t }}" style="{% render 'menu-font-styles', settings: block_settings %} --oc-top-menu-font-size: {{ block_settings.top_menu_font_size }}px;">
           {% assign overflow_class = 'overflow-menu' | append: color_scheme_classes %}
-          {% render 'overflow-list',
-            class: overflow_class,
-            ref: 'overflowMenu',
-            children: children,
-            minimum-items: 2,
-            data-testid: 'header-menu-overflow-list',
-            attributes: 'data-skip-node-update'
-          %}
+          {% render 'overflow-list', class: overflow_class, ref: 'overflowMenu', children: children, minimum-items: 2, data-testid: 'header-menu-overflow-list', attributes: 'data-skip-node-update' %}
         </nav>
       </div>
       <script src="{{ 'header-menu.js' | asset_url }}" type="module" fetchpriority="low"></script>
     </header-menu>
 
-    <!-- Overlay สำหรับ V4 -->
     <div class="oc-overlay" id="megaOverlay"></div>
 
     <script>
       (function () {
         'use strict';
-
-        function isDesktopMenu() {
-          var hdr = document.getElementById('header-component');
-          return hdr && hdr.getAttribute('data-menu-style') === 'menu';
-        }
-
-        /* ── Utilities for Image & Product Fetching ── */
+        function isDesktopMenu() { var h = document.getElementById('header-component'); return h && h.getAttribute('data-menu-style') === 'menu'; }
         var _cache = {};
         function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
-        function normalizeShopifyImage(src) {
-          if (!src) return null;
-          src = String(src);
-          if (src.indexOf('//') === 0) src = window.location.protocol + src;
-          if (src.indexOf('http') !== 0 && src.indexOf('//') !== 0) { src = src.indexOf('/') === 0 ? window.location.origin + src : window.location.origin + '/' + src; }
-          return src;
-        }
-        function resizeImg(src, width, height) {
-          src = normalizeShopifyImage(src);
-          if (!src) return null;
-          src = src.replace(/_(pico|icon|thumb|small|compact|medium|large|grande|original|\d+x\d*)(?=\.[a-zA-Z]{3,4}(\?[^.]*)?$)/, '');
-          return src.replace(/(\.[a-zA-Z]{3,4})(\?[^.]*)?$/, '_' + width + 'x' + height + '$1$2');
-        }
-        function getProductImage(product) {
-          if (!product) return null;
-          if (typeof product.featured_image === 'string' && product.featured_image) return product.featured_image;
-          if (product.featured_image && typeof product.featured_image === 'object') {
-            if (product.featured_image.src) return product.featured_image.src;
-            if (product.featured_image.url) return product.featured_image.url;
-          }
-          if (Array.isArray(product.images) && product.images.length) {
-            var first = product.images[0];
-            if (typeof first === 'string') return first;
-            if (first && first.src) return first.src;
-            if (first && first.url) return first.url;
-          }
-          if (product.image && product.image.src) return product.image.src;
-          return null;
-        }
+        function normalizeShopifyImage(src) { if (!src) return null; src = String(src); if (src.indexOf('//') === 0) src = window.location.protocol + src; if (src.indexOf('http') !== 0 && src.indexOf('//') !== 0) { src = src.indexOf('/') === 0 ? window.location.origin + src : window.location.origin + '/' + src; } return src; }
+        function resizeImg(src, w, h) { src = normalizeShopifyImage(src); if (!src) return null; src = src.replace(/_(pico|icon|thumb|small|compact|medium|large|grande|original|\d+x\d*)(?=\.[a-zA-Z]{3,4}(\?[^.]*)?$)/, ''); return src.replace(/(\.[a-zA-Z]{3,4})(\?[^.]*)?$/, '_' + w + 'x' + h + '$1$2'); }
+        function getProductImage(p) { if (!p) return null; if (typeof p.featured_image === 'string' && p.featured_image) return p.featured_image; if (p.featured_image && typeof p.featured_image === 'object') { if (p.featured_image.src) return p.featured_image.src; if (p.featured_image.url) return p.featured_image.url; } if (Array.isArray(p.images) && p.images.length) { var f = p.images[0]; if (typeof f === 'string') return f; if (f && f.src) return f.src; if (f && f.url) return f.url; } if (p.image && p.image.src) return p.image.src; return null; }
+        function fetchProducts(handle, limit) { if (!handle) return Promise.resolve([]); var k = handle + '::' + limit; if (Array.isArray(_cache[k])) return Promise.resolve(_cache[k]); if (_cache[k] && typeof _cache[k].then === 'function') return _cache[k]; _cache[k] = fetch('/collections/' + encodeURIComponent(handle) + '/products.json?limit=' + encodeURIComponent(limit), { credentials: 'same-origin' }).then(function (r) { if (!r.ok) throw new Error('Fetch failed'); return r.json(); }).then(function (d) { var p = Array.isArray(d.products) ? d.products : []; _cache[k] = p; return p; }).catch(function () { _cache[k] = []; return []; }); return _cache[k]; }
 
-        function fetchProducts(handle, limit) {
-          if (!handle) return Promise.resolve([]);
-          var cacheKey = handle + '::' + limit;
-          if (Array.isArray(_cache[cacheKey])) return Promise.resolve(_cache[cacheKey]);
-          if (_cache[cacheKey] && typeof _cache[cacheKey].then === 'function') return _cache[cacheKey];
-
-          _cache[cacheKey] = fetch('/collections/' + encodeURIComponent(handle) + '/products.json?limit=' + encodeURIComponent(limit), { credentials: 'same-origin' })
-            .then(function (res) { if (!res.ok) throw new Error('Fetch failed'); return res.json(); })
-            .then(function (data) {
-              var products = Array.isArray(data.products) ? data.products : [];
-              _cache[cacheKey] = products;
-              return products;
-            }).catch(function () { _cache[cacheKey] = []; return []; });
-          return _cache[cacheKey];
-        }
-
-        /* ── V4 UI Logic & Integration ── */
         function initV4MegaMenu() {
           if (!isDesktopMenu()) return;
           var wrap = document.querySelector('.oc-mega__wrap');
@@ -321,83 +184,72 @@
           var prodScroll = document.getElementById('ocMegaProductsScroll');
           var viewAllBtn = document.getElementById('ocMegaProductsViewAll');
           var prodBox = document.getElementById('ocMegaProductsBox');
-          var productLimit = parseInt(wrap.dataset.productLimit || 6, 10);
-          
+          var productLimit = parseInt(wrap.dataset.productLimit || 8, 10);
+          var cardCount    = parseInt(wrap.dataset.cardCount || 4, 10);
+          var pillCount    = parseInt(wrap.dataset.pillCount || 4, 10);
+
           var activeCat = cats[0] ? cats[0].dataset.cat : null;
           var activeSubHandle = null;
           var CAT_DELAY = 120, catTimer = null;
 
-          // 1. Hover Category (Col 1)
           function switchCat(catKey) {
             if (catKey === activeCat) return;
             activeCat = catKey;
-            
             cats.forEach(function(b) { b.classList.toggle('active', b.dataset.cat === catKey); });
             subPanes.forEach(function(p) { p.classList.toggle('active', p.dataset.pane === catKey); });
-            
-            // Trigger Load for the first sub-item of this category
-            var activePane = document.querySelector('.oc-mega__sub-pane[data-pane="'+catKey+'"]');
+            var activePane = document.querySelector('.oc-mega__sub-pane[data-pane="' + catKey + '"]');
             if (activePane) {
               var firstSub = activePane.querySelector('.oc-mega__sub');
-              if (firstSub) {
-                 loadProductsUI(firstSub.dataset.sub, firstSub.getAttribute('href'), activePane.querySelector('.oc-mega__sub-head').innerText);
-              }
+              if (firstSub) { activeSubHandle = null; loadProductsUI(firstSub.dataset.sub, firstSub.getAttribute('href'), activePane.querySelector('.oc-mega__sub-head').innerText); }
             }
             requestAnimationFrame(checkSubScroll);
           }
 
           cats.forEach(function(btn) {
-            btn.addEventListener('mouseenter', function() { var k = btn.dataset.cat; clearTimeout(catTimer); catTimer = setTimeout(function(){ switchCat(k); }, CAT_DELAY); });
+            btn.addEventListener('mouseenter', function() { var k = btn.dataset.cat; clearTimeout(catTimer); catTimer = setTimeout(function() { switchCat(k); }, CAT_DELAY); });
             btn.addEventListener('mouseleave', function() { clearTimeout(catTimer); });
           });
 
-          // 2. Hover Sub-Category (Col 2)
           document.querySelectorAll('.oc-mega__sub').forEach(function(subLink) {
-            subLink.addEventListener('mouseenter', function() {
-              loadProductsUI(this.dataset.sub, this.getAttribute('href'), this.innerText);
-            });
+            subLink.addEventListener('mouseenter', function() { loadProductsUI(this.dataset.sub, this.getAttribute('href'), this.innerText); });
           });
 
-          // 3. Render AJAX Data into V4 HTML Structure
           function loadProductsUI(handle, url, titleName) {
             if (!handle || activeSubHandle === handle) return;
             activeSubHandle = handle;
             prodBox.setAttribute('aria-busy', 'true');
-
-            // Set View All Link dynamically
             viewAllBtn.setAttribute('href', url || '#');
             viewAllBtn.innerHTML = 'ดู ' + esc(titleName || 'ทั้งหมด') + ' <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
 
             fetchProducts(handle, productLimit).then(function(products) {
-              if (activeSubHandle !== handle) return; // Ignore if user hovered somewhere else
+              if (activeSubHandle !== handle) return;
               prodBox.setAttribute('aria-busy', 'false');
-              
-              if (!products || !products.length) {
-                prodScroll.innerHTML = '<div style="padding:20px; font-size:13px; color:var(--oc-ink-40);">ไม่พบสินค้าแนะนำในหมวดนี้</div>';
-                return;
-              }
+              if (!products || !products.length) { prodScroll.innerHTML = '<div style="padding:20px;font-size:13px;color:var(--oc-ink-40);">ไม่พบสินค้าแนะนำในหมวดนี้</div>'; return; }
+
+              /* Split: first N = image cards, next M = pill buttons */
+              var cards = products.slice(0, cardCount);
+              var pills = products.slice(cardCount, cardCount + pillCount);
 
               var html = '<div class="oc-mega__prod-grid">';
-              products.forEach(function(p, index) {
+              cards.forEach(function(p, i) {
                 var rawImg = getProductImage(p);
-                var src = rawImg ? resizeImg(rawImg, 400, 300) : null; // 4:3 Ratio
+                var src = rawImg ? resizeImg(rawImg, 400, 300) : null;
                 var pUrl = '/products/' + esc(p.handle);
-                var delay = (index * 0.04) + 0.04; // Animation stagger
-
-                html += '<a href="' + pUrl + '" class="oc-mega__card" style="animation-delay: '+delay+'s;">';
-                if (src) {
-                  html += '<img class="oc-mega__card-img" src="' + esc(src) + '" alt="' + esc(p.title) + '" loading="lazy">';
-                } else {
-                  html += '<div class="oc-mega__card-img" style="display:flex;align-items:center;justify-content:center;font-size:20px;">📦</div>';
-                }
-                html += '<div class="oc-mega__card-body">';
-                html += '<div class="oc-mega__card-name">' + esc(p.title) + '</div>';
-                
-                html += '</div></a>';
+                var delay = (i * 0.04) + 0.04;
+                html += '<a href="' + pUrl + '" class="oc-mega__card" style="animation-delay:' + delay + 's;">';
+                if (src) { html += '<img class="oc-mega__card-img" src="' + esc(src) + '" alt="' + esc(p.title) + '" loading="lazy">'; }
+                else { html += '<div class="oc-mega__card-img" style="display:flex;align-items:center;justify-content:center;font-size:20px;">📦</div>'; }
+                html += '<div class="oc-mega__card-body"><div class="oc-mega__card-name">' + esc(p.title) + '</div></div></a>';
               });
               html += '</div>';
 
-              // Force reflow to re-trigger CSS animations
+              /* Pill buttons — text only, no image load */
+              if (pills.length) {
+                html += '<div class="oc-mega__pill-row">';
+                pills.forEach(function(p) { html += '<a href="/products/' + esc(p.handle) + '" class="oc-mega__pill">' + esc(p.title) + '</a>'; });
+                html += '</div>';
+              }
+
               prodScroll.innerHTML = html;
               prodScroll.classList.remove('oc-animate-trigger');
               void prodScroll.offsetWidth;
@@ -405,66 +257,26 @@
             });
           }
 
-          // Initial Load for first active cat
           var initActivePane = document.querySelector('.oc-mega__sub-pane.active');
-          if (initActivePane) {
-             var firstSub = initActivePane.querySelector('.oc-mega__sub');
-             if (firstSub) loadProductsUI(firstSub.dataset.sub, firstSub.getAttribute('href'), initActivePane.querySelector('.oc-mega__sub-head').innerText);
-          }
+          if (initActivePane) { var firstSub = initActivePane.querySelector('.oc-mega__sub'); if (firstSub) loadProductsUI(firstSub.dataset.sub, firstSub.getAttribute('href'), initActivePane.querySelector('.oc-mega__sub-head').innerText); }
 
-          // 4. Scroll Hints
           function checkSubScroll() {
-            document.querySelectorAll('.oc-mega__sub-pane.active').forEach(function(pane) {
-              var scroll = pane.querySelector('.oc-mega__sub-scroll');
-              if (!scroll) return;
-              var hasScroll = scroll.scrollHeight > scroll.clientHeight + 4;
-              pane.classList.toggle('has-scroll', hasScroll);
-              var atEnd = scroll.scrollTop + scroll.clientHeight >= scroll.scrollHeight - 4;
-              pane.classList.toggle('scrolled-end', atEnd);
-            });
+            document.querySelectorAll('.oc-mega__sub-pane.active').forEach(function(pane) { var s = pane.querySelector('.oc-mega__sub-scroll'); if (!s) return; pane.classList.toggle('has-scroll', s.scrollHeight > s.clientHeight + 4); pane.classList.toggle('scrolled-end', s.scrollTop + s.clientHeight >= s.scrollHeight - 4); });
           }
-          document.querySelectorAll('.oc-mega__sub-scroll').forEach(function(el) {
-            el.addEventListener('scroll', function() {
-              var pane = el.closest('.oc-mega__sub-pane');
-              if (pane) pane.classList.toggle('scrolled-end', el.scrollTop + el.clientHeight >= el.scrollHeight - 4);
-            });
-          });
+          document.querySelectorAll('.oc-mega__sub-scroll').forEach(function(el) { el.addEventListener('scroll', function() { var p = el.closest('.oc-mega__sub-pane'); if (p) p.classList.toggle('scrolled-end', el.scrollTop + el.clientHeight >= el.scrollHeight - 4); }); });
 
-          // 5. Drawer Toggle Logic (FIXED HOVER FLICKER)
+          /* Open/Close — no has-shadow, no chevron */
           var hoverTimer = null;
-          
-          function openMegaMenu(triggerNode) {
-            clearTimeout(hoverTimer);
-            if (triggerNode.getAttribute('aria-expanded') === 'true') return;
-            triggerNode.setAttribute('aria-expanded', 'true');
-            overlay.classList.add('active');
-            document.querySelector('.oc-header')?.classList.add('has-shadow');
-          }
-
-          function closeMegaMenu(triggerNode) {
-            // Delay ช่วยให้เมาส์ข้ามช่องว่างระหว่างปุ่มลงเมนูได้โดยไม่กระพริบ
-            hoverTimer = setTimeout(function() {
-              triggerNode.setAttribute('aria-expanded', 'false');
-              overlay.classList.remove('active');
-            }, 180); 
-          }
+          function openMegaMenu(t) { clearTimeout(hoverTimer); if (t.getAttribute('aria-expanded') === 'true') return; t.setAttribute('aria-expanded', 'true'); overlay.classList.add('active'); }
+          function closeMegaMenu(t) { hoverTimer = setTimeout(function() { t.setAttribute('aria-expanded', 'false'); overlay.classList.remove('active'); }, 180); }
 
           triggers.forEach(function(trigger) {
             trigger.addEventListener('click', function(e) { e.preventDefault(); });
-            
-            // เมื่อเมาส์เข้าปุ่ม
             trigger.addEventListener('mouseenter', function() { openMegaMenu(trigger); });
-            // เมื่อเมาส์ออกจากปุ่ม
             trigger.addEventListener('mouseleave', function() { closeMegaMenu(trigger); });
-
-            // เมื่อเมาส์เข้าไปในตัวกล่อง Mega Menu ยึดให้มันเปิดค้างไว้
             var submenu = trigger.nextElementSibling;
-            if (submenu) {
-              submenu.addEventListener('mouseenter', function() { clearTimeout(hoverTimer); });
-              submenu.addEventListener('mouseleave', function() { closeMegaMenu(trigger); });
-            }
+            if (submenu) { submenu.addEventListener('mouseenter', function() { clearTimeout(hoverTimer); }); submenu.addEventListener('mouseleave', function() { closeMegaMenu(trigger); }); }
           });
-
         }
 
         if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initV4MegaMenu); } else { setTimeout(initV4MegaMenu, 100); }
@@ -474,114 +286,81 @@
 {% endcase %}
 
 {% stylesheet %}
-/* ═══ CSS Variables & Reset V4 ═══ */
-:root {
-  --oc-cyan: #17a9bb;
-  --oc-cyan-vv: #14c9df;
-  --oc-indigo: #818CF8;
-  --oc-purple: #A78BFA;
-  --oc-purple-d: #7C3AED;
-  --oc-ink: #1A202C;
-  --oc-ink-70: #374151;
-  --oc-ink-40: #6B7280;
-  --oc-ink-15: #E5E7EB;
-  --oc-ink-05: #F9FAFB;
-  --oc-shadow-lg: 0 20px 60px rgba(100,100,160,0.18);
-  --oc-ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --oc-ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
-  --oc-radius: 14px;
-  --oc-radius-lg: 22px;
-  --oc-radius-pill: 999px;
-}
+:root { --oc-cyan:#17a9bb; --oc-cyan-vv:#14c9df; --oc-indigo:#818CF8; --oc-purple:#A78BFA; --oc-purple-d:#7C3AED; --oc-ink:#1A202C; --oc-ink-70:#374151; --oc-ink-40:#6B7280; --oc-ink-15:#E5E7EB; --oc-ink-05:#F9FAFB; --oc-shadow-lg:0 20px 60px rgba(100,100,160,0.18); --oc-ease-expo:cubic-bezier(0.16,1,0.3,1); --oc-ease-smooth:cubic-bezier(0.4,0,0.2,1); --oc-radius:14px; --oc-radius-lg:22px; --oc-radius-pill:999px; }
 
-/* Original Menu list resets */
-.header__drawer { --header-drawer-min-height: 60px; display: flex; min-height: var(--header-drawer-min-height); align-items: center; }
-#header-component[data-menu-style='drawer'] .header__drawer { display: flex; min-height: var(--header-drawer-min-height); }
-@media screen and (min-width: 750px) { #header-component[data-menu-style='menu'] .header__drawer { display: none; min-height: 0; } }
+.header__drawer { --header-drawer-min-height:60px; display:flex; min-height:var(--header-drawer-min-height); align-items:center; }
+#header-component[data-menu-style='drawer'] .header__drawer { display:flex; min-height:var(--header-drawer-min-height); }
+@media screen and (min-width:750px) { #header-component[data-menu-style='menu'] .header__drawer { display:none; min-height:0; } }
 
-/* Shopify Native Overrides to support V4 - Targeted ONLY to V4 Submenu to prevent breaking standard menus */
-.menu-list__list-item { position: static !important; } 
+.menu-list__list-item { position:static !important; }
+.oc-nav-trigger + .oc-v4-submenu-container { clip-path:none !important; visibility:hidden; position:absolute; width:100%; left:0; top:100%; z-index:var(--layer-header-menu,999); transition:opacity 0.28s var(--oc-ease-smooth),transform 0.28s var(--oc-ease-expo); opacity:0; transform:translateY(-4px); pointer-events:none; }
+.oc-nav-trigger[aria-expanded="true"] + .oc-v4-submenu-container { visibility:visible; opacity:1; transform:translateY(0); pointer-events:auto; }
 
-.oc-nav-trigger + .oc-v4-submenu-container {
-  clip-path: none !important;
-  visibility: hidden; position: absolute; width: 100%; left: 0;
-  top: 100%; z-index: var(--layer-header-menu, 999);
-  transition: opacity 0.28s var(--oc-ease-smooth), transform 0.28s var(--oc-ease-expo);
-  opacity: 0; transform: translateY(-4px); pointer-events: none;
-}
+.oc-overlay { position:fixed; inset:0; background:rgba(0,0,0,0); z-index:998; pointer-events:none; transition:background 0.35s; }
+.oc-overlay.active { background:rgba(0,0,0,0.10); }
 
-.oc-nav-trigger[aria-expanded="true"] + .oc-v4-submenu-container {
-  visibility: visible; opacity: 1; transform: translateY(0); pointer-events: auto;
-}
+.oc-mega-wrapper { width:100%; background:transparent !important; box-shadow:none !important; }
+.oc-mega__wrap { max-width:1100px; margin:0 auto; padding:0 24px; position:relative; z-index:1000; }
+.oc-mega__panel { background:#fff; border-radius:0 0 var(--oc-radius-lg) var(--oc-radius-lg); box-shadow:var(--oc-shadow-lg); border:1px solid rgba(0,0,0,0.06); border-top:0; overflow:hidden; display:flex; height:420px; text-align:left; }
 
-.oc-nav-trigger[aria-expanded="true"] .oc-nav__chev { transform: rotate(180deg) !important; opacity: 1 !important; }
+/* COL 1 */
+.oc-mega__cats-head,.oc-mega__sub-head,.oc-mega__prod-head { font-family:var(--menu-top-level-font-family); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--oc-ink-40); padding:14px 20px 10px; border-bottom:1px solid var(--oc-ink-15); flex-shrink:0; margin:0; display:flex; align-items:center; gap:6px; }
+.oc-mega__prod-head svg { width:13px; height:13px; stroke:var(--oc-purple); fill:none; stroke-width:2; }
+.oc-mega__cats { width:200px; min-width:200px; background:var(--oc-ink-05); border-right:1px solid var(--oc-ink-15); display:flex; flex-direction:column; }
+.oc-mega__cats-scroll { flex:1; overflow-y:auto; overflow-x:hidden; padding:6px 0; }
+.oc-mega__cat { display:flex; align-items:center; gap:10px; padding:11px 14px 11px 18px; cursor:pointer; color:var(--oc-ink-70); font-size:13.5px; font-weight:500; transition:background 0.12s,color 0.12s; position:relative; border:0; background:transparent; width:100%; text-align:left; font-family:inherit; }
+.oc-mega__cat:hover,.oc-mega__cat.active { background:#fff; color:var(--oc-ink); }
+.oc-mega__cat.active { color:var(--oc-cyan); font-weight:600; }
+.oc-mega__cat.active::before { content:''; position:absolute; left:0; top:6px; bottom:6px; width:3px; border-radius:0 3px 3px 0; background:linear-gradient(180deg,var(--oc-cyan-vv),var(--oc-cyan)); }
+.oc-mega__cat-ico { width:18px; height:18px; display:flex; align-items:center; justify-content:center; }
+.oc-mega__cat-ico svg { width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.oc-mega__cat.active .oc-mega__cat-ico svg { stroke:var(--oc-cyan); }
+.oc-mega__cat-arrow { margin-left:auto; width:12px; height:12px; opacity:0; transform:translateX(-3px); transition:opacity 0.15s,transform 0.15s; }
+.oc-mega__cat.active .oc-mega__cat-arrow { opacity:0.4; transform:translateX(0); }
 
-/* ═══ MEGA MENU V4 ═══ */
-.oc-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0); z-index: 998; pointer-events: none; transition: background 0.35s; }
-.oc-overlay.active { background: rgba(0,0,0,0.10); /* FIXED: Removed pointer-events: auto to prevent stealing hover */ }
+/* COL 2 */
+.oc-mega__subs { width:260px; min-width:260px; border-right:1px solid var(--oc-ink-15); display:flex; flex-direction:column; overflow:hidden; }
+.oc-mega__sub-pane { display:none; flex-direction:column; flex:1; min-height:0; }
+.oc-mega__sub-pane.active { display:flex; }
+.oc-mega__sub-scroll { flex:1; overflow-y:auto; overflow-x:hidden; padding:6px 8px; scrollbar-width:thin; scrollbar-color:rgba(20,201,223,0.25) transparent; }
+.oc-mega__sub-pane.has-scroll .oc-mega__sub-scroll { mask-image:linear-gradient(to bottom,#000 calc(100% - 28px),transparent 100%); -webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 28px),transparent 100%); }
+.oc-mega__sub-pane.scrolled-end .oc-mega__sub-scroll { mask-image:none; -webkit-mask-image:none; }
+.oc-mega__sub { display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:8px; text-decoration:none; color:var(--oc-ink-70); font-size:13px; font-weight:500; transition:background 0.12s,color 0.12s,transform 0.12s; }
+.oc-mega__sub:hover { background:rgba(20,201,223,0.05); color:var(--oc-ink); transform:translateX(2px); }
+.oc-mega__sub-dot { width:5px; height:5px; min-width:5px; border-radius:999px; background:var(--oc-ink-15); transition:background 0.12s,transform 0.12s; }
+.oc-mega__sub:hover .oc-mega__sub-dot { background:var(--oc-cyan); transform:scale(1.4); }
+.oc-mega__sub-seeall,.oc-mega__prod-viewall { display:flex; align-items:center; gap:4px; font-size:13px; font-weight:600; color:var(--oc-cyan); text-decoration:none; padding:0 20px; border-top:1px solid var(--oc-ink-15); transition:gap 0.2s,background 0.15s; height:42px; flex-shrink:0; }
+.oc-mega__prod-viewall { justify-content:center; }
+.oc-mega__sub-seeall:hover,.oc-mega__prod-viewall:hover { gap:8px; background:rgba(20,201,223,0.04); }
+.oc-mega__sub-seeall svg,.oc-mega__prod-viewall svg { width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
 
-.oc-mega-wrapper { width: 100%; background: transparent !important; box-shadow: none !important; }
-.oc-mega__wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1000;}
-.oc-mega__panel { background: #fff; border-radius: 0 0 var(--oc-radius-lg) var(--oc-radius-lg); box-shadow: var(--oc-shadow-lg); border: 1px solid rgba(0,0,0,0.06); border-top: 0; overflow: hidden; display: flex; height: 420px; text-align: left; }
+/* COL 3 */
+.oc-mega__products { flex:1; padding:0; display:flex; flex-direction:column; overflow:hidden; transition:opacity 0.2s; }
+.oc-mega__products[aria-busy="true"] { opacity:0.5; pointer-events:none; }
+.oc-mega__prod-pane { display:flex; flex-direction:column; flex:1; min-height:0; }
+.oc-mega__prod-scroll { flex:1; overflow-y:auto; overflow-x:hidden; padding:12px 16px; scrollbar-width:thin; scrollbar-color:rgba(167,139,250,0.2) transparent; }
+.oc-mega__prod-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; align-content:start; }
+.oc-mega__card { display:flex; flex-direction:column; align-items:center; border-radius:8px; overflow:hidden; border:1px solid var(--oc-ink-15); text-decoration:none; color:var(--oc-ink-70); transition:border-color 0.18s,box-shadow 0.18s,background 0.15s; background:#fff; }
+.oc-mega__card:hover { border-color:rgba(20,201,223,0.3); box-shadow:0 2px 10px rgba(20,201,223,0.08); background:rgba(20,201,223,0.02); }
+.oc-mega__card-img { width:100%; aspect-ratio:4/3; object-fit:cover; display:block; background:var(--oc-ink-05); }
+.oc-mega__card-body { padding:6px 8px; width:100%; }
+.oc-mega__card-name { font-size:11px; font-weight:600; color:var(--oc-ink); line-height:1.3; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
 
-/* ── COL 1 ── */
-.oc-mega__cats-head, .oc-mega__sub-head, .oc-mega__prod-head { font-family: var(--menu-top-level-font-family); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--oc-ink-40); padding: 14px 20px 10px; border-bottom: 1px solid var(--oc-ink-15); flex-shrink: 0; margin: 0; display:flex; align-items:center; gap:6px;}
-.oc-mega__prod-head svg { width: 13px; height: 13px; stroke: var(--oc-purple); fill: none; stroke-width: 2; }
-.oc-mega__cats { width: 200px; min-width: 200px; background: var(--oc-ink-05); border-right: 1px solid var(--oc-ink-15); display: flex; flex-direction: column; }
-.oc-mega__cats-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 6px 0; }
-.oc-mega__cat { display: flex; align-items: center; gap: 10px; padding: 11px 14px 11px 18px; cursor: pointer; color: var(--oc-ink-70); font-size: 13.5px; font-weight: 500; transition: background 0.12s, color 0.12s; position: relative; border: 0; background: transparent; width: 100%; text-align: left; font-family: inherit;}
-.oc-mega__cat:hover, .oc-mega__cat.active { background: #fff; color: var(--oc-ink); }
-.oc-mega__cat.active { color: var(--oc-cyan); font-weight: 600; }
-.oc-mega__cat.active::before { content: ''; position: absolute; left: 0; top: 6px; bottom: 6px; width: 3px; border-radius: 0 3px 3px 0; background: linear-gradient(180deg, var(--oc-cyan-vv), var(--oc-cyan)); }
-.oc-mega__cat-ico { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; }
-.oc-mega__cat-ico svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.oc-mega__cat.active .oc-mega__cat-ico svg { stroke: var(--oc-cyan); }
-.oc-mega__cat-arrow { margin-left: auto; width: 12px; height: 12px; opacity: 0; transform: translateX(-3px); transition: opacity 0.15s, transform 0.15s; }
-.oc-mega__cat.active .oc-mega__cat-arrow { opacity: 0.4; transform: translateX(0); }
+/* Pill buttons */
+.oc-mega__pill-row { display:flex; flex-wrap:wrap; gap:5px; padding-top:10px; border-top:1px solid var(--oc-ink-15); margin-top:10px; }
+.oc-mega__pill { display:inline-flex; align-items:center; padding:4px 10px; border-radius:var(--oc-radius-pill); background:var(--oc-ink-05); border:1px solid var(--oc-ink-15); font-size:11px; font-weight:500; color:var(--oc-ink-70); text-decoration:none; white-space:nowrap; transition:background 0.12s,border-color 0.12s,color 0.12s; }
+.oc-mega__pill:hover { background:rgba(20,201,223,0.08); border-color:var(--oc-cyan); color:var(--oc-cyan); }
 
-/* ── COL 2 ── */
-.oc-mega__subs { width: 260px; min-width: 260px; border-right: 1px solid var(--oc-ink-15); display: flex; flex-direction: column; overflow: hidden; }
-.oc-mega__sub-pane { display: none; flex-direction: column; flex: 1; min-height: 0; }
-.oc-mega__sub-pane.active { display: flex; }
-.oc-mega__sub-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 6px 8px; scrollbar-width: thin; scrollbar-color: rgba(20,201,223,0.25) transparent; }
-.oc-mega__sub-pane.has-scroll .oc-mega__sub-scroll { mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%); -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%); }
-.oc-mega__sub-pane.scrolled-end .oc-mega__sub-scroll { mask-image: none; -webkit-mask-image: none; }
-.oc-mega__sub { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: var(--oc-ink-70); font-size: 13px; font-weight: 500; transition: background 0.12s, color 0.12s, transform 0.12s; }
-.oc-mega__sub:hover { background: rgba(20,201,223,0.05); color: var(--oc-ink); transform: translateX(2px); }
-.oc-mega__sub-dot { width: 5px; height: 5px; min-width: 5px; border-radius: 999px; background: var(--oc-ink-15); transition: background 0.12s, transform 0.12s; }
-.oc-mega__sub:hover .oc-mega__sub-dot { background: var(--oc-cyan); transform: scale(1.4); }
-.oc-mega__sub-seeall, .oc-mega__prod-viewall { display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; color: var(--oc-cyan); text-decoration: none; padding: 0 20px; border-top: 1px solid var(--oc-ink-15); transition: gap 0.2s, background 0.15s; height: 42px; flex-shrink: 0; }
-.oc-mega__prod-viewall { justify-content: center; }
-.oc-mega__sub-seeall:hover, .oc-mega__prod-viewall:hover { gap: 8px; background: rgba(20,201,223,0.04); }
-.oc-mega__sub-seeall svg, .oc-mega__prod-viewall svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-
-/* ── COL 3 ── */
-.oc-mega__products { flex: 1; padding: 0; display: flex; flex-direction: column; overflow: hidden; transition: opacity 0.2s; }
-.oc-mega__products[aria-busy="true"] { opacity: 0.5; pointer-events: none; }
-.oc-mega__prod-pane { display: flex; flex-direction: column; flex: 1; min-height: 0; }
-.oc-mega__prod-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 12px 16px; scrollbar-width: thin; scrollbar-color: rgba(167,139,250,0.2) transparent; }
-.oc-mega__prod-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; align-content: start; }
-.oc-mega__card { display: flex; flex-direction: column; align-items: center; border-radius: 8px; overflow: hidden; border: 1px solid var(--oc-ink-15); text-decoration: none; color: var(--oc-ink-70); transition: border-color 0.18s, box-shadow 0.18s, background 0.15s; background: #fff; }
-.oc-mega__card:hover { border-color: rgba(20,201,223,0.3); box-shadow: 0 2px 10px rgba(20,201,223,0.08); background: rgba(20,201,223,0.02); }
-.oc-mega__card-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; background: var(--oc-ink-05); }
-.oc-mega__card-body { padding: 6px 8px; width: 100%; }
-.oc-mega__card-name { font-size: 11px; font-weight: 600; color: var(--oc-ink); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.oc-mega__card-price { font-size: 10.5px; font-weight: 700; color: var(--oc-cyan); margin-top: 1px; }
-
-/* ── Animation Classes ── */
-.oc-mega__sub-pane.active .oc-mega__sub { animation: oc-sub-in 0.22s var(--oc-ease-expo) backwards; }
-.oc-mega__sub-pane.active .oc-mega__sub:nth-child(1) { animation-delay: 0.02s; }
-.oc-mega__sub-pane.active .oc-mega__sub:nth-child(2) { animation-delay: 0.04s; }
-.oc-mega__sub-pane.active .oc-mega__sub:nth-child(3) { animation-delay: 0.06s; }
-.oc-mega__sub-pane.active .oc-mega__sub:nth-child(4) { animation-delay: 0.08s; }
-.oc-mega__sub-pane.active .oc-mega__sub:nth-child(5) { animation-delay: 0.10s; }
-.oc-animate-trigger .oc-mega__card { animation: oc-card-in 0.25s var(--oc-ease-expo) backwards; }
-
-@keyframes oc-sub-in { from { opacity: 0; transform: translateX(5px); } to { opacity: 1; transform: translateX(0); } }
-@keyframes oc-card-in { from { opacity: 0; transform: translateX(5px); } to { opacity: 1; transform: translateX(0); } }
-
-
-
+/* Animations */
+.oc-mega__sub-pane.active .oc-mega__sub { animation:oc-sub-in 0.22s var(--oc-ease-expo) backwards; }
+.oc-mega__sub-pane.active .oc-mega__sub:nth-child(1) { animation-delay:0.02s; }
+.oc-mega__sub-pane.active .oc-mega__sub:nth-child(2) { animation-delay:0.04s; }
+.oc-mega__sub-pane.active .oc-mega__sub:nth-child(3) { animation-delay:0.06s; }
+.oc-mega__sub-pane.active .oc-mega__sub:nth-child(4) { animation-delay:0.08s; }
+.oc-mega__sub-pane.active .oc-mega__sub:nth-child(5) { animation-delay:0.10s; }
+.oc-animate-trigger .oc-mega__card { animation:oc-card-in 0.25s var(--oc-ease-expo) backwards; }
+@keyframes oc-sub-in { from { opacity:0; transform:translateX(5px); } to { opacity:1; transform:translateX(0); } }
+@keyframes oc-card-in { from { opacity:0; transform:translateX(5px); } to { opacity:1; transform:translateX(0); } }
 {% endstylesheet %}
 
 {% schema %}
@@ -589,163 +368,47 @@
   "name": "t:names.menu",
   "tag": null,
   "settings": [
+    { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu" },
+    { "type": "select", "id": "page_width_preset", "label": "Mega menu width preset", "options": [
+      { "value": "wide", "label": "Wide" }, { "value": "normal", "label": "Normal" },
+      { "value": "narrow", "label": "Narrow" }, { "value": "content", "label": "Content" }
+    ], "default": "wide" },
+    { "type": "header", "content": "Mobile drawer" },
+    { "type": "checkbox", "id": "drawer_accordion", "label": "Accordion expand", "default": true },
+    { "type": "header", "content": "Mega menu — Product cards" },
     {
-      "type": "link_list",
-      "id": "menu",
-      "label": "Menu",
-      "default": "main-menu"
+      "type": "range", "id": "mega_thumb_count",
+      "label": "Product image cards",
+      "info": "Number of products shown with image (1 row, 4:3)",
+      "min": 1, "max": 8, "step": 1, "default": 4
     },
     {
-      "type": "select",
-      "id": "page_width_preset",
-      "label": "Mega menu width preset",
-      "options": [
-        { "value": "wide",    "label": "Wide" },
-        { "value": "normal",  "label": "Normal" },
-        { "value": "narrow",  "label": "Narrow" },
-        { "value": "content", "label": "Content" }
-      ],
-      "default": "wide"
+      "type": "range", "id": "mega_pill_count",
+      "label": "Product pill buttons",
+      "info": "Text-only links below cards — no images loaded",
+      "min": 0, "max": 12, "step": 1, "default": 4
     },
     {
-      "type": "header",
-      "content": "Mobile drawer"
+      "type": "range", "id": "product_limit",
+      "label": "Total products loaded (API)",
+      "info": "Should be ≥ cards + pills",
+      "min": 4, "max": 20, "step": 1, "default": 8
     },
-    {
-      "type": "checkbox",
-      "id": "drawer_accordion",
-      "label": "Accordion expand",
-      "default": true
-    },
-    {
-      "type": "header",
-      "content": "Mega menu content"
-    },
-    {
-      "type": "range",
-      "id": "mega_thumb_count",
-      "label": "Thumbnail images shown",
-      "min": 1,
-      "max": 8,
-      "step": 1,
-      "default": 4
-    },
-    {
-      "type": "range",
-      "id": "product_limit",
-      "label": "Total products loaded",
-      "min": 4,
-      "max": 20,
-      "step": 1,
-      "default": 8
-    },
-    {
-      "type": "header",
-      "content": "Drawer height"
-    },
-    {
-      "type": "range",
-      "id": "drawer_min_height",
-      "label": "Drawer minimum height (px)",
-      "min": 220,
-      "max": 600,
-      "step": 10,
-      "default": 260
-    },
-    {
-      "type": "header",
-      "content": "Thumbnail image"
-    },
-    {
-      "type": "range",
-      "id": "thumb_height",
-      "label": "Thumbnail card height (px)",
-      "min": 48,
-      "max": 160,
-      "step": 4,
-      "default": 96
-    },
-    {
-      "type": "range",
-      "id": "thumb_image_width",
-      "label": "Thumbnail image intrinsic width (px)",
-      "min": 100,
-      "max": 400,
-      "step": 20,
-      "default": 160
-    },
-    {
-      "type": "range",
-      "id": "thumb_title_font_size",
-      "label": "Thumbnail title font size (px)",
-      "min": 9,
-      "max": 16,
-      "step": 1,
-      "default": 12
-    },
-    {
-      "type": "header",
-      "content": "Column width"
-    },
-    {
-      "type": "range",
-      "id": "col0_width",
-      "label": "Left column width (px)",
-      "min": 160,
-      "max": 320,
-      "step": 10,
-      "default": 230
-    },
-    {
-      "type": "range",
-      "id": "col1_width",
-      "label": "Middle column width (px)",
-      "min": 160,
-      "max": 320,
-      "step": 10,
-      "default": 230
-    },
-    {
-      "type": "header",
-      "content": "Font size"
-    },
-    {
-      "type": "range",
-      "id": "top_menu_font_size",
-      "label": "Top menu font size (px)",
-      "min": 12,
-      "max": 24,
-      "step": 1,
-      "default": 16
-    },
-    {
-      "type": "range",
-      "id": "l0_font_size",
-      "label": "Left column font size (px)",
-      "min": 11,
-      "max": 20,
-      "step": 1,
-      "default": 12
-    },
-    {
-      "type": "range",
-      "id": "l1_font_size",
-      "label": "Middle column font size (px)",
-      "min": 11,
-      "max": 20,
-      "step": 1,
-      "default": 12
-    },
-    {
-      "type": "header",
-      "content": "Theme colour"
-    },
-    {
-      "type": "color_scheme",
-      "id": "color_scheme",
-      "label": "Color scheme",
-      "default": "primary"
-    }
+    { "type": "header", "content": "Drawer height" },
+    { "type": "range", "id": "drawer_min_height", "label": "Drawer minimum height (px)", "min": 220, "max": 600, "step": 10, "default": 260 },
+    { "type": "header", "content": "Thumbnail image" },
+    { "type": "range", "id": "thumb_height", "label": "Thumbnail card height (px)", "min": 48, "max": 160, "step": 4, "default": 72 },
+    { "type": "range", "id": "thumb_image_width", "label": "Thumbnail image intrinsic width (px)", "min": 160, "max": 800, "step": 20, "default": 500 },
+    { "type": "range", "id": "thumb_title_font_size", "label": "Thumbnail title font size (px)", "min": 9, "max": 16, "step": 1, "default": 10 },
+    { "type": "header", "content": "Column width" },
+    { "type": "range", "id": "col0_width", "label": "Left column width (px)", "min": 160, "max": 320, "step": 10, "default": 230 },
+    { "type": "range", "id": "col1_width", "label": "Middle column width (px)", "min": 160, "max": 320, "step": 10, "default": 230 },
+    { "type": "header", "content": "Font size" },
+    { "type": "range", "id": "top_menu_font_size", "label": "Top menu font size (px)", "min": 12, "max": 24, "step": 1, "default": 16 },
+    { "type": "range", "id": "l0_font_size", "label": "Left column font size (px)", "min": 11, "max": 20, "step": 1, "default": 13 },
+    { "type": "range", "id": "l1_font_size", "label": "Middle column font size (px)", "min": 11, "max": 20, "step": 1, "default": 13 },
+    { "type": "header", "content": "Theme colour" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "primary" }
   ]
 }
 {% endschema %}
