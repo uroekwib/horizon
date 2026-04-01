@@ -128,30 +128,21 @@
 
                             # Check for custom Image/SVG from Schema
                             assign custom_icon_image = blank
-  assign custom_icon_svg_url = blank
-
-  if l0_handle == block_settings.icon_1_handle
-    assign custom_icon_svg_url = block_settings.icon_1_svg_url
-    assign custom_icon_image = block_settings.icon_1_image
-  elsif l0_handle == block_settings.icon_2_handle
-    assign custom_icon_svg_url = block_settings.icon_2_svg_url
-    assign custom_icon_image = block_settings.icon_2_image
-  elsif l0_handle == block_settings.icon_3_handle
-    assign custom_icon_svg_url = block_settings.icon_3_svg_url
-    assign custom_icon_image = block_settings.icon_3_image
-  elsif l0_handle == block_settings.icon_4_handle
-    assign custom_icon_svg_url = block_settings.icon_4_svg_url
-    assign custom_icon_image = block_settings.icon_4_image
-  elsif l0_handle == block_settings.icon_5_handle
-    assign custom_icon_svg_url = block_settings.icon_5_svg_url
-    assign custom_icon_image = block_settings.icon_5_image
-  elsif l0_handle == block_settings.icon_6_handle
-    assign custom_icon_svg_url = block_settings.icon_6_svg_url
-    assign custom_icon_image = block_settings.icon_6_image
-  elsif l0_handle == block_settings.icon_7_handle
-    assign custom_icon_svg_url = block_settings.icon_7_svg_url
-    assign custom_icon_image = block_settings.icon_7_image
-  endif
+                            if l0_handle == block_settings.icon_1_handle and block_settings.icon_1_image != blank
+                              assign custom_icon_image = block_settings.icon_1_image
+                            elsif l0_handle == block_settings.icon_2_handle and block_settings.icon_2_image != blank
+                              assign custom_icon_image = block_settings.icon_2_image
+                            elsif l0_handle == block_settings.icon_3_handle and block_settings.icon_3_image != blank
+                              assign custom_icon_image = block_settings.icon_3_image
+                            elsif l0_handle == block_settings.icon_4_handle and block_settings.icon_4_image != blank
+                              assign custom_icon_image = block_settings.icon_4_image
+                            elsif l0_handle == block_settings.icon_5_handle and block_settings.icon_5_image != blank
+                              assign custom_icon_image = block_settings.icon_5_image
+                            elsif l0_handle == block_settings.icon_6_handle and block_settings.icon_6_image != blank
+                              assign custom_icon_image = block_settings.icon_6_image
+                            elsif l0_handle == block_settings.icon_7_handle and block_settings.icon_7_image != blank
+                              assign custom_icon_image = block_settings.icon_7_image
+                            endif
                           -%}
                           <button class="oc-mega__cat{% if forloop.first %} active{% endif %}" data-cat="{{ l0_handle }}" data-url="{{ l0.url }}">
                             <span class="oc-mega__cat-ico">
@@ -285,233 +276,457 @@
     </header-menu>
 
     <div class="oc-overlay" id="megaOverlay"></div>
+<script>
+  (function () {
+    'use strict';
 
-    <script>
-      (function () {
-        'use strict';
+    function isDesktopMenu() {
+      var hdr = document.getElementById('header-component');
+      return hdr && hdr.getAttribute('data-menu-style') === 'menu';
+    }
 
-        function isDesktopMenu() {
-          var hdr = document.getElementById('header-component');
-          return hdr && hdr.getAttribute('data-menu-style') === 'menu';
+    /* ── Utilities for Image & Product Fetching ── */
+    var _cache = {};
+
+    function esc(s) {
+      return String(s || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function normalizeShopifyImage(src) {
+      if (!src) return null;
+      src = String(src);
+
+      if (src.indexOf('//') === 0) {
+        src = window.location.protocol + src;
+      }
+
+      if (src.indexOf('http') !== 0 && src.indexOf('//') !== 0) {
+        src = src.indexOf('/') === 0
+          ? window.location.origin + src
+          : window.location.origin + '/' + src;
+      }
+
+      return src;
+    }
+
+    function resizeImg(src, width, height) {
+      src = normalizeShopifyImage(src);
+      if (!src) return null;
+
+      src = src.replace(
+        /_(pico|icon|thumb|small|compact|medium|large|grande|original|\d+x\d*)(?=\.[a-zA-Z]{3,4}(\?[^.]*)?$)/,
+        ''
+      );
+
+      return src.replace(
+        /(\.[a-zA-Z]{3,4})(\?[^.]*)?$/,
+        '_' + width + 'x' + height + '$1$2'
+      );
+    }
+
+    function getProductImage(product) {
+      if (!product) return null;
+
+      if (typeof product.featured_image === 'string' && product.featured_image) {
+        return product.featured_image;
+      }
+
+      if (product.featured_image && typeof product.featured_image === 'object') {
+        if (product.featured_image.src) return product.featured_image.src;
+        if (product.featured_image.url) return product.featured_image.url;
+      }
+
+      if (Array.isArray(product.images) && product.images.length) {
+        var first = product.images[0];
+        if (typeof first === 'string') return first;
+        if (first && first.src) return first.src;
+        if (first && first.url) return first.url;
+      }
+
+      if (product.image && product.image.src) return product.image.src;
+
+      return null;
+    }
+
+    function fetchProducts(handle, limit) {
+      if (!handle) return Promise.resolve([]);
+
+      var cacheKey = handle + '::' + limit;
+
+      if (Array.isArray(_cache[cacheKey])) {
+        return Promise.resolve(_cache[cacheKey]);
+      }
+
+      if (_cache[cacheKey] && typeof _cache[cacheKey].then === 'function') {
+        return _cache[cacheKey];
+      }
+
+      _cache[cacheKey] = fetch(
+        '/collections/' + encodeURIComponent(handle) + '/products.json?limit=' + encodeURIComponent(limit),
+        { credentials: 'same-origin' }
+      )
+        .then(function (res) {
+          if (!res.ok) throw new Error('Fetch failed');
+          return res.json();
+        })
+        .then(function (data) {
+          var products = Array.isArray(data.products) ? data.products : [];
+          _cache[cacheKey] = products;
+          return products;
+        })
+        .catch(function () {
+          _cache[cacheKey] = [];
+          return [];
+        });
+
+      return _cache[cacheKey];
+    }
+
+    /* ── V4 UI Logic & Integration ── */
+    function initV4MegaMenu() {
+      if (!isDesktopMenu()) return;
+
+      var wrap = document.querySelector('.oc-mega__wrap');
+      if (!wrap || wrap._ocInit) return;
+      wrap._ocInit = true;
+
+      var triggers = document.querySelectorAll('.oc-nav-trigger');
+      var overlay = document.getElementById('megaOverlay');
+      var cats = document.querySelectorAll('.oc-mega__cat');
+      var subPanes = document.querySelectorAll('.oc-mega__sub-pane');
+      var subLinks = document.querySelectorAll('.oc-mega__sub');
+
+      var prodScroll = document.getElementById('ocMegaProductsScroll');
+      var viewAllBtn = document.getElementById('ocMegaProductsViewAll');
+      var prodBox = document.getElementById('ocMegaProductsBox');
+
+      if (!prodScroll || !viewAllBtn || !prodBox || !cats.length) return;
+
+      var thumbCount = parseInt(wrap.dataset.thumbCount || 4, 10);
+      var pillCount = parseInt(wrap.dataset.pillCount || 4, 10);
+      var productLimit = parseInt(wrap.dataset.productLimit || 8, 10);
+      var imgWidth = parseInt(wrap.dataset.imgWidth || 160, 10);
+
+      var activeCat = cats[0] ? cats[0].dataset.cat : null;
+      var activeSubHandle = null;
+      var activeRequestId = 0;
+      var loadingTimer = null;
+      var CAT_DELAY = 120;
+      var catTimer = null;
+
+      function renderProductSkeleton(titleName) {
+        var cards = '';
+        var pills = '';
+
+        for (var i = 0; i < thumbCount; i++) {
+          cards += ''
+            + '<div class="oc-mega__card oc-mega__card--skeleton" aria-hidden="true">'
+            + '  <div class="oc-mega__card-img oc-skeleton-box"></div>'
+            + '  <div class="oc-mega__card-body">'
+            + '    <div class="oc-skeleton-line oc-skeleton-line--title"></div>'
+            + '    <div class="oc-skeleton-line oc-skeleton-line--meta"></div>'
+            + '  </div>'
+            + '</div>';
         }
 
-        /* ── Utilities for Image & Product Fetching ── */
-        var _cache = {};
-        function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
-        function normalizeShopifyImage(src) {
-          if (!src) return null;
-          src = String(src);
-          if (src.indexOf('//') === 0) src = window.location.protocol + src;
-          if (src.indexOf('http') !== 0 && src.indexOf('//') !== 0) { src = src.indexOf('/') === 0 ? window.location.origin + src : window.location.origin + '/' + src; }
-          return src;
-        }
-        function resizeImg(src, width, height) {
-          src = normalizeShopifyImage(src);
-          if (!src) return null;
-          src = src.replace(/_(pico|icon|thumb|small|compact|medium|large|grande|original|\d+x\d*)(?=\.[a-zA-Z]{3,4}(\?[^.]*)?$)/, '');
-          return src.replace(/(\.[a-zA-Z]{3,4})(\?[^.]*)?$/, '_' + width + 'x' + height + '$1$2');
-        }
-        function getProductImage(product) {
-          if (!product) return null;
-          if (typeof product.featured_image === 'string' && product.featured_image) return product.featured_image;
-          if (product.featured_image && typeof product.featured_image === 'object') {
-            if (product.featured_image.src) return product.featured_image.src;
-            if (product.featured_image.url) return product.featured_image.url;
-          }
-          if (Array.isArray(product.images) && product.images.length) {
-            var first = product.images[0];
-            if (typeof first === 'string') return first;
-            if (first && first.src) return first.src;
-            if (first && first.url) return first.url;
-          }
-          if (product.image && product.image.src) return product.image.src;
-          return null;
+        for (var j = 0; j < pillCount; j++) {
+          pills += ''
+            + '<div class="oc-mega__pill oc-mega__pill--skeleton" aria-hidden="true">'
+            + '  <span class="oc-skeleton-line oc-skeleton-line--pill"></span>'
+            + '</div>';
         }
 
-        function fetchProducts(handle, limit) {
-          if (!handle) return Promise.resolve([]);
-          var cacheKey = handle + '::' + limit;
-          if (Array.isArray(_cache[cacheKey])) return Promise.resolve(_cache[cacheKey]);
-          if (_cache[cacheKey] && typeof _cache[cacheKey].then === 'function') return _cache[cacheKey];
+        return ''
+          + '<div class="oc-mega__loading-state">'
+          + '  <div class="oc-mega__loading-copy">กำลังโหลดสินค้าในหมวด ' + esc(titleName || 'นี้') + '…</div>'
+          + '  <div class="oc-mega__prod-grid">' + cards + '</div>'
+          + '  <div class="oc-mega__pill-grid">' + pills + '</div>'
+          + '</div>';
+      }
 
-          _cache[cacheKey] = fetch('/collections/' + encodeURIComponent(handle) + '/products.json?limit=' + encodeURIComponent(limit), { credentials: 'same-origin' })
-            .then(function (res) { if (!res.ok) throw new Error('Fetch failed'); return res.json(); })
-            .then(function (data) {
-              var products = Array.isArray(data.products) ? data.products : [];
-              _cache[cacheKey] = products;
-              return products;
-            }).catch(function () { _cache[cacheKey] = []; return []; });
-          return _cache[cacheKey];
-        }
+      function renderEmptyState(title, desc) {
+        return ''
+          + '<div class="oc-mega__empty-state">'
+          + '  <div class="oc-mega__empty-title">' + esc(title || 'ยังไม่มีสินค้าในหมวดนี้') + '</div>'
+          + '  <div class="oc-mega__empty-desc">' + esc(desc || 'สามารถกดดูทั้งหมดเพื่อดูสินค้าเพิ่มเติมได้') + '</div>'
+          + '</div>';
+      }
 
-        /* ── V4 UI Logic & Integration ── */
-        function initV4MegaMenu() {
-          if (!isDesktopMenu()) return;
-          var wrap = document.querySelector('.oc-mega__wrap');
-          if (!wrap || wrap._ocInit) return;
-          wrap._ocInit = true;
+      function renderProducts(products) {
+        var html = '<div class="oc-mega__prod-grid">';
+        var pillHtml = '<div class="oc-mega__pill-grid">';
 
-          var triggers = document.querySelectorAll('.oc-nav-trigger');
-          var overlay = document.getElementById('megaOverlay');
-          var cats = document.querySelectorAll('.oc-mega__cat');
-          var subPanes = document.querySelectorAll('.oc-mega__sub-pane');
-          var prodScroll = document.getElementById('ocMegaProductsScroll');
-          var viewAllBtn = document.getElementById('ocMegaProductsViewAll');
-          var prodBox = document.getElementById('ocMegaProductsBox');
-          
-          var thumbCount = parseInt(wrap.dataset.thumbCount || 4, 10);
-          var pillCount = parseInt(wrap.dataset.pillCount || 4, 10);
-          var productLimit = parseInt(wrap.dataset.productLimit || 8, 10);
-          var imgWidth = parseInt(wrap.dataset.imgWidth || 160, 10);
-          
-          var activeCat = cats[0] ? cats[0].dataset.cat : null;
-          var activeSubHandle = null;
-          var CAT_DELAY = 120, catTimer = null;
+        products.forEach(function (p, index) {
+          var pUrl = '/products/' + esc(p.handle);
+          var delay = (index * 0.04) + 0.04;
 
-          function switchCat(catKey) {
-            if (catKey === activeCat) return;
-            activeCat = catKey;
-            
-            cats.forEach(function(b) { b.classList.toggle('active', b.dataset.cat === catKey); });
-            subPanes.forEach(function(p) { p.classList.toggle('active', p.dataset.pane === catKey); });
-            
-            var activePane = document.querySelector('.oc-mega__sub-pane[data-pane="'+catKey+'"]');
-            if (activePane) {
-              var firstSub = activePane.querySelector('.oc-mega__sub');
-              if (firstSub) {
-                 loadProductsUI(firstSub.dataset.sub, firstSub.getAttribute('href'), activePane.querySelector('.oc-mega__sub-head').innerText);
-              }
+          if (index < thumbCount) {
+            var rawImg = getProductImage(p);
+            var imgHeight = Math.round(imgWidth * 0.75);
+            var src = rawImg ? resizeImg(rawImg, imgWidth, imgHeight) : null;
+
+            html += '<a href="' + pUrl + '" class="oc-mega__card" style="animation-delay:' + delay + 's;">';
+
+            if (src) {
+              html += '<img class="oc-mega__card-img" src="' + esc(src) + '" alt="' + esc(p.title) + '" loading="lazy">';
+            } else {
+              html += '<div class="oc-mega__card-img oc-mega__card-img--fallback" style="display:flex;align-items:center;justify-content:center;font-size:20px;">📦</div>';
             }
-            requestAnimationFrame(checkSubScroll);
-          }
 
-          cats.forEach(function(btn) {
-            btn.addEventListener('mouseenter', function() { var k = btn.dataset.cat; clearTimeout(catTimer); catTimer = setTimeout(function(){ switchCat(k); }, CAT_DELAY); });
-            btn.addEventListener('mouseleave', function() { clearTimeout(catTimer); });
+            html += '<div class="oc-mega__card-body">';
+            html += '<div class="oc-mega__card-name">' + esc(p.title) + '</div>';
+            html += '</div>';
+            html += '</a>';
+          } else if (index < thumbCount + pillCount) {
+            pillHtml += '<a href="' + pUrl + '" class="oc-mega__pill" style="animation-delay:' + delay + 's;">' + esc(p.title) + '</a>';
+          }
+        });
+
+        html += '</div>';
+        pillHtml += '</div>';
+
+        if (products.length > thumbCount) {
+          html += pillHtml;
+        }
+
+        return html;
+      }
+
+      function setViewAll(url, titleName) {
+        viewAllBtn.setAttribute('href', url || '#');
+        viewAllBtn.innerHTML =
+          'ดู ' + esc(titleName || 'ทั้งหมด') +
+          ' <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+      }
+
+      function prefetchProducts(handle) {
+        if (!handle) return;
+        fetchProducts(handle, productLimit);
+      }
+
+      function loadProductsUI(handle, url, titleName) {
+        if (!handle || activeSubHandle === handle) return;
+
+        activeSubHandle = handle;
+        activeRequestId += 1;
+        var requestId = activeRequestId;
+
+        prodBox.setAttribute('aria-busy', 'true');
+        prodBox.classList.add('is-loading');
+
+        setViewAll(url, titleName);
+
+        clearTimeout(loadingTimer);
+
+        loadingTimer = setTimeout(function () {
+          if (requestId !== activeRequestId) return;
+          prodScroll.innerHTML = renderProductSkeleton(titleName);
+        }, 120);
+
+        fetchProducts(handle, productLimit)
+          .then(function (products) {
+            if (requestId !== activeRequestId) return;
+
+            clearTimeout(loadingTimer);
+            prodBox.setAttribute('aria-busy', 'false');
+            prodBox.classList.remove('is-loading');
+
+            if (!products || !products.length) {
+              prodScroll.innerHTML = renderEmptyState(
+                'ยังไม่มีสินค้าแนะนำในหมวดนี้',
+                'กดดูทั้งหมดเพื่อดูสินค้าในหมวดนี้เพิ่มเติม'
+              );
+              return;
+            }
+
+            prodScroll.innerHTML = renderProducts(products);
+            prodScroll.classList.remove('oc-animate-trigger');
+            void prodScroll.offsetWidth;
+            prodScroll.classList.add('oc-animate-trigger');
+          })
+          .catch(function () {
+            if (requestId !== activeRequestId) return;
+
+            clearTimeout(loadingTimer);
+            prodBox.setAttribute('aria-busy', 'false');
+            prodBox.classList.remove('is-loading');
+
+            prodScroll.innerHTML = renderEmptyState(
+              'โหลดสินค้าไม่สำเร็จ',
+              'ลองเลือกหมวดใหม่อีกครั้ง หรือกดดูทั้งหมดได้เลย'
+            );
           });
+      }
 
-          document.querySelectorAll('.oc-mega__sub').forEach(function(subLink) {
-            subLink.addEventListener('mouseenter', function() {
-              loadProductsUI(this.dataset.sub, this.getAttribute('href'), this.innerText);
-            });
-          });
+      function activateFirstSubInPane(catKey) {
+        var activePane = document.querySelector('.oc-mega__sub-pane[data-pane="' + catKey + '"]');
+        if (!activePane) return;
 
-          function loadProductsUI(handle, url, titleName) {
-            if (!handle || activeSubHandle === handle) return;
-            activeSubHandle = handle;
-            prodBox.setAttribute('aria-busy', 'true');
+        var firstSub = activePane.querySelector('.oc-mega__sub');
+        var paneTitleEl = activePane.querySelector('.oc-mega__sub-head');
+        var paneTitle = paneTitleEl ? paneTitleEl.innerText : '';
 
-            viewAllBtn.setAttribute('href', url || '#');
-            viewAllBtn.innerHTML = 'ดู ' + esc(titleName || 'ทั้งหมด') + ' <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+        if (firstSub) {
+          loadProductsUI(firstSub.dataset.sub, firstSub.getAttribute('href'), paneTitle || firstSub.innerText);
+        } else {
+          activeSubHandle = null;
+          setViewAll('#', paneTitle || 'ทั้งหมด');
+          prodBox.setAttribute('aria-busy', 'false');
+          prodBox.classList.remove('is-loading');
+          prodScroll.innerHTML = renderEmptyState(
+            'ยังไม่มีหมวดย่อยในส่วนนี้',
+            'สามารถกดดูทั้งหมดเพื่อเข้าสู่หน้าหมวดหลักได้'
+          );
+        }
+      }
 
-            fetchProducts(handle, productLimit).then(function(products) {
-              if (activeSubHandle !== handle) return; 
-              prodBox.setAttribute('aria-busy', 'false');
-              
-              if (!products || !products.length) {
-                prodScroll.innerHTML = '<div style="padding:20px; font-size:13px; color:var(--oc-ink-40);">ไม่พบสินค้าแนะนำในหมวดนี้</div>';
-                return;
-              }
+      function switchCat(catKey) {
+        if (!catKey || catKey === activeCat) return;
 
-              var html = '<div class="oc-mega__prod-grid">';
-              var pillHtml = '<div class="oc-mega__pill-grid">';
+        activeCat = catKey;
 
-              products.forEach(function(p, index) {
-                var pUrl = '/products/' + esc(p.handle);
-                var delay = (index * 0.04) + 0.04;
+        cats.forEach(function (b) {
+          b.classList.toggle('active', b.dataset.cat === catKey);
+        });
 
-                if (index < thumbCount) {
-                  var rawImg = getProductImage(p);
-                  var imgHeight = Math.round(imgWidth * 0.75);
-                  var src = rawImg ? resizeImg(rawImg, imgWidth, imgHeight) : null; 
-                  
-                  html += '<a href="' + pUrl + '" class="oc-mega__card" style="animation-delay: '+delay+'s;">';
-                  if (src) {
-                    html += '<img class="oc-mega__card-img" src="' + esc(src) + '" alt="' + esc(p.title) + '" loading="lazy">';
-                  } else {
-                    html += '<div class="oc-mega__card-img" style="display:flex;align-items:center;justify-content:center;font-size:20px;">📦</div>';
-                  }
-                  html += '<div class="oc-mega__card-body">';
-                  html += '<div class="oc-mega__card-name">' + esc(p.title) + '</div>';
-                  html += '</div></a>';
-                } 
-                else if (index < thumbCount + pillCount) {
-                  pillHtml += '<a href="' + pUrl + '" class="oc-mega__pill" style="animation-delay: '+delay+'s;">' + esc(p.title) + '</a>';
-                }
-              });
-              
-              html += '</div>';
-              pillHtml += '</div>';
+        subPanes.forEach(function (p) {
+          p.classList.toggle('active', p.dataset.pane === catKey);
+        });
 
-              if (products.length > thumbCount) {
-                html += pillHtml;
-              }
+        activateFirstSubInPane(catKey);
+        requestAnimationFrame(checkSubScroll);
+      }
 
-              prodScroll.innerHTML = html;
-              prodScroll.classList.remove('oc-animate-trigger');
-              void prodScroll.offsetWidth;
-              prodScroll.classList.add('oc-animate-trigger');
-            });
+      cats.forEach(function (btn) {
+        btn.addEventListener('mouseenter', function () {
+          var catKey = btn.dataset.cat;
+
+          clearTimeout(catTimer);
+          catTimer = setTimeout(function () {
+            switchCat(catKey);
+          }, CAT_DELAY);
+
+          var pane = document.querySelector('.oc-mega__sub-pane[data-pane="' + catKey + '"]');
+          var firstSub = pane && pane.querySelector('.oc-mega__sub');
+          if (firstSub) {
+            prefetchProducts(firstSub.dataset.sub);
           }
+        });
 
-          var initActivePane = document.querySelector('.oc-mega__sub-pane.active');
-          if (initActivePane) {
-             var firstSub = initActivePane.querySelector('.oc-mega__sub');
-             if (firstSub) loadProductsUI(firstSub.dataset.sub, firstSub.getAttribute('href'), initActivePane.querySelector('.oc-mega__sub-head').innerText);
-          }
+        btn.addEventListener('mouseleave', function () {
+          clearTimeout(catTimer);
+        });
+      });
 
-          function checkSubScroll() {
-            document.querySelectorAll('.oc-mega__sub-pane.active').forEach(function(pane) {
-              var scroll = pane.querySelector('.oc-mega__sub-scroll');
-              if (!scroll) return;
-              var hasScroll = scroll.scrollHeight > scroll.clientHeight + 4;
-              pane.classList.toggle('has-scroll', hasScroll);
-              var atEnd = scroll.scrollTop + scroll.clientHeight >= scroll.scrollHeight - 4;
-              pane.classList.toggle('scrolled-end', atEnd);
-            });
-          }
-          document.querySelectorAll('.oc-mega__sub-scroll').forEach(function(el) {
-            el.addEventListener('scroll', function() {
-              var pane = el.closest('.oc-mega__sub-pane');
-              if (pane) pane.classList.toggle('scrolled-end', el.scrollTop + el.clientHeight >= el.scrollHeight - 4);
-            });
-          });
+      subLinks.forEach(function (subLink) {
+        subLink.addEventListener('mouseenter', function () {
+          var subHandle = this.dataset.sub;
+          var subUrl = this.getAttribute('href');
+          var subTitle = this.innerText.trim();
 
-          var hoverTimer = null;
-          
-          function openMegaMenu(triggerNode) {
+          prefetchProducts(subHandle);
+          loadProductsUI(subHandle, subUrl, subTitle);
+        });
+      });
+
+      function checkSubScroll() {
+        document.querySelectorAll('.oc-mega__sub-pane.active').forEach(function (pane) {
+          var scroll = pane.querySelector('.oc-mega__sub-scroll');
+          if (!scroll) return;
+
+          var hasScroll = scroll.scrollHeight > scroll.clientHeight + 4;
+          pane.classList.toggle('has-scroll', hasScroll);
+
+          var atEnd = scroll.scrollTop + scroll.clientHeight >= scroll.scrollHeight - 4;
+          pane.classList.toggle('scrolled-end', atEnd);
+        });
+      }
+
+      document.querySelectorAll('.oc-mega__sub-scroll').forEach(function (el) {
+        el.addEventListener('scroll', function () {
+          var pane = el.closest('.oc-mega__sub-pane');
+          if (!pane) return;
+
+          pane.classList.toggle(
+            'scrolled-end',
+            el.scrollTop + el.clientHeight >= el.scrollHeight - 4
+          );
+        });
+      });
+
+      var hoverTimer = null;
+
+      function openMegaMenu(triggerNode) {
+        clearTimeout(hoverTimer);
+        if (triggerNode.getAttribute('aria-expanded') === 'true') return;
+
+        triggerNode.setAttribute('aria-expanded', 'true');
+        if (overlay) overlay.classList.add('active');
+        document.querySelector('.oc-header')?.classList.add('has-shadow');
+      }
+
+      function closeMegaMenu(triggerNode) {
+        hoverTimer = setTimeout(function () {
+          triggerNode.setAttribute('aria-expanded', 'false');
+          if (overlay) overlay.classList.remove('active');
+        }, 180);
+      }
+
+      triggers.forEach(function (trigger) {
+        trigger.addEventListener('click', function (e) {
+          e.preventDefault();
+        });
+
+        trigger.addEventListener('mouseenter', function () {
+          openMegaMenu(trigger);
+        });
+
+        trigger.addEventListener('mouseleave', function () {
+          closeMegaMenu(trigger);
+        });
+
+        var submenu = trigger.nextElementSibling;
+        if (submenu) {
+          submenu.addEventListener('mouseenter', function () {
             clearTimeout(hoverTimer);
-            if (triggerNode.getAttribute('aria-expanded') === 'true') return;
-            triggerNode.setAttribute('aria-expanded', 'true');
-            overlay.classList.add('active');
-            document.querySelector('.oc-header')?.classList.add('has-shadow');
-          }
-
-          function closeMegaMenu(triggerNode) {
-            hoverTimer = setTimeout(function() {
-              triggerNode.setAttribute('aria-expanded', 'false');
-              overlay.classList.remove('active');
-            }, 180); 
-          }
-
-          triggers.forEach(function(trigger) {
-            trigger.addEventListener('click', function(e) { e.preventDefault(); });
-            trigger.addEventListener('mouseenter', function() { openMegaMenu(trigger); });
-            trigger.addEventListener('mouseleave', function() { closeMegaMenu(trigger); });
-
-            var submenu = trigger.nextElementSibling;
-            if (submenu) {
-              submenu.addEventListener('mouseenter', function() { clearTimeout(hoverTimer); });
-              submenu.addEventListener('mouseleave', function() { closeMegaMenu(trigger); });
-            }
           });
 
+          submenu.addEventListener('mouseleave', function () {
+            closeMegaMenu(trigger);
+          });
         }
+      });
 
-        if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initV4MegaMenu); } else { setTimeout(initV4MegaMenu, 100); }
-      })();
-    </script>
+      var initActivePane = document.querySelector('.oc-mega__sub-pane.active');
+      if (initActivePane) {
+        var firstSub = initActivePane.querySelector('.oc-mega__sub');
+        var initTitleEl = initActivePane.querySelector('.oc-mega__sub-head');
+        var initTitle = initTitleEl ? initTitleEl.innerText : '';
 
+        if (firstSub) {
+          loadProductsUI(firstSub.dataset.sub, firstSub.getAttribute('href'), initTitle || firstSub.innerText);
+        } else {
+          prodScroll.innerHTML = renderEmptyState(
+            'ยังไม่มีหมวดย่อยในส่วนนี้',
+            'สามารถกดดูทั้งหมดเพื่อเข้าสู่หน้าหมวดหลักได้'
+          );
+        }
+      }
+
+      requestAnimationFrame(checkSubScroll);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initV4MegaMenu);
+    } else {
+      setTimeout(initV4MegaMenu, 100);
+    }
+  })();
+</script>
 {% endcase %}
 
 {% stylesheet %}
@@ -626,6 +841,73 @@
 
 @keyframes oc-sub-in { from { opacity: 0; transform: translateX(5px); } to { opacity: 1; transform: translateX(0); } }
 @keyframes oc-card-in { from { opacity: 0; transform: translateX(5px); } to { opacity: 1; transform: translateX(0); } }
+
+.oc-mega__products {
+  position: relative;
+}
+
+.oc-mega__loading-copy {
+  font-size: 12px;
+  color: var(--oc-ink-40);
+  margin-bottom: 12px;
+}
+
+.oc-skeleton-box,
+.oc-skeleton-line {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(90deg, #f3f4f6 0%, #e5e7eb 50%, #f3f4f6 100%);
+  background-size: 200% 100%;
+  animation: oc-skeleton-wave 1.15s linear infinite;
+}
+
+.oc-skeleton-box {
+  border-radius: 12px;
+  width: 100%;
+  height: var(--oc-thumb-height);
+}
+
+.oc-skeleton-line {
+  border-radius: 999px;
+  height: 10px;
+}
+
+.oc-skeleton-line--title {
+  width: 78%;
+  margin-top: 10px;
+}
+
+.oc-skeleton-line--pill {
+  display: block;
+  width: 100%;
+  height: 10px;
+}
+
+.oc-mega__card--skeleton,
+.oc-mega__pill--skeleton {
+  pointer-events: none;
+}
+
+.oc-mega__empty-state {
+  padding: 20px;
+}
+
+.oc-mega__empty-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--oc-ink);
+  margin-bottom: 4px;
+}
+
+.oc-mega__empty-desc {
+  font-size: 12px;
+  color: var(--oc-ink-40);
+}
+
+@keyframes oc-skeleton-wave {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
 
 {% endstylesheet %}
 
