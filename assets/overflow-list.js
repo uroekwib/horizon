@@ -385,3 +385,21 @@ if (!customElements.get('overflow-list')) {
   customElements.define('overflow-list', OverflowList);
 }
 
+/* ทำให้ 'เพิ่มเติม' หรือ moreSlot ไม่แสดง และไม่ทำงานเลย */
+document.addEventListener('DOMContentLoaded', () => {
+  const moreSlot = document.querySelector('[part="more"]');
+  const overflowMenu = document.querySelector('[part="overflow"]');
+  
+  if (moreSlot) {
+    // ซ่อน 'เพิ่มเติม' หรือ moreSlot
+    moreSlot.style.display = 'none';
+    // ปิดไม่ให้คลิก 'เพิ่มเติม'
+    moreSlot.disabled = true;
+    moreSlot.style.pointerEvents = 'none';
+  }
+
+  // ทำให้ 'overflow' menu ไม่ทำงาน
+  if (overflowMenu) {
+    overflowMenu.style.display = 'none'; // ซ่อน overflow ทั้งหมด
+  }
+});
