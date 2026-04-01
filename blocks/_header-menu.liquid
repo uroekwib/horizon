@@ -140,6 +140,8 @@
                               assign custom_icon_image = block_settings.icon_5_image
                             elsif l0_handle == block_settings.icon_6_handle and block_settings.icon_6_image != blank
                               assign custom_icon_image = block_settings.icon_6_image
+                            elsif l0_handle == block_settings.icon_7_handle and block_settings.icon_7_image != blank
+                              assign custom_icon_image = block_settings.icon_7_image
                             endif
                           -%}
                           <button class="oc-mega__cat{% if forloop.first %} active{% endif %}" data-cat="{{ l0_handle }}" data-url="{{ l0.url }}">
@@ -708,6 +710,16 @@
       "type": "image_picker",
       "id": "icon_6_image",
       "label": "Icon 6 - Image (SVG/PNG)"
+    },
+    {
+      "type": "text",
+      "id": "icon_7_handle",
+      "label": "Icon 7 - Collection Handle"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_7_image",
+      "label": "Icon 7 - Image (SVG/PNG)"
     },
     {
       "type": "header",
