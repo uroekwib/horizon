@@ -75,6 +75,7 @@
               ref="menuitem"
             >
               <span class="menu-list__link-title">{{- link.title -}}</span>
+              <svg class="oc-nav__chev" viewBox="0 0 1 1" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:1px; height:1px; margin-left:4px; opacity:0.5; transition: transform 0.25s;"><path d="M6 9l6 6 6-6"/></svg>
             </button>
           {% else %}
             <a
@@ -99,25 +100,19 @@
                 id="submenu-{{ forloop.index }}"
                 class="menu-list__submenu-inner oc-mega-wrapper {{ page_width_class }}"
               >
-                <div
-                  class="oc-mega__wrap"
-                  style="
-                    --oc-col0-width: {{ block_settings.col0_width | default: 230 }}px;
-                    --oc-col1-width: {{ block_settings.col1_width | default: 230 }}px;
-                    --oc-l0-font-size: {{ block_settings.l0_font_size | default: 12 }}px;
-                    --oc-l1-font-size: {{ block_settings.l1_font_size | default: 12 }}px;
-                    --oc-cat-head-font-size: {{ block_settings.cat_head_font_size | default: 11 }}px;
-                    --oc-sub-head-font-size: {{ block_settings.sub_head_font_size | default: 11 }}px;
-                    --oc-prod-head-font-size: {{ block_settings.prod_head_font_size | default: 11 }}px;
-                    --oc-thumb-height: {{ block_settings.thumb_height | default: 96 }}px;
-                    --oc-thumb-title-size: {{ block_settings.thumb_title_font_size | default: 12 }}px;
-                    --oc-drawer-min-height: {{ block_settings.drawer_min_height | default: 260 }}px;
-                  "
-                  data-thumb-count="{{ block_settings.mega_thumb_count | default: 4 }}"
-                  data-pill-count="{{ block_settings.mega_pill_count | default: 4 }}"
-                  data-product-limit="{{ block_settings.mega_thumb_count | plus: block_settings.mega_pill_count | default: 8 }}"
-                  data-img-width="{{ block_settings.thumb_image_width | default: 160 }}"
-                >
+                <div class="oc-mega__wrap" 
+                     style="
+                       --oc-col0-width: {{ block_settings.col0_width | default: 230 }}px;
+                       --oc-col1-width: {{ block_settings.col1_width | default: 230 }}px;
+                       --oc-l0-font-size: {{ block_settings.l0_font_size | default: 13.5 }}px;
+                       --oc-l1-font-size: {{ block_settings.l1_font_size | default: 13 }}px;
+                       --oc-thumb-height: {{ block_settings.thumb_height | default: 96 }}px;
+                       --oc-thumb-title-size: {{ block_settings.thumb_title_font_size | default: 11 }}px;
+                     "
+                     data-thumb-count="{{ block_settings.mega_thumb_count | default: 4 }}"
+                     data-pill-count="{{ block_settings.mega_pill_count | default: 4 }}"
+                     data-product-limit="{{ block_settings.mega_thumb_count | plus: block_settings.mega_pill_count | default: 8 }}"
+                     data-img-width="{{ block_settings.thumb_image_width | default: 160 }}">
                   <div class="oc-mega__panel">
 
                     <div class="oc-mega__cats">
@@ -131,65 +126,42 @@
                               assign l0_handle = l0_coll.handle
                             endif
 
-                            assign custom_icon_svg_url = blank
+                            # Check for custom Image/SVG from Schema
                             assign custom_icon_image = blank
-
-                            if l0_handle == block_settings.icon_1_handle
-                              assign custom_icon_svg_url = block_settings.icon_1_svg_url
+                            if l0_handle == block_settings.icon_1_handle and block_settings.icon_1_image != blank
                               assign custom_icon_image = block_settings.icon_1_image
-                            elsif l0_handle == block_settings.icon_2_handle
-                              assign custom_icon_svg_url = block_settings.icon_2_svg_url
+                            elsif l0_handle == block_settings.icon_2_handle and block_settings.icon_2_image != blank
                               assign custom_icon_image = block_settings.icon_2_image
-                            elsif l0_handle == block_settings.icon_3_handle
-                              assign custom_icon_svg_url = block_settings.icon_3_svg_url
+                            elsif l0_handle == block_settings.icon_3_handle and block_settings.icon_3_image != blank
                               assign custom_icon_image = block_settings.icon_3_image
-                            elsif l0_handle == block_settings.icon_4_handle
-                              assign custom_icon_svg_url = block_settings.icon_4_svg_url
+                            elsif l0_handle == block_settings.icon_4_handle and block_settings.icon_4_image != blank
                               assign custom_icon_image = block_settings.icon_4_image
-                            elsif l0_handle == block_settings.icon_5_handle
-                              assign custom_icon_svg_url = block_settings.icon_5_svg_url
+                            elsif l0_handle == block_settings.icon_5_handle and block_settings.icon_5_image != blank
                               assign custom_icon_image = block_settings.icon_5_image
-                            elsif l0_handle == block_settings.icon_6_handle
-                              assign custom_icon_svg_url = block_settings.icon_6_svg_url
+                            elsif l0_handle == block_settings.icon_6_handle and block_settings.icon_6_image != blank
                               assign custom_icon_image = block_settings.icon_6_image
-                            elsif l0_handle == block_settings.icon_7_handle
-                              assign custom_icon_svg_url = block_settings.icon_7_svg_url
+                            elsif l0_handle == block_settings.icon_7_handle and block_settings.icon_7_image != blank
                               assign custom_icon_image = block_settings.icon_7_image
                             endif
                           -%}
-
                           <button class="oc-mega__cat{% if forloop.first %} active{% endif %}" data-cat="{{ l0_handle }}" data-url="{{ l0.url }}">
                             <span class="oc-mega__cat-ico">
-                              {%- if custom_icon_svg_url != blank -%}
-                                <img
-                                  src="{{ custom_icon_svg_url }}"
-                                  alt="{{ l0.title | escape }}"
-                                  width="20"
-                                  height="20"
-                                  loading="lazy"
-                                  class="oc-mega__cat-ico-img"
-                                >
-                              {%- elsif custom_icon_image != blank -%}
-                                {{
-                                  custom_icon_image
-                                  | image_url: width: 48
-                                  | image_tag:
-                                    alt: l0.title,
-                                    widths: '20,40,48',
-                                    sizes: '20px',
-                                    width: 20,
-                                    height: 20,
-                                    loading: 'lazy',
-                                    class: 'oc-mega__cat-ico-img'
-                                }}
+                              {%- if custom_icon_image != blank -%}
+                                <img src="{{ custom_icon_image | image_url: width: 48 }}" alt="{{ l0.title }}" width="20" height="20" loading="lazy" style="object-fit: contain;">
                               {%- else -%}
-                                {%- render 'oc-default-mega-icon', handle: l0_handle -%}
+                                {%- case l0_handle -%}
+                                  {%- when 'signage' -%}<svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                                  {%- when 'sticker' -%}<svg viewBox="0 0 24 24"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                  {%- when 'label' -%}<svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                                  {%- when 'posm' -%}<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                                  {%- when 'booth' -%}<svg viewBox="0 0 24 24"><path d="M3 3h18v18H3z" fill="none"/><path d="M3 9h18"/><path d="M9 3v18"/></svg>
+                                  {%- when 'photo' -%}<svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                                  {%- when 'digital' -%}<svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><polygon points="10 8 16 12 10 16 10 8" fill="none"/></svg>{%- else -%}<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                {%- endcase -%}
                               {%- endif -%}
                             </span>
-                            <span class="oc-mega__cat-label">{{- l0.title -}}</span>
-                            <svg class="oc-mega__cat-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                              <path d="M9 18l6-6-6-6"/>
-                            </svg>
+                            {{- l0.title -}}
+                            <svg class="oc-mega__cat-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
                           </button>
                         {% endfor %}
                       </div>
@@ -237,40 +209,24 @@
                               {% endfor %}
                             {% endif %}
                           </div>
-                          <a href="{{ l0.url }}" class="oc-mega__sub-seeall">
-                            ดูทั้งหมด
-                            <svg viewBox="0 0 24 24" aria-hidden="true">
-                              <line x1="5" y1="12" x2="19" y2="12"/>
-                              <polyline points="12 5 19 12 12 19"/>
-                            </svg>
-                          </a>
+                          <a href="{{ l0.url }}" class="oc-mega__sub-seeall">ดูทั้งหมด <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
                         </div>
                       {% endfor %}
                     </div>
 
                     <div class="oc-mega__products" id="ocMegaProductsBox" aria-busy="false">
                       <div class="oc-mega__prod-pane active">
-                        <div class="oc-mega__prod-head">
-                          <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                          </svg>
-                          สินค้าแนะนำ
-                        </div>
+                        <div class="oc-mega__prod-head"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> สินค้าแนะนำ</div>
                         <div class="oc-mega__prod-scroll" id="ocMegaProductsScroll">
-                          <div class="oc-mega__loading-skeleton">กำลังเตรียมข้อมูล...</div>
+                          <div class="oc-mega__loading-skeleton" style="padding:20px; text-align:center; color: var(--oc-ink-40); font-size:12px;">กำลังเตรียมข้อมูล...</div>
                         </div>
-                        <a href="#" class="oc-mega__prod-viewall" id="ocMegaProductsViewAll">
-                          ดูทั้งหมด
-                          <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <line x1="5" y1="12" x2="19" y2="12"/>
-                            <polyline points="12 5 19 12 12 19"/>
-                          </svg>
-                        </a>
+                        <a href="#" class="oc-mega__prod-viewall" id="ocMegaProductsViewAll">ดูทั้งหมด <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
                       </div>
                     </div>
 
                   </div>
                 </div>
+
               </div>
             </div>
           {% endif %}
@@ -330,33 +286,22 @@
           return hdr && hdr.getAttribute('data-menu-style') === 'menu';
         }
 
+        /* ── Utilities for Image & Product Fetching ── */
         var _cache = {};
-
-        function esc(s) {
-          return String(s || '')
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;');
-        }
-
+        function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
         function normalizeShopifyImage(src) {
           if (!src) return null;
           src = String(src);
           if (src.indexOf('//') === 0) src = window.location.protocol + src;
-          if (src.indexOf('http') !== 0 && src.indexOf('//') !== 0) {
-            src = src.indexOf('/') === 0 ? window.location.origin + src : window.location.origin + '/' + src;
-          }
+          if (src.indexOf('http') !== 0 && src.indexOf('//') !== 0) { src = src.indexOf('/') === 0 ? window.location.origin + src : window.location.origin + '/' + src; }
           return src;
         }
-
         function resizeImg(src, width, height) {
           src = normalizeShopifyImage(src);
           if (!src) return null;
           src = src.replace(/_(pico|icon|thumb|small|compact|medium|large|grande|original|\d+x\d*)(?=\.[a-zA-Z]{3,4}(\?[^.]*)?$)/, '');
           return src.replace(/(\.[a-zA-Z]{3,4})(\?[^.]*)?$/, '_' + width + 'x' + height + '$1$2');
         }
-
         function getProductImage(product) {
           if (!product) return null;
           if (typeof product.featured_image === 'string' && product.featured_image) return product.featured_image;
@@ -377,33 +322,22 @@
         function fetchProducts(handle, limit) {
           if (!handle) return Promise.resolve([]);
           var cacheKey = handle + '::' + limit;
-
           if (Array.isArray(_cache[cacheKey])) return Promise.resolve(_cache[cacheKey]);
           if (_cache[cacheKey] && typeof _cache[cacheKey].then === 'function') return _cache[cacheKey];
 
-          _cache[cacheKey] = fetch('/collections/' + encodeURIComponent(handle) + '/products.json?limit=' + encodeURIComponent(limit), {
-            credentials: 'same-origin'
-          })
-            .then(function (res) {
-              if (!res.ok) throw new Error('Fetch failed');
-              return res.json();
-            })
+          _cache[cacheKey] = fetch('/collections/' + encodeURIComponent(handle) + '/products.json?limit=' + encodeURIComponent(limit), { credentials: 'same-origin' })
+            .then(function (res) { if (!res.ok) throw new Error('Fetch failed'); return res.json(); })
             .then(function (data) {
               var products = Array.isArray(data.products) ? data.products : [];
               _cache[cacheKey] = products;
               return products;
-            })
-            .catch(function () {
-              _cache[cacheKey] = [];
-              return [];
-            });
-
+            }).catch(function () { _cache[cacheKey] = []; return []; });
           return _cache[cacheKey];
         }
 
+        /* ── V4 UI Logic & Integration ── */
         function initV4MegaMenu() {
           if (!isDesktopMenu()) return;
-
           var wrap = document.querySelector('.oc-mega__wrap');
           if (!wrap || wrap._ocInit) return;
           wrap._ocInit = true;
@@ -415,84 +349,92 @@
           var prodScroll = document.getElementById('ocMegaProductsScroll');
           var viewAllBtn = document.getElementById('ocMegaProductsViewAll');
           var prodBox = document.getElementById('ocMegaProductsBox');
-
+          
           var thumbCount = parseInt(wrap.dataset.thumbCount || 4, 10);
           var pillCount = parseInt(wrap.dataset.pillCount || 4, 10);
           var productLimit = parseInt(wrap.dataset.productLimit || 8, 10);
           var imgWidth = parseInt(wrap.dataset.imgWidth || 160, 10);
-
+          
           var activeCat = cats[0] ? cats[0].dataset.cat : null;
           var activeSubHandle = null;
-          var CAT_DELAY = 120;
-          var catTimer = null;
-          var hoverTimer = null;
+          var CAT_DELAY = 120, catTimer = null;
 
-          function checkSubScroll() {
-            document.querySelectorAll('.oc-mega__sub-pane.active').forEach(function (pane) {
-              var scroll = pane.querySelector('.oc-mega__sub-scroll');
-              if (!scroll) return;
-              var hasScroll = scroll.scrollHeight > scroll.clientHeight + 4;
-              pane.classList.toggle('has-scroll', hasScroll);
-              var atEnd = scroll.scrollTop + scroll.clientHeight >= scroll.scrollHeight - 4;
-              pane.classList.toggle('scrolled-end', atEnd);
-            });
+          function switchCat(catKey) {
+            if (catKey === activeCat) return;
+            activeCat = catKey;
+            
+            cats.forEach(function(b) { b.classList.toggle('active', b.dataset.cat === catKey); });
+            subPanes.forEach(function(p) { p.classList.toggle('active', p.dataset.pane === catKey); });
+            
+            var activePane = document.querySelector('.oc-mega__sub-pane[data-pane="'+catKey+'"]');
+            if (activePane) {
+              var firstSub = activePane.querySelector('.oc-mega__sub');
+              if (firstSub) {
+                 loadProductsUI(firstSub.dataset.sub, firstSub.getAttribute('href'), activePane.querySelector('.oc-mega__sub-head').innerText);
+              }
+            }
+            requestAnimationFrame(checkSubScroll);
           }
+
+          cats.forEach(function(btn) {
+            btn.addEventListener('mouseenter', function() { var k = btn.dataset.cat; clearTimeout(catTimer); catTimer = setTimeout(function(){ switchCat(k); }, CAT_DELAY); });
+            btn.addEventListener('mouseleave', function() { clearTimeout(catTimer); });
+          });
+
+          document.querySelectorAll('.oc-mega__sub').forEach(function(subLink) {
+            subLink.addEventListener('mouseenter', function() {
+              loadProductsUI(this.dataset.sub, this.getAttribute('href'), this.innerText);
+            });
+          });
 
           function loadProductsUI(handle, url, titleName) {
             if (!handle || activeSubHandle === handle) return;
             activeSubHandle = handle;
-
             prodBox.setAttribute('aria-busy', 'true');
+
             viewAllBtn.setAttribute('href', url || '#');
-            viewAllBtn.innerHTML =
-              'ดู ' +
-              esc(titleName || 'ทั้งหมด') +
-              ' <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+            viewAllBtn.innerHTML = 'ดู ' + esc(titleName || 'ทั้งหมด') + ' <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
 
-            fetchProducts(handle, productLimit).then(function (products) {
-              if (activeSubHandle !== handle) return;
-
+            fetchProducts(handle, productLimit).then(function(products) {
+              if (activeSubHandle !== handle) return; 
               prodBox.setAttribute('aria-busy', 'false');
-
+              
               if (!products || !products.length) {
-                prodScroll.innerHTML = '<div class="oc-mega__empty">ไม่พบสินค้าแนะนำในหมวดนี้</div>';
+                prodScroll.innerHTML = '<div style="padding:20px; font-size:13px; color:var(--oc-ink-40);">ไม่พบสินค้าแนะนำในหมวดนี้</div>';
                 return;
               }
 
               var html = '<div class="oc-mega__prod-grid">';
               var pillHtml = '<div class="oc-mega__pill-grid">';
 
-              products.forEach(function (p, index) {
+              products.forEach(function(p, index) {
                 var pUrl = '/products/' + esc(p.handle);
                 var delay = (index * 0.04) + 0.04;
 
                 if (index < thumbCount) {
                   var rawImg = getProductImage(p);
                   var imgHeight = Math.round(imgWidth * 0.75);
-                  var src = rawImg ? resizeImg(rawImg, imgWidth, imgHeight) : null;
-
-                  html += '<a href="' + pUrl + '" class="oc-mega__card" style="animation-delay:' + delay + 's;">';
-
+                  var src = rawImg ? resizeImg(rawImg, imgWidth, imgHeight) : null; 
+                  
+                  html += '<a href="' + pUrl + '" class="oc-mega__card" style="animation-delay: '+delay+'s;">';
                   if (src) {
                     html += '<img class="oc-mega__card-img" src="' + esc(src) + '" alt="' + esc(p.title) + '" loading="lazy">';
                   } else {
-                    html += '<div class="oc-mega__card-img oc-mega__card-img--placeholder">';
-                    html += '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"></rect><path d="M8 10h8"></path><path d="M8 14h5"></path></svg>';
-                    html += '</div>';
+                    html += '<div class="oc-mega__card-img" style="display:flex;align-items:center;justify-content:center;font-size:20px;">📦</div>';
                   }
-
                   html += '<div class="oc-mega__card-body">';
                   html += '<div class="oc-mega__card-name">' + esc(p.title) + '</div>';
                   html += '</div></a>';
-                } else if (index < thumbCount + pillCount) {
-                  pillHtml += '<a href="' + pUrl + '" class="oc-mega__pill" style="animation-delay:' + delay + 's;">' + esc(p.title) + '</a>';
+                } 
+                else if (index < thumbCount + pillCount) {
+                  pillHtml += '<a href="' + pUrl + '" class="oc-mega__pill" style="animation-delay: '+delay+'s;">' + esc(p.title) + '</a>';
                 }
               });
-
+              
               html += '</div>';
               pillHtml += '</div>';
 
-              if (products.length > thumbCount && pillCount > 0) {
+              if (products.length > thumbCount) {
                 html += pillHtml;
               }
 
@@ -503,153 +445,68 @@
             });
           }
 
-          function switchCat(catKey) {
-            if (catKey === activeCat) return;
-            activeCat = catKey;
-
-            cats.forEach(function (b) {
-              b.classList.toggle('active', b.dataset.cat === catKey);
-            });
-
-            subPanes.forEach(function (p) {
-              p.classList.toggle('active', p.dataset.pane === catKey);
-            });
-
-            var activePane = document.querySelector('.oc-mega__sub-pane[data-pane="' + catKey + '"]');
-            if (activePane) {
-              var firstSub = activePane.querySelector('.oc-mega__sub');
-              if (firstSub) {
-                loadProductsUI(
-                  firstSub.dataset.sub,
-                  firstSub.getAttribute('href'),
-                  activePane.querySelector('.oc-mega__sub-head').innerText
-                );
-              }
-            }
-
-            requestAnimationFrame(checkSubScroll);
+          var initActivePane = document.querySelector('.oc-mega__sub-pane.active');
+          if (initActivePane) {
+             var firstSub = initActivePane.querySelector('.oc-mega__sub');
+             if (firstSub) loadProductsUI(firstSub.dataset.sub, firstSub.getAttribute('href'), initActivePane.querySelector('.oc-mega__sub-head').innerText);
           }
 
-          function closeAllMenus() {
-            triggers.forEach(function (trigger) {
-              trigger.setAttribute('aria-expanded', 'false');
+          function checkSubScroll() {
+            document.querySelectorAll('.oc-mega__sub-pane.active').forEach(function(pane) {
+              var scroll = pane.querySelector('.oc-mega__sub-scroll');
+              if (!scroll) return;
+              var hasScroll = scroll.scrollHeight > scroll.clientHeight + 4;
+              pane.classList.toggle('has-scroll', hasScroll);
+              var atEnd = scroll.scrollTop + scroll.clientHeight >= scroll.scrollHeight - 4;
+              pane.classList.toggle('scrolled-end', atEnd);
             });
-            if (overlay) overlay.classList.remove('active');
           }
+          document.querySelectorAll('.oc-mega__sub-scroll').forEach(function(el) {
+            el.addEventListener('scroll', function() {
+              var pane = el.closest('.oc-mega__sub-pane');
+              if (pane) pane.classList.toggle('scrolled-end', el.scrollTop + el.clientHeight >= el.scrollHeight - 4);
+            });
+          });
 
+          var hoverTimer = null;
+          
           function openMegaMenu(triggerNode) {
             clearTimeout(hoverTimer);
             if (triggerNode.getAttribute('aria-expanded') === 'true') return;
-
-            closeAllMenus();
             triggerNode.setAttribute('aria-expanded', 'true');
-            if (overlay) overlay.classList.add('active');
+            overlay.classList.add('active');
+            document.querySelector('.oc-header')?.classList.add('has-shadow');
           }
 
           function closeMegaMenu(triggerNode) {
-            hoverTimer = setTimeout(function () {
+            hoverTimer = setTimeout(function() {
               triggerNode.setAttribute('aria-expanded', 'false');
-              if (overlay) overlay.classList.remove('active');
-            }, 180);
+              overlay.classList.remove('active');
+            }, 180); 
           }
 
-          cats.forEach(function (btn) {
-            btn.addEventListener('mouseenter', function () {
-              var k = btn.dataset.cat;
-              clearTimeout(catTimer);
-              catTimer = setTimeout(function () {
-                switchCat(k);
-              }, CAT_DELAY);
-            });
-
-            btn.addEventListener('mouseleave', function () {
-              clearTimeout(catTimer);
-            });
-          });
-
-          document.querySelectorAll('.oc-mega__sub').forEach(function (subLink) {
-            subLink.addEventListener('mouseenter', function () {
-              loadProductsUI(this.dataset.sub, this.getAttribute('href'), this.innerText);
-            });
-          });
-
-          document.querySelectorAll('.oc-mega__sub-scroll').forEach(function (el) {
-            el.addEventListener('scroll', function () {
-              var pane = el.closest('.oc-mega__sub-pane');
-              if (pane) {
-                pane.classList.toggle(
-                  'scrolled-end',
-                  el.scrollTop + el.clientHeight >= el.scrollHeight - 4
-                );
-              }
-            });
-          });
-
-          triggers.forEach(function (trigger) {
-            trigger.addEventListener('click', function (e) {
-              e.preventDefault();
-              var isOpen = trigger.getAttribute('aria-expanded') === 'true';
-              if (isOpen) {
-                closeAllMenus();
-              } else {
-                openMegaMenu(trigger);
-              }
-            });
-
-            trigger.addEventListener('mouseenter', function () {
-              openMegaMenu(trigger);
-            });
-
-            trigger.addEventListener('mouseleave', function () {
-              closeMegaMenu(trigger);
-            });
+          triggers.forEach(function(trigger) {
+            trigger.addEventListener('click', function(e) { e.preventDefault(); });
+            trigger.addEventListener('mouseenter', function() { openMegaMenu(trigger); });
+            trigger.addEventListener('mouseleave', function() { closeMegaMenu(trigger); });
 
             var submenu = trigger.nextElementSibling;
             if (submenu) {
-              submenu.addEventListener('mouseenter', function () {
-                clearTimeout(hoverTimer);
-              });
-
-              submenu.addEventListener('mouseleave', function () {
-                closeMegaMenu(trigger);
-              });
+              submenu.addEventListener('mouseenter', function() { clearTimeout(hoverTimer); });
+              submenu.addEventListener('mouseleave', function() { closeMegaMenu(trigger); });
             }
           });
 
-          if (overlay) {
-            overlay.addEventListener('click', closeAllMenus);
-          }
-
-          document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') closeAllMenus();
-          });
-
-          var initActivePane = document.querySelector('.oc-mega__sub-pane.active');
-          if (initActivePane) {
-            var firstSub = initActivePane.querySelector('.oc-mega__sub');
-            if (firstSub) {
-              loadProductsUI(
-                firstSub.dataset.sub,
-                firstSub.getAttribute('href'),
-                initActivePane.querySelector('.oc-mega__sub-head').innerText
-              );
-            }
-          }
-
-          requestAnimationFrame(checkSubScroll);
         }
 
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', initV4MegaMenu);
-        } else {
-          setTimeout(initV4MegaMenu, 100);
-        }
+        if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initV4MegaMenu); } else { setTimeout(initV4MegaMenu, 100); }
       })();
     </script>
 
 {% endcase %}
 
 {% stylesheet %}
+/* ═══ CSS Variables & Reset V4 ═══ */
 :root {
   --oc-cyan: #17a9bb;
   --oc-cyan-vv: #14c9df;
@@ -661,7 +518,7 @@
   --oc-ink-40: #6B7280;
   --oc-ink-15: #E5E7EB;
   --oc-ink-05: #F9FAFB;
-  --oc-shadow-lg: 0 20px 60px rgba(100, 100, 160, 0.18);
+  --oc-shadow-lg: 0 20px 60px rgba(100,100,160,0.18);
   --oc-ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --oc-ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
   --oc-radius: 14px;
@@ -669,489 +526,98 @@
   --oc-radius-pill: 999px;
 }
 
-.menu-list__link-title {
-  font-size: var(--oc-top-menu-font-size, inherit);
-}
+.menu-list__link-title { font-size: var(--oc-top-menu-font-size, inherit); }
 
-.header__drawer {
-  --header-drawer-min-height: 60px;
-  display: flex;
-  min-height: var(--header-drawer-min-height);
-  align-items: center;
-}
+.header__drawer { --header-drawer-min-height: 60px; display: flex; min-height: var(--header-drawer-min-height); align-items: center; }
+#header-component[data-menu-style='drawer'] .header__drawer { display: flex; min-height: var(--header-drawer-min-height); }
+@media screen and (min-width: 750px) { #header-component[data-menu-style='menu'] .header__drawer { display: none; min-height: 0; } }
 
-#header-component[data-menu-style='drawer'] .header__drawer {
-  display: flex;
-  min-height: var(--header-drawer-min-height);
-}
-
-@media screen and (min-width: 750px) {
-  #header-component[data-menu-style='menu'] .header__drawer {
-    display: none;
-    min-height: 0;
-  }
-}
-
-.menu-list__list-item {
-  position: static !important;
-}
+.menu-list__list-item { position: static !important; } 
 
 .oc-nav-trigger + .oc-v4-submenu-container {
   clip-path: none !important;
-  visibility: hidden;
-  position: absolute;
-  width: 100%;
-  left: 0;
-  top: 100%;
-  z-index: var(--layer-header-menu, 999);
+  visibility: hidden; position: absolute; width: 100%; left: 0;
+  top: 100%; z-index: var(--layer-header-menu, 999);
   transition: opacity 0.28s var(--oc-ease-smooth), transform 0.28s var(--oc-ease-expo);
-  opacity: 0;
-  transform: translateY(-4px);
-  pointer-events: none;
+  opacity: 0; transform: translateY(-4px); pointer-events: none;
 }
 
 .oc-nav-trigger[aria-expanded="true"] + .oc-v4-submenu-container {
-  visibility: visible;
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
+  visibility: visible; opacity: 1; transform: translateY(0); pointer-events: auto;
 }
 
-.oc-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0);
-  z-index: 998;
-  pointer-events: none;
-  transition: background 0.35s;
-}
+.oc-nav-trigger[aria-expanded="true"] .oc-nav__chev { transform: rotate(180deg) !important; opacity: 1 !important; }
 
-.oc-overlay.active {
-  background: rgba(0, 0, 0, 0.10);
-  pointer-events: auto;
-}
+/* ═══ MEGA MENU V4 ═══ */
+.oc-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0); z-index: 998; pointer-events: none; transition: background 0.35s; }
+.oc-overlay.active { background: rgba(0,0,0,0.10); }
 
-.oc-mega-wrapper {
-  width: 100%;
-  background: transparent !important;
-  box-shadow: none !important;
-}
+.oc-mega-wrapper { width: 100%; background: transparent !important; box-shadow: none !important; }
+.oc-mega__wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1000;}
+.oc-mega__panel { background: #fff; border-radius: 0 0 var(--oc-radius-lg) var(--oc-radius-lg); box-shadow: var(--oc-shadow-lg); border: 1px solid rgba(0,0,0,0.06); border-top: 0; overflow: hidden; display: flex; height: 420px; text-align: left; }
 
-.oc-mega__wrap {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 24px;
-  position: relative;
-  z-index: 1000;
-}
+/* ── COL 1 ── */
+.oc-mega__cats-head, .oc-mega__sub-head, .oc-mega__prod-head { font-family: var(--menu-top-level-font-family); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--oc-ink-40); padding: 14px 20px 10px; border-bottom: 1px solid var(--oc-ink-15); flex-shrink: 0; margin: 0; display:flex; align-items:center; gap:6px;}
+.oc-mega__prod-head svg { width: 13px; height: 13px; stroke: var(--oc-purple); fill: none; stroke-width: 2; }
+.oc-mega__cats { width: var(--oc-col0-width); min-width: var(--oc-col0-width); background: var(--oc-ink-05); border-right: 1px solid var(--oc-ink-15); display: flex; flex-direction: column; }
+.oc-mega__cats-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 6px 0; }
+.oc-mega__cat { display: flex; align-items: center; gap: 10px; padding: 11px 14px 11px 18px; cursor: pointer; color: var(--oc-ink-70); font-size: var(--oc-l0-font-size); font-weight: 500; transition: background 0.12s, color 0.12s; position: relative; border: 0; background: transparent; width: 100%; text-align: left; font-family: inherit;}
+.oc-mega__cat:hover, .oc-mega__cat.active { background: #fff; color: var(--oc-ink); }
+.oc-mega__cat.active { color: var(--oc-cyan); font-weight: 600; }
+.oc-mega__cat.active::before { content: ''; position: absolute; left: 0; top: 6px; bottom: 6px; width: 3px; border-radius: 0 3px 3px 0; background: linear-gradient(180deg, var(--oc-cyan-vv), var(--oc-cyan)); }
+.oc-mega__cat-ico { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; }
+.oc-mega__cat-ico svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.oc-mega__cat.active .oc-mega__cat-ico svg { stroke: var(--oc-cyan); }
+.oc-mega__cat-arrow { margin-left: auto; width: 12px; height: 12px; opacity: 0; transform: translateX(-3px); transition: opacity 0.15s, transform 0.15s; }
+.oc-mega__cat.active .oc-mega__cat-arrow { opacity: 0.4; transform: translateX(0); }
 
-.oc-mega__panel {
-  background: #fff;
-  border-radius: 0 0 var(--oc-radius-lg) var(--oc-radius-lg);
-  box-shadow: var(--oc-shadow-lg);
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  border-top: 0;
-  overflow: hidden;
-  display: flex;
-  min-height: var(--oc-drawer-min-height, 260px);
-  height: 420px;
-  text-align: left;
-}
+/* ── COL 2 ── */
+.oc-mega__subs { width: var(--oc-col1-width); min-width: var(--oc-col1-width); border-right: 1px solid var(--oc-ink-15); display: flex; flex-direction: column; overflow: hidden; }
+.oc-mega__sub-pane { display: none; flex-direction: column; flex: 1; min-height: 0; }
+.oc-mega__sub-pane.active { display: flex; }
+.oc-mega__sub-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 6px 8px; scrollbar-width: thin; scrollbar-color: rgba(20,201,223,0.25) transparent; }
+.oc-mega__sub-pane.has-scroll .oc-mega__sub-scroll { mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%); -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%); }
+.oc-mega__sub-pane.scrolled-end .oc-mega__sub-scroll { mask-image: none; -webkit-mask-image: none; }
+.oc-mega__sub { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: var(--oc-ink-70); font-size: var(--oc-l1-font-size); font-weight: 500; transition: background 0.12s, color 0.12s, transform 0.12s; }
+.oc-mega__sub:hover { background: rgba(20,201,223,0.05); color: var(--oc-ink); transform: translateX(2px); }
+.oc-mega__sub-dot { width: 5px; height: 5px; min-width: 5px; border-radius: 999px; background: var(--oc-ink-15); transition: background 0.12s, transform 0.12s; }
+.oc-mega__sub:hover .oc-mega__sub-dot { background: var(--oc-cyan); transform: scale(1.4); }
+.oc-mega__sub-seeall, .oc-mega__prod-viewall { display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; color: var(--oc-cyan); text-decoration: none; padding: 0 20px; border-top: 1px solid var(--oc-ink-15); transition: gap 0.2s, background 0.15s; height: 42px; flex-shrink: 0; }
+.oc-mega__prod-viewall { justify-content: center; }
+.oc-mega__sub-seeall:hover, .oc-mega__prod-viewall:hover { gap: 8px; background: rgba(20,201,223,0.04); }
+.oc-mega__sub-seeall svg, .oc-mega__prod-viewall svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
-.oc-mega__cats-head,
-.oc-mega__sub-head,
-.oc-mega__prod-head {
-  font-family: var(--menu-top-level-font-family);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--oc-ink-40);
-  padding: 14px 20px 10px;
-  border-bottom: 1px solid var(--oc-ink-15);
-  flex-shrink: 0;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
+/* ── COL 3 ── */
+.oc-mega__products { flex: 1; padding: 0; display: flex; flex-direction: column; overflow: hidden; transition: opacity 0.2s; }
+.oc-mega__products[aria-busy="true"] { opacity: 0.5; pointer-events: none; }
+.oc-mega__prod-pane { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.oc-mega__prod-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 12px 16px; scrollbar-width: thin; scrollbar-color: rgba(167,139,250,0.2) transparent; }
 
-.oc-mega__cats-head {
-  font-size: var(--oc-cat-head-font-size, 11px);
-}
+/* Cards Grid */
+.oc-mega__prod-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; align-content: start; }
+.oc-mega__card { display: flex; flex-direction: column; align-items: center; border-radius: 8px; overflow: hidden; border: 1px solid var(--oc-ink-15); text-decoration: none; color: var(--oc-ink-70); transition: border-color 0.18s, box-shadow 0.18s, background 0.15s; background: #fff; }
+.oc-mega__card:hover { border-color: rgba(20,201,223,0.3); box-shadow: 0 2px 10px rgba(20,201,223,0.08); background: rgba(20,201,223,0.02); }
+.oc-mega__card-img { width: 100%; height: var(--oc-thumb-height); object-fit: cover; display: block; background: var(--oc-ink-05); }
+.oc-mega__card-body { padding: 6px 8px; width: 100%; }
+.oc-mega__card-name { font-size: var(--oc-thumb-title-size); font-weight: 600; color: var(--oc-ink); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
-.oc-mega__sub-head {
-  font-size: var(--oc-sub-head-font-size, 11px);
-}
+/* Pill Grid */
+.oc-mega__pill-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--oc-ink-15); }
+.oc-mega__pill { display: inline-flex; align-items: center; padding: 6px 14px; background: var(--oc-ink-05); border: 1px solid var(--oc-ink-15); border-radius: var(--oc-radius-pill); font-size: var(--oc-thumb-title-size); font-weight: 500; color: var(--oc-ink-70); text-decoration: none; transition: all 0.15s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.oc-mega__pill:hover { background: rgba(20,201,223,0.06); border-color: rgba(20,201,223,0.3); color: var(--oc-cyan); }
 
-.oc-mega__prod-head {
-  font-size: var(--oc-prod-head-font-size, 11px);
-}
-
-.oc-mega__prod-head svg {
-  width: 13px;
-  height: 13px;
-  stroke: var(--oc-purple);
-  fill: none;
-  stroke-width: 2;
-}
-
-.oc-mega__cats {
-  width: var(--oc-col0-width);
-  min-width: var(--oc-col0-width);
-  background: var(--oc-ink-05);
-  border-right: 1px solid var(--oc-ink-15);
-  display: flex;
-  flex-direction: column;
-}
-
-.oc-mega__cats-scroll {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 6px 0;
-}
-
-.oc-mega__cat {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 11px 14px 11px 18px;
-  cursor: pointer;
-  color: var(--oc-ink-70);
-  font-size: var(--oc-l0-font-size, 12px);
-  font-weight: 500;
-  transition: background 0.12s, color 0.12s;
-  position: relative;
-  border: 0;
-  background: transparent;
-  width: 100%;
-  text-align: left;
-  font-family: inherit;
-}
-
-.oc-mega__cat:hover,
-.oc-mega__cat.active {
-  background: #fff;
-  color: var(--oc-ink);
-}
-
-.oc-mega__cat.active {
-  color: var(--oc-cyan);
-  font-weight: 600;
-}
-
-.oc-mega__cat.active::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 6px;
-  bottom: 6px;
-  width: 3px;
-  border-radius: 0 3px 3px 0;
-  background: linear-gradient(180deg, var(--oc-cyan-vv), var(--oc-cyan));
-}
-
-.oc-mega__cat-ico {
-  width: 20px;
-  height: 20px;
-  min-width: 20px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.oc-mega__cat-ico svg,
-.oc-mega__cat-ico-img {
-  width: 20px;
-  height: 20px;
-  display: block;
-}
-
-.oc-mega__cat-ico svg {
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.oc-mega__cat.active .oc-mega__cat-ico svg {
-  stroke: var(--oc-cyan);
-}
-
-.oc-mega__cat-label {
-  min-width: 0;
-  flex: 1 1 auto;
-}
-
-.oc-mega__cat-arrow {
-  margin-left: auto;
-  width: 12px;
-  height: 12px;
-  opacity: 0;
-  transform: translateX(-3px);
-  transition: opacity 0.15s, transform 0.15s;
-}
-
-.oc-mega__cat.active .oc-mega__cat-arrow {
-  opacity: 0.4;
-  transform: translateX(0);
-}
-
-.oc-mega__subs {
-  width: var(--oc-col1-width);
-  min-width: var(--oc-col1-width);
-  border-right: 1px solid var(--oc-ink-15);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.oc-mega__sub-pane {
-  display: none;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-}
-
-.oc-mega__sub-pane.active {
-  display: flex;
-}
-
-.oc-mega__sub-scroll {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 6px 8px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(20, 201, 223, 0.25) transparent;
-}
-
-.oc-mega__sub-pane.has-scroll .oc-mega__sub-scroll {
-  mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%);
-}
-
-.oc-mega__sub-pane.scrolled-end .oc-mega__sub-scroll {
-  mask-image: none;
-  -webkit-mask-image: none;
-}
-
-.oc-mega__sub {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  text-decoration: none;
-  color: var(--oc-ink-70);
-  font-size: var(--oc-l1-font-size, 12px);
-  font-weight: 500;
-  transition: background 0.15s, color 0.15s;
-}
-
-.oc-mega__sub:hover {
-  background: rgba(20, 201, 223, 0.06);
-  color: var(--oc-cyan);
-}
-
-.oc-mega__sub-dot {
-  width: 6px;
-  height: 6px;
-  min-width: 6px;
-  border-radius: 999px;
-  background: rgba(20, 201, 223, 0.55);
-}
-
-.oc-mega__sub-seeall,
-.oc-mega__prod-viewall {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  text-decoration: none;
-  color: var(--oc-ink);
-  font-weight: 600;
-  font-size: 12px;
-  padding: 14px 18px;
-  border-top: 1px solid var(--oc-ink-15);
-  transition: color 0.15s ease;
-}
-
-.oc-mega__sub-seeall svg,
-.oc-mega__prod-viewall svg {
-  width: 16px;
-  height: 16px;
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.oc-mega__sub-seeall:hover,
-.oc-mega__prod-viewall:hover {
-  color: var(--oc-cyan);
-}
-
-.oc-mega__products {
-  flex: 1 1 auto;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  background: #fff;
-}
-
-.oc-mega__prod-pane {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-}
-
-.oc-mega__prod-scroll {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px 18px 18px;
-}
-
-.oc-mega__loading-skeleton,
-.oc-mega__empty {
-  padding: 20px;
-  text-align: center;
-  color: var(--oc-ink-40);
-  font-size: 12px;
-}
-
-.oc-mega__prod-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.oc-mega__card {
-  display: block;
-  text-decoration: none;
-  color: inherit;
-  border: 1px solid var(--oc-ink-15);
-  border-radius: 14px;
-  overflow: hidden;
-  background: #fff;
-  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
-}
-
-.oc-mega__card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(100, 100, 160, 0.12);
-  border-color: rgba(20, 201, 223, 0.35);
-}
-
-.oc-mega__card-img {
-  display: block;
-  width: 100%;
-  height: var(--oc-thumb-height, 96px);
-  object-fit: cover;
-  background: var(--oc-ink-05);
-}
-
-.oc-mega__card-img--placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.oc-mega__card-img--placeholder svg {
-  width: 24px;
-  height: 24px;
-  stroke: var(--oc-ink-40);
-  fill: none;
-  stroke-width: 1.8;
-}
-
-.oc-mega__card-body {
-  padding: 12px;
-  width: 100%;
-}
-
-.oc-mega__card-name {
-  font-size: var(--oc-thumb-title-size);
-  font-weight: 600;
-  color: var(--oc-ink);
-  line-height: 1.3;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.oc-mega__pill-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px dashed var(--oc-ink-15);
-}
-
-.oc-mega__pill {
-  display: inline-flex;
-  align-items: center;
-  padding: 6px 14px;
-  background: var(--oc-ink-05);
-  border: 1px solid var(--oc-ink-15);
-  border-radius: var(--oc-radius-pill);
-  font-size: var(--oc-thumb-title-size);
-  font-weight: 500;
-  color: var(--oc-ink-70);
-  text-decoration: none;
-  transition: all 0.15s;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-}
-
-.oc-mega__pill:hover {
-  background: rgba(20, 201, 223, 0.06);
-  border-color: rgba(20, 201, 223, 0.3);
-  color: var(--oc-cyan);
-}
-
-.oc-mega__sub-pane.active .oc-mega__sub {
-  animation: oc-sub-in 0.22s var(--oc-ease-expo) backwards;
-}
-
+/* ── Animation Classes ── */
+.oc-mega__sub-pane.active .oc-mega__sub { animation: oc-sub-in 0.22s var(--oc-ease-expo) backwards; }
 .oc-mega__sub-pane.active .oc-mega__sub:nth-child(1) { animation-delay: 0.02s; }
 .oc-mega__sub-pane.active .oc-mega__sub:nth-child(2) { animation-delay: 0.04s; }
 .oc-mega__sub-pane.active .oc-mega__sub:nth-child(3) { animation-delay: 0.06s; }
 .oc-mega__sub-pane.active .oc-mega__sub:nth-child(4) { animation-delay: 0.08s; }
 .oc-mega__sub-pane.active .oc-mega__sub:nth-child(5) { animation-delay: 0.10s; }
+.oc-animate-trigger .oc-mega__card, .oc-animate-trigger .oc-mega__pill { animation: oc-card-in 0.25s var(--oc-ease-expo) backwards; }
 
-.oc-animate-trigger .oc-mega__card,
-.oc-animate-trigger .oc-mega__pill {
-  animation: oc-card-in 0.25s var(--oc-ease-expo) backwards;
-}
+@keyframes oc-sub-in { from { opacity: 0; transform: translateX(5px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes oc-card-in { from { opacity: 0; transform: translateX(5px); } to { opacity: 1; transform: translateX(0); } }
 
-@keyframes oc-sub-in {
-  from { opacity: 0; transform: translateX(5px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes oc-card-in {
-  from { opacity: 0; transform: translateX(5px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-@media screen and (max-width: 1199px) {
-  .oc-mega__panel {
-    height: 400px;
-  }
-}
-
-@media screen and (max-width: 989px) {
-  .oc-mega__wrap {
-    padding: 0 16px;
-  }
-}
 {% endstylesheet %}
 
 {% schema %}
@@ -1170,144 +636,110 @@
       "id": "page_width_preset",
       "label": "Mega menu width preset",
       "options": [
-        { "value": "wide", "label": "Wide" },
-        { "value": "normal", "label": "Normal" },
-        { "value": "narrow", "label": "Narrow" },
+        { "value": "wide",    "label": "Wide" },
+        { "value": "normal",  "label": "Normal" },
+        { "value": "narrow",  "label": "Narrow" },
         { "value": "content", "label": "Content" }
       ],
       "default": "wide"
     },
-
     {
       "type": "header",
       "content": "Category Icons (Col 0)"
     },
     {
       "type": "paragraph",
-      "content": "จับคู่ Collection Handle เพื่อแสดง SVG URL หรือรูปภาพ หากเว้นว่างไว้จะใช้ไอคอน Default"
+      "content": "จับคู่ Collection Handle เพื่อแสดงรูปภาพหรือ SVG. หากเว้นว่างไว้จะใช้ไอคอน Default"
     },
-
     {
       "type": "text",
       "id": "icon_1_handle",
       "label": "Icon 1 - Collection Handle"
     },
     {
-      "type": "text",
-      "id": "icon_1_svg_url",
-      "label": "Icon 1 - SVG URL"
-    },
-    {
       "type": "image_picker",
       "id": "icon_1_image",
-      "label": "Icon 1 - Fallback Image"
+      "label": "Icon 1 - Image (SVG/PNG)"
     },
-
     {
       "type": "text",
       "id": "icon_2_handle",
       "label": "Icon 2 - Collection Handle"
     },
     {
-      "type": "text",
-      "id": "icon_2_svg_url",
-      "label": "Icon 2 - SVG URL"
-    },
-    {
       "type": "image_picker",
       "id": "icon_2_image",
-      "label": "Icon 2 - Fallback Image"
+      "label": "Icon 2 - Image (SVG/PNG)"
     },
-
     {
       "type": "text",
       "id": "icon_3_handle",
       "label": "Icon 3 - Collection Handle"
     },
     {
-      "type": "text",
-      "id": "icon_3_svg_url",
-      "label": "Icon 3 - SVG URL"
-    },
-    {
       "type": "image_picker",
       "id": "icon_3_image",
-      "label": "Icon 3 - Fallback Image"
+      "label": "Icon 3 - Image (SVG/PNG)"
     },
-
     {
       "type": "text",
       "id": "icon_4_handle",
       "label": "Icon 4 - Collection Handle"
     },
     {
-      "type": "text",
-      "id": "icon_4_svg_url",
-      "label": "Icon 4 - SVG URL"
-    },
-    {
       "type": "image_picker",
       "id": "icon_4_image",
-      "label": "Icon 4 - Fallback Image"
+      "label": "Icon 4 - Image (SVG/PNG)"
     },
-
     {
       "type": "text",
       "id": "icon_5_handle",
       "label": "Icon 5 - Collection Handle"
     },
     {
-      "type": "text",
-      "id": "icon_5_svg_url",
-      "label": "Icon 5 - SVG URL"
-    },
-    {
       "type": "image_picker",
       "id": "icon_5_image",
-      "label": "Icon 5 - Fallback Image"
+      "label": "Icon 5 - Image (SVG/PNG)"
     },
-
     {
       "type": "text",
       "id": "icon_6_handle",
       "label": "Icon 6 - Collection Handle"
     },
     {
-      "type": "text",
-      "id": "icon_6_svg_url",
-      "label": "Icon 6 - SVG URL"
-    },
-    {
       "type": "image_picker",
       "id": "icon_6_image",
-      "label": "Icon 6 - Fallback Image"
+      "label": "Icon 6 - Image (SVG/PNG)"
     },
-
     {
       "type": "text",
       "id": "icon_7_handle",
       "label": "Icon 7 - Collection Handle"
     },
     {
-      "type": "text",
-      "id": "icon_7_svg_url",
-      "label": "Icon 7 - SVG URL"
-    },
-    {
       "type": "image_picker",
       "id": "icon_7_image",
-      "label": "Icon 7 - Fallback Image"
+      "label": "Icon 7 - Image (SVG/PNG)"
     },
-
     {
       "type": "header",
-      "content": "Product recommendations"
+      "content": "Mobile drawer"
+    },
+    {
+      "type": "checkbox",
+      "id": "drawer_accordion",
+      "label": "Accordion expand",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Mega menu content"
     },
     {
       "type": "range",
       "id": "mega_thumb_count",
-      "label": "Product cards shown",
-      "min": 0,
+      "label": "Product image cards shown",
+      "min": 1,
       "max": 8,
       "step": 1,
       "default": 4
@@ -1322,7 +754,6 @@
       "step": 1,
       "default": 4
     },
-
     {
       "type": "header",
       "content": "Drawer height"
@@ -1336,7 +767,6 @@
       "step": 10,
       "default": 260
     },
-
     {
       "type": "header",
       "content": "Thumbnail image"
@@ -1368,7 +798,6 @@
       "step": 1,
       "default": 12
     },
-
     {
       "type": "header",
       "content": "Column width"
@@ -1391,7 +820,6 @@
       "step": 10,
       "default": 230
     },
-
     {
       "type": "header",
       "content": "Font size"
@@ -1424,34 +852,6 @@
       "default": 12
     },
     {
-      "type": "range",
-      "id": "cat_head_font_size",
-      "label": "Category heading font size (px)",
-      "min": 9,
-      "max": 18,
-      "step": 1,
-      "default": 11
-    },
-    {
-      "type": "range",
-      "id": "sub_head_font_size",
-      "label": "Subcategory heading font size (px)",
-      "min": 9,
-      "max": 18,
-      "step": 1,
-      "default": 11
-    },
-    {
-      "type": "range",
-      "id": "prod_head_font_size",
-      "label": "Product heading font size (px)",
-      "min": 9,
-      "max": 18,
-      "step": 1,
-      "default": 11
-    },
-
-    {
       "type": "header",
       "content": "Theme colour"
     },
@@ -1459,7 +859,7 @@
       "type": "color_scheme",
       "id": "color_scheme",
       "label": "Color scheme",
-      "default": "scheme-1"
+      "default": "primary"
     }
   ]
 }
