@@ -101,9 +101,18 @@
                 class="menu-list__submenu-inner oc-mega-wrapper {{ page_width_class }}"
               >
                 <div class="oc-mega__wrap" 
+                     style="
+                       --oc-col0-width: {{ block_settings.col0_width | default: 230 }}px;
+                       --oc-col1-width: {{ block_settings.col1_width | default: 230 }}px;
+                       --oc-l0-font-size: {{ block_settings.l0_font_size | default: 13.5 }}px;
+                       --oc-l1-font-size: {{ block_settings.l1_font_size | default: 13 }}px;
+                       --oc-thumb-height: {{ block_settings.thumb_height | default: 96 }}px;
+                       --oc-thumb-title-size: {{ block_settings.thumb_title_font_size | default: 11 }}px;
+                     "
                      data-thumb-count="{{ block_settings.mega_thumb_count | default: 4 }}"
                      data-pill-count="{{ block_settings.mega_pill_count | default: 4 }}"
-                     data-product-limit="{{ block_settings.mega_thumb_count | plus: block_settings.mega_pill_count | default: 8 }}">
+                     data-product-limit="{{ block_settings.mega_thumb_count | plus: block_settings.mega_pill_count | default: 8 }}"
+                     data-img-width="{{ block_settings.thumb_image_width | default: 160 }}">
                   <div class="oc-mega__panel">
 
                     <div class="oc-mega__cats">
@@ -117,26 +126,26 @@
                               assign l0_handle = l0_coll.handle
                             endif
 
-                            # Check for custom SVG from Schema
-                            assign custom_icon = blank
-                            if l0_handle == block_settings.icon_1_handle and block_settings.icon_1_svg != blank
-                              assign custom_icon = block_settings.icon_1_svg
-                            elsif l0_handle == block_settings.icon_2_handle and block_settings.icon_2_svg != blank
-                              assign custom_icon = block_settings.icon_2_svg
-                            elsif l0_handle == block_settings.icon_3_handle and block_settings.icon_3_svg != blank
-                              assign custom_icon = block_settings.icon_3_svg
-                            elsif l0_handle == block_settings.icon_4_handle and block_settings.icon_4_svg != blank
-                              assign custom_icon = block_settings.icon_4_svg
-                            elsif l0_handle == block_settings.icon_5_handle and block_settings.icon_5_svg != blank
-                              assign custom_icon = block_settings.icon_5_svg
-                            elsif l0_handle == block_settings.icon_6_handle and block_settings.icon_6_svg != blank
-                              assign custom_icon = block_settings.icon_6_svg
+                            # Check for custom Image/SVG from Schema
+                            assign custom_icon_image = blank
+                            if l0_handle == block_settings.icon_1_handle and block_settings.icon_1_image != blank
+                              assign custom_icon_image = block_settings.icon_1_image
+                            elsif l0_handle == block_settings.icon_2_handle and block_settings.icon_2_image != blank
+                              assign custom_icon_image = block_settings.icon_2_image
+                            elsif l0_handle == block_settings.icon_3_handle and block_settings.icon_3_image != blank
+                              assign custom_icon_image = block_settings.icon_3_image
+                            elsif l0_handle == block_settings.icon_4_handle and block_settings.icon_4_image != blank
+                              assign custom_icon_image = block_settings.icon_4_image
+                            elsif l0_handle == block_settings.icon_5_handle and block_settings.icon_5_image != blank
+                              assign custom_icon_image = block_settings.icon_5_image
+                            elsif l0_handle == block_settings.icon_6_handle and block_settings.icon_6_image != blank
+                              assign custom_icon_image = block_settings.icon_6_image
                             endif
                           -%}
                           <button class="oc-mega__cat{% if forloop.first %} active{% endif %}" data-cat="{{ l0_handle }}" data-url="{{ l0.url }}">
                             <span class="oc-mega__cat-ico">
-                              {%- if custom_icon != blank -%}
-                                {{- custom_icon -}}
+                              {%- if custom_icon_image != blank -%}
+                                <img src="{{ custom_icon_image | image_url: width: 48 }}" alt="{{ l0.title }}" width="20" height="20" loading="lazy" style="object-fit: contain;">
                               {%- else -%}
                                 {%- case l0_handle -%}
                                   {%- when 'signage' -%}<svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
@@ -247,7 +256,7 @@
           aria-label="{{ 'accessibility.header_navigation_label' | t }}"
           style="
             {% render 'menu-font-styles', settings: block_settings %}
-            --oc-top-menu-font-size: {{ block_settings.top_menu_font_size }}px;
+            --oc-top-menu-font-size: {{ block_settings.top_menu_font_size | default: 16 }}px;
           "
         >
           {% assign overflow_class = 'overflow-menu' | append: color_scheme_classes %}
@@ -342,12 +351,12 @@
           var thumbCount = parseInt(wrap.dataset.thumbCount || 4, 10);
           var pillCount = parseInt(wrap.dataset.pillCount || 4, 10);
           var productLimit = parseInt(wrap.dataset.productLimit || 8, 10);
+          var imgWidth = parseInt(wrap.dataset.imgWidth || 160, 10);
           
           var activeCat = cats[0] ? cats[0].dataset.cat : null;
           var activeSubHandle = null;
           var CAT_DELAY = 120, catTimer = null;
 
-          // 1. Hover Category (Col 1)
           function switchCat(catKey) {
             if (catKey === activeCat) return;
             activeCat = catKey;
@@ -370,14 +379,12 @@
             btn.addEventListener('mouseleave', function() { clearTimeout(catTimer); });
           });
 
-          // 2. Hover Sub-Category (Col 2)
           document.querySelectorAll('.oc-mega__sub').forEach(function(subLink) {
             subLink.addEventListener('mouseenter', function() {
               loadProductsUI(this.dataset.sub, this.getAttribute('href'), this.innerText);
             });
           });
 
-          // 3. Render AJAX Data into V4 HTML Structure
           function loadProductsUI(handle, url, titleName) {
             if (!handle || activeSubHandle === handle) return;
             activeSubHandle = handle;
@@ -403,9 +410,9 @@
                 var delay = (index * 0.04) + 0.04;
 
                 if (index < thumbCount) {
-                  // Render Card
                   var rawImg = getProductImage(p);
-                  var src = rawImg ? resizeImg(rawImg, 400, 300) : null; 
+                  var imgHeight = Math.round(imgWidth * 0.75);
+                  var src = rawImg ? resizeImg(rawImg, imgWidth, imgHeight) : null; 
                   
                   html += '<a href="' + pUrl + '" class="oc-mega__card" style="animation-delay: '+delay+'s;">';
                   if (src) {
@@ -418,7 +425,6 @@
                   html += '</div></a>';
                 } 
                 else if (index < thumbCount + pillCount) {
-                  // Render Pill
                   pillHtml += '<a href="' + pUrl + '" class="oc-mega__pill" style="animation-delay: '+delay+'s;">' + esc(p.title) + '</a>';
                 }
               });
@@ -426,7 +432,6 @@
               html += '</div>';
               pillHtml += '</div>';
 
-              // Combine grids if we have pills
               if (products.length > thumbCount) {
                 html += pillHtml;
               }
@@ -444,7 +449,6 @@
              if (firstSub) loadProductsUI(firstSub.dataset.sub, firstSub.getAttribute('href'), initActivePane.querySelector('.oc-mega__sub-head').innerText);
           }
 
-          // 4. Scroll Hints
           function checkSubScroll() {
             document.querySelectorAll('.oc-mega__sub-pane.active').forEach(function(pane) {
               var scroll = pane.querySelector('.oc-mega__sub-scroll');
@@ -462,7 +466,6 @@
             });
           });
 
-          // 5. Drawer Toggle Logic
           var hoverTimer = null;
           
           function openMegaMenu(triggerNode) {
@@ -521,6 +524,8 @@
   --oc-radius-pill: 999px;
 }
 
+.menu-list__link-title { font-size: var(--oc-top-menu-font-size, inherit); }
+
 .header__drawer { --header-drawer-min-height: 60px; display: flex; min-height: var(--header-drawer-min-height); align-items: center; }
 #header-component[data-menu-style='drawer'] .header__drawer { display: flex; min-height: var(--header-drawer-min-height); }
 @media screen and (min-width: 750px) { #header-component[data-menu-style='menu'] .header__drawer { display: none; min-height: 0; } }
@@ -552,26 +557,26 @@
 /* ── COL 1 ── */
 .oc-mega__cats-head, .oc-mega__sub-head, .oc-mega__prod-head { font-family: var(--menu-top-level-font-family); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--oc-ink-40); padding: 14px 20px 10px; border-bottom: 1px solid var(--oc-ink-15); flex-shrink: 0; margin: 0; display:flex; align-items:center; gap:6px;}
 .oc-mega__prod-head svg { width: 13px; height: 13px; stroke: var(--oc-purple); fill: none; stroke-width: 2; }
-.oc-mega__cats { width: 200px; min-width: 200px; background: var(--oc-ink-05); border-right: 1px solid var(--oc-ink-15); display: flex; flex-direction: column; }
+.oc-mega__cats { width: var(--oc-col0-width); min-width: var(--oc-col0-width); background: var(--oc-ink-05); border-right: 1px solid var(--oc-ink-15); display: flex; flex-direction: column; }
 .oc-mega__cats-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 6px 0; }
-.oc-mega__cat { display: flex; align-items: center; gap: 10px; padding: 11px 14px 11px 18px; cursor: pointer; color: var(--oc-ink-70); font-size: 13.5px; font-weight: 500; transition: background 0.12s, color 0.12s; position: relative; border: 0; background: transparent; width: 100%; text-align: left; font-family: inherit;}
+.oc-mega__cat { display: flex; align-items: center; gap: 10px; padding: 11px 14px 11px 18px; cursor: pointer; color: var(--oc-ink-70); font-size: var(--oc-l0-font-size); font-weight: 500; transition: background 0.12s, color 0.12s; position: relative; border: 0; background: transparent; width: 100%; text-align: left; font-family: inherit;}
 .oc-mega__cat:hover, .oc-mega__cat.active { background: #fff; color: var(--oc-ink); }
 .oc-mega__cat.active { color: var(--oc-cyan); font-weight: 600; }
 .oc-mega__cat.active::before { content: ''; position: absolute; left: 0; top: 6px; bottom: 6px; width: 3px; border-radius: 0 3px 3px 0; background: linear-gradient(180deg, var(--oc-cyan-vv), var(--oc-cyan)); }
-.oc-mega__cat-ico { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; }
+.oc-mega__cat-ico { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; }
 .oc-mega__cat-ico svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .oc-mega__cat.active .oc-mega__cat-ico svg { stroke: var(--oc-cyan); }
 .oc-mega__cat-arrow { margin-left: auto; width: 12px; height: 12px; opacity: 0; transform: translateX(-3px); transition: opacity 0.15s, transform 0.15s; }
 .oc-mega__cat.active .oc-mega__cat-arrow { opacity: 0.4; transform: translateX(0); }
 
 /* ── COL 2 ── */
-.oc-mega__subs { width: 260px; min-width: 260px; border-right: 1px solid var(--oc-ink-15); display: flex; flex-direction: column; overflow: hidden; }
+.oc-mega__subs { width: var(--oc-col1-width); min-width: var(--oc-col1-width); border-right: 1px solid var(--oc-ink-15); display: flex; flex-direction: column; overflow: hidden; }
 .oc-mega__sub-pane { display: none; flex-direction: column; flex: 1; min-height: 0; }
 .oc-mega__sub-pane.active { display: flex; }
 .oc-mega__sub-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 6px 8px; scrollbar-width: thin; scrollbar-color: rgba(20,201,223,0.25) transparent; }
 .oc-mega__sub-pane.has-scroll .oc-mega__sub-scroll { mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%); -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%); }
 .oc-mega__sub-pane.scrolled-end .oc-mega__sub-scroll { mask-image: none; -webkit-mask-image: none; }
-.oc-mega__sub { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: var(--oc-ink-70); font-size: 13px; font-weight: 500; transition: background 0.12s, color 0.12s, transform 0.12s; }
+.oc-mega__sub { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: var(--oc-ink-70); font-size: var(--oc-l1-font-size); font-weight: 500; transition: background 0.12s, color 0.12s, transform 0.12s; }
 .oc-mega__sub:hover { background: rgba(20,201,223,0.05); color: var(--oc-ink); transform: translateX(2px); }
 .oc-mega__sub-dot { width: 5px; height: 5px; min-width: 5px; border-radius: 999px; background: var(--oc-ink-15); transition: background 0.12s, transform 0.12s; }
 .oc-mega__sub:hover .oc-mega__sub-dot { background: var(--oc-cyan); transform: scale(1.4); }
@@ -590,13 +595,13 @@
 .oc-mega__prod-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; align-content: start; }
 .oc-mega__card { display: flex; flex-direction: column; align-items: center; border-radius: 8px; overflow: hidden; border: 1px solid var(--oc-ink-15); text-decoration: none; color: var(--oc-ink-70); transition: border-color 0.18s, box-shadow 0.18s, background 0.15s; background: #fff; }
 .oc-mega__card:hover { border-color: rgba(20,201,223,0.3); box-shadow: 0 2px 10px rgba(20,201,223,0.08); background: rgba(20,201,223,0.02); }
-.oc-mega__card-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; background: var(--oc-ink-05); }
+.oc-mega__card-img { width: 100%; height: var(--oc-thumb-height); object-fit: cover; display: block; background: var(--oc-ink-05); }
 .oc-mega__card-body { padding: 6px 8px; width: 100%; }
-.oc-mega__card-name { font-size: 11px; font-weight: 600; color: var(--oc-ink); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.oc-mega__card-name { font-size: var(--oc-thumb-title-size); font-weight: 600; color: var(--oc-ink); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
 /* Pill Grid */
 .oc-mega__pill-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--oc-ink-15); }
-.oc-mega__pill { display: inline-flex; align-items: center; padding: 6px 14px; background: var(--oc-ink-05); border: 1px solid var(--oc-ink-15); border-radius: var(--oc-radius-pill); font-size: 11px; font-weight: 500; color: var(--oc-ink-70); text-decoration: none; transition: all 0.15s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.oc-mega__pill { display: inline-flex; align-items: center; padding: 6px 14px; background: var(--oc-ink-05); border: 1px solid var(--oc-ink-15); border-radius: var(--oc-radius-pill); font-size: var(--oc-thumb-title-size); font-weight: 500; color: var(--oc-ink-70); text-decoration: none; transition: all 0.15s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 .oc-mega__pill:hover { background: rgba(20,201,223,0.06); border-color: rgba(20,201,223,0.3); color: var(--oc-cyan); }
 
 /* ── Animation Classes ── */
@@ -642,7 +647,7 @@
     },
     {
       "type": "paragraph",
-      "content": "จับคู่ Collection Handle เพื่อแสดง SVG. หากเว้นว่างไว้จะใช้ไอคอน Default"
+      "content": "จับคู่ Collection Handle เพื่อแสดงรูปภาพหรือ SVG. หากเว้นว่างไว้จะใช้ไอคอน Default"
     },
     {
       "type": "text",
@@ -650,9 +655,9 @@
       "label": "Icon 1 - Collection Handle"
     },
     {
-      "type": "html",
-      "id": "icon_1_svg",
-      "label": "Icon 1 - SVG Code"
+      "type": "image_picker",
+      "id": "icon_1_image",
+      "label": "Icon 1 - Image (SVG/PNG)"
     },
     {
       "type": "text",
@@ -660,9 +665,9 @@
       "label": "Icon 2 - Collection Handle"
     },
     {
-      "type": "html",
-      "id": "icon_2_svg",
-      "label": "Icon 2 - SVG Code"
+      "type": "image_picker",
+      "id": "icon_2_image",
+      "label": "Icon 2 - Image (SVG/PNG)"
     },
     {
       "type": "text",
@@ -670,9 +675,9 @@
       "label": "Icon 3 - Collection Handle"
     },
     {
-      "type": "html",
-      "id": "icon_3_svg",
-      "label": "Icon 3 - SVG Code"
+      "type": "image_picker",
+      "id": "icon_3_image",
+      "label": "Icon 3 - Image (SVG/PNG)"
     },
     {
       "type": "text",
@@ -680,9 +685,9 @@
       "label": "Icon 4 - Collection Handle"
     },
     {
-      "type": "html",
-      "id": "icon_4_svg",
-      "label": "Icon 4 - SVG Code"
+      "type": "image_picker",
+      "id": "icon_4_image",
+      "label": "Icon 4 - Image (SVG/PNG)"
     },
     {
       "type": "text",
@@ -690,9 +695,9 @@
       "label": "Icon 5 - Collection Handle"
     },
     {
-      "type": "html",
-      "id": "icon_5_svg",
-      "label": "Icon 5 - SVG Code"
+      "type": "image_picker",
+      "id": "icon_5_image",
+      "label": "Icon 5 - Image (SVG/PNG)"
     },
     {
       "type": "text",
@@ -700,9 +705,9 @@
       "label": "Icon 6 - Collection Handle"
     },
     {
-      "type": "html",
-      "id": "icon_6_svg",
-      "label": "Icon 6 - SVG Code"
+      "type": "image_picker",
+      "id": "icon_6_image",
+      "label": "Icon 6 - Image (SVG/PNG)"
     },
     {
       "type": "header",
