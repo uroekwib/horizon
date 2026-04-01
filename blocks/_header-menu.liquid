@@ -549,7 +549,17 @@
       });
 
       var hoverTimer = null;
-      function openMegaMenu(triggerNode) { clearTimeout(hoverTimer); if (triggerNode.getAttribute('aria-expanded') === 'true') return; triggerNode.setAttribute('aria-expanded', 'true'); if (overlay) overlay.classList.add('active'); document.querySelector('.oc-header')?.classList.add('has-shadow'); }
+     function openMegaMenu(triggerNode) {
+  clearTimeout(hoverTimer);
+  if (triggerNode.getAttribute('aria-expanded') === 'true') return;
+  triggerNode.setAttribute('aria-expanded', 'true');
+  if (overlay) overlay.classList.add('active');
+  document.querySelector('.oc-header')?.classList.add('has-shadow');
+  // reset ให้ activateFirstSubInPane re-trigger ทุกครั้งที่เปิด
+  // ไม่ hit network ซ้ำเพราะ _cache ยังอยู่
+  activeSubHandle = null;
+  activateFirstSubInPane(activeCat);
+}
       function closeMegaMenu(triggerNode) { hoverTimer = setTimeout(function () { triggerNode.setAttribute('aria-expanded', 'false'); if (overlay) overlay.classList.remove('active'); }, 180); }
 
       triggers.forEach(function (trigger) {
