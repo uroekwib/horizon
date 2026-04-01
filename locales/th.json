@@ -9,6 +9,22 @@
  */
 {
   "blocks": {
+     "menu": {
+    "mega_cats_heading": "หมวดสินค้า",
+    "mega_loading": "กำลังเตรียมข้อมูล...",
+    "mega_loading_cat": "กำลังโหลดสินค้าในหมวด",
+    "mega_featured_heading": "สินค้าแนะนำ",
+    "mega_see_all": "ดูทั้งหมด",
+    "mega_view_all_prefix": "ดู",
+    "mega_empty_title": "ยังไม่มีสินค้าในหมวดนี้",
+    "mega_empty_desc": "สามารถกดดูทั้งหมดเพื่อดูสินค้าเพิ่มเติมได้",
+    "mega_empty_no_sub": "ยังไม่มีหมวดย่อยในส่วนนี้",
+    "mega_empty_no_sub_desc": "สามารถกดดูทั้งหมดเพื่อเข้าสู่หน้าหมวดหลักได้",
+    "mega_no_featured_title": "ยังไม่มีสินค้าแนะนำในหมวดนี้",
+    "mega_no_featured_desc": "กดดูทั้งหมดเพื่อดูสินค้าในหมวดนี้เพิ่มเติม",
+    "mega_error_title": "โหลดสินค้าไม่สำเร็จ",
+    "mega_error_desc": "ลองเลือกหมวดใหม่อีกครั้ง หรือกดดูทั้งหมดได้เลย"
+  },
     "load_video": "โหลดวิดีโอ: {{ description }}",
     "sold_out": "ขายหมดแล้ว",
     "email_signup": {
