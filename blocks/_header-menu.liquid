@@ -333,16 +333,21 @@
     }
 
     function fetchProducts(handle, limit) {
-      if (!handle) return Promise.resolve([]);
-      var cacheKey = handle + '::' + limit;
-      if (Array.isArray(_cache[cacheKey])) return Promise.resolve(_cache[cacheKey]);
-      if (_cache[cacheKey] && typeof _cache[cacheKey].then === 'function') return _cache[cacheKey];
-      _cache[cacheKey] = fetch('/collections/' + encodeURIComponent(handle) + '/products.json?limit=' + encodeURIComponent(limit), { credentials: 'same-origin' })
-        .then(function (res) { if (!res.ok) throw new Error('Fetch failed'); return res.json(); })
-        .then(function (data) { var products = Array.isArray(data.products) ? data.products : []; _cache[cacheKey] = products; return products; })
-        .catch(function () { _cache[cacheKey] = []; return []; });
-      return _cache[cacheKey];
-    }
+  if (!handle) return Promise.resolve([]);
+  var cacheKey = handle + '::' + limit;
+  if (Array.isArray(_cache[cacheKey])) return Promise.resolve(_cache[cacheKey]);
+  if (_cache[cacheKey] && typeof _cache[cacheKey].then === 'function') return _cache[cacheKey];
+
+  // ── อ่าน locale จาก <html lang="en"> หรือ URL path ──
+  var lang = document.documentElement.lang || '';
+  var localePart = (lang && lang !== 'th') ? '/' + lang.split('-')[0] : '';
+
+  _cache[cacheKey] = fetch(localePart + '/collections/' + encodeURIComponent(handle) + '/products.json?limit=' + encodeURIComponent(limit), { credentials: 'same-origin' })
+    .then(function (res) { if (!res.ok) throw new Error('Fetch failed'); return res.json(); })
+    .then(function (data) { var products = Array.isArray(data.products) ? data.products : []; _cache[cacheKey] = products; return products; })
+    .catch(function () { _cache[cacheKey] = []; return []; });
+  return _cache[cacheKey];
+}
 
     function initV4MegaMenu() {
       if (!isDesktopMenu()) return;
