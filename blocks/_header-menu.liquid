@@ -51,205 +51,236 @@
       endcase
     %}
 
-    {% capture children %}
-      {% for link in block_settings.menu.links %}
-        <li
-          class="menu-list__list-item"
-          role="presentation"
-          on:focus="/activate"
-          on:blur="/deactivate"
+   {% capture fixed_children %}
+  {% for link in block_settings.menu.links %}
+    {% assign is_fixed_mega = false %}
+    {% if link.title == 'สินค้าและบริการ' and link.links != blank %}
+      {% assign is_fixed_mega = true %}
+    {% endif %}
+
+    {% if is_fixed_mega %}
+      <li
+        class="menu-list__list-item menu-list__list-item--fixed-mega"
+        role="presentation"
+        on:focus="/activate"
+        on:blur="/deactivate"
+      >
+        <button
+          type="button"
+          data-skip-node-update="true"
+          class="menu-list__link button-unstyled{% if link.active %} menu-list__link--active{% endif %} oc-nav-trigger"
+          aria-controls="submenu-fixed-mega"
+          aria-haspopup="true"
+          aria-expanded="false"
+          ref="menuitem"
         >
-          {% assign is_mega_toggle_only = false %}
-          {% if link.title == 'สินค้าและบริการ' and link.links != blank %}
-            {% assign is_mega_toggle_only = true %}
-          {% endif %}
+          <span class="menu-list__link-title">{{- link.title -}}</span>
+        </button>
 
-          {% if is_mega_toggle_only %}
-            <button
-              type="button"
-              data-skip-node-update="true"
-              class="menu-list__link button-unstyled{% if link.active %} menu-list__link--active{% endif %} oc-nav-trigger"
-              aria-controls="submenu-{{ forloop.index }}"
-              aria-haspopup="true"
-              aria-expanded="false"
-              ref="menuitem"
-            >
-              <span class="menu-list__link-title">{{- link.title -}}</span>
-              <svg class="oc-nav__chev" viewBox="0 0 1 1" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:1px; height:1px; margin-left:4px; opacity:0.5; transition: transform 0.25s;"><path d="M6 9l6 6 6-6"/></svg>
-            </button>
-          {% else %}
-            <a
-              href="{{ link.url }}"
-              data-skip-node-update="true"
-              class="menu-list__link{% if link.active %} menu-list__link--active{% endif %}"
-              {% if link.links != blank %}
-                aria-controls="submenu-{{ forloop.index }}"
-                aria-haspopup="true"
-                aria-expanded="false"
-              {% endif %}
-              {% if link.current %}aria-current="page"{% endif %}
-              ref="menuitem"
-            >
-              <span class="menu-list__link-title">{{- link.title -}}</span>
-            </a>
-          {% endif %}
+        <div class="menu-list__submenu oc-v4-submenu-container {{ color_scheme_classes }}" ref="submenu[]">
+          <div
+            id="submenu-fixed-mega"
+            class="menu-list__submenu-inner oc-mega-wrapper {{ page_width_class }}"
+          >
+            <div class="oc-mega__wrap" 
+                 style="
+                   --oc-col0-width: {{ block_settings.col0_width | default: 230 }}px;
+                   --oc-col1-width: {{ block_settings.col1_width | default: 230 }}px;
+                   --oc-l0-font-size: {{ block_settings.l0_font_size | default: 13.5 }}px;
+                   --oc-l1-font-size: {{ block_settings.l1_font_size | default: 13 }}px;
+                   --oc-thumb-height: {{ block_settings.thumb_height | default: 96 }}px;
+                   --oc-thumb-title-size: {{ block_settings.thumb_title_font_size | default: 11 }}px;
+                   --oc-drawer-min-height: {{ block_settings.drawer_min_height | default: 420 }}px;
+                 "
+                 data-thumb-count="{{ block_settings.mega_thumb_count | default: 4 }}"
+                 data-pill-count="{{ block_settings.mega_pill_count | default: 4 }}"
+                 data-product-limit="{{ block_settings.mega_thumb_count | plus: block_settings.mega_pill_count | default: 8 }}"
+                 data-img-width="{{ block_settings.thumb_image_width | default: 160 }}">
+              <div class="oc-mega__panel">
 
-          {% if link.links != blank and is_mega_toggle_only %}
-            <div class="menu-list__submenu oc-v4-submenu-container {{ color_scheme_classes }}" ref="submenu[]">
-              <div
-                id="submenu-{{ forloop.index }}"
-                class="menu-list__submenu-inner oc-mega-wrapper {{ page_width_class }}"
-              >
-                <div class="oc-mega__wrap" 
-                     style="
-                       --oc-col0-width: {{ block_settings.col0_width | default: 230 }}px;
-                       --oc-col1-width: {{ block_settings.col1_width | default: 230 }}px;
-                       --oc-l0-font-size: {{ block_settings.l0_font_size | default: 13.5 }}px;
-                       --oc-l1-font-size: {{ block_settings.l1_font_size | default: 13 }}px;
-                       --oc-thumb-height: {{ block_settings.thumb_height | default: 96 }}px;
-                       --oc-thumb-title-size: {{ block_settings.thumb_title_font_size | default: 11 }}px;
-                       --oc-drawer-min-height: {{ block_settings.drawer_min_height | default: 420 }}px;
-                     "
-                     data-thumb-count="{{ block_settings.mega_thumb_count | default: 4 }}"
-                     data-pill-count="{{ block_settings.mega_pill_count | default: 4 }}"
-                     data-product-limit="{{ block_settings.mega_thumb_count | plus: block_settings.mega_pill_count | default: 8 }}"
-                     data-img-width="{{ block_settings.thumb_image_width | default: 160 }}">
-                  <div class="oc-mega__panel">
+                <div class="oc-mega__cats">
+                  <div class="oc-mega__cats-head">หมวดสินค้า</div>
+                  <div class="oc-mega__cats-scroll">
+                    {% for l0 in link.links %}
+                      {%- liquid
+                        assign l0_coll = l0.object
+                        assign l0_handle = l0.handle
+                        if l0_coll != blank
+                          assign l0_handle = l0_coll.handle
+                        endif
 
-                    <div class="oc-mega__cats">
-                      <div class="oc-mega__cats-head">หมวดสินค้า</div>
-                      <div class="oc-mega__cats-scroll">
-                        {% for l0 in link.links %}
-                          {%- liquid
-                            assign l0_coll = l0.object
-                            assign l0_handle = l0.handle
-                            if l0_coll != blank
-                              assign l0_handle = l0_coll.handle
+                        assign custom_icon_image = blank
+                        case forloop.index
+                          when 1
+                            if block_settings.icon_1_image != blank
+                              assign custom_icon_image = block_settings.icon_1_image
                             endif
+                          when 2
+                            if block_settings.icon_2_image != blank
+                              assign custom_icon_image = block_settings.icon_2_image
+                            endif
+                          when 3
+                            if block_settings.icon_3_image != blank
+                              assign custom_icon_image = block_settings.icon_3_image
+                            endif
+                          when 4
+                            if block_settings.icon_4_image != blank
+                              assign custom_icon_image = block_settings.icon_4_image
+                            endif
+                          when 5
+                            if block_settings.icon_5_image != blank
+                              assign custom_icon_image = block_settings.icon_5_image
+                            endif
+                          when 6
+                            if block_settings.icon_6_image != blank
+                              assign custom_icon_image = block_settings.icon_6_image
+                            endif
+                          when 7
+                            if block_settings.icon_7_image != blank
+                              assign custom_icon_image = block_settings.icon_7_image
+                            endif
+                        endcase
+                      -%}
+                      <button class="oc-mega__cat{% if forloop.first %} active{% endif %}" data-cat="{{ l0_handle }}" data-url="{{ l0.url }}">
+                        {%- if custom_icon_image != blank -%}
+                          <span class="oc-mega__cat-ico">
+                            <img src="{{ custom_icon_image | image_url: width: 48 }}" alt="{{ l0.title }}" width="20" height="20" loading="lazy" style="object-fit: contain;">
+                          </span>
+                        {%- endif -%}
+                        {{- l0.title -}}
+                        <svg class="oc-mega__cat-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                      </button>
+                    {% endfor %}
+                  </div>
+                </div>
 
-                            assign custom_icon_image = blank
-                            case forloop.index
-                              when 1
-                                if block_settings.icon_1_image != blank
-                                  assign custom_icon_image = block_settings.icon_1_image
-                                endif
-                              when 2
-                                if block_settings.icon_2_image != blank
-                                  assign custom_icon_image = block_settings.icon_2_image
-                                endif
-                              when 3
-                                if block_settings.icon_3_image != blank
-                                  assign custom_icon_image = block_settings.icon_3_image
-                                endif
-                              when 4
-                                if block_settings.icon_4_image != blank
-                                  assign custom_icon_image = block_settings.icon_4_image
-                                endif
-                              when 5
-                                if block_settings.icon_5_image != blank
-                                  assign custom_icon_image = block_settings.icon_5_image
-                                endif
-                              when 6
-                                if block_settings.icon_6_image != blank
-                                  assign custom_icon_image = block_settings.icon_6_image
-                                endif
-                              when 7
-                                if block_settings.icon_7_image != blank
-                                  assign custom_icon_image = block_settings.icon_7_image
-                                endif
-                            endcase
-                          -%}
-                          <button class="oc-mega__cat{% if forloop.first %} active{% endif %}" data-cat="{{ l0_handle }}" data-url="{{ l0.url }}">
-                            {%- if custom_icon_image != blank -%}
-                              <span class="oc-mega__cat-ico">
-                                <img src="{{ custom_icon_image | image_url: width: 48 }}" alt="{{ l0.title }}" width="20" height="20" loading="lazy" style="object-fit: contain;">
-                              </span>
-                            {%- endif -%}
-                            {{- l0.title -}}
-                            <svg class="oc-mega__cat-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-                          </button>
-                        {% endfor %}
+                <div class="oc-mega__subs">
+                  {% for l0 in link.links %}
+                    {%- liquid
+                      assign l0_coll = l0.object
+                      assign l0_handle = l0.handle
+                      assign subcols = blank
+                      assign has_meta = false
+
+                      if l0_coll != blank
+                        assign l0_handle = l0_coll.handle
+                        assign subcols = l0_coll.metafields.custom.subcol_megamenu.value
+                      endif
+
+                      if subcols != blank and subcols.size > 0
+                        assign has_meta = true
+                      endif
+                    -%}
+
+                    <div class="oc-mega__sub-pane{% if forloop.first %} active{% endif %}" data-pane="{{ l0_handle }}">
+                      <div class="oc-mega__sub-head">{{ l0.title }}</div>
+                      <div class="oc-mega__sub-scroll">
+                        {% if has_meta %}
+                          {% for subcol in subcols %}
+                            <a href="{{ subcol.url }}" class="oc-mega__sub" data-sub="{{ subcol.handle }}">
+                              <span class="oc-mega__sub-dot"></span>{{- subcol.title -}}
+                            </a>
+                          {% endfor %}
+                        {% else %}
+                          {% for l1 in l0.links %}
+                            {%- liquid
+                              assign l1_coll = l1.object
+                              assign l1_handle = l1.handle
+                              if l1_coll != blank
+                                assign l1_handle = l1_coll.handle
+                              endif
+                            -%}
+                            <a href="{{ l1.url }}" class="oc-mega__sub" data-sub="{{ l1_handle }}">
+                              <span class="oc-mega__sub-dot"></span>{{- l1.title -}}
+                            </a>
+                          {% endfor %}
+                        {% endif %}
                       </div>
+                      <a href="{{ l0.url }}" class="oc-mega__sub-seeall">ดูทั้งหมด <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
                     </div>
+                  {% endfor %}
+                </div>
 
-                    <div class="oc-mega__subs">
-                      {% for l0 in link.links %}
-                        {%- liquid
-                          assign l0_coll = l0.object
-                          assign l0_handle = l0.handle
-                          assign subcols = blank
-                          assign has_meta = false
-
-                          if l0_coll != blank
-                            assign l0_handle = l0_coll.handle
-                            assign subcols = l0_coll.metafields.custom.subcol_megamenu.value
-                          endif
-
-                          if subcols != blank and subcols.size > 0
-                            assign has_meta = true
-                          endif
-                        -%}
-
-                        <div class="oc-mega__sub-pane{% if forloop.first %} active{% endif %}" data-pane="{{ l0_handle }}">
-                          <div class="oc-mega__sub-head">{{ l0.title }}</div>
-                          <div class="oc-mega__sub-scroll">
-                            {% if has_meta %}
-                              {% for subcol in subcols %}
-                                <a href="{{ subcol.url }}" class="oc-mega__sub" data-sub="{{ subcol.handle }}">
-                                  <span class="oc-mega__sub-dot"></span>{{- subcol.title -}}
-                                </a>
-                              {% endfor %}
-                            {% else %}
-                              {% for l1 in l0.links %}
-                                {%- liquid
-                                  assign l1_coll = l1.object
-                                  assign l1_handle = l1.handle
-                                  if l1_coll != blank
-                                    assign l1_handle = l1_coll.handle
-                                  endif
-                                -%}
-                                <a href="{{ l1.url }}" class="oc-mega__sub" data-sub="{{ l1_handle }}">
-                                  <span class="oc-mega__sub-dot"></span>{{- l1.title -}}
-                                </a>
-                              {% endfor %}
-                            {% endif %}
-                          </div>
-                          <a href="{{ l0.url }}" class="oc-mega__sub-seeall">ดูทั้งหมด <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
-                        </div>
-                      {% endfor %}
+                <div class="oc-mega__products" id="ocMegaProductsBox" aria-busy="false">
+                  <div class="oc-mega__prod-pane active">
+                    <div class="oc-mega__prod-head"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> สินค้าแนะนำ</div>
+                    <div class="oc-mega__prod-scroll" id="ocMegaProductsScroll">
+                      <div class="oc-mega__loading-skeleton" style="padding:20px; text-align:center; color: var(--oc-ink-40); font-size:12px;">กำลังเตรียมข้อมูล...</div>
                     </div>
-
-                    <div class="oc-mega__products" id="ocMegaProductsBox" aria-busy="false">
-                      <div class="oc-mega__prod-pane active">
-                        <div class="oc-mega__prod-head"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> สินค้าแนะนำ</div>
-                        <div class="oc-mega__prod-scroll" id="ocMegaProductsScroll">
-                          <div class="oc-mega__loading-skeleton" style="padding:20px; text-align:center; color: var(--oc-ink-40); font-size:12px;">กำลังเตรียมข้อมูล...</div>
-                        </div>
-                        <a href="#" class="oc-mega__prod-viewall" id="ocMegaProductsViewAll">ดูทั้งหมด <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
-                      </div>
-                    </div>
-
+                    <a href="#" class="oc-mega__prod-viewall" id="ocMegaProductsViewAll">ดูทั้งหมด <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
                   </div>
                 </div>
 
               </div>
             </div>
-          {% endif %}
-        </li>
-      {% endfor %}
 
+          </div>
+        </div>
+      </li>
+    {% endif %}
+  {% endfor %}
+{% endcapture %}
+
+{% capture overflow_children %}
+  {% for link in block_settings.menu.links %}
+    {% assign is_fixed_mega = false %}
+    {% if link.title == 'สินค้าและบริการ' and link.links != blank %}
+      {% assign is_fixed_mega = true %}
+    {% endif %}
+
+    {% unless is_fixed_mega %}
       <li
         class="menu-list__list-item"
         role="presentation"
-        slot="more"
         on:focus="/activate"
         on:blur="/deactivate"
       >
-        <button role="listitem" class="menu-list__link button-unstyled">
-          <span class="menu-list__link-title">{{ 'actions.more' | t }}</span>
-        </button>
+        <a
+          href="{{ link.url }}"
+          data-skip-node-update="true"
+          class="menu-list__link{% if link.active %} menu-list__link--active{% endif %}"
+          {% if link.links != blank %}
+            aria-controls="submenu-{{ forloop.index }}"
+            aria-haspopup="true"
+            aria-expanded="false"
+          {% endif %}
+          {% if link.current %}aria-current="page"{% endif %}
+          ref="menuitem"
+        >
+          <span class="menu-list__link-title">{{- link.title -}}</span>
+        </a>
+
+        {% if link.links != blank %}
+          <div class="menu-list__submenu {{ color_scheme_classes }}" ref="submenu[]">
+            <div id="submenu-{{ forloop.index }}" class="menu-list__submenu-inner">
+              <ul class="list-unstyled">
+                {% for child_link in link.links %}
+                  <li>
+                    <a href="{{ child_link.url }}" class="menu-list__link{% if child_link.current %} menu-list__link--active{% endif %}">
+                      {{ child_link.title }}
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        {% endif %}
       </li>
-    {% endcapture %}
+    {% endunless %}
+  {% endfor %}
+
+  <li
+    class="menu-list__list-item"
+    role="presentation"
+    slot="more"
+    on:focus="/activate"
+    on:blur="/deactivate"
+  >
+    <button role="listitem" class="menu-list__link button-unstyled">
+      <span class="menu-list__link-title">{{ 'actions.more' | t }}</span>
+    </button>
+  </li>
+{% endcapture %}
 
     <header-menu
       ref="headerMenu"
@@ -258,24 +289,28 @@
       data-hydration-key="header-menu"
     >
       <div class="header-menu__inner">
-        <nav
-          class="menu-list"
-          aria-label="{{ 'accessibility.header_navigation_label' | t }}"
-          style="
-            {% render 'menu-font-styles', settings: block_settings %}
-            --oc-top-menu-font-size: {{ block_settings.top_menu_font_size | default: 16 }}px;
-          "
-        >
-          {% assign overflow_class = 'overflow-menu' | append: color_scheme_classes %}
-          {% render 'overflow-list',
-            class: overflow_class,
-            ref: 'overflowMenu',
-            children: children,
-            minimum-items: 2,
-            data-testid: 'header-menu-overflow-list',
-            attributes: 'data-skip-node-update'
-          %}
-        </nav>
+      <nav
+  class="menu-list oc-menu-list-split"
+  aria-label="{{ 'accessibility.header_navigation_label' | t }}"
+  style="
+    {% render 'menu-font-styles', settings: block_settings %}
+    --oc-top-menu-font-size: {{ block_settings.top_menu_font_size | default: 16 }}px;
+  "
+>
+  <ul class="menu-list__fixed list-unstyled" role="list">
+    {{ fixed_children }}
+  </ul>
+
+  {% assign overflow_class = 'overflow-menu' | append: color_scheme_classes %}
+  {% render 'overflow-list',
+    class: overflow_class,
+    ref: 'overflowMenu',
+    children: overflow_children,
+    minimum-items: 2,
+    data-testid: 'header-menu-overflow-list',
+    attributes: 'data-skip-node-update'
+  %}
+</nav>
       </div>
       <script src="{{ 'header-menu.js' | asset_url }}" type="module" fetchpriority="low"></script>
     </header-menu>
@@ -661,6 +696,37 @@
 .oc-mega__empty-desc { font-size: 12px; color: var(--oc-ink-40); }
 @keyframes oc-skeleton-wave { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
+.oc-menu-list-split {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  min-width: 0;
+}
+
+.menu-list__fixed {
+  display: flex;
+  align-items: stretch;
+  flex: 0 0 auto;
+  min-width: max-content;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.menu-list__list-item--fixed-mega {
+  flex: 0 0 auto;
+}
+
+.menu-list__list-item--fixed-mega > .menu-list__link,
+.menu-list__list-item--fixed-mega > .button-unstyled {
+  white-space: nowrap;
+}
+
+.oc-menu-list-split > overflow-list,
+.oc-menu-list-split > .overflow-menu {
+  flex: 1 1 auto;
+  min-width: 0;
+}
 
 {% endstylesheet %}
 
