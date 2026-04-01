@@ -46,7 +46,7 @@ class HeaderMenu extends Component {
 
 
   #overflowSubmenuListener = () => {
-    this.#deactivate();
+    this.dataset.overflowExpanded = 'false';
   };
 
   /**
