@@ -126,23 +126,7 @@
                               assign l0_handle = l0_coll.handle
                             endif
 
-                            # Check for custom Image/SVG from Schema
-                            assign custom_icon_image = blank
-                            if l0_handle == block_settings.icon_1_handle and block_settings.icon_1_image != blank
-                              assign custom_icon_image = block_settings.icon_1_image
-                            elsif l0_handle == block_settings.icon_2_handle and block_settings.icon_2_image != blank
-                              assign custom_icon_image = block_settings.icon_2_image
-                            elsif l0_handle == block_settings.icon_3_handle and block_settings.icon_3_image != blank
-                              assign custom_icon_image = block_settings.icon_3_image
-                            elsif l0_handle == block_settings.icon_4_handle and block_settings.icon_4_image != blank
-                              assign custom_icon_image = block_settings.icon_4_image
-                            elsif l0_handle == block_settings.icon_5_handle and block_settings.icon_5_image != blank
-                              assign custom_icon_image = block_settings.icon_5_image
-                            elsif l0_handle == block_settings.icon_6_handle and block_settings.icon_6_image != blank
-                              assign custom_icon_image = block_settings.icon_6_image
-                            elsif l0_handle == block_settings.icon_7_handle and block_settings.icon_7_image != blank
-                              assign custom_icon_image = block_settings.icon_7_image
-                            endif
+                           
                           -%}
                           <button class="oc-mega__cat{% if forloop.first %} active{% endif %}" data-cat="{{ l0_handle }}" data-url="{{ l0.url }}">
                            {%- if custom_icon_image != blank -%}
