@@ -385,11 +385,3 @@ if (!customElements.get('overflow-list')) {
   customElements.define('overflow-list', OverflowList);
 }
 
-// ปิดการแสดง "เพิ่มเติม" (moreSlot) และไม่ให้มันทำงาน
-const moreSlot = document.querySelector('[part="more"]');
-
-if (moreSlot) {
-  moreSlot.style.display = 'none'; // ซ่อนปุ่ม "เพิ่มเติม"
-  moreSlot.disabled = true; // ปิดไม่ให้คลิก
-  moreSlot.style.pointerEvents = 'none'; // ปิดการใช้งานการคลิก
-}
