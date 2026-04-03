@@ -21,7 +21,7 @@
   {% endif %}
 {% endfor %}
 
-{% assign initial_products_limit = block.settings.products_per_page %}
+{% assign initial_products_limit = block.settings.products_per_page | at_most: 15 %}
 {% assign rendered_count = 0 %}
 {% assign preload_image = blank %}
 
@@ -120,7 +120,7 @@
     white-space: nowrap;
     cursor: pointer;
     font-family: 'Google Sans', 'Noto Sans Thai', sans-serif;
-    transition: background 0.2s, box-shadow 0.2s, color 0.2s;
+    transition: background 0.2s;
   }
 
   .ocf__subpill-{{ ai_gen_id }}:hover {
@@ -150,10 +150,10 @@
     border-left: 2px solid #14c9df;
     padding-left: 16px;
     margin-left: 4px;
-    animation: ocf-fadein-{{ ai_gen_id }} 0.25s ease;
+    animation: ocf-fadein 0.25s ease;
   }
 
-  @keyframes ocf-fadein-{{ ai_gen_id }} {
+  @keyframes ocf-fadein {
     from { opacity: 0; transform: translateY(-4px); }
     to   { opacity: 1; transform: translateY(0); }
   }
@@ -222,6 +222,23 @@
     gap: {{ block.settings.product_grid_gap }}px;
   }
 
+  @media screen and (max-width: 749px) {
+    .ocf__grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat({{ block.settings.products_per_row_mobile }}, 1fr) !important;
+    }
+
+    .ocf__row-{{ ai_gen_id }} {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-bottom: 4px;
+    }
+
+    .ocf__row-{{ ai_gen_id }}::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
   .ocf__card-{{ ai_gen_id }} {
     display: flex;
     flex-direction: column;
@@ -232,7 +249,7 @@
     background: #f3f7fa;
     box-shadow: 0 2px 12px rgba(0,0,0,0.07);
     overflow: hidden;
-    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, opacity 0.25s ease;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
     border: 1.5px solid transparent;
   }
 
@@ -295,101 +312,9 @@
     flex-shrink: 0;
   }
 
-  .ocf__loading-more-{{ ai_gen_id }} {
-    display: none;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    min-height: 52px;
-    color: rgba(0,0,0,0.58);
-    font-size: 13px;
-    margin-top: 10px;
-  }
-
-  .ocf__loading-more-{{ ai_gen_id }}.visible {
-    display: flex;
-  }
-
-  .ocf__loading-dot-{{ ai_gen_id }} {
-    width: 8px;
-    height: 8px;
-    border-radius: 999px;
-    background: #17a9bb;
-    opacity: 0.25;
-    animation: ocf-loading-dot-{{ ai_gen_id }} 1.2s infinite ease-in-out;
-  }
-
-  .ocf__loading-dot-{{ ai_gen_id }}:nth-child(2) {
-    animation-delay: 0.15s;
-  }
-
-  .ocf__loading-dot-{{ ai_gen_id }}:nth-child(3) {
-    animation-delay: 0.3s;
-  }
-
-  @keyframes ocf-loading-dot-{{ ai_gen_id }} {
-    0%, 80%, 100% {
-      transform: translateY(0);
-      opacity: 0.25;
-    }
-    40% {
-      transform: translateY(-4px);
-      opacity: 1;
-    }
-  }
-
-  .ocf__skeleton-{{ ai_gen_id }} {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .ocf__skeleton-box-{{ ai_gen_id }},
-  .ocf__skeleton-line-{{ ai_gen_id }} {
-    background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    animation: ocf-shimmer-{{ ai_gen_id }} 1.2s infinite;
-  }
-
-  .ocf__skeleton-box-{{ ai_gen_id }} {
-    aspect-ratio: 4 / 3;
-    border-radius: {{ block.settings.product_image_radius }}px;
-  }
-
-  .ocf__skeleton-line-{{ ai_gen_id }} {
-    height: 13px;
-    border-radius: 4px;
-  }
-
-  .ocf__skeleton-line-{{ ai_gen_id }}.is-title {
-    width: 68%;
-  }
-
-  .ocf__skeleton-line-{{ ai_gen_id }}.is-price {
-    width: 36%;
-    animation-delay: 0.12s;
-  }
-
-  @keyframes ocf-shimmer-{{ ai_gen_id }} {
+  @keyframes ocf-shimmer {
     0%   { background-position: 200% 0; }
     100% { background-position: -200% 0; }
-  }
-
-  @media screen and (max-width: 749px) {
-    .ocf__grid-{{ ai_gen_id }} {
-      grid-template-columns: repeat({{ block.settings.products_per_row_mobile }}, 1fr) !important;
-    }
-
-    .ocf__row-{{ ai_gen_id }} {
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      scrollbar-width: none;
-      padding-bottom: 4px;
-    }
-
-    .ocf__row-{{ ai_gen_id }}::-webkit-scrollbar {
-      display: none;
-    }
   }
 {% endstyle %}
 
@@ -512,10 +437,11 @@
 
             <div class="ocf__card-body-{{ ai_gen_id }}">
               <h3 class="ocf__card-title-{{ ai_gen_id }}">{{ product.title }}</h3>
-              <div class="ocf__card-price-{{ ai_gen_id }}">
-                {%- assign formatted_price = product.price | money_without_trailing_zeros -%}
-                {{ 'content.price_from' | t: price: formatted_price }}/{{ product.metafields.custom.product_price.value | default: product.metafields.custom.product_price | default: 'ชิ้น' }}
-              </div>
+             <div class="ocf__card-price-{{ ai_gen_id }}">
+  {%- assign formatted_price = product.price | money_without_trailing_zeros -%}
+  {{ 'content.price_from' | t: price: formatted_price }}/{{ product.metafields.custom.product_price.value | default: product.metafields.custom.product_price | default: 'ชิ้น' }}
+</div>
+
             </div>
           </a>
 
@@ -524,13 +450,6 @@
           {% endif %}
         {% endif %}
       {% endfor %}
-    </div>
-
-    <div class="ocf__loading-more-{{ ai_gen_id }}" data-loading-more>
-      <span class="ocf__loading-dot-{{ ai_gen_id }}"></span>
-      <span class="ocf__loading-dot-{{ ai_gen_id }}"></span>
-      <span class="ocf__loading-dot-{{ ai_gen_id }}"></span>
-      <span>กำลังโหลดสินค้าเพิ่มเติม...</span>
     </div>
   </div>
 </div>
@@ -565,9 +484,8 @@
   var sortEl = root.querySelector('[data-sort]');
   var viewBtns = root.querySelectorAll('[data-view]');
   var counter = root.querySelector('.ocf__counter-{{ ai_gen_id }}');
-  var loadingMore = root.querySelector('[data-loading-more]');
 
-  var perPage = parseInt(root.dataset.productsPerPage, 10) || 8;
+  var perPage = Math.min(parseInt(root.dataset.productsPerPage, 10) || 8, 8);
   var defCols = parseInt(root.dataset.desktopCols, 10) || 4;
   var initialCount = parseInt(root.dataset.initialCount, 10) || 0;
 
@@ -579,11 +497,7 @@
 
   var state = {
     handle: root.dataset.activeHandle || '',
-    sort: 'default',
-    page: Math.ceil(initialCount / perPage) + 1,
-    isLoading: false,
-    hasMore: initialCount >= perPage,
-    mode: 'initial'
+    sort: 'default'
   };
 
   var sortMap = {
@@ -594,16 +508,26 @@
     'created-desc': 'created-descending'
   };
 
+  var page = initialCount >= perPage ? 2 : 1;
+  var isLoading = false;
+  var hasMore = initialCount >= perPage;
+  var observer;
+
   function updateCounter(handle) {
     if (!counter) return;
     var total = countMap[handle];
     counter.textContent = total != null ? total + ' รายการ' : '';
   }
 
-  function escapeHtml(str) {
-    var div = document.createElement('div');
-    div.textContent = str || '';
-    return div.innerHTML;
+  function skeletonHTML() {
+    var radius = {{ block.settings.product_image_radius }};
+    return Array(Math.min(perPage, 4)).fill(null).map(function () {
+      return '<div style="display:flex;flex-direction:column;gap:10px;">'
+        + '<div style="aspect-ratio:4/3;border-radius:' + radius + 'px;background:linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%);background-size:200% 100%;animation:ocf-shimmer 1.2s infinite;"></div>'
+        + '<div style="height:13px;width:65%;border-radius:4px;background:linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%);background-size:200% 100%;animation:ocf-shimmer 1.2s infinite 0.08s;"></div>'
+        + '<div style="height:13px;width:35%;border-radius:4px;background:linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%);background-size:200% 100%;animation:ocf-shimmer 1.2s infinite 0.16s;"></div>'
+        + '</div>';
+    }).join('');
   }
 
   function buildResponsiveImageUrl(url, width) {
@@ -619,11 +543,17 @@
     }
   }
 
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.textContent = str || '';
+    return div.innerHTML;
+  }
+
   function formatPrice(price) {
-    return '฿' + new Intl.NumberFormat('th-TH', {
+    return new Intl.NumberFormat('th-TH', {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0
-    }).format(price);
+    }).format(price) + ' บาท';
   }
 
   function getImageHtml(img, title, eager, highPriority) {
@@ -648,6 +578,14 @@
       + '</div>';
   }
 
+  function formatPrice(price) {
+  return '฿' + new Intl.NumberFormat('th-TH', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  }).format(price);
+}
+
+
   function cardHTML(p, index, currentPage) {
     var imgObj = p.featured_image || (p.images && p.images[0]) || null;
     var img = '';
@@ -659,64 +597,44 @@
     }
 
     var price = p.variants && p.variants[0] ? parseFloat(p.variants[0].price) : 0;
-    if (!img || !price || price <= 0) return '';
+
+    if (!img || !price || price <= 0) {
+      return '';
+    }
 
     var title = escapeHtml(p.title);
     var eager = currentPage === 1 && index < 4;
     var highPriority = currentPage === 1 && index === 0;
     var priceFromTpl = root.dataset.i18nPriceFrom || 'เริ่มจาก __PRICE__';
 
-    return '<a href="/products/' + p.handle + '" class="ocf__card-{{ ai_gen_id }}">'
+
+     return '<a href="/products/' + p.handle + '" class="ocf__card-{{ ai_gen_id }}">'
       + getImageHtml(img, title, eager, highPriority)
       + '<div class="ocf__card-body-{{ ai_gen_id }}">'
       + '<h3 class="ocf__card-title-{{ ai_gen_id }}">' + title + '</h3>'
-      + '<div class="ocf__card-price-{{ ai_gen_id }}">' + priceFromTpl.replace('__PRICE__', formatPrice(price)) + '</div>'
+      + '<div class="ocf__card-price-{{ ai_gen_id }}">'
+      + priceFromTpl.replace('__PRICE__', formatPrice(price))
+      + '</div>'
       + '</div>'
       + '</a>';
-  }
 
-  function skeletonHTML(count) {
-    var total = Math.min(count || perPage, 4);
-    var html = '';
-    for (var i = 0; i < total; i += 1) {
-      html += '<div class="ocf__skeleton-{{ ai_gen_id }}">'
-        + '<div class="ocf__skeleton-box-{{ ai_gen_id }}"></div>'
-        + '<div class="ocf__skeleton-line-{{ ai_gen_id }} is-title"></div>'
-        + '<div class="ocf__skeleton-line-{{ ai_gen_id }} is-price"></div>'
-        + '</div>';
-    }
-    return html;
-  }
-
-  function showLoadingMore(show) {
-    if (!loadingMore) return;
-    loadingMore.classList.toggle('visible', !!show);
-  }
-
-  function resetStateForNewHandle() {
-    state.page = 1;
-    state.hasMore = true;
-    state.mode = 'reset';
   }
 
   async function loadProducts(reset) {
-    if (state.isLoading) return;
-    if (!state.handle || !state.hasMore) return;
-
-    state.isLoading = true;
+    if (isLoading) return;
 
     if (reset) {
-      resetStateForNewHandle();
-      grid.innerHTML = skeletonHTML(perPage);
-      showLoadingMore(false);
+      page = 1;
+      hasMore = true;
+      grid.innerHTML = skeletonHTML();
       updateCounter(state.handle);
-    } else {
-      showLoadingMore(true);
     }
 
-    var requestPage = state.page;
-    var url = '/collections/' + state.handle + '/products.json?limit=' + perPage + '&page=' + requestPage;
+    if (!state.handle || !hasMore) return;
 
+    isLoading = true;
+
+    var url = '/collections/' + state.handle + '/products.json?limit=' + perPage + '&page=' + page;
     if (sortMap[state.sort]) {
       url += '&sort_by=' + sortMap[state.sort];
     }
@@ -726,76 +644,65 @@
       if (!res.ok) throw new Error('Fetch failed');
 
       var data = await res.json();
-      var products = Array.isArray(data.products) ? data.products : [];
 
-      if (requestPage === 1) {
+      if (page === 1) {
         grid.innerHTML = '';
       }
 
-      if (!products.length) {
-        if (requestPage === 1) {
+      if (!data.products || !data.products.length) {
+        if (page === 1) {
           grid.innerHTML = '<div class="ocf__empty-{{ ai_gen_id }}">ไม่พบสินค้าในหมวดนี้</div>';
         }
-        state.hasMore = false;
-        state.isLoading = false;
-        showLoadingMore(false);
+        hasMore = false;
+        isLoading = false;
         return;
       }
 
-      var html = products.map(function (product, index) {
-        return cardHTML(product, index, requestPage);
+      if (data.products.length < perPage) {
+        hasMore = false;
+      }
+
+      var html = data.products.map(function (product, index) {
+        return cardHTML(product, index, page);
       }).join('');
 
-      if (!html) {
-        if (requestPage === 1) {
-          grid.innerHTML = '<div class="ocf__empty-{{ ai_gen_id }}">ไม่พบสินค้าในหมวดนี้</div>';
-        }
-        state.hasMore = false;
-        state.isLoading = false;
-        showLoadingMore(false);
+      if (!html && page === 1) {
+        grid.innerHTML = '<div class="ocf__empty-{{ ai_gen_id }}">ไม่พบสินค้าในหมวดนี้</div>';
+        hasMore = false;
+        isLoading = false;
         return;
       }
 
       grid.insertAdjacentHTML('beforeend', html);
-
-      state.page = requestPage + 1;
-      state.hasMore = products.length >= perPage;
+      page += 1;
     } catch (e) {
-      if (requestPage === 1) {
+      if (page === 1) {
         grid.innerHTML = '<div class="ocf__empty-{{ ai_gen_id }}">เกิดข้อผิดพลาด กรุณาลองใหม่</div>';
       }
-      state.hasMore = false;
     }
 
-    state.isLoading = false;
-    showLoadingMore(false);
+    isLoading = false;
   }
 
   var sentinel = document.createElement('div');
   sentinel.style.height = '1px';
-  sentinel.setAttribute('aria-hidden', 'true');
   grid.after(sentinel);
 
-  var observer = new IntersectionObserver(function (entries) {
-    var entry = entries[0];
-    if (!entry || !entry.isIntersecting) return;
-    if (state.isLoading || !state.hasMore) return;
-    loadProducts(false);
-  }, { rootMargin: '320px 0px' });
+  observer = new IntersectionObserver(function (entries) {
+    if (entries[0].isIntersecting && !isLoading && hasMore) {
+      loadProducts(false);
+    }
+  }, { rootMargin: '300px' });
 
   observer.observe(sentinel);
 
   root.querySelectorAll('[data-sub-handle]').forEach(function (btn) {
     btn.addEventListener('click', function () {
-      var nextHandle = btn.dataset.subHandle;
-      if (!nextHandle || nextHandle === state.handle) return;
-
       root.querySelectorAll('[data-sub-handle]').forEach(function (b) {
         b.classList.remove('active');
       });
-
       btn.classList.add('active');
-      state.handle = nextHandle;
+      state.handle = btn.dataset.subHandle;
       loadProducts(true);
     }, { passive: true });
   });
@@ -972,15 +879,6 @@
     },
     {
       "type": "range",
-      "id": "products_per_page",
-      "label": "สินค้าต่อครั้ง",
-      "min": 4,
-      "max": 16,
-      "step": 1,
-      "default": 8
-    },
-    {
-      "type": "range",
       "id": "products_per_row_desktop",
       "label": "คอลัมน์ desktop",
       "min": 2,
@@ -1003,45 +901,19 @@
       "id": "product_grid_gap",
       "label": "ระยะห่างการ์ด",
       "min": 8,
-      "max": 32,
-      "step": 2,
-      "default": 16
-    },
-    {
-      "type": "range",
-      "id": "product_image_radius",
-      "label": "ความโค้งการ์ด",
-      "min": 0,
-      "max": 30,
-      "step": 2,
-      "default": 16
-    },
-    {
-      "type": "range",
-      "id": "product_title_size",
-      "label": "ขนาดชื่อสินค้า",
-      "min": 12,
-      "max": 24,
-      "step": 1,
-      "default": 16
-    },
-    {
-      "type": "range",
-      "id": "product_price_size",
-      "label": "ขนาดราคา",
-      "min": 11,
-      "max": 22,
-      "step": 1,
-      "default": 14
-    },
-    {
-      "type": "range",
-      "id": "icon_size",
-      "label": "ขนาดไอคอนหมวด",
-      "min": 14,
       "max": 40,
-      "step": 1,
-      "default": 22
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "สินค้าต่อหน้า",
+      "min": 4,
+      "max": 50,
+      "step": 2,
+      "default": 8
     },
     {
       "type": "header",
@@ -1049,38 +921,86 @@
     },
     {
       "type": "range",
-      "id": "pill_padding_vertical",
-      "label": "ระยะบนล่าง pill",
-      "min": 4,
+      "id": "pill_font_size",
+      "label": "ขนาดตัวอักษร",
+      "min": 11,
       "max": 18,
       "step": 1,
-      "default": 9
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "pill_padding_vertical",
+      "label": "Padding บน-ล่าง",
+      "min": 4,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 8
     },
     {
       "type": "range",
       "id": "pill_padding_horizontal",
-      "label": "ระยะซ้ายขวา pill",
+      "label": "Padding ซ้าย-ขวา",
       "min": 8,
       "max": 28,
-      "step": 1,
+      "step": 2,
+      "unit": "px",
       "default": 16
     },
     {
       "type": "range",
       "id": "pill_border_radius",
-      "label": "ความโค้ง pill",
+      "label": "มุมโค้ง",
       "min": 0,
-      "max": 30,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "ขนาด icon",
+      "min": 12,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "header",
+      "content": "Product Card"
+    },
+    {
+      "type": "range",
+      "id": "product_image_radius",
+      "label": "มุมโค้งการ์ด",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "product_title_size",
+      "label": "ขนาดชื่อสินค้า",
+      "min": 12,
+      "max": 20,
       "step": 1,
+      "unit": "px",
       "default": 14
     },
     {
       "type": "range",
-      "id": "pill_font_size",
-      "label": "ขนาดตัวอักษร pill",
-      "min": 11,
-      "max": 18,
+      "id": "product_price_size",
+      "label": "ขนาดราคา",
+      "min": 12,
+      "max": 20,
       "step": 1,
+      "unit": "px",
       "default": 14
     }
   ],
