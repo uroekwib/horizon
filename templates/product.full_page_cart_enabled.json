@@ -380,7 +380,7 @@
                       "type": "custom-liquid",
                       "name": "t:names.custom_liquid",
                       "settings": {
-                        "custom_liquid": "{% assign form_id = product.metafields.custom.quote_form_id.value %}\n\n{% if form_id %}\n  <iframe \n    src=\"https://alphadigital.media/forms/form.php?form={{ form_id }}\"\n    style=\"width:100%; height:1200px; border:0;\"\n    loading=\"lazy\"\n    title=\"Quote Form\">\n  </iframe>\n{% else %}\n  <p>---</p>\n{% endif %}"
+                        "custom_liquid": "{% assign form_id = product.metafields.custom.quote_form_id.value %}\n\n{% if form_id %}\n  <iframe \n    src=\"https://alphadigital.media/forms/form.php?form={{ form_id }}\"\n    style=\"width:100%; height:1200px; border:0;\"\n    loading=\"lazy\"\n    title=\"Quote Form\">\n  </iframe>\n{% else %}\n  <p></p>\n{% endif %}"
                       },
                       "blocks": {}
                     },
