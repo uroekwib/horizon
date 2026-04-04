@@ -414,6 +414,7 @@
                     "custom_liquid_RyHhEn": {
                       "type": "custom-liquid",
                       "name": "t:names.custom_liquid",
+                      "disabled": true,
                       "settings": {
                         "custom_liquid": "{{ product.metafields.custom.hulk_form.value }}"
                       },
