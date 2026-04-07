@@ -44,8 +44,6 @@
     <script src="https://analytics.ahrefs.com/analytics.js" data-key="+eGeh2TabSnAKPxKnL1ohw" async></script>
   </head>
 
-  
-
   <body class="page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }}">
     {% render 'skip-to-content-link', href: '#MainContent', text: 'accessibility.skip_to_text' %}
     <div id="header-group">
@@ -145,34 +143,47 @@
 
     {% section 'social-bar' %}
 
-    <!-- Search auto-focus fix -->
-  <script>
-  (function () {
-    function initSearchAutoFocus() {
-      var searchModal = document.getElementById('search-modal');
-      if (!searchModal) return;
-      var dialog = searchModal.querySelector('dialog');
-      if (!dialog) return;
+<!-- Search auto-focus fix -->
+<script>
+(function () {
+  function initSearchAutoFocus() {
+    var searchModal = document.getElementById('search-modal');
+    if (!searchModal) return;
+    var dialog = searchModal.querySelector('dialog');
+    if (!dialog) return;
 
-      new MutationObserver(function (mutations) {
-        for (var i = 0; i < mutations.length; i++) {
-          if (mutations[i].attributeName === 'open' && dialog.hasAttribute('open')) {
-            setTimeout(function () {
-              var input = document.getElementById('cmdk-input')
-                        || searchModal.querySelector('input[type="search"]');
-              if (input) input.focus({ preventScroll: false });
-            }, 80);
-            break;
-          }
+    new MutationObserver(function (mutations) {
+      for (var i = 0; i < mutations.length; i++) {
+        if (mutations[i].attributeName === 'open' && dialog.hasAttribute('open')) {
+          
+          // iOS: ต้อง focus ทันทีใน gesture chain ก่อน setTimeout ตัด chain
+          var inputImmediate = document.getElementById('cmdk-input')
+                            || searchModal.querySelector('input[type="search"]');
+          if (inputImmediate) inputImmediate.focus({ preventScroll: false });
+
+          // Android + Snize: dispatch events กระตุ้น instant search
+          setTimeout(function () {
+            var input = document.getElementById('cmdk-input')
+                      || searchModal.querySelector('input[type="search"]');
+            if (!input) return;
+            input.focus({ preventScroll: false });
+            // กระตุ้น Snize ให้ activate
+            input.dispatchEvent(new Event('focus', { bubbles: true }));
+            input.dispatchEvent(new Event('click', { bubbles: true }));
+            input.dispatchEvent(new InputEvent('input', { bubbles: true }));
+          }, 80);
+
+          break;
         }
-      }).observe(dialog, { attributes: true, attributeFilter: ['open'] });
-    }
+      }
+    }).observe(dialog, { attributes: true, attributeFilter: ['open'] });
+  }
 
-    document.readyState === 'loading'
-      ? document.addEventListener('DOMContentLoaded', initSearchAutoFocus)
-      : initSearchAutoFocus();
-  })();
-  </script>
-  
+  document.readyState === 'loading'
+    ? document.addEventListener('DOMContentLoaded', initSearchAutoFocus)
+    : initSearchAutoFocus();
+})();
+</script>
   </body>
 </html>
+>
