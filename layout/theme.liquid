@@ -143,40 +143,27 @@
 
     {% section 'social-bar' %}
 
-<!-- Search auto-focus fix -->
+    <!-- Search auto-focus fix -->
 <script>
 (function () {
   function initSearchAutoFocus() {
-    var searchModal = document.getElementById('search-modal');
-    if (!searchModal) return;
-    var dialog = searchModal.querySelector('dialog');
-    if (!dialog) return;
+    var triggers = document.querySelectorAll('.search-action__icon-btn');
+    if (!triggers.length) return;
 
-    new MutationObserver(function (mutations) {
-      for (var i = 0; i < mutations.length; i++) {
-        if (mutations[i].attributeName === 'open' && dialog.hasAttribute('open')) {
-          
-          // iOS: ต้อง focus ทันทีใน gesture chain ก่อน setTimeout ตัด chain
-          var inputImmediate = document.getElementById('cmdk-input')
-                            || searchModal.querySelector('input[type="search"]');
-          if (inputImmediate) inputImmediate.focus({ preventScroll: false });
+    triggers.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        // อยู่ใน gesture chain ตรงๆ — mobile ยอมรับ focus แน่นอน
+        var input = document.getElementById('cmdk-input');
+        if (!input) return;
 
-          // Android + Snize: dispatch events กระตุ้น instant search
-          setTimeout(function () {
-            var input = document.getElementById('cmdk-input')
-                      || searchModal.querySelector('input[type="search"]');
-            if (!input) return;
-            input.focus({ preventScroll: false });
-            // กระตุ้น Snize ให้ activate
-            input.dispatchEvent(new Event('focus', { bubbles: true }));
-            input.dispatchEvent(new Event('click', { bubbles: true }));
-            input.dispatchEvent(new InputEvent('input', { bubbles: true }));
-          }, 80);
-
-          break;
-        }
-      }
-    }).observe(dialog, { attributes: true, attributeFilter: ['open'] });
+        // iOS ต้องการ delay เล็กน้อยรอ dialog animate เสร็จ
+        setTimeout(function () {
+          input.focus({ preventScroll: false });
+          input.dispatchEvent(new Event('focus', { bubbles: true }));
+          input.dispatchEvent(new Event('click', { bubbles: true }));
+        }, 50);
+      });
+    });
   }
 
   document.readyState === 'loading'
@@ -184,6 +171,7 @@
     : initSearchAutoFocus();
 })();
 </script>
+
   </body>
 </html>
 >
