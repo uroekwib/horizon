@@ -3,6 +3,8 @@
   type="module"
 ></script>
 
+{% comment %} ปิด native predictive search — ใช้ Searchanise แทน {% endcomment %}
+{% comment %}
 <script>
 document.addEventListener('focusin', function(e) {
   if (!e.target.closest('input[type="search"]')) return;
@@ -15,6 +17,7 @@ document.addEventListener('focusin', function(e) {
   document.head.appendChild(s);
 });
 </script>
+{% endcomment %}
 
 <dialog-component
   id="search-modal"
