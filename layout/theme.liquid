@@ -171,35 +171,7 @@
     : initSearchAutoFocus();
 })();
 </script>
-  <!-- Search auto-focus fix -->
-<!-- Search auto-focus fix -->
-<script>
-(function () {
-  function initSearchAutoFocus() {
-    var triggers = document.querySelectorAll('.search-action__icon-btn');
-    if (!triggers.length) return;
 
-    triggers.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var input = document.getElementById('cmdk-input');
-        if (!input) return;
-
-        // 1) focus ทันทีใน gesture chain → keyboard โผล่บน mobile
-        input.focus({ preventScroll: false });
-
-        // 2) หลัง dialog animate เสร็จ → กระตุ้น Searchanise ด้วย FocusEvent
-        setTimeout(function () {
-          input.dispatchEvent(new FocusEvent('focus', { bubbles: true, relatedTarget: null }));
-        }, 150);
-      });
-    });
-  }
-
-  document.readyState === 'loading'
-    ? document.addEventListener('DOMContentLoaded', initSearchAutoFocus)
-    : initSearchAutoFocus();
-})();
-</script>
   </body>
 </html>
 
