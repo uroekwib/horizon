@@ -171,7 +171,32 @@
     : initSearchAutoFocus();
 })();
 </script>
+  <!-- Search auto-focus fix -->
+<script>
+(function () {
+  function initSearchAutoFocus() {
+    var triggers = document.querySelectorAll('.search-action__icon-btn');
+    if (!triggers.length) return;
 
+    triggers.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            var input = document.getElementById('cmdk-input');
+            if (!input) return;
+            input.focus({ preventScroll: false });
+            input.click();
+          });
+        });
+      });
+    });
+  }
+
+  document.readyState === 'loading'
+    ? document.addEventListener('DOMContentLoaded', initSearchAutoFocus)
+    : initSearchAutoFocus();
+})();
+</script>
   </body>
 </html>
 
