@@ -172,6 +172,7 @@
 })();
 </script>
   <!-- Search auto-focus fix -->
+<!-- Search auto-focus fix -->
 <script>
 (function () {
   function initSearchAutoFocus() {
@@ -180,14 +181,16 @@
 
     triggers.forEach(function (btn) {
       btn.addEventListener('click', function () {
-        requestAnimationFrame(function () {
-          requestAnimationFrame(function () {
-            var input = document.getElementById('cmdk-input');
-            if (!input) return;
-            input.focus({ preventScroll: false });
-            input.click();
-          });
-        });
+        var input = document.getElementById('cmdk-input');
+        if (!input) return;
+
+        // 1) focus ทันทีใน gesture chain → keyboard โผล่บน mobile
+        input.focus({ preventScroll: false });
+
+        // 2) หลัง dialog animate เสร็จ → กระตุ้น Searchanise ด้วย FocusEvent
+        setTimeout(function () {
+          input.dispatchEvent(new FocusEvent('focus', { bubbles: true, relatedTarget: null }));
+        }, 150);
       });
     });
   }
