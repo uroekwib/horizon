@@ -144,17 +144,21 @@
     {% section 'social-bar' %}
 
     <!-- Search auto-focus fix -->
-<!-- Search: block native dialog, ให้ Searchanise จัดการ -->
+<!-- Search: ป้องกัน native dialog push history state -->
 <script>
 (function () {
-  var modal = document.getElementById('search-modal');
-  if (!modal) return;
-  var dialog = modal.querySelector('dialog');
-  if (!dialog) return;
-
-  // override showModal ให้เป็น no-op
-  dialog.showModal = function () {};
-  dialog.show = function () {};
+  document.querySelectorAll('.search-action__icon-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var orig = history.pushState;
+      // แทน pushState ด้วย replaceState ชั่วคราว 500ms
+      history.pushState = function () {
+        history.replaceState.apply(history, arguments);
+      };
+      setTimeout(function () {
+        history.pushState = orig;
+      }, 500);
+    });
+  });
 })();
 </script>
 
