@@ -1188,27 +1188,29 @@
   }
 
   @media screen and (max-width: 749px) {
-/* ใหม่ — ใช้ drawer mode แทน media query */
-#header-component[data-menu-style='drawer'] .oc-lang-toggle--desktop {
-  display: none !important;
-}
-#header-component[data-menu-style='drawer'] .oc-lang-toggle--mobile {
-  display: inline-flex !important;
-  grid-area: rightLg;
-  justify-self: center;
-  align-self: center;
-  padding: 1px;
-}
-#header-component[data-menu-style='drawer'] .oc-lang-toggle--mobile .oc-lang-toggle__btn {
-  padding: 3px 8px;
-  font-size: 11px;
-  min-width: 30px;
-}
-#header-component[data-menu-style='drawer'] .oc-lang-toggle--mobile .oc-lang-toggle__track {
-  top: 1px;
-  left: 1px;
-  height: calc(100% - 2px);
-}
+    #header-component .oc-lang-toggle--desktop {
+      display: none !important;
+    }
+
+    #header-component .oc-lang-toggle--mobile {
+      display: inline-flex !important;
+      grid-area: rightLg;
+      justify-self: center;
+      align-self: center;
+      padding: 1px;
+    }
+
+    #header-component .oc-lang-toggle--mobile .oc-lang-toggle__btn {
+      padding: 3px 8px;
+      font-size: 11px;
+      min-width: 30px;
+    }
+
+    #header-component .oc-lang-toggle--mobile .oc-lang-toggle__track {
+      top: 1px;
+      left: 1px;
+      height: calc(100% - 2px);
+    }
   }
 
     /*************** search input *****************/
