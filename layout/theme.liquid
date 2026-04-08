@@ -144,15 +144,30 @@
     {% section 'social-bar' %}
 
     <!-- Search auto-focus fix -->
-<!-- Search: sync back button กับ Searchanise -->
+<!-- Search: sync Searchanise back button กับ native closeDialog -->
 <script>
-window.addEventListener('popstate', function () {
-  // ถ้า Searchanise widget เปิดอยู่ ให้ปิดด้วย
-  if (document.body.classList.contains('snize-instant-widget-is-open')) {
-    var closeBtn = document.querySelector('.snize-close-button-arrow, .snize-close-btn, [class*="snize-close"]');
-    if (closeBtn) closeBtn.click();
+(function () {
+  function init() {
+    var modal = document.getElementById('search-modal');
+    if (!modal) return;
+
+    // รอ Searchanise inject ปุ่ม back ก่อน
+    var observer = new MutationObserver(function () {
+      var closeBtn = document.querySelector('.snize-close-button-arrow');
+      if (!closeBtn || closeBtn._hooked) return;
+      closeBtn._hooked = true;
+      closeBtn.addEventListener('click', function () {
+        if (modal.closeDialog) modal.closeDialog();
+      });
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
   }
-});
+
+  document.readyState === 'loading'
+    ? document.addEventListener('DOMContentLoaded', init)
+    : init();
+})();
 </script>
 
   </body>
