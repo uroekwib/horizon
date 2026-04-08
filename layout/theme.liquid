@@ -144,7 +144,7 @@
     {% section 'social-bar' %}
 
     <!-- Search auto-focus fix -->
-<!-- Search: ปิด native dialog ทันที ให้ Searchanise จัดการแทน -->
+<!-- Search: ปิด native dialog ให้ Searchanise จัดการแทน -->
 <script>
 (function () {
   var modal = document.getElementById('search-modal');
@@ -154,7 +154,9 @@
 
   new MutationObserver(function () {
     if (dialog.hasAttribute('open')) {
-      dialog.close();
+      setTimeout(function () {
+        dialog.close();
+      }, 50);
     }
   }).observe(dialog, { attributes: true, attributeFilter: ['open'] });
 })();
