@@ -1,6 +1,344 @@
+{% doc %}
+  @prompt
+    อยากเขียน section ที่โหลดรูป random มาจาก files ที่มีเลย โดยเอาเฉพาะภาพที่มีการ rederence ไว้กับสินค้าอะไรก็ได้เลย เป็น gallery ที่ schroll down ก็โหลดไปเรื่อย ๆ แบบ endless
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-random-gallery-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background-color: {{ block.settings.background_color }};
+    padding: {{ block.settings.spacing }}px 0;
+  }
+
+  .ai-random-gallery-container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-random-gallery-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat({{ block.settings.columns_desktop }}, 1fr);
+    gap: {{ block.settings.gap }}px;
+    margin-bottom: 40px;
+  }
+
+  .ai-random-gallery-item-{{ ai_gen_id }} {
+    position: relative;
+    overflow: hidden;
+    border-radius: {{ block.settings.border_radius }}px;
+    background-color: #f5f5f5;
+  }
+
+  .ai-random-gallery-item-{{ ai_gen_id }} img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
+
+  .ai-random-gallery-loader-{{ ai_gen_id }} {
+    text-align: center;
+    padding: 40px 20px;
+    color: {{ block.settings.text_color }};
+  }
+
+  .ai-random-gallery-loader-{{ ai_gen_id }}.hidden {
+    display: none;
+  }
+
+  .ai-random-gallery-spinner-{{ ai_gen_id }} {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 4px solid {{ block.settings.text_color }}33;
+    border-top-color: {{ block.settings.text_color }};
+    border-radius: 50%;
+    animation: ai-random-gallery-spin-{{ ai_gen_id }} 0.8s linear infinite;
+  }
+
+  @keyframes ai-random-gallery-spin-{{ ai_gen_id }} {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .ai-random-gallery-end-{{ ai_gen_id }} {
+    text-align: center;
+    padding: 40px 20px;
+    color: {{ block.settings.text_color }};
+    opacity: 0.6;
+  }
+
+  .ai-random-gallery-end-{{ ai_gen_id }}.hidden {
+    display: none;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-random-gallery-grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat({{ block.settings.columns_mobile }}, 1fr);
+    }
+  }
+{% endstyle %}
+
+<random-gallery-{{ ai_gen_id }}
+  class="ai-random-gallery-{{ ai_gen_id }}"
+  data-images-per-load="{{ block.settings.images_per_load }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-random-gallery-container-{{ ai_gen_id }}">
+    <div class="ai-random-gallery-grid-{{ ai_gen_id }}"></div>
+
+    <div class="ai-random-gallery-loader-{{ ai_gen_id }}">
+      <div class="ai-random-gallery-spinner-{{ ai_gen_id }}"></div>
+      <p>กำลังโหลดรูปภาพ...</p>
+    </div>
+
+    <div class="ai-random-gallery-end-{{ ai_gen_id }} hidden">
+      <p>ไม่มีรูปภาพเพิ่มเติม</p>
+    </div>
+  </div>
+</random-gallery-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class RandomGallery{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.allImages = [];
+        this.displayedImages = new Set();
+        this.isLoading = false;
+        this.hasMoreImages = true;
+        this.imagesPerLoad = parseInt(this.dataset.imagesPerLoad) || 12;
+        this.grid = this.querySelector('.ai-random-gallery-grid-{{ ai_gen_id }}');
+        this.loader = this.querySelector('.ai-random-gallery-loader-{{ ai_gen_id }}');
+        this.endMessage = this.querySelector('.ai-random-gallery-end-{{ ai_gen_id }}');
+      }
+
+      connectedCallback() {
+        this.fetchProductImages();
+        this.setupInfiniteScroll();
+      }
+
+      async fetchProductImages() {
+        try {
+          const response = await fetch('/products.json?limit=250');
+          const data = await response.json();
+          
+          data.products.forEach(product => {
+            if (product.images && product.images.length > 0) {
+              product.images.forEach(image => {
+                this.allImages.push({
+                  src: image.src,
+                  alt: image.alt || product.title,
+                  productTitle: product.title,
+                  productUrl: `/products/${product.handle}`
+                });
+              });
+            }
+          });
+
+          if (this.allImages.length > 0) {
+            this.loadMoreImages();
+          } else {
+            this.showEndMessage();
+          }
+        } catch (error) {
+          console.error('Error fetching product images:', error);
+          this.showEndMessage();
+        }
+      }
+
+      loadMoreImages() {
+        if (this.isLoading || !this.hasMoreImages) return;
+
+        this.isLoading = true;
+        this.loader.classList.remove('hidden');
+
+        const availableImages = this.allImages.filter(
+          img => !this.displayedImages.has(img.src)
+        );
+
+        if (availableImages.length === 0) {
+          this.hasMoreImages = false;
+          this.showEndMessage();
+          return;
+        }
+
+        const imagesToLoad = this.getRandomImages(
+          availableImages,
+          Math.min(this.imagesPerLoad, availableImages.length)
+        );
+
+        imagesToLoad.forEach(imageData => {
+          this.displayedImages.add(imageData.src);
+          const item = this.createImageItem(imageData);
+          this.grid.appendChild(item);
+        });
+
+        this.loader.classList.add('hidden');
+        this.isLoading = false;
+
+        if (this.displayedImages.size >= this.allImages.length) {
+          this.hasMoreImages = false;
+          this.showEndMessage();
+        }
+      }
+
+      getRandomImages(images, count) {
+        const shuffled = [...images].sort(() => Math.random() - 0.5);
+        return shuffled.slice(0, count);
+      }
+
+      createImageItem(imageData) {
+        const item = document.createElement('div');
+        item.className = 'ai-random-gallery-item-{{ ai_gen_id }}';
+
+        const img = document.createElement('img');
+        img.src = imageData.src.replace(/\.(jpg|jpeg|png|gif|webp)/, '_400x.$1');
+        img.alt = imageData.alt;
+        img.loading = 'lazy';
+
+        item.appendChild(img);
+        return item;
+      }
+
+      setupInfiniteScroll() {
+        const observer = new IntersectionObserver(
+          entries => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting && !this.isLoading && this.hasMoreImages) {
+                this.loadMoreImages();
+              }
+            });
+          },
+          {
+            rootMargin: '200px'
+          }
+        );
+
+        observer.observe(this.loader);
+      }
+
+      showEndMessage() {
+        this.loader.classList.add('hidden');
+        this.endMessage.classList.remove('hidden');
+      }
+    }
+
+    customElements.define('random-gallery-{{ ai_gen_id }}', RandomGallery{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Random gallery",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columns on desktop",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns on mobile",
+      "options": [
+        {
+          "value": "1",
+          "label": "1"
+        },
+        {
+          "value": "2",
+          "label": "2"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Gap between images",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum width",
+      "min": 800,
+      "max": 1600,
+      "step": 100,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "spacing",
+      "label": "Vertical spacing",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Loading"
+    },
+    {
+      "type": "range",
+      "id": "images_per_load",
+      "label": "Images per load",
+      "min": 6,
+      "max": 24,
+      "step": 6,
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#000000"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Random gallery"
+    }
+  ]
+}
 {% endschema %}
