@@ -144,21 +144,31 @@
     {% section 'social-bar' %}
 
     <!-- Search auto-focus fix -->
-<!-- Search: ป้องกัน native dialog push history state -->
 <script>
 (function () {
-  document.querySelectorAll('.search-action__icon-btn').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var orig = history.pushState;
-      // แทน pushState ด้วย replaceState ชั่วคราว 500ms
-      history.pushState = function () {
-        history.replaceState.apply(history, arguments);
-      };
-      setTimeout(function () {
-        history.pushState = orig;
-      }, 500);
+  function initSearchAutoFocus() {
+    var triggers = document.querySelectorAll('.search-action__icon-btn');
+    if (!triggers.length) return;
+
+    triggers.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        // อยู่ใน gesture chain ตรงๆ — mobile ยอมรับ focus แน่นอน
+        var input = document.getElementById('cmdk-input');
+        if (!input) return;
+
+        // iOS ต้องการ delay เล็กน้อยรอ dialog animate เสร็จ
+        setTimeout(function () {
+          input.focus({ preventScroll: false });
+          input.dispatchEvent(new Event('focus', { bubbles: true }));
+          input.dispatchEvent(new Event('click', { bubbles: true }));
+        }, 50);
+      });
     });
-  });
+  }
+
+  document.readyState === 'loading'
+    ? document.addEventListener('DOMContentLoaded', initSearchAutoFocus)
+    : initSearchAutoFocus();
 })();
 </script>
 
