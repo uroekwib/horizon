@@ -5,18 +5,18 @@
 
 {% comment %} ปิด native predictive search — ใช้ Searchanise แทน {% endcomment %}
 {% comment %}
-<script>
-document.addEventListener('focusin', function(e) {
-  if (!e.target.closest('input[type="search"]')) return;
-  if (window.__psLoaded) return;
-  window.__psLoaded = true;
+  <script>
+  document.addEventListener('focusin', function(e) {
+    if (!e.target.closest('input[type="search"]')) return;
+    if (window.__psLoaded) return;
+    window.__psLoaded = true;
 
-  var s = document.createElement('script');
-  s.src = "{{ 'predictive-search.js' | asset_url }}";
-  s.type = "module";
-  document.head.appendChild(s);
-});
-</script>
+    var s = document.createElement('script');
+    s.src = "{{ 'predictive-search.js' | asset_url }}";
+    s.type = "module";
+    document.head.appendChild(s);
+  });
+  </script>
 {% endcomment %}
 
 <dialog-component
@@ -64,8 +64,27 @@ document.addEventListener('focusin', function(e) {
             >
               {{- 'content.search_input_label' | t -}}
             </label>
+            {% comment %} ก่อนแก้ลบ on เพื่อไม่ให้ native ทำงาน
+              <input
+                class="search-input"
+                id="{{ 'cmdk-input' | default: 'Search' }}"
+                type="search"
+                name="q"
+                role="combobox"
+                aria-expanded="false"
+                aria-owns="predictive-search-results"
+                aria-controls="predictive-search-results"
+                aria-haspopup="listbox"
+                aria-autocomplete="list"
+                autocomplete="off"
+                placeholder="{{ 'content.search_input_placeholder' | t }}"
+                ref="searchInput"
+                on:input="/search"
+                on:keydown="/onSearchKeyDown"
+              >
+            {% endcomment %}
             <input
-              class="search-input"
+              class="search-input snize-input-style"
               id="{{ 'cmdk-input' | default: 'Search' }}"
               type="search"
               name="q"
@@ -78,8 +97,6 @@ document.addEventListener('focusin', function(e) {
               autocomplete="off"
               placeholder="{{ 'content.search_input_placeholder' | t }}"
               ref="searchInput"
-              on:input="/search"
-              on:keydown="/onSearchKeyDown"
             >
             <input
               name="options[prefix]"
