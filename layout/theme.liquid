@@ -144,32 +144,15 @@
     {% section 'social-bar' %}
 
     <!-- Search auto-focus fix -->
+<!-- Search: sync back button กับ Searchanise -->
 <script>
-(function () {
-  function initSearchAutoFocus() {
-    var triggers = document.querySelectorAll('.search-action__icon-btn');
-    if (!triggers.length) return;
-
-    triggers.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        // อยู่ใน gesture chain ตรงๆ — mobile ยอมรับ focus แน่นอน
-        var input = document.getElementById('cmdk-input');
-        if (!input) return;
-
-        // iOS ต้องการ delay เล็กน้อยรอ dialog animate เสร็จ
-        setTimeout(function () {
-          input.focus({ preventScroll: false });
-          input.dispatchEvent(new Event('focus', { bubbles: true }));
-          input.dispatchEvent(new Event('click', { bubbles: true }));
-        }, 50);
-      });
-    });
+window.addEventListener('popstate', function () {
+  // ถ้า Searchanise widget เปิดอยู่ ให้ปิดด้วย
+  if (document.body.classList.contains('snize-instant-widget-is-open')) {
+    var closeBtn = document.querySelector('.snize-close-button-arrow, .snize-close-btn, [class*="snize-close"]');
+    if (closeBtn) closeBtn.click();
   }
-
-  document.readyState === 'loading'
-    ? document.addEventListener('DOMContentLoaded', initSearchAutoFocus)
-    : initSearchAutoFocus();
-})();
+});
 </script>
 
   </body>
