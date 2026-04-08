@@ -144,31 +144,14 @@
     {% section 'social-bar' %}
 
     <!-- Search auto-focus fix -->
+<!-- Search: ป้องกัน native dialog เปิด ให้ Searchanise จัดการแทน -->
 <script>
 (function () {
-  function initSearchAutoFocus() {
-    var triggers = document.querySelectorAll('.search-action__icon-btn');
-    if (!triggers.length) return;
-
-    triggers.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        // อยู่ใน gesture chain ตรงๆ — mobile ยอมรับ focus แน่นอน
-        var input = document.getElementById('cmdk-input');
-        if (!input) return;
-
-        // iOS ต้องการ delay เล็กน้อยรอ dialog animate เสร็จ
-        setTimeout(function () {
-          input.focus({ preventScroll: false });
-          input.dispatchEvent(new Event('focus', { bubbles: true }));
-          input.dispatchEvent(new Event('click', { bubbles: true }));
-        }, 50);
-      });
-    });
-  }
-
-  document.readyState === 'loading'
-    ? document.addEventListener('DOMContentLoaded', initSearchAutoFocus)
-    : initSearchAutoFocus();
+  document.querySelectorAll('.search-action__icon-btn').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.stopImmediatePropagation();
+    }, true); // capture phase — วิ่งก่อน Horizon's on:click handler
+  });
 })();
 </script>
 
