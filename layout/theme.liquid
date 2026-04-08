@@ -144,20 +144,22 @@
     {% section 'social-bar' %}
 
     <!-- Search auto-focus fix -->
-    <!-- Search: ปิด native dialog ทันที ให้ Searchanise จัดการแทน -->
-    <script>
-      (function () {
-        var modal = document.getElementById('search-modal');
-        if (!modal) return;
-        var dialog = modal.querySelector('dialog');
-        if (!dialog) return;
+<!-- Search: ปิด native dialog ทันที ให้ Searchanise จัดการแทน -->
+<script>
+(function () {
+  var modal = document.getElementById('search-modal');
+  if (!modal) return;
+  var dialog = modal.querySelector('dialog');
+  if (!dialog) return;
 
-        new MutationObserver(function () {
-          if (dialog.hasAttribute('open')) {
-            dialog.close();
-          }
-        }).observe(dialog, { attributes: true, attributeFilter: ['open'] });
-      })();
-    </script>
+  new MutationObserver(function () {
+    if (dialog.hasAttribute('open')) {
+      dialog.close();
+    }
+  }).observe(dialog, { attributes: true, attributeFilter: ['open'] });
+})();
+</script>
+
   </body>
 </html>
+
