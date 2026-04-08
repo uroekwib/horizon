@@ -144,31 +144,17 @@
     {% section 'social-bar' %}
 
     <!-- Search auto-focus fix -->
+<!-- Search: block native dialog, ให้ Searchanise จัดการ -->
 <script>
 (function () {
-  function initSearchAutoFocus() {
-    var triggers = document.querySelectorAll('.search-action__icon-btn');
-    if (!triggers.length) return;
+  var modal = document.getElementById('search-modal');
+  if (!modal) return;
+  var dialog = modal.querySelector('dialog');
+  if (!dialog) return;
 
-    triggers.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        // อยู่ใน gesture chain ตรงๆ — mobile ยอมรับ focus แน่นอน
-        var input = document.getElementById('cmdk-input');
-        if (!input) return;
-
-        // iOS ต้องการ delay เล็กน้อยรอ dialog animate เสร็จ
-        setTimeout(function () {
-          input.focus({ preventScroll: false });
-          input.dispatchEvent(new Event('focus', { bubbles: true }));
-          input.dispatchEvent(new Event('click', { bubbles: true }));
-        }, 50);
-      });
-    });
-  }
-
-  document.readyState === 'loading'
-    ? document.addEventListener('DOMContentLoaded', initSearchAutoFocus)
-    : initSearchAutoFocus();
+  // override showModal ให้เป็น no-op
+  dialog.showModal = function () {};
+  dialog.show = function () {};
 })();
 </script>
 
