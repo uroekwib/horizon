@@ -89,7 +89,7 @@
             "button_hover": "#0dd7ef",
             "button_radius": 20,
             "border_radius": 16,
-            "title_size": 18
+            "title_size": 14
           },
           "blocks": {}
         }
