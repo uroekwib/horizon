@@ -1,6 +1,572 @@
+{% doc %}
+  @prompt
+    Create a Shopify flipbook section inspired by this reference:
+    https://heyzine.com/flip-book/db32aea196.html#page/12
+    
+    and use this catalogue as the main visual/content reference:
+    https://cdn.shopify.com/s/files/1/0098/2653/3433/files/Octopus_Media_Solutions_catalogue_2026.pdf?v=1775702103
+    
+    I want the experience to feel like a real online flipbook, similar to Heyzine, not a normal slider or static PDF embed.
+    The viewer should have a realistic book-opening effect, smooth page-flip animation, visible page depth, paper shadow, and natural page turning from left to right.
+    
+    On desktop, use a two-page spread layout like a real catalogue or magazine.
+    On mobile, adapt carefully for usability and readability — switch to a single-page view if needed, keep touch gestures smooth, and avoid tiny unreadable spreads.
+    
+    The overall visual style should follow the Octopus Media Solutions catalogue: clean corporate editorial design, premium presentation, strong image composition, and balanced text layout.
+    
+    Important requirements:
+    
+    Shopify-compatible section using Liquid, CSS, and JavaScript
+    Flipbook-style interaction, not a standard carousel
+    Responsive for desktop and mobile
+    Smooth performance and touch-friendly navigation
+    Elegant dark or neutral background around the book to make pages stand out
+    Preserve a premium catalogue reading experience across all devices
+    
+    The final result should feel like reading a real printed catalogue digitally, with modern interactive behaviour similar to Heyzine.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-flipbook-container-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background-color: {{ block.settings.background_color }};
+    padding: {{ block.settings.padding_desktop }}px 20px;
+    min-height: 600px;
+  }
+
+  .ai-flipbook-wrapper-{{ ai_gen_id }} {
+    max-width: {{ block.settings.max_width }}px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .ai-flipbook-stage-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    perspective: 2000px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+
+  .ai-flipbook-book-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    height: {{ block.settings.book_height }}px;
+    transform-style: preserve-3d;
+    transition: transform 0.3s ease;
+  }
+
+  .ai-flipbook-page-{{ ai_gen_id }} {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    top: 0;
+    background: #ffffff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    transform-origin: left center;
+    transform-style: preserve-3d;
+    transition: transform {{ block.settings.flip_speed }}s cubic-bezier(0.645, 0.045, 0.355, 1);
+    backface-visibility: hidden;
+  }
+
+  .ai-flipbook-page-{{ ai_gen_id }}.left-page {
+    left: 0;
+    transform-origin: right center;
+  }
+
+  .ai-flipbook-page-{{ ai_gen_id }}.right-page {
+    right: 0;
+    transform-origin: left center;
+  }
+
+  .ai-flipbook-page-{{ ai_gen_id }}.flipping {
+    transform: rotateY(-180deg);
+    z-index: 10;
+  }
+
+  .ai-flipbook-page-front-{{ ai_gen_id }},
+  .ai-flipbook-page-back-{{ ai_gen_id }} {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    overflow: hidden;
+  }
+
+  .ai-flipbook-page-back-{{ ai_gen_id }} {
+    transform: rotateY(180deg);
+  }
+
+  .ai-flipbook-page-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .ai-flipbook-controls-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 30px;
+  }
+
+  .ai-flipbook-btn-{{ ai_gen_id }} {
+    background-color: {{ block.settings.button_color }};
+    color: {{ block.settings.button_text_color }};
+    border: none;
+    padding: 12px 24px;
+    border-radius: {{ block.settings.button_radius }}px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ai-flipbook-btn-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_color }};
+    transform: translateY(-2px);
+  }
+
+  .ai-flipbook-btn-{{ ai_gen_id }}:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .ai-flipbook-page-indicator-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .ai-flipbook-spine-{{ ai_gen_id }} {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.3));
+    transform: translateX(-50%);
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-flipbook-container-{{ ai_gen_id }} {
+      padding: {{ block.settings.padding_mobile }}px 15px;
+    }
+
+    .ai-flipbook-book-{{ ai_gen_id }} {
+      height: {{ block.settings.book_height_mobile }}px;
+    }
+
+    .ai-flipbook-page-{{ ai_gen_id }} {
+      width: 100%;
+      left: 0 !important;
+      right: auto !important;
+    }
+
+    .ai-flipbook-page-{{ ai_gen_id }}.left-page {
+      display: none;
+    }
+
+    .ai-flipbook-spine-{{ ai_gen_id }} {
+      display: none;
+    }
+
+    .ai-flipbook-btn-{{ ai_gen_id }} {
+      padding: 10px 20px;
+      font-size: 14px;
+    }
+
+    .ai-flipbook-page-indicator-{{ ai_gen_id }} {
+      font-size: 14px;
+    }
+  }
+{% endstyle %}
+
+<flipbook-viewer-{{ ai_gen_id }}
+  class="ai-flipbook-container-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-flipbook-wrapper-{{ ai_gen_id }}">
+    <div class="ai-flipbook-stage-{{ ai_gen_id }}">
+      <div class="ai-flipbook-book-{{ ai_gen_id }}">
+        <div class="ai-flipbook-spine-{{ ai_gen_id }}"></div>
+        
+        {% for i in (1..12) %}
+          {% assign page_key = 'page_' | append: i %}
+          {% assign page_image = block.settings[page_key] %}
+          
+          {% if page_image %}
+            <div
+              class="ai-flipbook-page-{{ ai_gen_id }} {% if i == 1 %}left-page{% else %}right-page{% endif %}"
+              data-page="{{ i }}"
+              style="z-index: {{ 100 | minus: i }};"
+            >
+              <div class="ai-flipbook-page-front-{{ ai_gen_id }}">
+                <img
+                  src="{{ page_image | image_url: width: 1200 }}"
+                  alt="Page {{ i }}"
+                  loading="lazy"
+                  width="600"
+                  height="{{ block.settings.book_height }}"
+                >
+              </div>
+              {% if i < 12 %}
+                {% assign next_page = i | plus: 1 %}
+                {% assign next_page_key = 'page_' | append: next_page %}
+                {% assign next_page_image = block.settings[next_page_key] %}
+                {% if next_page_image %}
+                  <div class="ai-flipbook-page-back-{{ ai_gen_id }}">
+                    <img
+                      src="{{ next_page_image | image_url: width: 1200 }}"
+                      alt="Page {{ next_page }}"
+                      loading="lazy"
+                      width="600"
+                      height="{{ block.settings.book_height }}"
+                    >
+                  </div>
+                {% endif %}
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="ai-flipbook-controls-{{ ai_gen_id }}">
+      <button
+        class="ai-flipbook-btn-{{ ai_gen_id }} ai-flipbook-prev-{{ ai_gen_id }}"
+        aria-label="Previous page"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        <span>Previous</span>
+      </button>
+
+      <div class="ai-flipbook-page-indicator-{{ ai_gen_id }}">
+        <span class="ai-flipbook-current-page-{{ ai_gen_id }}">1</span>
+        /
+        <span class="ai-flipbook-total-pages-{{ ai_gen_id }}">12</span>
+      </div>
+
+      <button
+        class="ai-flipbook-btn-{{ ai_gen_id }} ai-flipbook-next-{{ ai_gen_id }}"
+        aria-label="Next page"
+      >
+        <span>Next</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    </div>
+  </div>
+</flipbook-viewer-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class FlipbookViewer{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.currentPage = 1;
+        this.totalPages = 12;
+        this.isFlipping = false;
+      }
+
+      connectedCallback() {
+        this.prevBtn = this.querySelector('.ai-flipbook-prev-{{ ai_gen_id }}');
+        this.nextBtn = this.querySelector('.ai-flipbook-next-{{ ai_gen_id }}');
+        this.currentPageEl = this.querySelector('.ai-flipbook-current-page-{{ ai_gen_id }}');
+        this.totalPagesEl = this.querySelector('.ai-flipbook-total-pages-{{ ai_gen_id }}');
+        this.pages = this.querySelectorAll('.ai-flipbook-page-{{ ai_gen_id }}');
+        this.book = this.querySelector('.ai-flipbook-book-{{ ai_gen_id }}');
+
+        this.countActualPages();
+        this.setupEventListeners();
+        this.updateControls();
+        this.setupTouchGestures();
+      }
+
+      countActualPages() {
+        this.totalPages = this.pages.length;
+        this.totalPagesEl.textContent = this.totalPages;
+      }
+
+      setupEventListeners() {
+        this.prevBtn.addEventListener('click', () => this.previousPage());
+        this.nextBtn.addEventListener('click', () => this.nextPage());
+      }
+
+      setupTouchGestures() {
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        this.book.addEventListener('touchstart', (e) => {
+          touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        this.book.addEventListener('touchend', (e) => {
+          touchEndX = e.changedTouches[0].screenX;
+          this.handleSwipe(touchStartX, touchEndX);
+        }, { passive: true });
+      }
+
+      handleSwipe(startX, endX) {
+        const swipeThreshold = 50;
+        const diff = startX - endX;
+
+        if (Math.abs(diff) > swipeThreshold) {
+          if (diff > 0) {
+            this.nextPage();
+          } else {
+            this.previousPage();
+          }
+        }
+      }
+
+      nextPage() {
+        if (this.isFlipping || this.currentPage >= this.totalPages) return;
+
+        this.isFlipping = true;
+        const currentPageEl = this.querySelector(`.ai-flipbook-page-{{ ai_gen_id }}[data-page="${this.currentPage}"]`);
+        
+        if (currentPageEl) {
+          currentPageEl.classList.add('flipping');
+          
+          setTimeout(() => {
+            this.currentPage++;
+            this.updateControls();
+            this.isFlipping = false;
+          }, {{ block.settings.flip_speed | times: 1000 }});
+        }
+      }
+
+      previousPage() {
+        if (this.isFlipping || this.currentPage <= 1) return;
+
+        this.isFlipping = true;
+        this.currentPage--;
+        
+        const previousPageEl = this.querySelector(`.ai-flipbook-page-{{ ai_gen_id }}[data-page="${this.currentPage}"]`);
+        
+        if (previousPageEl) {
+          previousPageEl.classList.remove('flipping');
+          
+          setTimeout(() => {
+            this.updateControls();
+            this.isFlipping = false;
+          }, {{ block.settings.flip_speed | times: 1000 }});
+        }
+      }
+
+      updateControls() {
+        this.currentPageEl.textContent = this.currentPage;
+        
+        this.prevBtn.disabled = this.currentPage <= 1;
+        this.nextBtn.disabled = this.currentPage >= this.totalPages;
+      }
+    }
+
+    customElements.define('flipbook-viewer-{{ ai_gen_id }}', FlipbookViewer{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Catalogue flipbook",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum width",
+      "min": 800,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "book_height",
+      "label": "Book height (desktop)",
+      "min": 400,
+      "max": 800,
+      "step": 50,
+      "unit": "px",
+      "default": 600
+    },
+    {
+      "type": "range",
+      "id": "book_height_mobile",
+      "label": "Book height (mobile)",
+      "min": 300,
+      "max": 600,
+      "step": 50,
+      "unit": "px",
+      "default": 450
+    },
+    {
+      "type": "range",
+      "id": "padding_desktop",
+      "label": "Padding (desktop)",
+      "min": 20,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_mobile",
+      "label": "Padding (mobile)",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Animation"
+    },
+    {
+      "type": "range",
+      "id": "flip_speed",
+      "label": "Flip speed",
+      "min": 0.5,
+      "max": 2,
+      "step": 0.5,
+      "unit": "s",
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#2a2a2a"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_color",
+      "label": "Button hover",
+      "default": "#333333"
+    },
+    {
+      "type": "range",
+      "id": "button_radius",
+      "label": "Button radius",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Pages"
+    },
+    {
+      "type": "image_picker",
+      "id": "page_1",
+      "label": "Page 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "page_2",
+      "label": "Page 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "page_3",
+      "label": "Page 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "page_4",
+      "label": "Page 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "page_5",
+      "label": "Page 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "page_6",
+      "label": "Page 6"
+    },
+    {
+      "type": "image_picker",
+      "id": "page_7",
+      "label": "Page 7"
+    },
+    {
+      "type": "image_picker",
+      "id": "page_8",
+      "label": "Page 8"
+    },
+    {
+      "type": "image_picker",
+      "id": "page_9",
+      "label": "Page 9"
+    },
+    {
+      "type": "image_picker",
+      "id": "page_10",
+      "label": "Page 10"
+    },
+    {
+      "type": "image_picker",
+      "id": "page_11",
+      "label": "Page 11"
+    },
+    {
+      "type": "image_picker",
+      "id": "page_12",
+      "label": "Page 12"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Catalogue flipbook"
+    }
+  ]
+}
 {% endschema %}
