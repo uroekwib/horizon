@@ -1272,26 +1272,33 @@ input[type="checkbox"] {
   font-size: 16px;
 }
 
-/* ====== PATTERN B: Custom ::before ====== */
-.product-description ul {
-  list-style: none;  /* ❗ ปิด native bullet */
-  padding-left: 0;
+/* custom.css */
+.product-description ul,
+.product__description ul,
+.rte ul {                          /* Horizon ใช้ .rte ครอบ rich text */
+  list-style: none !important;
+  padding-left: 0 !important;
   margin: 0.75em 0;
 }
-.product-description ul li {
-  list-style: none;  /* ❗ ซ้ำที่ li ด้วย กัน inheritance จาก Horizon */
+
+.product-description ul li,
+.product__description ul li,
+.rte ul li {
+  list-style: none !important;
   position: relative;
   padding-left: 1.4em;
   margin: 0.3em 0;
 }
-.product-description ul li::before {
+
+.product-description ul li::before,
+.product__description ul li::before,
+.rte ul li::before {
   content: "›";
   position: absolute;
   left: 0;
   top: 0;
-  color: #17a9bb;        /* CI cyan */
+  color: #17a9bb;
   font-weight: 600;
-  line-height: inherit;
 }
 
 
