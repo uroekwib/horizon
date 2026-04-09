@@ -1,6 +1,660 @@
+{% doc %}
+  @prompt
+    Create a Shopify e-book style catalogue layout based on this reference:
+    https://cdn.shopify.com/s/files/1/0098/2653/3433/files/Octopus_Media_Solutions_catalogue_2026.pdf
+    
+    The design should replicate a premium corporate catalogue with a clean editorial layout, large showcase images, and balanced text blocks.
+    Use a grid system with asymmetrical composition, combining large hero images with smaller supporting visuals.
+    Apply soft background color sections (light grey or pastel tones) to separate content like pages in a book.
+    
+    Typography should be modern and minimal, with clear hierarchy similar to a professional branding presentation.
+    
+    Each section should feel like a “catalogue page”, including:
+    
+    Title + subtitle
+    Project description
+    Image composition (1 large + 2–3 supporting images)
+    
+    Avoid traditional e-commerce UI such as price blocks or add-to-cart buttons.
+    Focus on portfolio-style storytelling and brand presentation.
+    
+    Ensure the layout is fully responsive and maintains the same editorial feeling on mobile.
+    
+    Optional: add subtle transitions or scroll-based animations to simulate an interactive catalogue experience.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-catalogue-page-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: {{ block.settings.section_padding_top }}px 0 {{ block.settings.section_padding_bottom }}px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .ai-catalogue-page__container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-catalogue-page__header-{{ ai_gen_id }} {
+    margin-bottom: {{ block.settings.header_spacing }}px;
+  }
+
+  .ai-catalogue-page__subtitle-{{ ai_gen_id }} {
+    font-size: {{ block.settings.subtitle_size }}px;
+    color: {{ block.settings.subtitle_color }};
+    margin-bottom: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+
+  .ai-catalogue-page__title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_size }}px;
+    color: {{ block.settings.title_color }};
+    margin: 0 0 {{ block.settings.title_spacing }}px;
+    line-height: 1.2;
+    font-weight: 400;
+  }
+
+  .ai-catalogue-page__description-{{ ai_gen_id }} {
+    font-size: {{ block.settings.description_size }}px;
+    color: {{ block.settings.description_color }};
+    line-height: 1.6;
+    max-width: 800px;
+  }
+
+  .ai-catalogue-page__grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: {{ block.settings.grid_gap }}px;
+    margin-top: {{ block.settings.grid_spacing }}px;
+  }
+
+  .ai-catalogue-page__image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    overflow: hidden;
+    border-radius: {{ block.settings.image_border_radius }}px;
+    background-color: #f5f5f5;
+  }
+
+  .ai-catalogue-page__image-wrapper-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .ai-catalogue-page__image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-catalogue-page__image-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 200px;
+    max-height: 200px;
+    opacity: 0.3;
+  }
+
+  .ai-catalogue-page__hero-image-{{ ai_gen_id }} {
+    grid-column: span 8;
+    aspect-ratio: 4 / 3;
+  }
+
+  .ai-catalogue-page__support-image-1-{{ ai_gen_id }} {
+    grid-column: span 4;
+    aspect-ratio: 1 / 1;
+  }
+
+  .ai-catalogue-page__support-image-2-{{ ai_gen_id }} {
+    grid-column: span 4;
+    aspect-ratio: 1 / 1;
+  }
+
+  .ai-catalogue-page__support-image-3-{{ ai_gen_id }} {
+    grid-column: span 4;
+    aspect-ratio: 1 / 1;
+  }
+
+  .ai-catalogue-page__text-block-{{ ai_gen_id }} {
+    grid-column: span 4;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: {{ block.settings.text_block_padding }}px;
+    background-color: {{ block.settings.text_block_bg }};
+    border-radius: {{ block.settings.image_border_radius }}px;
+  }
+
+  .ai-catalogue-page__text-block-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.text_block_title_size }}px;
+    color: {{ block.settings.text_block_title_color }};
+    margin: 0 0 16px;
+    line-height: 1.3;
+    font-weight: 500;
+  }
+
+  .ai-catalogue-page__text-block-content-{{ ai_gen_id }} {
+    font-size: {{ block.settings.text_block_content_size }}px;
+    color: {{ block.settings.text_block_content_color }};
+    line-height: 1.6;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-catalogue-page__hero-image-{{ ai_gen_id }} {
+      grid-column: span 12;
+      aspect-ratio: 16 / 10;
+    }
+
+    .ai-catalogue-page__support-image-1-{{ ai_gen_id }},
+    .ai-catalogue-page__support-image-2-{{ ai_gen_id }},
+    .ai-catalogue-page__support-image-3-{{ ai_gen_id }} {
+      grid-column: span 6;
+      aspect-ratio: 4 / 3;
+    }
+
+    .ai-catalogue-page__text-block-{{ ai_gen_id }} {
+      grid-column: span 12;
+      padding: {{ block.settings.text_block_padding | times: 0.7 }}px;
+    }
+
+    .ai-catalogue-page__title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_size | times: 0.7 }}px;
+    }
+
+    .ai-catalogue-page__subtitle-{{ ai_gen_id }} {
+      font-size: {{ block.settings.subtitle_size | times: 0.8 }}px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-catalogue-page-{{ ai_gen_id }} {
+      padding: {{ block.settings.section_padding_top | times: 0.6 }}px 0 {{ block.settings.section_padding_bottom | times: 0.6 }}px;
+    }
+
+    .ai-catalogue-page__container-{{ ai_gen_id }} {
+      padding: 0 16px;
+    }
+
+    .ai-catalogue-page__grid-{{ ai_gen_id }} {
+      gap: {{ block.settings.grid_gap | times: 0.7 }}px;
+    }
+
+    .ai-catalogue-page__support-image-1-{{ ai_gen_id }},
+    .ai-catalogue-page__support-image-2-{{ ai_gen_id }},
+    .ai-catalogue-page__support-image-3-{{ ai_gen_id }} {
+      grid-column: span 12;
+    }
+
+    .ai-catalogue-page__title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_size | times: 0.5 }}px;
+    }
+
+    .ai-catalogue-page__text-block-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.text_block_title_size | times: 0.8 }}px;
+    }
+  }
+
+  {% if block.settings.enable_scroll_fade %}
+    .ai-catalogue-page__image-wrapper-{{ ai_gen_id }},
+    .ai-catalogue-page__text-block-{{ ai_gen_id }} {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .ai-catalogue-page__image-wrapper-{{ ai_gen_id }}.ai-visible-{{ ai_gen_id }},
+    .ai-catalogue-page__text-block-{{ ai_gen_id }}.ai-visible-{{ ai_gen_id }} {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  {% endif %}
+{% endstyle %}
+
+<catalogue-page-{{ ai_gen_id }}
+  class="ai-catalogue-page-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-catalogue-page__container-{{ ai_gen_id }}">
+    {% if block.settings.subtitle != blank or block.settings.title != blank or block.settings.description != blank %}
+      <div class="ai-catalogue-page__header-{{ ai_gen_id }}">
+        {% if block.settings.subtitle != blank %}
+          <div class="ai-catalogue-page__subtitle-{{ ai_gen_id }}">
+            {{ block.settings.subtitle }}
+          </div>
+        {% endif %}
+
+        {% if block.settings.title != blank %}
+          <h2 class="ai-catalogue-page__title-{{ ai_gen_id }}">
+            {{ block.settings.title }}
+          </h2>
+        {% endif %}
+
+        {% if block.settings.description != blank %}
+          <div class="ai-catalogue-page__description-{{ ai_gen_id }}">
+            {{ block.settings.description }}
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="ai-catalogue-page__grid-{{ ai_gen_id }}">
+      <div class="ai-catalogue-page__hero-image-{{ ai_gen_id }} ai-catalogue-page__image-wrapper-{{ ai_gen_id }}">
+        {% if block.settings.hero_image %}
+          <img
+            src="{{ block.settings.hero_image | image_url: width: 1600 }}"
+            alt="{{ block.settings.hero_image.alt | escape }}"
+            loading="lazy"
+            width="{{ block.settings.hero_image.width }}"
+            height="{{ block.settings.hero_image.height }}"
+          >
+        {% else %}
+          <div class="ai-catalogue-page__image-placeholder-{{ ai_gen_id }}">
+            {{ 'hero-apparel-1' | placeholder_svg_tag }}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="ai-catalogue-page__support-image-1-{{ ai_gen_id }} ai-catalogue-page__image-wrapper-{{ ai_gen_id }}">
+        {% if block.settings.support_image_1 %}
+          <img
+            src="{{ block.settings.support_image_1 | image_url: width: 800 }}"
+            alt="{{ block.settings.support_image_1.alt | escape }}"
+            loading="lazy"
+            width="{{ block.settings.support_image_1.width }}"
+            height="{{ block.settings.support_image_1.height }}"
+          >
+        {% else %}
+          <div class="ai-catalogue-page__image-placeholder-{{ ai_gen_id }}">
+            {{ 'product-apparel-1' | placeholder_svg_tag }}
+          </div>
+        {% endif %}
+      </div>
+
+      {% if block.settings.show_text_block %}
+        <div class="ai-catalogue-page__text-block-{{ ai_gen_id }}">
+          {% if block.settings.text_block_title != blank %}
+            <h3 class="ai-catalogue-page__text-block-title-{{ ai_gen_id }}">
+              {{ block.settings.text_block_title }}
+            </h3>
+          {% endif %}
+
+          {% if block.settings.text_block_content != blank %}
+            <div class="ai-catalogue-page__text-block-content-{{ ai_gen_id }}">
+              {{ block.settings.text_block_content }}
+            </div>
+          {% endif %}
+        </div>
+      {% else %}
+        <div class="ai-catalogue-page__support-image-2-{{ ai_gen_id }} ai-catalogue-page__image-wrapper-{{ ai_gen_id }}">
+          {% if block.settings.support_image_2 %}
+            <img
+              src="{{ block.settings.support_image_2 | image_url: width: 800 }}"
+              alt="{{ block.settings.support_image_2.alt | escape }}"
+              loading="lazy"
+              width="{{ block.settings.support_image_2.width }}"
+              height="{{ block.settings.support_image_2.height }}"
+            >
+          {% else %}
+            <div class="ai-catalogue-page__image-placeholder-{{ ai_gen_id }}">
+              {{ 'product-apparel-1' | placeholder_svg_tag }}
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <div class="ai-catalogue-page__support-image-3-{{ ai_gen_id }} ai-catalogue-page__image-wrapper-{{ ai_gen_id }}">
+        {% if block.settings.support_image_3 %}
+          <img
+            src="{{ block.settings.support_image_3 | image_url: width: 800 }}"
+            alt="{{ block.settings.support_image_3.alt | escape }}"
+            loading="lazy"
+            width="{{ block.settings.support_image_3.width }}"
+            height="{{ block.settings.support_image_3.height }}"
+          >
+        {% else %}
+          <div class="ai-catalogue-page__image-placeholder-{{ ai_gen_id }}">
+            {{ 'detailed-apparel-1' | placeholder_svg_tag }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</catalogue-page-{{ ai_gen_id }}>
+
+{% if block.settings.enable_scroll_fade %}
+  <script>
+    (function() {
+      class CataloguePage{{ ai_gen_id }} extends HTMLElement {
+        constructor() {
+          super();
+          this.observer = null;
+        }
+
+        connectedCallback() {
+          this.initScrollAnimation();
+        }
+
+        initScrollAnimation() {
+          const elements = this.querySelectorAll(
+            '.ai-catalogue-page__image-wrapper-{{ ai_gen_id }}, .ai-catalogue-page__text-block-{{ ai_gen_id }}'
+          );
+
+          const observerOptions = {
+            root: null,
+            rootMargin: '0px 0px -100px 0px',
+            threshold: 0.1
+          };
+
+          this.observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+              if (entry.isIntersecting) {
+                setTimeout(() => {
+                  entry.target.classList.add('ai-visible-{{ ai_gen_id }}');
+                }, index * 100);
+                this.observer.unobserve(entry.target);
+              }
+            });
+          }, observerOptions);
+
+          elements.forEach((element) => {
+            this.observer.observe(element);
+          });
+        }
+
+        disconnectedCallback() {
+          if (this.observer) {
+            this.observer.disconnect();
+          }
+        }
+      }
+
+      customElements.define('catalogue-page-{{ ai_gen_id }}', CataloguePage{{ ai_gen_id }});
+    })();
+  </script>
+{% endif %}
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Catalogue page",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum width",
+      "min": 800,
+      "max": 1600,
+      "step": 100,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "label": "Grid gap",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "grid_spacing",
+      "label": "Grid top spacing",
+      "min": 20,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "label": "Image border radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#f9f9f9"
+    },
+    {
+      "type": "header",
+      "content": "Header"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Project showcase"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "label": "Title",
+      "default": "Premium signage solutions"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Explore our portfolio of custom signage, display materials, and point-of-purchase installations designed for premium brands across Southeast Asia.</p>"
+    },
+    {
+      "type": "range",
+      "id": "header_spacing",
+      "label": "Header spacing",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "label": "Subtitle size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle color",
+      "default": "#666666"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title size",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "title_spacing",
+      "label": "Title spacing",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "description_size",
+      "label": "Description size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description color",
+      "default": "#333333"
+    },
+    {
+      "type": "header",
+      "content": "Images"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Hero image"
+    },
+    {
+      "type": "image_picker",
+      "id": "support_image_1",
+      "label": "Support image 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "support_image_3",
+      "label": "Support image 2"
+    },
+    {
+      "type": "header",
+      "content": "Text block"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_text_block",
+      "label": "Show text block",
+      "default": true
+    },
+    {
+      "type": "inline_richtext",
+      "id": "text_block_title",
+      "label": "Title",
+      "default": "Design excellence"
+    },
+    {
+      "type": "richtext",
+      "id": "text_block_content",
+      "label": "Content",
+      "default": "<p>Our approach combines contemporary aesthetics with functional design, delivering impactful brand experiences that resonate with your audience.</p>"
+    },
+    {
+      "type": "range",
+      "id": "text_block_padding",
+      "label": "Padding",
+      "min": 20,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "color",
+      "id": "text_block_bg",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "text_block_title_size",
+      "label": "Title size",
+      "min": 16,
+      "max": 36,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "color",
+      "id": "text_block_title_color",
+      "label": "Title color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "text_block_content_size",
+      "label": "Content size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "text_block_content_color",
+      "label": "Content color",
+      "default": "#333333"
+    },
+    {
+      "type": "image_picker",
+      "id": "support_image_2",
+      "label": "Alternative image"
+    },
+    {
+      "type": "header",
+      "content": "Animation"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_scroll_fade",
+      "label": "Enable scroll fade-in",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Catalogue page"
+    }
+  ]
+}
 {% endschema %}
