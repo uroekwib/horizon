@@ -1,6 +1,695 @@
+{% doc %}
+  @prompt
+    <!DOCTYPE html>
+    <html lang="th">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Octopus Media Solutions — Essential Catalogue 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;700;800&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js"></script>
+    <style>
+    :root{
+      --c:#17a9bb;--cv:#14c9df;--cl:#e3f8fb;
+      --i:#818CF8;--ink:#1A202C;--ink70:#374151;--ink40:#6B7280;--ink15:#E5E7EB;
+      --bg:#f3f7fa;
+      --grad:linear-gradient(90deg,#14c9df,#17a9bb,#818CF8,#A78BFA);
+      --gci:linear-gradient(135deg,#14c9df,#17a9bb);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter','Noto Sans Thai',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;overflow-x:hidden}
+    
+    /* ── HEADER ── */
+    .hdr{position:fixed;top:0;left:0;right:0;z-index:300;background:rgba(255,255,255,.96);backdrop-filter:blur(16px);border-bottom:1px solid var(--ink15);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .hdr-brand{display:flex;align-items:center;gap:10px}
+    .hdr-brand img{height:28px}
+    .hdr-txt{font-size:.78em;color:var(--ink40)}
+    .hdr-txt strong{display:block;font-size:1.05em;font-weight:800;color:var(--ink)}
+    .hdr-right{display:flex;align-items:center;gap:8px}
+    .btn{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:99px;font-size:.78em;font-weight:700;text-decoration:none;cursor:pointer;border:none;transition:transform .15s,opacity .15s}
+    .btn-c{background:var(--grad);background-size:200%;color:#fff;box-shadow:0 3px 12px rgba(20,201,223,.22)}
+    .btn-c:hover{opacity:.88;transform:translateY(-1px)}
+    .btn-o{background:#fff;border:1.5px solid var(--c);color:var(--c)}
+    .btn-o:hover{background:var(--cl)}
+    .btn-lg{padding:12px 26px;font-size:.9em}
+    
+    /* ── HERO ── */
+    .hero{padding:100px 24px 52px;text-align:center;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(20,201,223,.09),transparent 60%),var(--bg);position:relative;overflow:hidden}
+    .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(23,169,187,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(23,169,187,.04) 1px,transparent 1px);background-size:56px 56px}
+    .hero-inner{position:relative;z-index:1;max-width:680px;margin:0 auto}
+    .hero-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(20,201,223,.10);border:1px solid rgba(20,201,223,.22);border-radius:99px;padding:5px 14px;font-size:.73em;font-weight:700;color:var(--c);letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px}
+    .hero-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--cv);animation:dot 2s ease-in-out infinite}
+    @keyframes dot{0%,100%{opacity:1}50%{opacity:.4}}
+    .hero h1{font-size:clamp(2.2em,6vw,4em);font-weight:900;line-height:1.08;letter-spacing:-.04em;margin-bottom:10px;color:var(--ink)}
+    .hero h1 .g{background:var(--grad);background-size:300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:ga 5s ease-in-out infinite alternate}
+    @keyframes ga{0%{background-position:0%}100%{background-position:100%}}
+    .hero-sub{font-size:.95em;color:var(--ink40);margin-bottom:8px;font-style:italic}
+    .hero-desc{font-size:.88em;color:var(--ink40);line-height:1.7;margin-bottom:36px}
+    .hero-stats{display:flex;justify-content:center;gap:40px;margin-bottom:36px}
+    .stat-num{font-size:2em;font-weight:900;background:var(--grad);background-size:200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+    .stat-lbl{font-size:.7em;color:var(--ink40);font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:4px}
+    .hero-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+    
+    /* ── STAGE ── */
+    .stage{padding:48px 24px 70px;display:flex;flex-direction:column;align-items:center;background:linear-gradient(180deg,#dce5ef 0%,#c8d4e0 100%);min-height:60vh}
+    
+    /* ── LOADING ── */
+    .load-box{background:#fff;border-radius:16px;padding:40px 32px;display:flex;flex-direction:column;align-items:center;gap:20px;box-shadow:0 20px 60px rgba(0,0,0,.12);min-width:320px}
+    .load-title{font-size:.92em;font-weight:700;color:var(--ink)}
+    .load-sub{font-size:.78em;color:var(--ink40)}
+    .progress-wrap{width:100%;background:var(--ink15);border-radius:99px;overflow:hidden;height:6px}
+    .progress-bar{height:100%;background:var(--grad);background-size:200%;border-radius:99px;transition:width .3s ease;width:0%}
+    .spin{width:36px;height:36px;border:3px solid var(--ink15);border-top-color:var(--c);border-radius:50%;animation:ro .7s linear infinite}
+    @keyframes ro{to{transform:rotate(360deg)}}
+    
+    /* ── FLIPBOOK SCENE ── */
+    .flipbook-scene{display:flex;align-items:center;gap:20px;position:relative;margin-bottom:20px}
+    .arr{width:52px;height:52px;
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-catalogue-viewer-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .ai-catalogue-hero-{{ ai_gen_id }} {
+    padding: 60px 24px 40px;
+    text-align: center;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(20, 201, 223, 0.09), transparent 60%), #f3f7fa;
+    position: relative;
+    overflow: hidden;
+    border-radius: {{ block.settings.border_radius }}px;
+  }
+
+  .ai-catalogue-grid-{{ ai_gen_id }} {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(rgba(23, 169, 187, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(23, 169, 187, 0.04) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+
+  .ai-catalogue-hero-inner-{{ ai_gen_id }} {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .ai-catalogue-badge-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: {{ block.settings.badge_bg_color }};
+    border: 1px solid {{ block.settings.badge_border_color }};
+    border-radius: 99px;
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    color: {{ block.settings.badge_text_color }};
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .ai-catalogue-badge-{{ ai_gen_id }}::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: {{ block.settings.badge_dot_color }};
+    animation: ai-catalogue-dot-{{ ai_gen_id }} 2s ease-in-out infinite;
+  }
+
+  @keyframes ai-catalogue-dot-{{ ai_gen_id }} {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .ai-catalogue-heading-{{ ai_gen_id }} {
+    font-size: clamp(28px, 6vw, {{ block.settings.heading_size }}px);
+    font-weight: 900;
+    line-height: 1.08;
+    letter-spacing: -0.04em;
+    margin-bottom: 10px;
+    color: {{ block.settings.heading_color }};
+  }
+
+  .ai-catalogue-gradient-{{ ai_gen_id }} {
+    background: linear-gradient(90deg, #14c9df, #17a9bb, #818CF8, #A78BFA);
+    background-size: 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .ai-catalogue-subtitle-{{ ai_gen_id }} {
+    font-size: 15px;
+    color: {{ block.settings.subtitle_color }};
+    margin-bottom: 8px;
+    font-style: italic;
+  }
+
+  .ai-catalogue-description-{{ ai_gen_id }} {
+    font-size: 14px;
+    color: {{ block.settings.description_color }};
+    line-height: 1.7;
+    margin-bottom: 36px;
+  }
+
+  .ai-catalogue-stats-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 36px;
+    flex-wrap: wrap;
+  }
+
+  .ai-catalogue-stat-{{ ai_gen_id }} {
+    text-align: center;
+  }
+
+  .ai-catalogue-stat-num-{{ ai_gen_id }} {
+    font-size: 32px;
+    font-weight: 900;
+    background: linear-gradient(90deg, #14c9df, #17a9bb, #818CF8);
+    background-size: 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+  }
+
+  .ai-catalogue-stat-label-{{ ai_gen_id }} {
+    font-size: 11px;
+    color: {{ block.settings.stat_label_color }};
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .ai-catalogue-buttons-{{ ai_gen_id }} {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .ai-catalogue-btn-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 26px;
+    border-radius: 99px;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.15s, opacity 0.15s;
+  }
+
+  .ai-catalogue-btn-primary-{{ ai_gen_id }} {
+    background: linear-gradient(90deg, #14c9df, #17a9bb, #818CF8, #A78BFA);
+    background-size: 200%;
+    color: #fff;
+    box-shadow: 0 3px 12px rgba(20, 201, 223, 0.22);
+  }
+
+  .ai-catalogue-btn-primary-{{ ai_gen_id }}:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+  }
+
+  .ai-catalogue-btn-secondary-{{ ai_gen_id }} {
+    background: #fff;
+    border: 1.5px solid {{ block.settings.secondary_btn_border }};
+    color: {{ block.settings.secondary_btn_color }};
+  }
+
+  .ai-catalogue-btn-secondary-{{ ai_gen_id }}:hover {
+    background: {{ block.settings.secondary_btn_hover_bg }};
+  }
+
+  .ai-catalogue-viewer-section-{{ ai_gen_id }} {
+    padding: 48px 24px;
+    background: linear-gradient(180deg, #dce5ef 0%, #c8d4e0 100%);
+    border-radius: {{ block.settings.border_radius }}px;
+    margin-top: 20px;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-catalogue-pdf-container-{{ ai_gen_id }} {
+    background: #fff;
+    border-radius: 16px;
+    padding: 40px 32px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .ai-catalogue-pdf-icon-{{ ai_gen_id }} {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    background: linear-gradient(135deg, #14c9df, #17a9bb);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-catalogue-pdf-icon-{{ ai_gen_id }} svg {
+    width: 48px;
+    height: 48px;
+    fill: #fff;
+  }
+
+  .ai-catalogue-pdf-title-{{ ai_gen_id }} {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1A202C;
+    margin-bottom: 8px;
+  }
+
+  .ai-catalogue-pdf-subtitle-{{ ai_gen_id }} {
+    font-size: 14px;
+    color: #6B7280;
+    margin-bottom: 24px;
+  }
+
+  .ai-catalogue-empty-state-{{ ai_gen_id }} {
+    font-size: 14px;
+    color: #999;
+    font-style: italic;
+    padding: 20px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-catalogue-hero-{{ ai_gen_id }} {
+      padding: 40px 16px 32px;
+    }
+
+    .ai-catalogue-stats-{{ ai_gen_id }} {
+      gap: 24px;
+    }
+
+    .ai-catalogue-stat-num-{{ ai_gen_id }} {
+      font-size: 24px;
+    }
+
+    .ai-catalogue-viewer-section-{{ ai_gen_id }} {
+      padding: 32px 16px;
+    }
+  }
+{% endstyle %}
+
+<catalogue-viewer-{{ ai_gen_id }} class="ai-catalogue-viewer-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-catalogue-hero-{{ ai_gen_id }}">
+    <div class="ai-catalogue-grid-{{ ai_gen_id }}"></div>
+    <div class="ai-catalogue-hero-inner-{{ ai_gen_id }}">
+      {% if block.settings.badge_text != blank %}
+        <div class="ai-catalogue-badge-{{ ai_gen_id }}">
+          {{ block.settings.badge_text }}
+        </div>
+      {% endif %}
+
+      {% if block.settings.heading_gradient != blank %}
+        <h1 class="ai-catalogue-heading-{{ ai_gen_id }}">
+          {{ block.settings.heading_before }}
+          <span class="ai-catalogue-gradient-{{ ai_gen_id }}">{{ block.settings.heading_gradient }}</span>
+          {{ block.settings.heading_after }}
+        </h1>
+      {% endif %}
+
+      {% if block.settings.subtitle != blank %}
+        <div class="ai-catalogue-subtitle-{{ ai_gen_id }}">
+          {{ block.settings.subtitle }}
+        </div>
+      {% endif %}
+
+      {% if block.settings.description != blank %}
+        <div class="ai-catalogue-description-{{ ai_gen_id }}">
+          {{ block.settings.description }}
+        </div>
+      {% endif %}
+
+      {% if block.settings.show_stats %}
+        <div class="ai-catalogue-stats-{{ ai_gen_id }}">
+          {% if block.settings.stat_1_number != blank %}
+            <div class="ai-catalogue-stat-{{ ai_gen_id }}">
+              <div class="ai-catalogue-stat-num-{{ ai_gen_id }}">{{ block.settings.stat_1_number }}</div>
+              <div class="ai-catalogue-stat-label-{{ ai_gen_id }}">{{ block.settings.stat_1_label }}</div>
+            </div>
+          {% endif %}
+
+          {% if block.settings.stat_2_number != blank %}
+            <div class="ai-catalogue-stat-{{ ai_gen_id }}">
+              <div class="ai-catalogue-stat-num-{{ ai_gen_id }}">{{ block.settings.stat_2_number }}</div>
+              <div class="ai-catalogue-stat-label-{{ ai_gen_id }}">{{ block.settings.stat_2_label }}</div>
+            </div>
+          {% endif %}
+
+          {% if block.settings.stat_3_number != blank %}
+            <div class="ai-catalogue-stat-{{ ai_gen_id }}">
+              <div class="ai-catalogue-stat-num-{{ ai_gen_id }}">{{ block.settings.stat_3_number }}</div>
+              <div class="ai-catalogue-stat-label-{{ ai_gen_id }}">{{ block.settings.stat_3_label }}</div>
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <div class="ai-catalogue-buttons-{{ ai_gen_id }}">
+        {% if block.settings.pdf_file != blank %}
+          <a href="{{ block.settings.pdf_file }}" class="ai-catalogue-btn-{{ ai_gen_id }} ai-catalogue-btn-primary-{{ ai_gen_id }}" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            {{ block.settings.primary_btn_label }}
+          </a>
+        {% endif %}
+
+        {% if block.settings.secondary_btn_link != blank %}
+          <a href="{{ block.settings.secondary_btn_link }}" class="ai-catalogue-btn-{{ ai_gen_id }} ai-catalogue-btn-secondary-{{ ai_gen_id }}">
+            {{ block.settings.secondary_btn_label }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="ai-catalogue-viewer-section-{{ ai_gen_id }}">
+    <div class="ai-catalogue-pdf-container-{{ ai_gen_id }}">
+      {% if block.settings.pdf_file != blank %}
+        <div class="ai-catalogue-pdf-icon-{{ ai_gen_id }}">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
+            <path d="M14 2v6h6"/>
+            <path d="M9 13h6"/>
+            <path d="M9 17h6"/>
+          </svg>
+        </div>
+        <div class="ai-catalogue-pdf-title-{{ ai_gen_id }}">{{ block.settings.pdf_title }}</div>
+        <div class="ai-catalogue-pdf-subtitle-{{ ai_gen_id }}">{{ block.settings.pdf_description }}</div>
+        <a href="{{ block.settings.pdf_file }}" class="ai-catalogue-btn-{{ ai_gen_id }} ai-catalogue-btn-primary-{{ ai_gen_id }}" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          เปิดดูแคตตาล็อก
+        </a>
+      {% else %}
+        <div class="ai-catalogue-empty-state-{{ ai_gen_id }}">
+          กรุณาอัปโหลดไฟล์ PDF แคตตาล็อกในการตั้งค่า
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</catalogue-viewer-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class CatalogueViewer{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.init();
+      }
+
+      init() {
+        const buttons = this.querySelectorAll('.ai-catalogue-btn-{{ ai_gen_id }}');
+        buttons.forEach(button => {
+          button.addEventListener('click', function(e) {
+            if (this.href && this.href.includes('.pdf')) {
+              console.log('Opening PDF catalogue');
+            }
+          });
+        });
+      }
+    }
+
+    customElements.define('catalogue-viewer-{{ ai_gen_id }}', CatalogueViewer{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Catalogue viewer",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Badge"
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Text",
+      "default": "NEW 2026"
+    },
+    {
+      "type": "color",
+      "id": "badge_bg_color",
+      "label": "Background",
+      "default": "rgba(20, 201, 223, 0.10)"
+    },
+    {
+      "type": "color",
+      "id": "badge_border_color",
+      "label": "Border",
+      "default": "rgba(20, 201, 223, 0.22)"
+    },
+    {
+      "type": "color",
+      "id": "badge_text_color",
+      "label": "Text color",
+      "default": "#17a9bb"
+    },
+    {
+      "type": "color",
+      "id": "badge_dot_color",
+      "label": "Dot",
+      "default": "#14c9df"
+    },
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "heading_before",
+      "label": "Text before gradient"
+    },
+    {
+      "type": "text",
+      "id": "heading_gradient",
+      "label": "Gradient text",
+      "default": "Essential Catalogue"
+    },
+    {
+      "type": "text",
+      "id": "heading_after",
+      "label": "Text after gradient",
+      "default": "2026"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Size",
+      "min": 24,
+      "max": 72,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Color",
+      "default": "#1A202C"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Octopus Media Solutions"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "สำรวจผลิตภัณฑ์และบริการครบวงจรสำหรับป้ายโฆษณา วัสดุจัดแสดง และงานติดตั้ง POP"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle color",
+      "default": "#6B7280"
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description color",
+      "default": "#6B7280"
+    },
+    {
+      "type": "header",
+      "content": "Statistics"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_stats",
+      "label": "Show statistics",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "stat_1_number",
+      "label": "Stat 1 number",
+      "default": "500+"
+    },
+    {
+      "type": "text",
+      "id": "stat_1_label",
+      "label": "Stat 1 label",
+      "default": "Products"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_number",
+      "label": "Stat 2 number",
+      "default": "50+"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_label",
+      "label": "Stat 2 label",
+      "default": "Categories"
+    },
+    {
+      "type": "text",
+      "id": "stat_3_number",
+      "label": "Stat 3 number",
+      "default": "2026"
+    },
+    {
+      "type": "text",
+      "id": "stat_3_label",
+      "label": "Stat 3 label",
+      "default": "Edition"
+    },
+    {
+      "type": "color",
+      "id": "stat_label_color",
+      "label": "Label color",
+      "default": "#6B7280"
+    },
+    {
+      "type": "header",
+      "content": "PDF file"
+    },
+    {
+      "type": "url",
+      "id": "pdf_file",
+      "label": "PDF file URL"
+    },
+    {
+      "type": "text",
+      "id": "pdf_title",
+      "label": "Title",
+      "default": "แคตตาล็อกผลิตภัณฑ์ 2026"
+    },
+    {
+      "type": "text",
+      "id": "pdf_description",
+      "label": "Description",
+      "default": "คลิกเพื่อดาวน์โหลดหรือเปิดดูแคตตาล็อกฉบับเต็ม"
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "text",
+      "id": "primary_btn_label",
+      "label": "Primary button",
+      "default": "ดาวน์โหลด PDF"
+    },
+    {
+      "type": "text",
+      "id": "secondary_btn_label",
+      "label": "Secondary button",
+      "default": "ดูสินค้าทั้งหมด"
+    },
+    {
+      "type": "url",
+      "id": "secondary_btn_link",
+      "label": "Secondary link"
+    },
+    {
+      "type": "color",
+      "id": "secondary_btn_border",
+      "label": "Secondary border",
+      "default": "#17a9bb"
+    },
+    {
+      "type": "color",
+      "id": "secondary_btn_color",
+      "label": "Secondary text",
+      "default": "#17a9bb"
+    },
+    {
+      "type": "color",
+      "id": "secondary_btn_hover_bg",
+      "label": "Secondary hover",
+      "default": "#e3f8fb"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Catalogue viewer"
+    }
+  ]
+}
 {% endschema %}
