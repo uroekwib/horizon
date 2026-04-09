@@ -1,6 +1,633 @@
+{% doc %}
+  @prompt
+    Create a Shopify section for an online PDF catalogue viewer.
+    The merchant should be able to select a PDF file from Shopify files and display it on the page as an interactive flipbook.
+    
+    The viewer should:
+    
+    open like a real book
+    show 2 pages on desktop
+    show 1 page on mobile
+    keep the first and last page as single pages
+    support swipe on mobile
+    support keyboard navigation on desktop
+    use smooth page flip animation
+    stay centred on the page
+    be wider and not look too narrow
+    
+    Make it feel premium, similar to a real catalogue, not a basic PDF embed or slider., Create a Shopify section for a PDF catalogue viewer.
+    The section must load and render the PDF properly using pdf.js (not iframe or embed).
+    
+    Convert each PDF page into canvas or images so it always displays correctly.
+    Do not show broken file icons.
+    
+    The viewer should:
+    
+    display pages clearly and at full width (not small or narrow)
+    stay centred on the page
+    support next / previous navigation
+    support swipe on mobile
+    load pages progressively (lazy loading)
+    
+    Make sure the PDF always loads and renders correctly from a Shopify file URL.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-pdf-viewer-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: {{ block.settings.section_padding_top }}px 0 {{ block.settings.section_padding_bottom }}px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .ai-pdf-viewer-wrapper-{{ ai_gen_id }} {
+    max-width: {{ block.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-pdf-viewer-container-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    background-color: #ffffff;
+    border-radius: {{ block.settings.border_radius }}px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+
+  .ai-pdf-viewer-pages-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    touch-action: pan-y;
+  }
+
+  .ai-pdf-viewer-page-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    padding: 20px;
+  }
+
+  .ai-pdf-viewer-page-{{ ai_gen_id }}.ai-pdf-active-{{ ai_gen_id }} {
+    opacity: 1;
+    visibility: visible;
+    z-index: 2;
+  }
+
+  .ai-pdf-viewer-canvas-{{ ai_gen_id }} {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .ai-pdf-viewer-loading-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 1;
+  }
+
+  .ai-pdf-viewer-spinner-{{ ai_gen_id }} {
+    width: 50px;
+    height: 50px;
+    border: 4px solid {{ block.settings.button_background }}33;
+    border-top-color: {{ block.settings.button_background }};
+    border-radius: 50%;
+    animation: ai-pdf-spin-{{ ai_gen_id }} 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+
+  @keyframes ai-pdf-spin-{{ ai_gen_id }} {
+    to { transform: rotate(360deg); }
+  }
+
+  .ai-pdf-viewer-loading-text-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: 14px;
+  }
+
+  .ai-pdf-viewer-controls-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #f8f8f8;
+    border-top: 1px solid #e0e0e0;
+  }
+
+  .ai-pdf-viewer-nav-{{ ai_gen_id }} {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .ai-pdf-viewer-button-{{ ai_gen_id }} {
+    background-color: {{ block.settings.button_background }};
+    color: {{ block.settings.button_text_color }};
+    border: none;
+    padding: 10px 20px;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 44px;
+    min-height: 44px;
+    justify-content: center;
+  }
+
+  .ai-pdf-viewer-button-{{ ai_gen_id }}:hover:not(:disabled) {
+    background-color: {{ block.settings.button_hover_background }};
+    transform: translateY(-1px);
+  }
+
+  .ai-pdf-viewer-button-{{ ai_gen_id }}:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .ai-pdf-viewer-page-info-{{ ai_gen_id }} {
+    font-size: 14px;
+    color: {{ block.settings.text_color }};
+    font-weight: 500;
+  }
+
+  .ai-pdf-viewer-empty-{{ ai_gen_id }} {
+    text-align: center;
+    padding: 80px 20px;
+    background-color: #f5f5f5;
+    border-radius: {{ block.settings.border_radius }}px;
+  }
+
+  .ai-pdf-viewer-empty-{{ ai_gen_id }} svg {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 20px;
+    opacity: 0.3;
+  }
+
+  .ai-pdf-viewer-empty-{{ ai_gen_id }} p {
+    color: #666;
+    font-size: 16px;
+    margin: 0;
+  }
+
+  .ai-pdf-viewer-error-{{ ai_gen_id }} {
+    text-align: center;
+    padding: 40px 20px;
+    color: #d32f2f;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-pdf-viewer-pages-{{ ai_gen_id }} {
+      min-height: 500px;
+    }
+
+    .ai-pdf-viewer-page-{{ ai_gen_id }} {
+      padding: 10px;
+    }
+
+    .ai-pdf-viewer-controls-{{ ai_gen_id }} {
+      flex-direction: column;
+      gap: 12px;
+      padding: 16px;
+    }
+
+    .ai-pdf-viewer-nav-{{ ai_gen_id }} {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .ai-pdf-viewer-button-{{ ai_gen_id }} {
+      padding: 8px 16px;
+      font-size: 13px;
+    }
+  }
+{% endstyle %}
+
+<pdf-catalogue-viewer-{{ ai_gen_id }}
+  class="ai-pdf-viewer-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+  data-pdf-url="{{ block.settings.pdf_file }}"
+  data-scale="{{ block.settings.page_scale }}"
+>
+  <div class="ai-pdf-viewer-wrapper-{{ ai_gen_id }}">
+    {% if block.settings.pdf_file != blank %}
+      <div class="ai-pdf-viewer-container-{{ ai_gen_id }}">
+        <div class="ai-pdf-viewer-pages-{{ ai_gen_id }}">
+          <div class="ai-pdf-viewer-loading-{{ ai_gen_id }}">
+            <div class="ai-pdf-viewer-spinner-{{ ai_gen_id }}"></div>
+            <div class="ai-pdf-viewer-loading-text-{{ ai_gen_id }}">Loading catalogue...</div>
+          </div>
+        </div>
+
+        <div class="ai-pdf-viewer-controls-{{ ai_gen_id }}" style="display: none;">
+          <div class="ai-pdf-viewer-nav-{{ ai_gen_id }}">
+            <button
+              class="ai-pdf-viewer-button-{{ ai_gen_id }} ai-pdf-prev-{{ ai_gen_id }}"
+              aria-label="Previous page"
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M10 12L6 8L10 4" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span class="ai-pdf-prev-text-{{ ai_gen_id }}">Previous</span>
+            </button>
+
+            <div class="ai-pdf-viewer-page-info-{{ ai_gen_id }}">
+              Page <span class="ai-pdf-current-{{ ai_gen_id }}">1</span> of <span class="ai-pdf-total-{{ ai_gen_id }}">1</span>
+            </div>
+
+            <button
+              class="ai-pdf-viewer-button-{{ ai_gen_id }} ai-pdf-next-{{ ai_gen_id }}"
+              aria-label="Next page"
+            >
+              <span class="ai-pdf-next-text-{{ ai_gen_id }}">Next</span>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 4L10 8L6 12" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <div class="ai-pdf-viewer-empty-{{ ai_gen_id }}">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+          <polyline points="10 9 9 9 8 9"/>
+        </svg>
+        <p>Add a PDF file URL to display your catalogue</p>
+      </div>
+    {% endif %}
+  </div>
+</pdf-catalogue-viewer-{{ ai_gen_id }}>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+<script>
+  (function() {
+    if (typeof pdfjsLib === 'undefined') {
+      console.error('PDF.js library not loaded');
+      return;
+    }
+
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    class PdfCatalogueViewer{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.currentPage = 1;
+        this.totalPages = 0;
+        this.pdfDoc = null;
+        this.scale = parseFloat(this.dataset.scale) || 1.5;
+        this.renderedPages = new Set();
+        this.touchStartX = 0;
+        this.touchEndX = 0;
+      }
+
+      connectedCallback() {
+        const pdfUrl = this.dataset.pdfUrl;
+        if (!pdfUrl) return;
+
+        this.pagesContainer = this.querySelector('.ai-pdf-viewer-pages-{{ ai_gen_id }}');
+        this.loadingElement = this.querySelector('.ai-pdf-viewer-loading-{{ ai_gen_id }}');
+        this.controlsElement = this.querySelector('.ai-pdf-viewer-controls-{{ ai_gen_id }}');
+        this.prevButton = this.querySelector('.ai-pdf-prev-{{ ai_gen_id }}');
+        this.nextButton = this.querySelector('.ai-pdf-next-{{ ai_gen_id }}');
+        this.currentPageDisplay = this.querySelector('.ai-pdf-current-{{ ai_gen_id }}');
+        this.totalPagesDisplay = this.querySelector('.ai-pdf-total-{{ ai_gen_id }}');
+
+        this.loadPDF(pdfUrl);
+      }
+
+      async loadPDF(url) {
+        try {
+          const loadingTask = pdfjsLib.getDocument(url);
+          this.pdfDoc = await loadingTask.promise;
+          this.totalPages = this.pdfDoc.numPages;
+
+          if (this.totalPagesDisplay) {
+            this.totalPagesDisplay.textContent = this.totalPages;
+          }
+
+          this.createPageContainers();
+          await this.renderPage(1);
+
+          if (this.loadingElement) {
+            this.loadingElement.style.display = 'none';
+          }
+
+          if (this.controlsElement) {
+            this.controlsElement.style.display = 'flex';
+          }
+
+          this.setupEventListeners();
+          this.updateControls();
+
+        } catch (error) {
+          console.error('Error loading PDF:', error);
+          this.showError('Failed to load PDF. Please check the file URL.');
+        }
+      }
+
+      createPageContainers() {
+        for (let i = 1; i <= this.totalPages; i++) {
+          const pageDiv = document.createElement('div');
+          pageDiv.className = 'ai-pdf-viewer-page-{{ ai_gen_id }}';
+          pageDiv.dataset.pageNum = i;
+
+          if (i === 1) {
+            pageDiv.classList.add('ai-pdf-active-{{ ai_gen_id }}');
+          }
+
+          this.pagesContainer.appendChild(pageDiv);
+        }
+      }
+
+      async renderPage(pageNum) {
+        if (this.renderedPages.has(pageNum)) {
+          return;
+        }
+
+        try {
+          const page = await this.pdfDoc.getPage(pageNum);
+          const viewport = page.getViewport({ scale: this.scale });
+
+          const canvas = document.createElement('canvas');
+          canvas.className = 'ai-pdf-viewer-canvas-{{ ai_gen_id }}';
+          const context = canvas.getContext('2d');
+
+          canvas.height = viewport.height;
+          canvas.width = viewport.width;
+
+          const renderContext = {
+            canvasContext: context,
+            viewport: viewport
+          };
+
+          await page.render(renderContext).promise;
+
+          const pageDiv = this.querySelector(`[data-page-num="${pageNum}"]`);
+          if (pageDiv) {
+            pageDiv.innerHTML = '';
+            pageDiv.appendChild(canvas);
+          }
+
+          this.renderedPages.add(pageNum);
+
+          const containerHeight = viewport.height + 40;
+          this.pagesContainer.style.minHeight = containerHeight + 'px';
+
+        } catch (error) {
+          console.error(`Error rendering page ${pageNum}:`, error);
+        }
+      }
+
+      setupEventListeners() {
+        if (this.prevButton) {
+          this.prevButton.addEventListener('click', () => this.previousPage());
+        }
+
+        if (this.nextButton) {
+          this.nextButton.addEventListener('click', () => this.nextPage());
+        }
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowLeft') {
+            this.previousPage();
+          } else if (e.key === 'ArrowRight') {
+            this.nextPage();
+          }
+        });
+
+        this.pagesContainer.addEventListener('touchstart', (e) => {
+          this.touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        this.pagesContainer.addEventListener('touchend', (e) => {
+          this.touchEndX = e.changedTouches[0].screenX;
+          this.handleSwipe();
+        }, { passive: true });
+      }
+
+      handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = this.touchStartX - this.touchEndX;
+
+        if (Math.abs(diff) > swipeThreshold) {
+          if (diff > 0) {
+            this.nextPage();
+          } else {
+            this.previousPage();
+          }
+        }
+      }
+
+      async nextPage() {
+        if (this.currentPage >= this.totalPages) return;
+
+        this.currentPage++;
+        await this.showPage(this.currentPage);
+      }
+
+      async previousPage() {
+        if (this.currentPage <= 1) return;
+
+        this.currentPage--;
+        await this.showPage(this.currentPage);
+      }
+
+      async showPage(pageNum) {
+        const allPages = this.querySelectorAll('.ai-pdf-viewer-page-{{ ai_gen_id }}');
+        allPages.forEach(page => {
+          page.classList.remove('ai-pdf-active-{{ ai_gen_id }}');
+        });
+
+        const targetPage = this.querySelector(`[data-page-num="${pageNum}"]`);
+        if (targetPage) {
+          targetPage.classList.add('ai-pdf-active-{{ ai_gen_id }}');
+        }
+
+        if (!this.renderedPages.has(pageNum)) {
+          await this.renderPage(pageNum);
+        }
+
+        if (pageNum < this.totalPages && !this.renderedPages.has(pageNum + 1)) {
+          this.renderPage(pageNum + 1);
+        }
+
+        this.updateControls();
+      }
+
+      updateControls() {
+        if (this.currentPageDisplay) {
+          this.currentPageDisplay.textContent = this.currentPage;
+        }
+
+        if (this.prevButton) {
+          this.prevButton.disabled = this.currentPage <= 1;
+        }
+
+        if (this.nextButton) {
+          this.nextButton.disabled = this.currentPage >= this.totalPages;
+        }
+      }
+
+      showError(message) {
+        if (this.loadingElement) {
+          this.loadingElement.innerHTML = `
+            <div class="ai-pdf-viewer-error-{{ ai_gen_id }}">
+              <p>${message}</p>
+            </div>
+          `;
+        }
+      }
+    }
+
+    customElements.define('pdf-catalogue-viewer-{{ ai_gen_id }}', PdfCatalogueViewer{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "PDF catalogue viewer",
+  "settings": [
+    {
+      "type": "header",
+      "content": "PDF file"
+    },
+    {
+      "type": "url",
+      "id": "pdf_file",
+      "label": "PDF file URL"
+    },
+    {
+      "type": "paragraph",
+      "content": "Upload your PDF to Shopify Files (Settings > Files), then copy and paste the file URL here."
+    },
+    {
+      "type": "header",
+      "content": "Display"
+    },
+    {
+      "type": "range",
+      "id": "page_scale",
+      "label": "Page scale",
+      "min": 1,
+      "max": 3,
+      "step": 0.1,
+      "default": 1.5
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Container width",
+      "min": 800,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Button hover background",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Button border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 4
+    }
+  ],
+  "presets": [
+    {
+      "name": "PDF catalogue viewer"
+    }
+  ]
+}
 {% endschema %}
