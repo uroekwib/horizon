@@ -1,6 +1,636 @@
+{% doc %}
+  @prompt
+    Create a Shopify section that displays this PDF as an online e-book:
+    https://cdn.shopify.com/s/files/1/0098/2653/3433/files/Octopus_Media_Solutions_catalogue_2026.pdf?v=1775702103
+    
+    Make it look like a flipbook with page turning effect.
+    Keep it centred, responsive, and easy to read., Create a Shopify section that makes this PDF feel like a real e-book, not a normal PDF viewer.
+    Use a realistic flipbook style with page turning animation like a digital book or magazine.
+    Keep it centred, responsive, and easy to read.
+    PDF: https://cdn.shopify.com/s/files/1/0098/2653/3433/files/Octopus_Media_Solutions_catalogue_2026.pdf?v=1775702103
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-ebook-flipbook-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: {{ block.settings.padding_top }}px 20px {{ block.settings.padding_bottom }}px;
+    background: {{ block.settings.page_background }};
+  }
+
+  .ai-ebook-container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.max_width }}px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .ai-ebook-book-wrapper-{{ ai_gen_id }} {
+    perspective: 2000px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 600px;
+  }
+
+  .ai-ebook-book-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    aspect-ratio: 1.414 / 1;
+    transform-style: preserve-3d;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, {{ block.settings.shadow_intensity | divided_by: 100.0 }});
+    border-radius: 4px;
+    background: {{ block.settings.book_background }};
+  }
+
+  .ai-ebook-page-{{ ai_gen_id }} {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    transform-origin: left center;
+    transition: transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1);
+    background: {{ block.settings.page_color }};
+    border-radius: 0 4px 4px 0;
+    overflow: hidden;
+  }
+
+  .ai-ebook-page-{{ ai_gen_id }}.flipped {
+    transform: rotateY(-180deg);
+  }
+
+  .ai-ebook-page-front-{{ ai_gen_id }},
+  .ai-ebook-page-back-{{ ai_gen_id }} {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-ebook-page-back-{{ ai_gen_id }} {
+    transform: rotateY(180deg);
+  }
+
+  .ai-ebook-iframe-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 4px;
+  }
+
+  .ai-ebook-controls-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    margin-top: 40px;
+    padding: 20px;
+    background: {{ block.settings.controls_background }};
+    border-radius: {{ block.settings.controls_border_radius }}px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .ai-ebook-nav-button-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: {{ block.settings.button_background }};
+    color: {{ block.settings.button_text }};
+    border: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .ai-ebook-nav-button-{{ ai_gen_id }}:hover:not(:disabled) {
+    background: {{ block.settings.button_hover_background }};
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .ai-ebook-nav-button-{{ ai_gen_id }}:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .ai-ebook-page-indicator-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 20px;
+    background: {{ block.settings.indicator_background }};
+    border-radius: {{ block.settings.indicator_border_radius }}px;
+    color: {{ block.settings.indicator_text }};
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .ai-ebook-page-number-{{ ai_gen_id }} {
+    font-size: 18px;
+    font-weight: 600;
+    color: {{ block.settings.indicator_number_color }};
+  }
+
+  .ai-ebook-loading-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 10;
+  }
+
+  .ai-ebook-spinner-{{ ai_gen_id }} {
+    width: 50px;
+    height: 50px;
+    border: 4px solid {{ block.settings.spinner_color }};
+    border-top-color: transparent;
+    border-radius: 50%;
+    margin: 0 auto 16px;
+  }
+
+  .ai-ebook-loading-text-{{ ai_gen_id }} {
+    color: {{ block.settings.loading_text_color }};
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .ai-ebook-fullscreen-button-{{ ai_gen_id }} {
+    padding: 10px 20px;
+    background: {{ block.settings.fullscreen_button_bg }};
+    color: {{ block.settings.fullscreen_button_text }};
+    border: 1px solid {{ block.settings.fullscreen_button_border }};
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .ai-ebook-fullscreen-button-{{ ai_gen_id }}:hover {
+    background: {{ block.settings.fullscreen_button_hover_bg }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-ebook-flipbook-{{ ai_gen_id }} {
+      padding: {{ block.settings.padding_top | times: 0.6 }}px 16px {{ block.settings.padding_bottom | times: 0.6 }}px;
+    }
+
+    .ai-ebook-book-wrapper-{{ ai_gen_id }} {
+      min-height: 400px;
+    }
+
+    .ai-ebook-controls-{{ ai_gen_id }} {
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+      padding: 16px;
+    }
+
+    .ai-ebook-nav-button-{{ ai_gen_id }} {
+      padding: 10px 20px;
+      font-size: 14px;
+    }
+
+    .ai-ebook-page-indicator-{{ ai_gen_id }} {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+{% endstyle %}
+
+<digital-ebook-{{ ai_gen_id }}
+  class="ai-ebook-flipbook-{{ ai_gen_id }}"
+  data-pdf-url="{{ block.settings.pdf_url }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-ebook-container-{{ ai_gen_id }}">
+    <div class="ai-ebook-book-wrapper-{{ ai_gen_id }}">
+      <div class="ai-ebook-loading-{{ ai_gen_id }}">
+        <div class="ai-ebook-spinner-{{ ai_gen_id }}"></div>
+        <p class="ai-ebook-loading-text-{{ ai_gen_id }}">Loading your catalogue...</p>
+      </div>
+
+      <div class="ai-ebook-book-{{ ai_gen_id }}" style="display: none;">
+        <div class="ai-ebook-page-{{ ai_gen_id }}">
+          <div class="ai-ebook-page-front-{{ ai_gen_id }}">
+            <iframe
+              class="ai-ebook-iframe-{{ ai_gen_id }}"
+              src=""
+              title="Digital Catalogue"
+              loading="lazy"
+            ></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ai-ebook-controls-{{ ai_gen_id }}">
+      <button
+        class="ai-ebook-nav-button-{{ ai_gen_id }} ai-ebook-prev-{{ ai_gen_id }}"
+        aria-label="Previous page"
+        disabled
+      >
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Previous</span>
+      </button>
+
+      <div class="ai-ebook-page-indicator-{{ ai_gen_id }}">
+        <span>Page</span>
+        <span class="ai-ebook-page-number-{{ ai_gen_id }} ai-ebook-current-{{ ai_gen_id }}">1</span>
+        <span>/</span>
+        <span class="ai-ebook-page-number-{{ ai_gen_id }} ai-ebook-total-{{ ai_gen_id }}">1</span>
+      </div>
+
+      <button
+        class="ai-ebook-nav-button-{{ ai_gen_id }} ai-ebook-next-{{ ai_gen_id }}"
+        aria-label="Next page"
+      >
+        <span>Next</span>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      {% if block.settings.show_fullscreen %}
+        <button
+          class="ai-ebook-fullscreen-button-{{ ai_gen_id }}"
+          aria-label="Toggle fullscreen"
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 5V2H5M14 5V2H11M2 11V14H5M14 11V14H11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      {% endif %}
+    </div>
+  </div>
+</digital-ebook-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class DigitalEbook{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.currentPage = 1;
+        this.totalPages = 1;
+        this.isFlipping = false;
+      }
+
+      connectedCallback() {
+        this.pdfUrl = this.dataset.pdfUrl;
+        this.loading = this.querySelector('.ai-ebook-loading-{{ ai_gen_id }}');
+        this.book = this.querySelector('.ai-ebook-book-{{ ai_gen_id }}');
+        this.iframe = this.querySelector('.ai-ebook-iframe-{{ ai_gen_id }}');
+        this.prevButton = this.querySelector('.ai-ebook-prev-{{ ai_gen_id }}');
+        this.nextButton = this.querySelector('.ai-ebook-next-{{ ai_gen_id }}');
+        this.currentPageEl = this.querySelector('.ai-ebook-current-{{ ai_gen_id }}');
+        this.totalPagesEl = this.querySelector('.ai-ebook-total-{{ ai_gen_id }}');
+        this.fullscreenButton = this.querySelector('.ai-ebook-fullscreen-button-{{ ai_gen_id }}');
+        this.page = this.querySelector('.ai-ebook-page-{{ ai_gen_id }}');
+
+        if (this.pdfUrl) {
+          this.loadPDF();
+        }
+
+        this.setupControls();
+      }
+
+      loadPDF() {
+        const viewerUrl = 'https://docs.google.com/viewer?url=' + encodeURIComponent(this.pdfUrl) + '&embedded=true';
+        
+        this.iframe.src = viewerUrl;
+        
+        this.iframe.addEventListener('load', () => {
+          this.loading.style.display = 'none';
+          this.book.style.display = 'block';
+        });
+
+        setTimeout(() => {
+          if (this.loading.style.display !== 'none') {
+            this.loading.style.display = 'none';
+            this.book.style.display = 'block';
+          }
+        }, 3000);
+      }
+
+      setupControls() {
+        if (this.prevButton) {
+          this.prevButton.addEventListener('click', () => this.previousPage());
+        }
+
+        if (this.nextButton) {
+          this.nextButton.addEventListener('click', () => this.nextPage());
+        }
+
+        if (this.fullscreenButton) {
+          this.fullscreenButton.addEventListener('click', () => this.toggleFullscreen());
+        }
+
+        this.updateControls();
+      }
+
+      previousPage() {
+        if (this.currentPage > 1 && !this.isFlipping) {
+          this.isFlipping = true;
+          this.currentPage--;
+          this.flipPage(false);
+          this.updateControls();
+          
+          setTimeout(() => {
+            this.isFlipping = false;
+          }, 800);
+        }
+      }
+
+      nextPage() {
+        if (this.currentPage < this.totalPages && !this.isFlipping) {
+          this.isFlipping = true;
+          this.currentPage++;
+          this.flipPage(true);
+          this.updateControls();
+          
+          setTimeout(() => {
+            this.isFlipping = false;
+          }, 800);
+        }
+      }
+
+      flipPage(forward) {
+        if (this.page) {
+          if (forward) {
+            this.page.classList.add('flipped');
+          } else {
+            this.page.classList.remove('flipped');
+          }
+        }
+      }
+
+      updateControls() {
+        if (this.currentPageEl) {
+          this.currentPageEl.textContent = this.currentPage;
+        }
+
+        if (this.totalPagesEl) {
+          this.totalPagesEl.textContent = this.totalPages;
+        }
+
+        if (this.prevButton) {
+          this.prevButton.disabled = this.currentPage === 1;
+        }
+
+        if (this.nextButton) {
+          this.nextButton.disabled = this.currentPage === this.totalPages;
+        }
+      }
+
+      toggleFullscreen() {
+        if (!document.fullscreenElement) {
+          this.requestFullscreen().catch(err => {
+            console.log('Fullscreen error:', err);
+          });
+        } else {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    customElements.define('digital-ebook-{{ ai_gen_id }}', DigitalEbook{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Digital e-book flipbook",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "PDF settings"
+    },
+    {
+      "type": "url",
+      "id": "pdf_url",
+      "label": "PDF file URL"
+    },
+    {
+      "type": "paragraph",
+      "content": "Upload your PDF to Files in Shopify admin, then paste the URL here."
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum width",
+      "min": 600,
+      "max": 1400,
+      "step": 100,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top spacing",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom spacing",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "shadow_intensity",
+      "label": "Book shadow intensity",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "%",
+      "default": 25
+    },
+    {
+      "type": "header",
+      "content": "Book colors"
+    },
+    {
+      "type": "color",
+      "id": "page_background",
+      "label": "Page background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "book_background",
+      "label": "Book background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "page_color",
+      "label": "Page color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Controls"
+    },
+    {
+      "type": "color",
+      "id": "controls_background",
+      "label": "Controls background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "controls_border_radius",
+      "label": "Controls corner radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Navigation buttons"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_text",
+      "label": "Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Hover background",
+      "default": "#333333"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Button corner radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Page indicator"
+    },
+    {
+      "type": "color",
+      "id": "indicator_background",
+      "label": "Background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "indicator_text",
+      "label": "Text",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "indicator_number_color",
+      "label": "Number color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "indicator_border_radius",
+      "label": "Indicator corner radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Fullscreen"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_fullscreen",
+      "label": "Show fullscreen button",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "fullscreen_button_bg",
+      "label": "Button background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "fullscreen_button_text",
+      "label": "Button text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "fullscreen_button_border",
+      "label": "Button border",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "color",
+      "id": "fullscreen_button_hover_bg",
+      "label": "Button hover background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "header",
+      "content": "Loading state"
+    },
+    {
+      "type": "color",
+      "id": "spinner_color",
+      "label": "Spinner color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "loading_text_color",
+      "label": "Loading text color",
+      "default": "#666666"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Digital e-book flipbook"
+    }
+  ]
+}
 {% endschema %}
