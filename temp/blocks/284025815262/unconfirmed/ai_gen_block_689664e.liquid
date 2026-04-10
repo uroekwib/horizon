@@ -1,6 +1,412 @@
+{% doc %}
+  @prompt
+    Create a Shopify section that makes this PDF feel like a real e-book, not a normal PDF viewer.
+    Use a realistic flipbook style with page turning animation like a digital book or magazine.
+    Keep it centred, responsive, and easy to read.
+    PDF: https://cdn.shopify.com/s/files/1/0098/2653/3433/files/Octopus_Media_Solutions_catalogue_2026.pdf?v=1775702103
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-flipbook-container-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    max-width: {{ block.settings.max_width }}px;
+    margin: 0 auto;
+    padding: {{ block.settings.padding_top }}px 20px {{ block.settings.padding_bottom }}px;
+  }
+
+  .ai-flipbook-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    background-color: {{ block.settings.background_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, {{ block.settings.shadow_opacity | divided_by: 100.0 }});
+    overflow: hidden;
+  }
+
+  .ai-flipbook-canvas-{{ ai_gen_id }} {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .ai-flipbook-pages-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    perspective: 2000px;
+    background-color: {{ block.settings.page_background }};
+  }
+
+  .ai-flipbook-page-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    transform-origin: right center;
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .ai-flipbook-page-{{ ai_gen_id }}.flipped {
+    transform: rotateY(-180deg);
+  }
+
+  .ai-flipbook-controls-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    background-color: {{ block.settings.controls_background }};
+  }
+
+  .ai-flipbook-button-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background-color: {{ block.settings.button_color }};
+    color: {{ block.settings.button_text_color }};
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .ai-flipbook-button-{{ ai_gen_id }}:hover:not(:disabled) {
+    background-color: {{ block.settings.button_hover_color }};
+    transform: scale(1.05);
+  }
+
+  .ai-flipbook-button-{{ ai_gen_id }}:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .ai-flipbook-button-{{ ai_gen_id }} svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .ai-flipbook-page-info-{{ ai_gen_id }} {
+    font-size: 14px;
+    color: {{ block.settings.text_color }};
+    font-weight: 500;
+    min-width: 80px;
+    text-align: center;
+  }
+
+  .ai-flipbook-loading-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    color: {{ block.settings.text_color }};
+  }
+
+  .ai-flipbook-spinner-{{ ai_gen_id }} {
+    width: 48px;
+    height: 48px;
+    border: 4px solid {{ block.settings.button_color }};
+    border-top-color: transparent;
+    border-radius: 50%;
+    margin-bottom: 16px;
+  }
+
+  .ai-flipbook-error-{{ ai_gen_id }} {
+    text-align: center;
+    padding: 40px 20px;
+    color: #d82c0d;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-flipbook-container-{{ ai_gen_id }} {
+      padding: {{ block.settings.padding_top | times: 0.6 }}px 16px {{ block.settings.padding_bottom | times: 0.6 }}px;
+    }
+
+    .ai-flipbook-button-{{ ai_gen_id }} {
+      width: 40px;
+      height: 40px;
+    }
+
+    .ai-flipbook-button-{{ ai_gen_id }} svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .ai-flipbook-page-info-{{ ai_gen_id }} {
+      font-size: 12px;
+      min-width: 60px;
+    }
+  }
+{% endstyle %}
+
+<pdf-flipbook-{{ ai_gen_id }}
+  class="ai-flipbook-container-{{ ai_gen_id }}"
+  data-pdf-url="{{ block.settings.pdf_url }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-flipbook-wrapper-{{ ai_gen_id }}">
+    <div class="ai-flipbook-loading-{{ ai_gen_id }}" id="loading-{{ ai_gen_id }}">
+      <div class="ai-flipbook-spinner-{{ ai_gen_id }}"></div>
+      <p>Loading e-book...</p>
+    </div>
+    <div class="ai-flipbook-error-{{ ai_gen_id }}" id="error-{{ ai_gen_id }}" style="display: none;">
+      <p>Unable to load PDF. Please check the URL.</p>
+    </div>
+    <div id="flipbook-content-{{ ai_gen_id }}" style="display: none;">
+      <div class="ai-flipbook-pages-{{ ai_gen_id }}" id="pages-{{ ai_gen_id }}"></div>
+      <div class="ai-flipbook-controls-{{ ai_gen_id }}">
+        <button
+          class="ai-flipbook-button-{{ ai_gen_id }}"
+          id="prev-{{ ai_gen_id }}"
+          aria-label="Previous page"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+        <div class="ai-flipbook-page-info-{{ ai_gen_id }}" id="page-info-{{ ai_gen_id }}">
+          Page 1
+        </div>
+        <button
+          class="ai-flipbook-button-{{ ai_gen_id }}"
+          id="next-{{ ai_gen_id }}"
+          aria-label="Next page"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</pdf-flipbook-{{ ai_gen_id }}>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+  (function() {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    class PdfFlipbook{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.currentPage = 1;
+        this.totalPages = 0;
+        this.pdfDoc = null;
+        this.scale = 1.5;
+      }
+
+      connectedCallback() {
+        this.pdfUrl = this.dataset.pdfUrl;
+        this.loadingEl = this.querySelector('#loading-{{ ai_gen_id }}');
+        this.errorEl = this.querySelector('#error-{{ ai_gen_id }}');
+        this.contentEl = this.querySelector('#flipbook-content-{{ ai_gen_id }}');
+        this.pagesContainer = this.querySelector('#pages-{{ ai_gen_id }}');
+        this.pageInfo = this.querySelector('#page-info-{{ ai_gen_id }}');
+        this.prevBtn = this.querySelector('#prev-{{ ai_gen_id }}');
+        this.nextBtn = this.querySelector('#next-{{ ai_gen_id }}');
+
+        this.prevBtn.addEventListener('click', () => this.previousPage());
+        this.nextBtn.addEventListener('click', () => this.nextPage());
+
+        this.loadPDF();
+      }
+
+      async loadPDF() {
+        try {
+          const loadingTask = pdfjsLib.getDocument(this.pdfUrl);
+          this.pdfDoc = await loadingTask.promise;
+          this.totalPages = this.pdfDoc.numPages;
+
+          this.loadingEl.style.display = 'none';
+          this.contentEl.style.display = 'block';
+
+          await this.renderPage(this.currentPage);
+          this.updateControls();
+        } catch (error) {
+          console.error('Error loading PDF:', error);
+          this.loadingEl.style.display = 'none';
+          this.errorEl.style.display = 'block';
+        }
+      }
+
+      async renderPage(pageNum) {
+        const page = await this.pdfDoc.getPage(pageNum);
+        const viewport = page.getViewport({ scale: this.scale });
+
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+        canvas.className = 'ai-flipbook-canvas-{{ ai_gen_id }}';
+
+        const renderContext = {
+          canvasContext: context,
+          viewport: viewport
+        };
+
+        await page.render(renderContext).promise;
+
+        this.pagesContainer.innerHTML = '';
+        this.pagesContainer.appendChild(canvas);
+        this.pagesContainer.style.height = viewport.height + 'px';
+      }
+
+      previousPage() {
+        if (this.currentPage <= 1) return;
+        this.currentPage--;
+        this.renderPage(this.currentPage);
+        this.updateControls();
+      }
+
+      nextPage() {
+        if (this.currentPage >= this.totalPages) return;
+        this.currentPage++;
+        this.renderPage(this.currentPage);
+        this.updateControls();
+      }
+
+      updateControls() {
+        this.pageInfo.textContent = `Page ${this.currentPage} of ${this.totalPages}`;
+        this.prevBtn.disabled = this.currentPage <= 1;
+        this.nextBtn.disabled = this.currentPage >= this.totalPages;
+      }
+    }
+
+    customElements.define('pdf-flipbook-{{ ai_gen_id }}', PdfFlipbook{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "PDF flipbook",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "PDF settings"
+    },
+    {
+      "type": "url",
+      "id": "pdf_url",
+      "label": "PDF URL"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum width",
+      "min": 600,
+      "max": 1400,
+      "step": 50,
+      "unit": "px",
+      "default": 1000
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Container background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "page_background",
+      "label": "Page background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "controls_background",
+      "label": "Controls background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "shadow_opacity",
+      "label": "Shadow opacity",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "%",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Controls"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button icon color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_color",
+      "label": "Button hover color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#000000"
+    }
+  ],
+  "presets": [
+    {
+      "name": "PDF flipbook"
+    }
+  ]
+}
 {% endschema %}
