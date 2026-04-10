@@ -1,6 +1,721 @@
+{% doc %}
+  @prompt
+    Create a Shopify PDF flipbook section using pdf.js and page-flip.
+    
+    Use this PDF:
+    https://cdn.shopify.com/s/files/1/0098/2653/3433/files/Octopus_Media_Solutions_catalogue_2026.pdf?v=1775702103
+    
+    Show first page as cover, inside pages as 2-page spread, last page single.
+    Desktop: 2 pages, Mobile: 1 page.
+    
+    Keep viewer centred, wider, and responsive.
+    Add Previous / Next buttons and page counter.
+    
+    Add a TOC below the viewer as a grid of cards.
+    Make each TOC card a Shopify block with editable title, page number, and link.
+    Clicking a card should jump to that page.
+    
+    Do not use iframe. Use pdf.js to render pages.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-pdf-flipbook-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: 40px 20px;
+  }
+
+  .ai-pdf-flipbook-container-{{ ai_gen_id }} {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .ai-pdf-flipbook-viewer-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    margin-bottom: 40px;
+  }
+
+  .ai-pdf-flipbook-viewer-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: {{ block.settings.viewer_background }};
+    border-radius: {{ block.settings.viewer_border_radius }}px;
+    padding: 40px 20px;
+    min-height: 600px;
+  }
+
+  .ai-pdf-flipbook-book-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .ai-pdf-flipbook-page-{{ ai_gen_id }} {
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .ai-pdf-flipbook-page-{{ ai_gen_id }} canvas {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .ai-pdf-flipbook-controls-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px;
+  }
+
+  .ai-pdf-flipbook-button-{{ ai_gen_id }} {
+    padding: 12px 24px;
+    background-color: {{ block.settings.button_background }};
+    color: {{ block.settings.button_text }};
+    border: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+  }
+
+  .ai-pdf-flipbook-button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_background }};
+  }
+
+  .ai-pdf-flipbook-button-{{ ai_gen_id }}:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .ai-pdf-flipbook-page-counter-{{ ai_gen_id }} {
+    font-size: 14px;
+    color: {{ block.settings.text_color }};
+  }
+
+  .ai-pdf-flipbook-loading-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 16px;
+    color: {{ block.settings.text_color }};
+  }
+
+  .ai-pdf-flipbook-toc-{{ ai_gen_id }} {
+    margin-top: 60px;
+  }
+
+  .ai-pdf-flipbook-toc-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.toc_title_size }}px;
+    color: {{ block.settings.text_color }};
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .ai-pdf-flipbook-toc-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+  }
+
+  .ai-pdf-flipbook-toc-card-{{ ai_gen_id }} {
+    background-color: {{ block.settings.card_background }};
+    border: 1px solid {{ block.settings.card_border }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    padding: 20px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .ai-pdf-flipbook-toc-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  .ai-pdf-flipbook-toc-card-title-{{ ai_gen_id }} {
+    font-size: 16px;
+    font-weight: 600;
+    color: {{ block.settings.text_color }};
+    margin-bottom: 8px;
+  }
+
+  .ai-pdf-flipbook-toc-card-page-{{ ai_gen_id }} {
+    font-size: 14px;
+    color: {{ block.settings.text_color }};
+    opacity: 0.7;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-pdf-flipbook-viewer-{{ ai_gen_id }} {
+      padding: 20px 10px;
+      min-height: 400px;
+    }
+
+    .ai-pdf-flipbook-toc-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+    }
+  }
+{% endstyle %}
+
+<pdf-flipbook-{{ ai_gen_id }}
+  class="ai-pdf-flipbook-{{ ai_gen_id }}"
+  data-pdf-url="{{ block.settings.pdf_url }}"
+  data-toc-items='[
+    {% for i in (1..10) %}
+      {% liquid
+        assign title_key = 'toc_' | append: i | append: '_title'
+        assign page_key = 'toc_' | append: i | append: '_page'
+        assign title = block.settings[title_key]
+        assign page = block.settings[page_key]
+      %}
+      {% if title != blank %}
+        {"title": {{ title | json }}, "page": {{ page }}}{% unless forloop.last %},{% endunless %}
+      {% endif %}
+    {% endfor %}
+  ]'
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-pdf-flipbook-container-{{ ai_gen_id }}">
+    <div class="ai-pdf-flipbook-viewer-wrapper-{{ ai_gen_id }}">
+      <div class="ai-pdf-flipbook-viewer-{{ ai_gen_id }}">
+        <div class="ai-pdf-flipbook-loading-{{ ai_gen_id }}">Loading PDF...</div>
+        <div class="ai-pdf-flipbook-book-{{ ai_gen_id }}" id="ai-pdf-flipbook-book-{{ ai_gen_id }}"></div>
+      </div>
+      <div class="ai-pdf-flipbook-controls-{{ ai_gen_id }}">
+        <button
+          class="ai-pdf-flipbook-button-{{ ai_gen_id }}"
+          id="ai-pdf-flipbook-prev-{{ ai_gen_id }}"
+          disabled
+        >
+          Previous
+        </button>
+        <div class="ai-pdf-flipbook-page-counter-{{ ai_gen_id }}" id="ai-pdf-flipbook-counter-{{ ai_gen_id }}">
+          Page 1 of 1
+        </div>
+        <button
+          class="ai-pdf-flipbook-button-{{ ai_gen_id }}"
+          id="ai-pdf-flipbook-next-{{ ai_gen_id }}"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+
+    {% if block.settings.show_toc %}
+      <div class="ai-pdf-flipbook-toc-{{ ai_gen_id }}">
+        {% if block.settings.toc_title != blank %}
+          <h2 class="ai-pdf-flipbook-toc-title-{{ ai_gen_id }}">{{ block.settings.toc_title }}</h2>
+        {% endif %}
+        <div class="ai-pdf-flipbook-toc-grid-{{ ai_gen_id }}" id="ai-pdf-flipbook-toc-grid-{{ ai_gen_id }}"></div>
+      </div>
+    {% endif %}
+  </div>
+</pdf-flipbook-{{ ai_gen_id }}>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/page-flip/2.0.7/js/page-flip.browser.min.js"></script>
+
+<script>
+  (function() {
+    class PdfFlipbook{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.pdfUrl = this.dataset.pdfUrl;
+        this.tocItems = JSON.parse(this.dataset.tocItems || '[]');
+        this.pageFlip = null;
+        this.pdfDoc = null;
+        this.currentPage = 0;
+        this.totalPages = 0;
+        this.isMobile = window.innerWidth < 750;
+      }
+
+      connectedCallback() {
+        if (typeof pdfjsLib === 'undefined' || typeof St === 'undefined') {
+          setTimeout(() => this.connectedCallback(), 100);
+          return;
+        }
+
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        this.loadPDF();
+        this.renderTOC();
+        window.addEventListener('resize', () => this.handleResize());
+      }
+
+      async loadPDF() {
+        try {
+          const loadingTask = pdfjsLib.getDocument(this.pdfUrl);
+          this.pdfDoc = await loadingTask.promise;
+          this.totalPages = this.pdfDoc.numPages;
+          await this.initializeFlipbook();
+        } catch (error) {
+          console.error('Error loading PDF:', error);
+          this.querySelector('.ai-pdf-flipbook-loading-{{ ai_gen_id }}').textContent = 'Error loading PDF';
+        }
+      }
+
+      async initializeFlipbook() {
+        const bookContainer = this.querySelector('#ai-pdf-flipbook-book-{{ ai_gen_id }}');
+        bookContainer.innerHTML = '';
+
+        for (let i = 1; i <= this.totalPages; i++) {
+          const pageDiv = document.createElement('div');
+          pageDiv.className = 'ai-pdf-flipbook-page-{{ ai_gen_id }}';
+          pageDiv.dataset.density = 'hard';
+          bookContainer.appendChild(pageDiv);
+        }
+
+        const pages = bookContainer.querySelectorAll('.ai-pdf-flipbook-page-{{ ai_gen_id }}');
+        
+        this.pageFlip = new St.PageFlip(bookContainer, {
+          width: this.isMobile ? 300 : 550,
+          height: this.isMobile ? 400 : 700,
+          size: 'stretch',
+          minWidth: 200,
+          maxWidth: 2000,
+          minHeight: 200,
+          maxHeight: 2000,
+          showCover: true,
+          mobileScrollSupport: false,
+          usePortrait: this.isMobile,
+          startPage: 0,
+          drawShadow: true,
+          flippingTime: 1000,
+          useMouseEvents: true,
+          swipeDistance: 30,
+          clickEventForward: true,
+          maxShadowOpacity: 0.5
+        });
+
+        this.pageFlip.loadFromHTML(pages);
+
+        await this.renderAllPages();
+
+        this.querySelector('.ai-pdf-flipbook-loading-{{ ai_gen_id }}').style.display = 'none';
+        this.updatePageCounter();
+        this.setupEventListeners();
+
+        this.pageFlip.on('flip', (e) => {
+          this.currentPage = e.data;
+          this.updatePageCounter();
+          this.updateButtons();
+        });
+      }
+
+      async renderAllPages() {
+        const pages = this.querySelectorAll('.ai-pdf-flipbook-page-{{ ai_gen_id }}');
+        
+        for (let i = 0; i < this.totalPages; i++) {
+          const page = await this.pdfDoc.getPage(i + 1);
+          const scale = this.isMobile ? 1.5 : 2;
+          const viewport = page.getViewport({ scale });
+
+          const canvas = document.createElement('canvas');
+          const context = canvas.getContext('2d');
+          canvas.height = viewport.height;
+          canvas.width = viewport.width;
+
+          await page.render({
+            canvasContext: context,
+            viewport: viewport
+          }).promise;
+
+          pages[i].appendChild(canvas);
+        }
+      }
+
+      renderTOC() {
+        const tocGrid = this.querySelector('#ai-pdf-flipbook-toc-grid-{{ ai_gen_id }}');
+        if (!tocGrid) return;
+
+        tocGrid.innerHTML = '';
+
+        this.tocItems.forEach(item => {
+          if (item.title) {
+            const card = document.createElement('div');
+            card.className = 'ai-pdf-flipbook-toc-card-{{ ai_gen_id }}';
+            card.dataset.page = item.page;
+            card.innerHTML = `
+              <div class="ai-pdf-flipbook-toc-card-title-{{ ai_gen_id }}">${item.title}</div>
+              <div class="ai-pdf-flipbook-toc-card-page-{{ ai_gen_id }}">Page ${item.page}</div>
+            `;
+            tocGrid.appendChild(card);
+          }
+        });
+      }
+
+      setupEventListeners() {
+        const prevBtn = this.querySelector('#ai-pdf-flipbook-prev-{{ ai_gen_id }}');
+        const nextBtn = this.querySelector('#ai-pdf-flipbook-next-{{ ai_gen_id }}');
+
+        prevBtn.addEventListener('click', () => {
+          if (this.pageFlip) {
+            this.pageFlip.flipPrev();
+          }
+        });
+
+        nextBtn.addEventListener('click', () => {
+          if (this.pageFlip) {
+            this.pageFlip.flipNext();
+          }
+        });
+
+        const tocCards = this.querySelectorAll('.ai-pdf-flipbook-toc-card-{{ ai_gen_id }}');
+        tocCards.forEach(card => {
+          card.addEventListener('click', () => {
+            const pageNum = parseInt(card.dataset.page) - 1;
+            if (this.pageFlip && pageNum >= 0 && pageNum < this.totalPages) {
+              this.pageFlip.flip(pageNum);
+            }
+          });
+        });
+      }
+
+      updatePageCounter() {
+        const counter = this.querySelector('#ai-pdf-flipbook-counter-{{ ai_gen_id }}');
+        if (counter && this.pageFlip) {
+          const currentPageNum = this.pageFlip.getCurrentPageIndex() + 1;
+          counter.textContent = `Page ${currentPageNum} of ${this.totalPages}`;
+        }
+      }
+
+      updateButtons() {
+        const prevBtn = this.querySelector('#ai-pdf-flipbook-prev-{{ ai_gen_id }}');
+        const nextBtn = this.querySelector('#ai-pdf-flipbook-next-{{ ai_gen_id }}');
+
+        if (this.pageFlip) {
+          const currentPageIndex = this.pageFlip.getCurrentPageIndex();
+          prevBtn.disabled = currentPageIndex === 0;
+          nextBtn.disabled = currentPageIndex >= this.totalPages - 1;
+        }
+      }
+
+      handleResize() {
+        const wasMobile = this.isMobile;
+        this.isMobile = window.innerWidth < 750;
+        
+        if (wasMobile !== this.isMobile && this.pdfDoc) {
+          this.initializeFlipbook();
+        }
+      }
+    }
+
+    customElements.define('pdf-flipbook-{{ ai_gen_id }}', PdfFlipbook{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "PDF flipbook",
+  "settings": [
+    {
+      "type": "header",
+      "content": "PDF settings"
+    },
+    {
+      "type": "text",
+      "id": "pdf_url",
+      "label": "PDF URL",
+      "default": "https://cdn.shopify.com/s/files/1/0098/2653/3433/files/Octopus_Media_Solutions_catalogue_2026.pdf?v=1775702103"
+    },
+    {
+      "type": "header",
+      "content": "Viewer style"
+    },
+    {
+      "type": "color",
+      "id": "viewer_background",
+      "label": "Background",
+      "default": "#f3f7fa"
+    },
+    {
+      "type": "range",
+      "id": "viewer_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Controls"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Button hover background",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Button border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Table of contents"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_toc",
+      "label": "Show table of contents",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "toc_title",
+      "label": "Title",
+      "default": "Table of Contents"
+    },
+    {
+      "type": "range",
+      "id": "toc_title_size",
+      "label": "Title size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_border",
+      "label": "Card border",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Card border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "TOC item 1"
+    },
+    {
+      "type": "text",
+      "id": "toc_1_title",
+      "label": "Title"
+    },
+    {
+      "type": "range",
+      "id": "toc_1_page",
+      "label": "Page number",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "TOC item 2"
+    },
+    {
+      "type": "text",
+      "id": "toc_2_title",
+      "label": "Title"
+    },
+    {
+      "type": "range",
+      "id": "toc_2_page",
+      "label": "Page number",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "TOC item 3"
+    },
+    {
+      "type": "text",
+      "id": "toc_3_title",
+      "label": "Title"
+    },
+    {
+      "type": "range",
+      "id": "toc_3_page",
+      "label": "Page number",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "TOC item 4"
+    },
+    {
+      "type": "text",
+      "id": "toc_4_title",
+      "label": "Title"
+    },
+    {
+      "type": "range",
+      "id": "toc_4_page",
+      "label": "Page number",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "TOC item 5"
+    },
+    {
+      "type": "text",
+      "id": "toc_5_title",
+      "label": "Title"
+    },
+    {
+      "type": "range",
+      "id": "toc_5_page",
+      "label": "Page number",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "TOC item 6"
+    },
+    {
+      "type": "text",
+      "id": "toc_6_title",
+      "label": "Title"
+    },
+    {
+      "type": "range",
+      "id": "toc_6_page",
+      "label": "Page number",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "TOC item 7"
+    },
+    {
+      "type": "text",
+      "id": "toc_7_title",
+      "label": "Title"
+    },
+    {
+      "type": "range",
+      "id": "toc_7_page",
+      "label": "Page number",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "TOC item 8"
+    },
+    {
+      "type": "text",
+      "id": "toc_8_title",
+      "label": "Title"
+    },
+    {
+      "type": "range",
+      "id": "toc_8_page",
+      "label": "Page number",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "TOC item 9"
+    },
+    {
+      "type": "text",
+      "id": "toc_9_title",
+      "label": "Title"
+    },
+    {
+      "type": "range",
+      "id": "toc_9_page",
+      "label": "Page number",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "TOC item 10"
+    },
+    {
+      "type": "text",
+      "id": "toc_10_title",
+      "label": "Title"
+    },
+    {
+      "type": "range",
+      "id": "toc_10_page",
+      "label": "Page number",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 1
+    }
+  ],
+  "presets": [
+    {
+      "name": "PDF flipbook"
+    }
+  ]
+}
 {% endschema %}
