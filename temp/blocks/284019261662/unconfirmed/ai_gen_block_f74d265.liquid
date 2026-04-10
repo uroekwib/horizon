@@ -1,6 +1,777 @@
+{% doc %}
+  @prompt
+    Create a Shopify section for an online e-book catalogue viewer.
+    The merchant should be able to select a PDF file from Shopify files and display it as a standalone HTML viewer (not iframe).
+    
+    Use this PDF as reference:
+    https://cdn.shopify.com/s/files/1/0098/2653/3433/files/Octopus_Media_Solutions_catalogue_2026.pdf?v=1775702103
+    
+    Requirements:
+    
+    Render PDF using pdf.js (canvas or images), not embed
+    Ensure the PDF always loads correctly (fix loading issues)
+    Convert pages to optimized images (WebP or canvas)
+    Use lazy loading (do not load all pages at once)
+    
+    Viewer behaviour:
+    
+    Smooth page flip animation (flipbook style)
+    Desktop: show 2-page spread
+    Mobile: show 1 page
+    First page = cover only, last page = single
+    Support swipe (mobile) and keyboard navigation (desktop)
+    
+    Layout:
+    
+    Viewer must be centred horizontally on the page
+    Increase width so it does not look narrow
+    Keep proper page ratio and fit within screen
+    Clean, premium catalogue style
+    
+    Add:
+    
+    Previous / Next navigation
+    Page counter
+    Optional demo mode (preview before full load)
+    
+    Important:
+    
+    Do not use iframe or basic PDF embed
+    Must work inside Shopify section (Liquid + CSS + JS)
+    Ensure responsive and smooth performance, Add a Table of Contents section below the catalogue viewer.
+    Show it as a clean grid of cards with page number and section title.
+    Each TOC card should be clickable and jump to the correct page in the flipbook.
+    Also include one final card for downloading the full PDF.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-toc-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: 60px 20px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .ai-toc-container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.max_width }}px;
+    margin: 0 auto;
+  }
+
+  .ai-toc-heading-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: 40px;
+    color: {{ block.settings.heading_color }};
+    font-size: {{ block.settings.heading_size }}px;
+    font-weight: 600;
+  }
+
+  .ai-toc-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: {{ block.settings.card_gap }}px;
+  }
+
+  .ai-toc-card-{{ ai_gen_id }} {
+    background: {{ block.settings.card_background }};
+    border: {{ block.settings.card_border_width }}px solid {{ block.settings.card_border_color }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ai-toc-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    border-color: {{ block.settings.card_hover_border_color }};
+  }
+
+  .ai-toc-card-page-{{ ai_gen_id }} {
+    font-size: 14px;
+    font-weight: 600;
+    color: {{ block.settings.page_number_color }};
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .ai-toc-card-title-{{ ai_gen_id }} {
+    font-size: 18px;
+    font-weight: 600;
+    color: {{ block.settings.card_text_color }};
+    line-height: 1.4;
+  }
+
+  .ai-toc-card-description-{{ ai_gen_id }} {
+    font-size: 14px;
+    color: {{ block.settings.card_description_color }};
+    line-height: 1.6;
+  }
+
+  .ai-toc-card-icon-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    width: 24px;
+    height: 24px;
+    color: {{ block.settings.icon_color }};
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+  }
+
+  .ai-toc-card-{{ ai_gen_id }}:hover .ai-toc-card-icon-{{ ai_gen_id }} {
+    opacity: 1;
+  }
+
+  .ai-toc-download-card-{{ ai_gen_id }} {
+    background: {{ block.settings.download_card_background }};
+    border-color: {{ block.settings.download_card_border }};
+  }
+
+  .ai-toc-download-card-{{ ai_gen_id }}:hover {
+    background: {{ block.settings.download_card_hover_background }};
+  }
+
+  .ai-toc-download-card-{{ ai_gen_id }} .ai-toc-card-title-{{ ai_gen_id }} {
+    color: {{ block.settings.download_card_text }};
+  }
+
+  .ai-toc-download-card-{{ ai_gen_id }} .ai-toc-card-description-{{ ai_gen_id }} {
+    color: {{ block.settings.download_card_text }};
+    opacity: 0.9;
+  }
+
+  .ai-toc-download-card-{{ ai_gen_id }} .ai-toc-card-icon-{{ ai_gen_id }} {
+    color: {{ block.settings.download_card_text }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-toc-{{ ai_gen_id }} {
+      padding: 40px 16px;
+    }
+
+    .ai-toc-heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_size | times: 0.75 }}px;
+      margin-bottom: 24px;
+    }
+
+    .ai-toc-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .ai-toc-card-{{ ai_gen_id }} {
+      padding: 20px;
+    }
+  }
+{% endstyle %}
+
+<table-of-contents-{{ ai_gen_id }}
+  class="ai-toc-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-toc-container-{{ ai_gen_id }}">
+    {% if block.settings.heading != blank %}
+      <h2 class="ai-toc-heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+    {% endif %}
+
+    <div class="ai-toc-grid-{{ ai_gen_id }}">
+      {% for i in (1..10) %}
+        {% assign page_key = 'toc_' | append: i | append: '_page' %}
+        {% assign title_key = 'toc_' | append: i | append: '_title' %}
+        {% assign description_key = 'toc_' | append: i | append: '_description' %}
+        {% assign enabled_key = 'toc_' | append: i | append: '_enabled' %}
+
+        {% assign page_number = block.settings[page_key] %}
+        {% assign title = block.settings[title_key] %}
+        {% assign description = block.settings[description_key] %}
+        {% assign enabled = block.settings[enabled_key] %}
+
+        {% if enabled and title != blank %}
+          <div
+            class="ai-toc-card-{{ ai_gen_id }}"
+            data-page="{{ page_number }}"
+            role="button"
+            tabindex="0"
+          >
+            <div class="ai-toc-card-page-{{ ai_gen_id }}">หน้า {{ page_number }}</div>
+            <div class="ai-toc-card-title-{{ ai_gen_id }}">{{ title }}</div>
+            {% if description != blank %}
+              <div class="ai-toc-card-description-{{ ai_gen_id }}">{{ description }}</div>
+            {% endif %}
+            <svg class="ai-toc-card-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </div>
+        {% endif %}
+      {% endfor %}
+
+      {% if block.settings.show_download_card and block.settings.pdf_url != blank %}
+        <a
+          href="{{ block.settings.pdf_url }}"
+          class="ai-toc-card-{{ ai_gen_id }} ai-toc-download-card-{{ ai_gen_id }}"
+          download
+          target="_blank"
+        >
+          <div class="ai-toc-card-title-{{ ai_gen_id }}">{{ block.settings.download_card_title }}</div>
+          {% if block.settings.download_card_description != blank %}
+            <div class="ai-toc-card-description-{{ ai_gen_id }}">{{ block.settings.download_card_description }}</div>
+          {% endif %}
+          <svg class="ai-toc-card-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</table-of-contents-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class TableOfContents{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        const cards = this.querySelectorAll('.ai-toc-card-{{ ai_gen_id }}[data-page]');
+        
+        cards.forEach(card => {
+          card.addEventListener('click', () => {
+            const pageNumber = parseInt(card.dataset.page);
+            this.jumpToPage(pageNumber);
+          });
+
+          card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              const pageNumber = parseInt(card.dataset.page);
+              this.jumpToPage(pageNumber);
+            }
+          });
+        });
+      }
+
+      jumpToPage(pageNumber) {
+        const pdfViewers = document.querySelectorAll('[data-pdf-url]');
+        
+        if (pdfViewers.length === 0) {
+          console.warn('No PDF viewer found on page');
+          return;
+        }
+
+        const viewer = pdfViewers[0];
+        
+        if (typeof viewer.jumpToPage === 'function') {
+          viewer.jumpToPage(pageNumber);
+        } else if (viewer.currentPage !== undefined) {
+          viewer.currentPage = pageNumber;
+          if (typeof viewer.renderPages === 'function') {
+            viewer.renderPages();
+          }
+        }
+
+        viewer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    customElements.define('table-of-contents-{{ ai_gen_id }}', TableOfContents{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Table of contents",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "General"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "สารบัญ"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum width",
+      "min": 800,
+      "max": 1600,
+      "step": 100,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 20,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "header",
+      "content": "Card style"
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "label": "Gap between cards",
+      "min": 12,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "card_border_width",
+      "label": "Border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Card border",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "color",
+      "id": "card_hover_border_color",
+      "label": "Card hover border",
+      "default": "#14c3d8"
+    },
+    {
+      "type": "color",
+      "id": "card_text_color",
+      "label": "Card title",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "card_description_color",
+      "label": "Card description",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "page_number_color",
+      "label": "Page number",
+      "default": "#14c3d8"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "TOC item 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "toc_1_enabled",
+      "label": "Enable",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "toc_1_page",
+      "label": "Page number",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "text",
+      "id": "toc_1_title",
+      "label": "Title",
+      "default": "ผลิตภัณฑ์แนะนำ"
+    },
+    {
+      "type": "text",
+      "id": "toc_1_description",
+      "label": "Description",
+      "default": "สินค้าและบริการยอดนิยม"
+    },
+    {
+      "type": "header",
+      "content": "TOC item 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "toc_2_enabled",
+      "label": "Enable",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "toc_2_page",
+      "label": "Page number",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "text",
+      "id": "toc_2_title",
+      "label": "Title",
+      "default": "ป้ายโฆษณา"
+    },
+    {
+      "type": "text",
+      "id": "toc_2_description",
+      "label": "Description",
+      "default": "ป้ายโฆษณาทุกประเภท"
+    },
+    {
+      "type": "header",
+      "content": "TOC item 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "toc_3_enabled",
+      "label": "Enable",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "toc_3_page",
+      "label": "Page number",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 10
+    },
+    {
+      "type": "text",
+      "id": "toc_3_title",
+      "label": "Title",
+      "default": "สติกเกอร์ติดผนัง"
+    },
+    {
+      "type": "text",
+      "id": "toc_3_description",
+      "label": "Description",
+      "default": "สติกเกอร์คุณภาพสูง"
+    },
+    {
+      "type": "header",
+      "content": "TOC item 4"
+    },
+    {
+      "type": "checkbox",
+      "id": "toc_4_enabled",
+      "label": "Enable",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "toc_4_page",
+      "label": "Page number",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 15
+    },
+    {
+      "type": "text",
+      "id": "toc_4_title",
+      "label": "Title",
+      "default": "Roll-up Banner"
+    },
+    {
+      "type": "text",
+      "id": "toc_4_description",
+      "label": "Description",
+      "default": "แบนเนอร์พกพาสะดวก"
+    },
+    {
+      "type": "header",
+      "content": "TOC item 5"
+    },
+    {
+      "type": "checkbox",
+      "id": "toc_5_enabled",
+      "label": "Enable",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "toc_5_page",
+      "label": "Page number",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 20
+    },
+    {
+      "type": "text",
+      "id": "toc_5_title",
+      "label": "Title"
+    },
+    {
+      "type": "text",
+      "id": "toc_5_description",
+      "label": "Description"
+    },
+    {
+      "type": "header",
+      "content": "TOC item 6"
+    },
+    {
+      "type": "checkbox",
+      "id": "toc_6_enabled",
+      "label": "Enable",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "toc_6_page",
+      "label": "Page number",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 25
+    },
+    {
+      "type": "text",
+      "id": "toc_6_title",
+      "label": "Title"
+    },
+    {
+      "type": "text",
+      "id": "toc_6_description",
+      "label": "Description"
+    },
+    {
+      "type": "header",
+      "content": "TOC item 7"
+    },
+    {
+      "type": "checkbox",
+      "id": "toc_7_enabled",
+      "label": "Enable",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "toc_7_page",
+      "label": "Page number",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 30
+    },
+    {
+      "type": "text",
+      "id": "toc_7_title",
+      "label": "Title"
+    },
+    {
+      "type": "text",
+      "id": "toc_7_description",
+      "label": "Description"
+    },
+    {
+      "type": "header",
+      "content": "TOC item 8"
+    },
+    {
+      "type": "checkbox",
+      "id": "toc_8_enabled",
+      "label": "Enable",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "toc_8_page",
+      "label": "Page number",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 35
+    },
+    {
+      "type": "text",
+      "id": "toc_8_title",
+      "label": "Title"
+    },
+    {
+      "type": "text",
+      "id": "toc_8_description",
+      "label": "Description"
+    },
+    {
+      "type": "header",
+      "content": "TOC item 9"
+    },
+    {
+      "type": "checkbox",
+      "id": "toc_9_enabled",
+      "label": "Enable",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "toc_9_page",
+      "label": "Page number",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 40
+    },
+    {
+      "type": "text",
+      "id": "toc_9_title",
+      "label": "Title"
+    },
+    {
+      "type": "text",
+      "id": "toc_9_description",
+      "label": "Description"
+    },
+    {
+      "type": "header",
+      "content": "TOC item 10"
+    },
+    {
+      "type": "checkbox",
+      "id": "toc_10_enabled",
+      "label": "Enable",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "toc_10_page",
+      "label": "Page number",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 45
+    },
+    {
+      "type": "text",
+      "id": "toc_10_title",
+      "label": "Title"
+    },
+    {
+      "type": "text",
+      "id": "toc_10_description",
+      "label": "Description"
+    },
+    {
+      "type": "header",
+      "content": "Download card"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_download_card",
+      "label": "Show download card",
+      "default": true
+    },
+    {
+      "type": "url",
+      "id": "pdf_url",
+      "label": "PDF file URL"
+    },
+    {
+      "type": "text",
+      "id": "download_card_title",
+      "label": "Title",
+      "default": "ดาวน์โหลด PDF"
+    },
+    {
+      "type": "text",
+      "id": "download_card_description",
+      "label": "Description",
+      "default": "ดาวน์โหลดแคตตาล็อกฉบับเต็ม"
+    },
+    {
+      "type": "color",
+      "id": "download_card_background",
+      "label": "Background",
+      "default": "#14c3d8"
+    },
+    {
+      "type": "color",
+      "id": "download_card_hover_background",
+      "label": "Hover background",
+      "default": "#0fa8bb"
+    },
+    {
+      "type": "color",
+      "id": "download_card_border",
+      "label": "Border",
+      "default": "#14c3d8"
+    },
+    {
+      "type": "color",
+      "id": "download_card_text",
+      "label": "Text",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Table of contents"
+    }
+  ]
+}
 {% endschema %}
