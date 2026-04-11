@@ -1,328 +1,311 @@
-{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+{% assign viewer_id = section.id | replace: '_', '' | downcase %}
 
 {% style %}
-  .ai-pdf-viewer-{{ ai_gen_id }} {
-    display: block;
+  .pdfv-{{ viewer_id }} {
+    --pdfv-bg: {{ section.settings.background_color }};
+    --pdfv-header-bg: {{ section.settings.header_background }};
+    --pdfv-text: {{ section.settings.text_color }};
+    --pdfv-border: {{ section.settings.border_color }};
+    --pdfv-primary: {{ section.settings.primary_color }};
+    --pdfv-btn-bg: {{ section.settings.button_background }};
+    --pdfv-btn-text: {{ section.settings.button_text }};
+    --pdfv-btn-hover: {{ section.settings.button_hover }};
+    --pdfv-btn-radius: {{ section.settings.button_radius }}px;
+    --pdfv-radius: {{ section.settings.border_radius }}px;
+    --pdfv-height: {{ section.settings.viewer_height }}px;
+    --pdfv-gap: 24px;
     width: 100%;
   }
 
-  .ai-pdf-viewer-outer-{{ ai_gen_id }} {
+  .pdfv-{{ viewer_id }} * {
+    box-sizing: border-box;
+  }
+
+  .pdfv-shell-{{ viewer_id }} {
     width: 100%;
-    max-width: min(1600px, calc(100vw - 24px));
+    max-width: min(1800px, calc(100vw - 32px));
     margin: 0 auto;
-    padding: 24px 12px;
+    padding: 20px 16px;
   }
 
-  .ai-pdf-viewer-container-{{ ai_gen_id }} {
-    position: relative;
-    background: {{ block.settings.background_color }};
-    border: 1px solid {{ block.settings.border_color }};
-    border-radius: {{ block.settings.border_radius }}px;
+  .pdfv-card-{{ viewer_id }} {
+    background: var(--pdfv-bg);
+    border: 1px solid var(--pdfv-border);
+    border-radius: var(--pdfv-radius);
     overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,.08);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
   }
 
-  .ai-pdf-viewer-header-{{ ai_gen_id }} {
+  .pdfv-header-{{ viewer_id }} {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 16px;
-    padding: 14px 18px;
-    background: {{ block.settings.header_background }};
-    border-bottom: 1px solid {{ block.settings.border_color }};
+    justify-content: space-between;
+    gap: 14px;
     flex-wrap: wrap;
+    padding: 14px 18px;
+    background: var(--pdfv-header-bg);
+    border-bottom: 1px solid var(--pdfv-border);
   }
 
-  .ai-pdf-viewer-title-{{ ai_gen_id }} {
+  .pdfv-title-{{ viewer_id }} {
     margin: 0;
-    font-size: {{ block.settings.title_size }}px;
+    color: var(--pdfv-text);
+    font-size: {{ section.settings.title_size }}px;
     line-height: 1.3;
     font-weight: 700;
-    color: {{ block.settings.text_color }};
   }
 
-  .ai-pdf-viewer-page-info-{{ ai_gen_id }} {
+  .pdfv-meta-{{ viewer_id }} {
+    color: var(--pdfv-text);
+    opacity: .8;
     font-size: 13px;
-    color: {{ block.settings.text_color }};
-    opacity: .85;
     white-space: nowrap;
   }
 
-  .ai-pdf-viewer-toolbar-{{ ai_gen_id }} {
+  .pdfv-toolbar-{{ viewer_id }} {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 14px 16px;
-    background: {{ block.settings.header_background }};
-    border-bottom: 1px solid {{ block.settings.border_color }};
+    padding: 12px 14px;
+    background: var(--pdfv-header-bg);
+    border-bottom: 1px solid var(--pdfv-border);
   }
 
-  .ai-pdf-viewer-button-{{ ai_gen_id }},
-  .ai-pdf-viewer-select-{{ ai_gen_id }} {
+  .pdfv-btn-{{ viewer_id }} {
     appearance: none;
-    border: 1px solid {{ block.settings.border_color }};
-    background: {{ block.settings.button_background }};
-    color: {{ block.settings.button_text }};
-    border-radius: {{ block.settings.button_radius }}px;
+    border: 1px solid var(--pdfv-border);
+    background: var(--pdfv-btn-bg);
+    color: var(--pdfv-btn-text);
     padding: 9px 14px;
+    border-radius: var(--pdfv-btn-radius);
+    cursor: pointer;
     font-size: 13px;
     line-height: 1;
-    cursor: pointer;
-    transition: .2s ease;
+    transition: background .2s ease, opacity .2s ease, transform .2s ease;
   }
 
-  .ai-pdf-viewer-button-{{ ai_gen_id }}:hover:not(:disabled),
-  .ai-pdf-viewer-select-{{ ai_gen_id }}:hover {
-    background: {{ block.settings.button_hover }};
+  .pdfv-btn-{{ viewer_id }}:hover:not(:disabled) {
+    background: var(--pdfv-btn-hover);
   }
 
-  .ai-pdf-viewer-button-{{ ai_gen_id }}:disabled {
+  .pdfv-btn-{{ viewer_id }}:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  .pdfv-btn-{{ viewer_id }}:disabled {
     opacity: .45;
     cursor: not-allowed;
   }
 
-  .ai-pdf-viewer-button-{{ ai_gen_id }}.is-active {
-    outline: 2px solid {{ block.settings.primary_color }};
+  .pdfv-btn-{{ viewer_id }}.is-active {
+    outline: 2px solid var(--pdfv-primary);
     outline-offset: 1px;
   }
 
-  .ai-pdf-viewer-zoom-level-{{ ai_gen_id }} {
-    min-width: 62px;
+  .pdfv-zoom-label-{{ viewer_id }} {
+    min-width: 60px;
     text-align: center;
     font-size: 13px;
-    color: {{ block.settings.text_color }};
     font-weight: 600;
+    color: var(--pdfv-text);
+    align-self: center;
   }
 
-  .ai-pdf-viewer-stage-{{ ai_gen_id }} {
+  .pdfv-stage-{{ viewer_id }} {
     position: relative;
     width: 100%;
-    height: {{ block.settings.viewer_height }}px;
+    height: var(--pdfv-height);
     min-height: 420px;
-    background: linear-gradient(180deg, #f8f8f8 0%, #efefef 100%);
     overflow: auto;
+    background: linear-gradient(180deg, #f8f8f8 0%, #efefef 100%);
     -webkit-overflow-scrolling: touch;
   }
 
-  .ai-pdf-viewer-stage-inner-{{ ai_gen_id }} {
+  .pdfv-stage-inner-{{ viewer_id }} {
+    min-width: 100%;
     min-height: 100%;
     display: flex;
-    align-items: flex-start;
     justify-content: center;
-    padding: 20px;
+    align-items: flex-start;
+    padding: 24px;
   }
 
-  .ai-pdf-viewer-spread-{{ ai_gen_id }} {
+  .pdfv-spread-{{ viewer_id }} {
     display: flex;
-    align-items: flex-start;
     justify-content: center;
-    gap: 18px;
-    margin: 0 auto;
+    align-items: flex-start;
+    gap: var(--pdfv-gap);
     width: max-content;
-    max-width: none;
+    margin: 0 auto;
   }
 
-  .ai-pdf-page-wrap-{{ ai_gen_id }} {
+  .pdfv-page-{{ viewer_id }} {
     position: relative;
-    flex: 0 0 auto;
     background: #fff;
-    box-shadow: 0 10px 24px rgba(0,0,0,.16);
     border-radius: 4px;
     overflow: hidden;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, .16);
+    flex: 0 0 auto;
   }
 
-  .ai-pdf-page-canvas-{{ ai_gen_id }} {
+  .pdfv-canvas-{{ viewer_id }} {
     display: block;
     width: auto;
     height: auto;
-    max-width: none;
   }
 
-  .ai-pdf-viewer-loading-{{ ai_gen_id }},
-  .ai-pdf-viewer-error-{{ ai_gen_id }},
-  .ai-pdf-viewer-empty-state-{{ ai_gen_id }} {
-    min-height: {{ block.settings.viewer_height }}px;
+  .pdfv-loading-{{ viewer_id }},
+  .pdfv-empty-{{ viewer_id }},
+  .pdfv-error-{{ viewer_id }} {
+    min-height: var(--pdfv-height);
     display: flex;
     align-items: center;
     justify-content: center;
-    text-align: center;
     padding: 40px 20px;
-    color: {{ block.settings.text_color }};
+    text-align: center;
+    color: var(--pdfv-text);
   }
 
-  .ai-pdf-viewer-loading-box-{{ ai_gen_id }} {
+  .pdfv-loading-box-{{ viewer_id }} {
     display: grid;
     gap: 12px;
     justify-items: center;
   }
 
-  .ai-pdf-viewer-spinner-{{ ai_gen_id }} {
+  .pdfv-spinner-{{ viewer_id }} {
     width: 42px;
     height: 42px;
-    border: 4px solid {{ block.settings.border_color }};
-    border-top-color: {{ block.settings.primary_color }};
+    border: 4px solid var(--pdfv-border);
+    border-top-color: var(--pdfv-primary);
     border-radius: 50%;
-    animation: ai-pdf-spin-{{ ai_gen_id }} 1s linear infinite;
+    animation: pdfv-spin-{{ viewer_id }} 1s linear infinite;
   }
 
-  @keyframes ai-pdf-spin-{{ ai_gen_id }} {
+  @keyframes pdfv-spin-{{ viewer_id }} {
     to { transform: rotate(360deg); }
   }
 
-  .ai-pdf-viewer-empty-icon-{{ ai_gen_id }} {
-    width: 74px;
-    height: 74px;
-    margin: 0 auto 12px;
-    opacity: .35;
-  }
-
-  .ai-pdf-viewer-footer-{{ ai_gen_id }} {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-    align-items: center;
-    padding: 14px 16px;
-    background: {{ block.settings.header_background }};
-    border-top: 1px solid {{ block.settings.border_color }};
-  }
-
-  .ai-pdf-viewer-hint-{{ ai_gen_id }} {
-    width: 100%;
+  .pdfv-footer-{{ viewer_id }} {
+    padding: 12px 14px;
     text-align: center;
+    background: var(--pdfv-header-bg);
+    border-top: 1px solid var(--pdfv-border);
+    color: var(--pdfv-text);
     font-size: 12px;
-    color: {{ block.settings.text_color }};
     opacity: .7;
   }
 
   @media screen and (max-width: 989px) {
-    .ai-pdf-viewer-outer-{{ ai_gen_id }} {
+    .pdfv-shell-{{ viewer_id }} {
       max-width: 100%;
       padding: 16px 0;
     }
 
-    .ai-pdf-viewer-stage-{{ ai_gen_id }} {
-      height: clamp(420px, 72vh, {{ block.settings.viewer_height }}px);
+    .pdfv-stage-{{ viewer_id }} {
+      height: min(78vh, {{ section.settings.viewer_height }}px);
     }
 
-    .ai-pdf-viewer-stage-inner-{{ ai_gen_id }} {
-      padding: 12px;
-    }
-
-    .ai-pdf-viewer-spread-{{ ai_gen_id }} {
-      gap: 10px;
+    .pdfv-stage-inner-{{ viewer_id }} {
+      padding: 14px;
     }
   }
 
   @media screen and (max-width: 749px) {
-    .ai-pdf-viewer-header-{{ ai_gen_id }} {
+    .pdfv-header-{{ viewer_id }} {
       padding: 12px 14px;
     }
 
-    .ai-pdf-viewer-toolbar-{{ ai_gen_id }},
-    .ai-pdf-viewer-footer-{{ ai_gen_id }} {
+    .pdfv-toolbar-{{ viewer_id }} {
       gap: 6px;
       padding: 10px 12px;
     }
 
-    .ai-pdf-viewer-button-{{ ai_gen_id }},
-    .ai-pdf-viewer-select-{{ ai_gen_id }} {
+    .pdfv-btn-{{ viewer_id }} {
       padding: 8px 11px;
       font-size: 12px;
     }
 
-    .ai-pdf-viewer-stage-{{ ai_gen_id }} {
+    .pdfv-stage-{{ viewer_id }} {
       min-height: 380px;
-      height: min(72vh, 620px);
+      height: min(76vh, 680px);
     }
 
-    .ai-pdf-viewer-stage-inner-{{ ai_gen_id }} {
+    .pdfv-stage-inner-{{ viewer_id }} {
       padding: 10px;
+    }
+
+    .pdfv-{{ viewer_id }} .js-view-spread {
+      display: none !important;
     }
   }
 {% endstyle %}
 
-<pdf-viewer-{{ ai_gen_id }}
-  class="ai-pdf-viewer-{{ ai_gen_id }}"
-  data-pdf-url="{% if block.settings.pdf_file %}{{ block.settings.pdf_file }}{% endif %}"
-  data-default-view="{{ block.settings.default_view }}"
-  data-default-fit="{{ block.settings.default_fit }}"
-  {{ block.shopify_attributes }}
+<section
+  class="pdfv-{{ viewer_id }}"
+  data-pdf-url="{{ section.settings.pdf_file }}"
+  data-default-view="{{ section.settings.default_view }}"
+  data-default-fit="{{ section.settings.default_fit }}"
+  {{ section.shopify_attributes }}
 >
-  <div class="ai-pdf-viewer-outer-{{ ai_gen_id }}">
-    <div class="ai-pdf-viewer-container-{{ ai_gen_id }}">
-      <div class="ai-pdf-viewer-header-{{ ai_gen_id }}">
-        <h3 class="ai-pdf-viewer-title-{{ ai_gen_id }}">{{ block.settings.viewer_title }}</h3>
-        <div class="ai-pdf-viewer-page-info-{{ ai_gen_id }}">
-          <span class="ai-pdf-current-page-{{ ai_gen_id }}">1</span>
-          /
-          <span class="ai-pdf-total-pages-{{ ai_gen_id }}">1</span>
+  <div class="pdfv-shell-{{ viewer_id }}">
+    <div class="pdfv-card-{{ viewer_id }}">
+      <div class="pdfv-header-{{ viewer_id }}">
+        <h2 class="pdfv-title-{{ viewer_id }}">{{ section.settings.viewer_title }}</h2>
+        <div class="pdfv-meta-{{ viewer_id }}">
+          <span class="js-current-page">1</span> / <span class="js-total-pages">1</span>
         </div>
       </div>
 
-      {% if block.settings.pdf_file == blank %}
-        <div class="ai-pdf-viewer-empty-state-{{ ai_gen_id }}">
-          <div>
-            <div class="ai-pdf-viewer-empty-icon-{{ ai_gen_id }}">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="8" y1="13" x2="16" y2="13"></line>
-                <line x1="8" y1="17" x2="13" y2="17"></line>
-              </svg>
-            </div>
-            <div>เลือกไฟล์ PDF เพื่อแสดงแคตตาล็อก</div>
-          </div>
+      {% if section.settings.pdf_file == blank %}
+        <div class="pdfv-empty-{{ viewer_id }}">
+          <div>กรุณาใส่ URL ไฟล์ PDF ก่อน</div>
         </div>
       {% else %}
-        <div class="ai-pdf-viewer-toolbar-{{ ai_gen_id }}">
-          <button type="button" class="ai-pdf-viewer-button-{{ ai_gen_id }} js-first">⏮</button>
-          <button type="button" class="ai-pdf-viewer-button-{{ ai_gen_id }} js-prev">◀</button>
-          <button type="button" class="ai-pdf-viewer-button-{{ ai_gen_id }} js-next">▶</button>
-          <button type="button" class="ai-pdf-viewer-button-{{ ai_gen_id }} js-last">⏭</button>
+        <div class="pdfv-toolbar-{{ viewer_id }}">
+          <button type="button" class="pdfv-btn-{{ viewer_id }} js-first">⏮</button>
+          <button type="button" class="pdfv-btn-{{ viewer_id }} js-prev">◀</button>
+          <button type="button" class="pdfv-btn-{{ viewer_id }} js-next">▶</button>
+          <button type="button" class="pdfv-btn-{{ viewer_id }} js-last">⏭</button>
 
-          <button type="button" class="ai-pdf-viewer-button-{{ ai_gen_id }} js-view-single">Single</button>
-          <button type="button" class="ai-pdf-viewer-button-{{ ai_gen_id }} js-view-spread">Spread</button>
+          <button type="button" class="pdfv-btn-{{ viewer_id }} js-view-single">Single</button>
+          <button type="button" class="pdfv-btn-{{ viewer_id }} js-view-spread">Book</button>
 
-          <button type="button" class="ai-pdf-viewer-button-{{ ai_gen_id }} js-fit-width">Fit width</button>
-          <button type="button" class="ai-pdf-viewer-button-{{ ai_gen_id }} js-fit-page">Fit page</button>
+          <button type="button" class="pdfv-btn-{{ viewer_id }} js-fit-page">Fit page</button>
+          <button type="button" class="pdfv-btn-{{ viewer_id }} js-fit-width">Fit width</button>
 
-          <button type="button" class="ai-pdf-viewer-button-{{ ai_gen_id }} js-zoom-out">−</button>
-          <span class="ai-pdf-viewer-zoom-level-{{ ai_gen_id }}">100%</span>
-          <button type="button" class="ai-pdf-viewer-button-{{ ai_gen_id }} js-zoom-in">+</button>
+          <button type="button" class="pdfv-btn-{{ viewer_id }} js-zoom-out">−</button>
+          <span class="pdfv-zoom-label-{{ viewer_id }} js-zoom-label">100%</span>
+          <button type="button" class="pdfv-btn-{{ viewer_id }} js-zoom-in">+</button>
         </div>
 
-        <div class="ai-pdf-viewer-stage-{{ ai_gen_id }}">
-          <div class="ai-pdf-viewer-loading-{{ ai_gen_id }}">
-            <div class="ai-pdf-viewer-loading-box-{{ ai_gen_id }}">
-              <div class="ai-pdf-viewer-spinner-{{ ai_gen_id }}"></div>
+        <div class="pdfv-stage-{{ viewer_id }}">
+          <div class="pdfv-loading-{{ viewer_id }} js-loading">
+            <div class="pdfv-loading-box-{{ viewer_id }}">
+              <div class="pdfv-spinner-{{ viewer_id }}"></div>
               <div>กำลังโหลด PDF...</div>
             </div>
           </div>
 
-          <div class="ai-pdf-viewer-stage-inner-{{ ai_gen_id }}" hidden>
-            <div class="ai-pdf-viewer-spread-{{ ai_gen_id }}">
-              <div class="ai-pdf-page-wrap-{{ ai_gen_id }} js-page-wrap-1">
-                <canvas class="ai-pdf-page-canvas-{{ ai_gen_id }} js-canvas-1"></canvas>
+          <div class="pdfv-stage-inner-{{ viewer_id }} js-stage-inner" hidden>
+            <div class="pdfv-spread-{{ viewer_id }}">
+              <div class="pdfv-page-{{ viewer_id }} js-wrap-1">
+                <canvas class="pdfv-canvas-{{ viewer_id }} js-canvas-1"></canvas>
               </div>
-              <div class="ai-pdf-page-wrap-{{ ai_gen_id }} js-page-wrap-2" hidden>
-                <canvas class="ai-pdf-page-canvas-{{ ai_gen_id }} js-canvas-2"></canvas>
+              <div class="pdfv-page-{{ viewer_id }} js-wrap-2" hidden>
+                <canvas class="pdfv-canvas-{{ viewer_id }} js-canvas-2"></canvas>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="ai-pdf-viewer-footer-{{ ai_gen_id }}">
-          <div class="ai-pdf-viewer-hint-{{ ai_gen_id }}">
-            Desktop: ลูกศรซ้าย-ขวา / Mobile: ปัดซ้าย-ขวา
-          </div>
+        <div class="pdfv-footer-{{ viewer_id }}">
+          Desktop: arrow key / Mobile: swipe
         </div>
       {% endif %}
     </div>
   </div>
-</pdf-viewer-{{ ai_gen_id }}>
+</section>
 
 <script>
   window.pdfjsLib = window.pdfjsLib || {};
@@ -333,91 +316,76 @@
 
 <script>
 (function() {
-  class PDFViewer{{ ai_gen_id }} extends HTMLElement {
-    constructor() {
-      super();
+  class LeanPDFViewer{{ viewer_id }} {
+    constructor(root) {
+      this.root = root;
+      this.pdfUrl = root.dataset.pdfUrl;
+      this.defaultView = root.dataset.defaultView || 'spread';
+      this.defaultFit = root.dataset.defaultFit || 'page';
+
       this.pdfDoc = null;
       this.totalPages = 0;
       this.currentPage = 1;
-      this.renderToken = 0;
-
-      this.viewMode = this.dataset.defaultView || 'single';   // single | spread
-      this.fitMode = this.dataset.defaultFit || 'page';       // page | width | manual
+      this.viewMode = this.defaultView;
+      this.fitMode = this.defaultFit;
       this.manualScale = 1;
-
-      this.minScale = 0.4;
-      this.maxScale = 3.5;
+      this.renderToken = 0;
+      this.minScale = 0.45;
+      this.maxScale = 3;
 
       this.touchStartX = 0;
       this.touchEndX = 0;
+      this.resizeTimer = null;
       this.resizeObserver = null;
-      this.boundKeydown = this.onKeydown.bind(this);
-      this.boundResize = this.onResize.bind(this);
+
+      this.cache();
+      this.bind();
+      this.load();
     }
 
-    connectedCallback() {
-      this.pdfUrl = this.getAttribute('data-pdf-url');
-      if (!this.pdfUrl) return;
+    cache() {
+      this.loadingEl = this.root.querySelector('.js-loading');
+      this.stageEl = this.root.querySelector('.pdfv-stage-{{ viewer_id }}');
+      this.stageInnerEl = this.root.querySelector('.js-stage-inner');
 
-      this.cacheEls();
-      this.bindEvents();
-      this.loadPDF();
+      this.currentPageEl = this.root.querySelector('.js-current-page');
+      this.totalPagesEl = this.root.querySelector('.js-total-pages');
+      this.zoomLabelEl = this.root.querySelector('.js-zoom-label');
+
+      this.wrap1 = this.root.querySelector('.js-wrap-1');
+      this.wrap2 = this.root.querySelector('.js-wrap-2');
+      this.canvas1 = this.root.querySelector('.js-canvas-1');
+      this.canvas2 = this.root.querySelector('.js-canvas-2');
+
+      this.btnFirst = this.root.querySelector('.js-first');
+      this.btnPrev = this.root.querySelector('.js-prev');
+      this.btnNext = this.root.querySelector('.js-next');
+      this.btnLast = this.root.querySelector('.js-last');
+      this.btnViewSingle = this.root.querySelector('.js-view-single');
+      this.btnViewSpread = this.root.querySelector('.js-view-spread');
+      this.btnFitPage = this.root.querySelector('.js-fit-page');
+      this.btnFitWidth = this.root.querySelector('.js-fit-width');
+      this.btnZoomOut = this.root.querySelector('.js-zoom-out');
+      this.btnZoomIn = this.root.querySelector('.js-zoom-in');
     }
 
-    disconnectedCallback() {
-      document.removeEventListener('keydown', this.boundKeydown);
-      if (this.resizeObserver) this.resizeObserver.disconnect();
-      window.removeEventListener('resize', this.boundResize);
-    }
-
-    cacheEls() {
-      this.loadingEl = this.querySelector('.ai-pdf-viewer-loading-{{ ai_gen_id }}');
-      this.stageEl = this.querySelector('.ai-pdf-viewer-stage-{{ ai_gen_id }}');
-      this.stageInnerEl = this.querySelector('.ai-pdf-viewer-stage-inner-{{ ai_gen_id }}');
-      this.spreadEl = this.querySelector('.ai-pdf-viewer-spread-{{ ai_gen_id }}');
-      this.pageInfoCurrentEl = this.querySelector('.ai-pdf-current-page-{{ ai_gen_id }}');
-      this.pageInfoTotalEl = this.querySelector('.ai-pdf-total-pages-{{ ai_gen_id }}');
-      this.zoomLevelEl = this.querySelector('.ai-pdf-viewer-zoom-level-{{ ai_gen_id }}');
-
-      this.canvas1 = this.querySelector('.js-canvas-1');
-      this.canvas2 = this.querySelector('.js-canvas-2');
-      this.wrap1 = this.querySelector('.js-page-wrap-1');
-      this.wrap2 = this.querySelector('.js-page-wrap-2');
-
-      this.btnFirst = this.querySelector('.js-first');
-      this.btnPrev = this.querySelector('.js-prev');
-      this.btnNext = this.querySelector('.js-next');
-      this.btnLast = this.querySelector('.js-last');
-      this.btnSingle = this.querySelector('.js-view-single');
-      this.btnSpread = this.querySelector('.js-view-spread');
-      this.btnFitWidth = this.querySelector('.js-fit-width');
-      this.btnFitPage = this.querySelector('.js-fit-page');
-      this.btnZoomOut = this.querySelector('.js-zoom-out');
-      this.btnZoomIn = this.querySelector('.js-zoom-in');
-    }
-
-    bindEvents() {
+    bind() {
       this.btnFirst?.addEventListener('click', () => this.goToPage(1));
       this.btnPrev?.addEventListener('click', () => this.previous());
       this.btnNext?.addEventListener('click', () => this.next());
       this.btnLast?.addEventListener('click', () => this.goToPage(this.getLastStartPage()));
 
-      this.btnSingle?.addEventListener('click', () => {
+      this.btnViewSingle?.addEventListener('click', () => {
         this.viewMode = 'single';
-        this.fitMode = this.fitMode === 'manual' ? 'manual' : 'page';
+        if (this.fitMode !== 'manual') this.fitMode = 'page';
         this.render();
       });
 
-      this.btnSpread?.addEventListener('click', () => {
+      this.btnViewSpread?.addEventListener('click', () => {
         if (this.isMobile()) return;
         this.viewMode = 'spread';
         if (this.currentPage > 1 && this.currentPage % 2 !== 0) this.currentPage -= 1;
-        this.fitMode = this.fitMode === 'manual' ? 'manual' : 'page';
-        this.render();
-      });
-
-      this.btnFitWidth?.addEventListener('click', () => {
-        this.fitMode = 'width';
+        if (this.fitMode !== 'manual') this.fitMode = 'page';
         this.render();
       });
 
@@ -426,11 +394,15 @@
         this.render();
       });
 
-      this.btnZoomIn?.addEventListener('click', () => this.zoomBy(1.2));
-      this.btnZoomOut?.addEventListener('click', () => this.zoomBy(1 / 1.2));
+      this.btnFitWidth?.addEventListener('click', () => {
+        this.fitMode = 'width';
+        this.render();
+      });
 
-      document.addEventListener('keydown', this.boundKeydown);
-      window.addEventListener('resize', this.boundResize);
+      this.btnZoomIn?.addEventListener('click', async () => this.zoomBy(1.2));
+      this.btnZoomOut?.addEventListener('click', async () => this.zoomBy(1 / 1.2));
+
+      document.addEventListener('keydown', (e) => this.onKeydown(e));
 
       this.stageEl?.addEventListener('touchstart', (e) => {
         this.touchStartX = e.changedTouches[0].screenX;
@@ -445,13 +417,17 @@
         }
       }, { passive: true });
 
-      if (this.stageEl && 'ResizeObserver' in window) {
+      if ('ResizeObserver' in window && this.stageEl) {
         this.resizeObserver = new ResizeObserver(() => this.onResize());
         this.resizeObserver.observe(this.stageEl);
+      } else {
+        window.addEventListener('resize', () => this.onResize());
       }
     }
 
-    async loadPDF() {
+    async load() {
+      if (!this.pdfUrl || !window.pdfjsLib) return;
+
       try {
         const task = window.pdfjsLib.getDocument({
           url: this.pdfUrl,
@@ -461,11 +437,9 @@
 
         this.pdfDoc = await task.promise;
         this.totalPages = this.pdfDoc.numPages;
-        this.pageInfoTotalEl.textContent = this.totalPages;
+        this.totalPagesEl.textContent = this.totalPages;
 
-        if (this.viewMode === 'spread' && this.isMobile()) {
-          this.viewMode = 'single';
-        }
+        if (this.isMobile()) this.viewMode = 'single';
 
         await this.render();
 
@@ -473,13 +447,8 @@
         this.stageInnerEl.hidden = false;
       } catch (error) {
         console.error(error);
-        this.showError('ไม่สามารถโหลด PDF ได้ กรุณาตรวจสอบ URL ไฟล์อีกครั้ง');
-      }
-    }
-
-    showError(message) {
-      if (this.loadingEl) {
-        this.loadingEl.innerHTML = '<div>' + message + '</div>';
+        this.loadingEl.className = 'pdfv-error-{{ viewer_id }}';
+        this.loadingEl.innerHTML = '<div>ไม่สามารถโหลด PDF ได้ กรุณาตรวจสอบ URL ไฟล์อีกครั้ง</div>';
       }
     }
 
@@ -495,7 +464,7 @@
       const mode = this.getEffectiveViewMode();
 
       if (mode === 'spread') {
-        if (this.currentPage <= 1) return [1, 2 <= this.totalPages ? 2 : null];
+        if (this.currentPage <= 1) return [1, this.totalPages >= 2 ? 2 : null];
         const left = this.currentPage % 2 === 0 ? this.currentPage : this.currentPage - 1;
         return [left, left + 1 <= this.totalPages ? left + 1 : null];
       }
@@ -524,22 +493,36 @@
       const size1 = await this.getPageSize(page1);
       const size2 = page2 ? await this.getPageSize(page2) : null;
 
-      const stageStyles = window.getComputedStyle(this.stageInnerEl);
-      const innerPadX = parseFloat(stageStyles.paddingLeft) + parseFloat(stageStyles.paddingRight);
-      const innerPadY = parseFloat(stageStyles.paddingTop) + parseFloat(stageStyles.paddingBottom);
+      const styles = window.getComputedStyle(this.stageInnerEl);
+      const innerPadX = parseFloat(styles.paddingLeft) + parseFloat(styles.paddingRight);
+      const innerPadY = parseFloat(styles.paddingTop) + parseFloat(styles.paddingBottom);
 
-      const gap = mode === 'spread' && size2 ? 18 : 0;
-      const availableWidth = Math.max(100, this.stageEl.clientWidth - innerPadX - 8);
-      const availableHeight = Math.max(100, this.stageEl.clientHeight - innerPadY - 8);
+      const availableWidth = Math.max(100, this.stageEl.clientWidth - innerPadX);
+      const availableHeight = Math.max(100, this.stageEl.clientHeight - innerPadY);
 
-      const totalBaseWidth = size1.width + (size2 ? size2.width : 0) + gap;
-      const maxBaseHeight = Math.max(size1.height, size2 ? size2.height : 0);
+      if (mode === 'single') {
+        const scaleWidth = availableWidth / size1.width;
+        const scalePage = Math.min(availableWidth / size1.width, availableHeight / size1.height);
 
-      const scaleWidth = availableWidth / totalBaseWidth;
-      const scalePage = Math.min(availableWidth / totalBaseWidth, availableHeight / maxBaseHeight);
+        if (this.fitMode === 'width') return scaleWidth;
+        if (this.fitMode === 'page') return scalePage;
+        return this.manualScale;
+      }
 
-      if (this.fitMode === 'width') return scaleWidth;
-      if (this.fitMode === 'page') return scalePage;
+      const gap = size2 ? 24 : 0;
+      const totalWidth = size1.width + (size2 ? size2.width : 0) + gap;
+      const maxHeight = Math.max(size1.height, size2 ? size2.height : 0);
+      const scaleByWidth = availableWidth / totalWidth;
+      const scaleByHeight = availableHeight / maxHeight;
+
+      if (this.fitMode === 'width') {
+        return Math.min(scaleByWidth, 1.35);
+      }
+
+      if (this.fitMode === 'page') {
+        return Math.min(scaleByWidth, scaleByHeight);
+      }
+
       return this.manualScale;
     }
 
@@ -553,16 +536,107 @@
       await this.render();
     }
 
-    async onResize() {
+    async render() {
       if (!this.pdfDoc) return;
 
-      const effective = this.getEffectiveViewMode();
-      if (effective === 'spread' && this.currentPage > 1 && this.currentPage % 2 !== 0) {
-        this.currentPage -= 1;
+      const token = ++this.renderToken;
+      const mode = this.getEffectiveViewMode();
+      const [page1, page2] = this.getVisiblePages();
+      const scale = Math.min(this.maxScale, Math.max(this.minScale, await this.getScaleForFit()));
+
+      if (token !== this.renderToken) return;
+
+      this.wrap2.hidden = !(mode === 'spread' && page2);
+
+      await this.renderPageToCanvas(page1, this.canvas1, scale, token);
+
+      if (mode === 'spread' && page2) {
+        await this.renderPageToCanvas(page2, this.canvas2, scale, token);
+      } else {
+        this.canvas2.width = 0;
+        this.canvas2.height = 0;
+        this.canvas2.style.width = '0px';
+        this.canvas2.style.height = '0px';
       }
 
-      clearTimeout(this.resizeTimer);
-      this.resizeTimer = setTimeout(() => this.render(), 120);
+      this.currentPageEl.textContent = page1;
+      this.updateUI(scale);
+      this.updateButtons();
+
+      if (this.fitMode === 'page' || this.fitMode === 'width') {
+        this.stageEl.scrollTo({ left: 0, top: 0, behavior: 'auto' });
+      }
+    }
+
+    async renderPageToCanvas(pageNumber, canvas, scale, token) {
+      const page = await this.pdfDoc.getPage(pageNumber);
+      if (token !== this.renderToken) return;
+
+      const viewport = page.getViewport({ scale });
+      const context = canvas.getContext('2d', { alpha: false });
+
+      const dpr = window.devicePixelRatio || 1;
+      const outputScale = this.isMobile() ? Math.min(dpr, 1.25) : Math.min(dpr, 1.5);
+
+      canvas.width = Math.floor(viewport.width * outputScale);
+      canvas.height = Math.floor(viewport.height * outputScale);
+      canvas.style.width = Math.floor(viewport.width) + 'px';
+      canvas.style.height = Math.floor(viewport.height) + 'px';
+
+      context.setTransform(outputScale, 0, 0, outputScale, 0, 0);
+      context.imageSmoothingEnabled = true;
+      context.imageSmoothingQuality = 'medium';
+
+      await page.render({
+        canvasContext: context,
+        viewport
+      }).promise;
+    }
+
+    updateUI(scale) {
+      const effective = this.getEffectiveViewMode();
+
+      this.zoomLabelEl.textContent = Math.round(scale * 100) + '%';
+
+      this.btnViewSingle?.classList.toggle('is-active', effective === 'single');
+      this.btnViewSpread?.classList.toggle('is-active', effective === 'spread' && !this.isMobile());
+
+      this.btnFitPage?.classList.toggle('is-active', this.fitMode === 'page');
+      this.btnFitWidth?.classList.toggle('is-active', this.fitMode === 'width');
+
+      if (this.isMobile()) {
+        this.btnViewSpread?.classList.remove('is-active');
+        this.btnViewSingle?.classList.add('is-active');
+      }
+    }
+
+    updateButtons() {
+      const lastStartPage = this.getLastStartPage();
+      this.btnFirst.disabled = this.currentPage <= 1;
+      this.btnPrev.disabled = this.currentPage <= 1;
+      this.btnNext.disabled = this.currentPage >= lastStartPage;
+      this.btnLast.disabled = this.currentPage >= lastStartPage;
+    }
+
+    goToPage(page) {
+      const effective = this.getEffectiveViewMode();
+
+      if (effective === 'spread' && page > 1 && page % 2 !== 0) {
+        page -= 1;
+      }
+
+      this.currentPage = Math.max(1, Math.min(page, this.getLastStartPage()));
+      this.render();
+    }
+
+    next() {
+      const step = this.getEffectiveViewMode() === 'spread' ? 2 : 1;
+      this.goToPage(this.currentPage + step);
+    }
+
+    previous() {
+      const step = this.getEffectiveViewMode() === 'spread' ? 2 : 1;
+      this.goToPage(this.currentPage - step);
     }
 
     onKeydown(e) {
@@ -586,115 +660,39 @@
       }
     }
 
-    async render() {
+    onResize() {
       if (!this.pdfDoc) return;
-      const token = ++this.renderToken;
 
-      const mode = this.getEffectiveViewMode();
-      const [page1, page2] = this.getVisiblePages();
-      const scale = Math.min(this.maxScale, Math.max(this.minScale, await this.getScaleForFit()));
+      if (this.isMobile()) this.viewMode = 'single';
 
-      if (token !== this.renderToken) return;
-
-      this.wrap2.hidden = !(mode === 'spread' && page2);
-      await this.renderPageToCanvas(page1, this.canvas1, scale, token);
-      if (mode === 'spread' && page2) {
-        await this.renderPageToCanvas(page2, this.canvas2, scale, token);
-      } else {
-        this.canvas2.width = 0;
-        this.canvas2.height = 0;
+      if (this.getEffectiveViewMode() === 'spread' && this.currentPage > 1 && this.currentPage % 2 !== 0) {
+        this.currentPage -= 1;
       }
 
-      this.pageInfoCurrentEl.textContent = page1;
-      this.updateUI(scale);
-      this.updateNavButtons();
-      this.centerScrollOnRender();
-    }
-
-    async renderPageToCanvas(pageNumber, canvas, scale, token) {
-      const page = await this.pdfDoc.getPage(pageNumber);
-      if (token !== this.renderToken) return;
-
-      const viewport = page.getViewport({ scale });
-      const context = canvas.getContext('2d', { alpha: false });
-
-      const outputScale = window.devicePixelRatio || 1;
-      canvas.width = Math.floor(viewport.width * outputScale);
-      canvas.height = Math.floor(viewport.height * outputScale);
-      canvas.style.width = Math.floor(viewport.width) + 'px';
-      canvas.style.height = Math.floor(viewport.height) + 'px';
-
-      context.setTransform(outputScale, 0, 0, outputScale, 0, 0);
-      context.imageSmoothingEnabled = true;
-      context.imageSmoothingQuality = 'high';
-
-      await page.render({
-        canvasContext: context,
-        viewport
-      }).promise;
-    }
-
-    centerScrollOnRender() {
-      if (this.fitMode === 'page' || this.fitMode === 'width') {
-        this.stageEl.scrollTo({ left: 0, top: 0, behavior: 'auto' });
-      }
-    }
-
-    updateUI(scale) {
-      const effective = this.getEffectiveViewMode();
-
-      this.zoomLevelEl.textContent = Math.round(scale * 100) + '%';
-
-      this.btnSingle?.classList.toggle('is-active', effective === 'single');
-      this.btnSpread?.classList.toggle('is-active', effective === 'spread' && !this.isMobile());
-
-      this.btnFitWidth?.classList.toggle('is-active', this.fitMode === 'width');
-      this.btnFitPage?.classList.toggle('is-active', this.fitMode === 'page');
-
-      if (this.btnSpread) {
-        this.btnSpread.disabled = this.isMobile();
-        this.btnSpread.title = this.isMobile() ? 'มือถือจะแสดงแบบหน้าเดี่ยวอัตโนมัติ' : '';
-      }
-    }
-
-    updateNavButtons() {
-      const effective = this.getEffectiveViewMode();
-      const step = effective === 'spread' ? 2 : 1;
-      const lastStartPage = this.getLastStartPage();
-
-      this.btnFirst.disabled = this.currentPage <= 1;
-      this.btnPrev.disabled = this.currentPage <= 1;
-      this.btnNext.disabled = this.currentPage >= lastStartPage;
-      this.btnLast.disabled = this.currentPage >= lastStartPage;
-    }
-
-    goToPage(page) {
-      const effective = this.getEffectiveViewMode();
-
-      if (effective === 'spread' && page > 1 && page % 2 !== 0) {
-        page -= 1;
-      }
-
-      this.currentPage = Math.max(1, Math.min(page, this.getLastStartPage()));
-      this.render();
-    }
-
-    next() {
-      const effective = this.getEffectiveViewMode();
-      const step = effective === 'spread' ? 2 : 1;
-      this.goToPage(this.currentPage + step);
-    }
-
-    previous() {
-      const effective = this.getEffectiveViewMode();
-      const step = effective === 'spread' ? 2 : 1;
-      this.goToPage(this.currentPage - step);
+      clearTimeout(this.resizeTimer);
+      this.resizeTimer = setTimeout(() => {
+        if (this.fitMode === 'page' || this.fitMode === 'width') {
+          this.render();
+        }
+      }, 220);
     }
   }
 
-  if (!customElements.get('pdf-viewer-{{ ai_gen_id }}')) {
-    customElements.define('pdf-viewer-{{ ai_gen_id }}', PDFViewer{{ ai_gen_id }});
-  }
+  document.addEventListener('DOMContentLoaded', function() {
+    var root = document.querySelector('.pdfv-{{ viewer_id }}');
+    if (root && !root.dataset.viewerMounted) {
+      root.dataset.viewerMounted = 'true';
+      new LeanPDFViewer{{ viewer_id }}(root);
+    }
+  });
+
+  document.addEventListener('shopify:section:load', function(event) {
+    var root = event.target.querySelector('.pdfv-{{ viewer_id }}');
+    if (root && !root.dataset.viewerMounted) {
+      root.dataset.viewerMounted = 'true';
+      new LeanPDFViewer{{ viewer_id }}(root);
+    }
+  });
 })();
 </script>
 
@@ -706,22 +704,21 @@
       "type": "text",
       "id": "viewer_title",
       "label": "ชื่อแคตตาล็อก",
-      "default": "แคตตาล็อกสินค้า"
+      "default": "Catalogue"
     },
     {
       "type": "url",
       "id": "pdf_file",
-      "label": "URL ไฟล์ PDF",
-      "info": "วาง URL ของไฟล์ PDF จาก Shopify Files หรือ CDN"
+      "label": "URL ไฟล์ PDF"
     },
     {
       "type": "select",
       "id": "default_view",
-      "label": "โหมดเริ่มต้น",
+      "label": "โหมดเริ่มต้นบน Desktop",
       "default": "spread",
       "options": [
         { "value": "single", "label": "Single page" },
-        { "value": "spread", "label": "Spread / Book" }
+        { "value": "spread", "label": "Book spread" }
       ]
     },
     {
@@ -737,7 +734,7 @@
     {
       "type": "range",
       "id": "viewer_height",
-      "label": "ความสูงของ viewer",
+      "label": "ความสูง viewer",
       "min": 400,
       "max": 1200,
       "step": 50,
@@ -757,7 +754,7 @@
     {
       "type": "color",
       "id": "header_background",
-      "label": "พื้นหลังส่วนหัว / toolbar",
+      "label": "พื้นหลังส่วนหัว",
       "default": "#f5f5f5"
     },
     {
@@ -775,7 +772,7 @@
     {
       "type": "color",
       "id": "primary_color",
-      "label": "สี highlight",
+      "label": "สี active",
       "default": "#14c3d8"
     },
     {
