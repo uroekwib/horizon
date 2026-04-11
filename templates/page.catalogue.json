@@ -73,31 +73,26 @@
     "177570157111675007": {
       "type": "_blocks",
       "blocks": {
-        "ai_convertblock_pdfviewer_ECzmE3": {
-          "type": "ai_convertblock_pdfviewer",
-          "name": "PDF catalogue viewer",
+        "ai_gen_block_9d94451_dHpKLh": {
+          "type": "ai_gen_block_9d94451",
           "settings": {
-            "viewer_title": "แคตตาล็อกสินค้า",
-            "pdf_file": "https://cdn.shopify.com/s/files/1/0098/2653/3433/files/Octopus_Media_Solutions_catalogue_2026.pdf?v=1775702103",
-            "default_view": "single",
-            "default_fit": "page",
-            "viewer_height": 800,
-            "background_color": "#ffffff",
-            "header_background": "#f5f5f5",
-            "text_color": "#14c3d8",
-            "border_color": "#e2e2e2",
-            "primary_color": "#14c3d8",
+            "pdf_url": "https://cdn.shopify.com/s/files/1/0098/2653/3433/files/Octopus_Media_Solutions_catalogue_2026.pdf?v=1775702103",
+            "catalogue_title": "Product Catalogue",
+            "viewer_height": 700,
+            "background_color": "#14c3d8",
+            "header_background": "#f3f7fa",
+            "toolbar_background": "#ffffff",
+            "text_color": "#000000",
             "button_background": "#14c3d8",
             "button_text": "#ffffff",
-            "button_hover": "#0dd7ef",
-            "button_radius": 24,
-            "border_radius": 12,
-            "title_size": 18
+            "border_color": "#e6e6e6",
+            "accent_color": "#14c3d8"
           },
           "blocks": {}
         },
         "ai_gen_block_e8d38b5_t7Mr7X": {
           "type": "ai_gen_block_e8d38b5",
+          "disabled": true,
           "settings": {
             "viewer_title": "แคตตาล็อกสินค้า",
             "pdf_file": "https://cdn.shopify.com/s/files/1/0098/2653/3433/files/Octopus_Media_Solutions_catalogue_2026.pdf?v=1775702103",
@@ -118,7 +113,7 @@
         }
       },
       "block_order": [
-        "ai_convertblock_pdfviewer_ECzmE3",
+        "ai_gen_block_9d94451_dHpKLh",
         "ai_gen_block_e8d38b5_t7Mr7X"
       ],
       "settings": {
