@@ -256,9 +256,10 @@
     }
 
     .ai-pdf-viewer-canvas-container-{{ ai_gen_id }} {
+      height: auto;
+      min-height: 200px;
       padding: 10px;
-      overflow-x: auto;
-      overflow-y: hidden;
+      overflow: hidden;
     }
 
     .ai-pdf-viewer-spread-toggle-{{ ai_gen_id }} {
@@ -275,7 +276,10 @@
 
   @media screen and (min-width: 750px) {
     .ai-pdf-viewer-fullscreen-button-{{ ai_gen_id }} {
-      display: none;
+      width: 52px;
+      height: 52px;
+      bottom: 20px;
+      right: 20px;
     }
   }
 {% endstyle %}
