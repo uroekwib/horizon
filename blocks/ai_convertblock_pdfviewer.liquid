@@ -870,7 +870,10 @@
           this.fullscreenPanX = 0;
           this.fullscreenPanY = 0;
 
-          const page = await this.pdfDoc.getPage(this.fullscreenPage);
+          const fsEffectiveSpread = !this.isMobile && this.isDoubleSpread && this.fullscreenPage > 1;
+          const pagesToRender = fsEffectiveSpread
+            ? [this.fullscreenPage, this.fullscreenPage + 1]
+            : [this.fullscreenPage];
           const dpr = window.devicePixelRatio || 1;
 
           const fsContainer = this.fullscreenOverlay.querySelector('.ai-pdf-viewer-fullscreen-canvas-container-{{ ai_gen_id }}');
@@ -879,25 +882,31 @@
 
           // Auto-fit on first open (fullscreenScale === null), then use stored value for pinch
           if (this.fullscreenScale === null) {
-            const baseViewport = page.getViewport({ scale: 1.0 });
-            const scaleX = containerWidth / baseViewport.width;
+            const basePage = await this.pdfDoc.getPage(this.fullscreenPage);
+            const baseViewport = basePage.getViewport({ scale: 1.0 });
+            const totalWidth = fsEffectiveSpread ? baseViewport.width * 2 + 10 : baseViewport.width;
+            const scaleX = containerWidth / totalWidth;
             const scaleY = containerHeight / baseViewport.height;
             this.fullscreenScale = Math.min(scaleX, scaleY);
             this.fullscreenFitScale = this.fullscreenScale;
           }
 
-          const scaledViewport = page.getViewport({ scale: this.fullscreenScale * dpr });
+          for (const pageNum of pagesToRender) {
+            if (pageNum > this.pdfDoc.numPages) continue;
+            const page = await this.pdfDoc.getPage(pageNum);
+            const scaledViewport = page.getViewport({ scale: this.fullscreenScale * dpr });
 
-          const canvas = document.createElement('canvas');
-          canvas.className = 'ai-pdf-viewer-canvas-{{ ai_gen_id }}';
-          const context = canvas.getContext('2d');
-          canvas.width = scaledViewport.width;
-          canvas.height = scaledViewport.height;
-          canvas.style.width = (scaledViewport.width / dpr) + 'px';
-          canvas.style.height = (scaledViewport.height / dpr) + 'px';
+            const canvas = document.createElement('canvas');
+            canvas.className = 'ai-pdf-viewer-canvas-{{ ai_gen_id }}';
+            const context = canvas.getContext('2d');
+            canvas.width = scaledViewport.width;
+            canvas.height = scaledViewport.height;
+            canvas.style.width = (scaledViewport.width / dpr) + 'px';
+            canvas.style.height = (scaledViewport.height / dpr) + 'px';
 
-          await page.render({ canvasContext: context, viewport: scaledViewport }).promise;
-          this.fullscreenCanvasWrapper.appendChild(canvas);
+            await page.render({ canvasContext: context, viewport: scaledViewport }).promise;
+            this.fullscreenCanvasWrapper.appendChild(canvas);
+          }
 
           this.updateFullscreenControls();
         } finally {
@@ -931,13 +940,21 @@
       }
 
       updateFullscreenControls() {
-        this.fullscreenCurrentPageEl.textContent = this.fullscreenPage;
+        const fsEffectiveSpread = !this.isMobile && this.isDoubleSpread && this.fullscreenPage > 1;
+        const displayPage = fsEffectiveSpread && this.fullscreenPage < this.pdfDoc.numPages
+          ? `${this.fullscreenPage}-${this.fullscreenPage + 1}`
+          : this.fullscreenPage;
+        this.fullscreenCurrentPageEl.textContent = displayPage;
 
         const prevButton = this.querySelector('.ai-pdf-viewer-fullscreen-prev-{{ ai_gen_id }}');
         const nextButton = this.querySelector('.ai-pdf-viewer-fullscreen-next-{{ ai_gen_id }}');
 
         prevButton.disabled = this.fullscreenPage <= 1;
-        nextButton.disabled = this.fullscreenPage >= this.pdfDoc.numPages;
+        if (fsEffectiveSpread) {
+          nextButton.disabled = this.fullscreenPage >= this.pdfDoc.numPages - 1;
+        } else {
+          nextButton.disabled = this.fullscreenPage >= this.pdfDoc.numPages;
+        }
       }
 
       zoomIn() {
@@ -957,14 +974,17 @@
       async fitToScreen() {
         if (!this.pdfDoc) return;
 
-        const page = await this.pdfDoc.getPage(1);
+        const page = await this.pdfDoc.getPage(this.currentPage || 1);
         const viewport = page.getViewport({ scale: 1.0 });
-        
+
         const containerWidth = this.canvasContainer.clientWidth - 40;
+        const containerHeight = this.canvasContainer.clientHeight - 40;
         const effectiveSpread = this.isMobile ? false : (this.isDoubleSpread && this.currentPage > 1);
         const pageWidth = effectiveSpread ? viewport.width * 2 + 10 : viewport.width;
-        
-        this.scale = containerWidth / pageWidth;
+
+        const scaleByWidth = containerWidth / pageWidth;
+        const scaleByHeight = containerHeight / viewport.height;
+        this.scale = Math.min(scaleByWidth, scaleByHeight);
         this.fitScale = this.scale;
         this.renderPage();
       }
@@ -1002,17 +1022,29 @@
 
       fullscreenPrevPage() {
         if (this.fullscreenPage > 1) {
-          this.fullscreenPage--;
-          this.fullscreenScale = null; // auto-fit new page
+          const fsEffectiveSpread = !this.isMobile && this.isDoubleSpread && this.fullscreenPage > 1;
+          const step = fsEffectiveSpread ? 2 : 1;
+          this.fullscreenPage = Math.max(1, this.fullscreenPage - step);
+          this.fullscreenScale = null;
           this.renderFullscreenPage();
         }
       }
 
       fullscreenNextPage() {
-        if (this.fullscreenPage < this.pdfDoc.numPages) {
-          this.fullscreenPage++;
-          this.fullscreenScale = null; // auto-fit new page
-          this.renderFullscreenPage();
+        const fsEffectiveSpread = !this.isMobile && this.isDoubleSpread && this.fullscreenPage > 1;
+        const step = fsEffectiveSpread ? 2 : 1;
+        if (fsEffectiveSpread) {
+          if (this.fullscreenPage < this.pdfDoc.numPages - 1) {
+            this.fullscreenPage = Math.min(this.pdfDoc.numPages - 1, this.fullscreenPage + step);
+            this.fullscreenScale = null;
+            this.renderFullscreenPage();
+          }
+        } else {
+          if (this.fullscreenPage < this.pdfDoc.numPages) {
+            this.fullscreenPage = Math.min(this.pdfDoc.numPages, this.fullscreenPage + step);
+            this.fullscreenScale = null;
+            this.renderFullscreenPage();
+          }
         }
       }
 
