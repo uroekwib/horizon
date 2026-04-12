@@ -487,9 +487,7 @@
         this.touchEndX = 0;
         this.pinchStartDistance = null;
         this.pinchStartScale = 1.0;
-        this._pendingPinchScale = null;
-        this._pendingPinchFsScale = null;
-        this._pinchRafPending = false;
+        this._lastPinchRatio = null;
         this._renderInProgress = false;
         this._renderQueued = false;
         this.fullscreenScale = null;
@@ -571,24 +569,24 @@
             e.touches[0].clientX - e.touches[1].clientX,
             e.touches[0].clientY - e.touches[1].clientY
           );
-          this._pendingPinchScale = Math.min(3.0, Math.max(0.5, this.pinchStartScale * (distance / this.pinchStartDistance)));
-          if (!this._pinchRafPending) {
-            this._pinchRafPending = true;
-            requestAnimationFrame(() => {
-              this._pinchRafPending = false;
-              if (this._pendingPinchScale !== null) {
-                this.scale = this._pendingPinchScale;
-                this._pendingPinchScale = null;
-                this.renderPage();
-              }
-            });
-          }
+          const ratio = distance / this.pinchStartDistance;
+          this._lastPinchRatio = ratio;
+          // CSS transform only — no re-render during pinch
+          const clampedRatio = Math.min(3.0 / this.pinchStartScale, Math.max(0.5 / this.pinchStartScale, ratio));
+          this.canvasWrapper.style.transformOrigin = 'center center';
+          this.canvasWrapper.style.transform = `scale(${clampedRatio})`;
         }
       }
 
       handleTouchEnd(e) {
         if (this.pinchStartDistance) {
+          // Pinch ended — clear transform, re-render once at final scale
+          this.canvasWrapper.style.transform = '';
+          const ratio = this._lastPinchRatio || 1;
+          this.scale = Math.min(3.0, Math.max(0.5, this.pinchStartScale * ratio));
           this.pinchStartDistance = null;
+          this._lastPinchRatio = null;
+          this.renderPage();
           return;
         }
         this.touchEndX = e.changedTouches[0].screenX;
@@ -627,24 +625,24 @@
             e.touches[0].clientX - e.touches[1].clientX,
             e.touches[0].clientY - e.touches[1].clientY
           );
-          this._pendingPinchFsScale = Math.min(5.0, Math.max(0.3, this.pinchStartScale * (distance / this.pinchStartDistance)));
-          if (!this._pinchRafPending) {
-            this._pinchRafPending = true;
-            requestAnimationFrame(() => {
-              this._pinchRafPending = false;
-              if (this._pendingPinchFsScale !== null) {
-                this.fullscreenScale = this._pendingPinchFsScale;
-                this._pendingPinchFsScale = null;
-                this.renderFullscreenPage();
-              }
-            });
-          }
+          const ratio = distance / this.pinchStartDistance;
+          this._lastPinchRatio = ratio;
+          // CSS transform only — no re-render during pinch
+          const clampedRatio = Math.min(5.0 / this.pinchStartScale, Math.max(0.3 / this.pinchStartScale, ratio));
+          this.fullscreenCanvasWrapper.style.transformOrigin = 'center center';
+          this.fullscreenCanvasWrapper.style.transform = `scale(${clampedRatio})`;
         }
       }
 
       handleFullscreenTouchEnd(e) {
         if (this.pinchStartDistance) {
+          // Pinch ended — clear transform, re-render once at final scale
+          this.fullscreenCanvasWrapper.style.transform = '';
+          const ratio = this._lastPinchRatio || 1;
+          this.fullscreenScale = Math.min(5.0, Math.max(0.3, this.pinchStartScale * ratio));
           this.pinchStartDistance = null;
+          this._lastPinchRatio = null;
+          this.renderFullscreenPage();
           return;
         }
         this.touchEndX = e.changedTouches[0].screenX;
