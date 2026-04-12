@@ -532,11 +532,11 @@
         }
 
         window.addEventListener('resize', () => {
-          const wasMobile = this.isMobile;
-          this.isMobile = window.innerWidth < 750;
-          if (wasMobile !== this.isMobile && this.pdfDoc) {
-            this.renderPage();
-          }
+          clearTimeout(this._resizeTimer);
+          this._resizeTimer = setTimeout(() => {
+            this.isMobile = window.innerWidth < 750;
+            if (this.pdfDoc) this.fitToScreen();
+          }, 150);
         });
       }
 
@@ -1022,7 +1022,7 @@
           this.spreadLabel.textContent = 'Double';
         }
 
-        this.renderPage();
+        this.fitToScreen();
       }
 
       downloadPDF() {
