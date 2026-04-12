@@ -116,6 +116,8 @@
   .ai-pdf-viewer-canvas-{{ ai_gen_id }} {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     background-color: #ffffff;
+    max-width: none !important;
+    display: block;
   }
 
   .ai-pdf-viewer-loading-{{ ai_gen_id }} {
@@ -247,14 +249,39 @@
   }
 
   @media screen and (max-width: 749px) {
+    .ai-pdf-viewer-header-{{ ai_gen_id }} {
+      display: none;
+    }
+
     .ai-pdf-viewer-toolbar-{{ ai_gen_id }} {
-      padding: 10px 12px;
-      gap: 8px;
+      flex-wrap: nowrap;
+      padding: 6px 8px;
+      gap: 4px;
+      justify-content: space-between;
+    }
+
+    .ai-pdf-viewer-toolbar-group-{{ ai_gen_id }} {
+      gap: 3px;
+      flex-shrink: 0;
     }
 
     .ai-pdf-viewer-button-{{ ai_gen_id }} {
-      padding: 6px 10px;
-      font-size: 13px;
+      padding: 5px 7px;
+      font-size: 12px;
+      gap: 0;
+    }
+
+    .ai-pdf-viewer-btn-label-{{ ai_gen_id }} {
+      display: none;
+    }
+
+    .ai-pdf-viewer-zoom-display-{{ ai_gen_id }} {
+      min-width: 36px;
+      font-size: 12px;
+    }
+
+    .ai-pdf-viewer-page-info-{{ ai_gen_id }} {
+      font-size: 12px;
     }
 
     .ai-pdf-viewer-canvas-container-{{ ai_gen_id }} {
@@ -307,7 +334,7 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
         </svg>
-        Fit
+        <span class="ai-pdf-viewer-btn-label-{{ ai_gen_id }}">Fit</span>
       </button>
     </div>
 
@@ -378,7 +405,7 @@
           <polyline points="7 10 12 15 17 10"></polyline>
           <line x1="12" y1="15" x2="12" y2="3"></line>
         </svg>
-        Download
+        <span class="ai-pdf-viewer-btn-label-{{ ai_gen_id }}">Download</span>
       </button>
     </div>
   </div>
@@ -460,7 +487,10 @@
         this.touchEndX = 0;
         this.pinchStartDistance = null;
         this.pinchStartScale = 1.0;
+        this._pendingPinchScale = null;
         this._pinchRafPending = false;
+        this._renderInProgress = false;
+        this._renderQueued = false;
       }
 
       connectedCallback() {
@@ -537,13 +567,16 @@
             e.touches[0].clientX - e.touches[1].clientX,
             e.touches[0].clientY - e.touches[1].clientY
           );
-          const newScale = Math.min(3.0, Math.max(0.5, this.pinchStartScale * (distance / this.pinchStartDistance)));
+          this._pendingPinchScale = Math.min(3.0, Math.max(0.5, this.pinchStartScale * (distance / this.pinchStartDistance)));
           if (!this._pinchRafPending) {
             this._pinchRafPending = true;
             requestAnimationFrame(() => {
               this._pinchRafPending = false;
-              this.scale = newScale;
-              this.renderPage();
+              if (this._pendingPinchScale !== null) {
+                this.scale = this._pendingPinchScale;
+                this._pendingPinchScale = null;
+                this.renderPage();
+              }
             });
           }
         }
@@ -654,36 +687,45 @@
       async renderPage() {
         if (!this.pdfDoc) return;
 
-        this.canvasWrapper.innerHTML = '';
-
-        const effectiveSpread = this.isMobile ? false : (this.isDoubleSpread && this.currentPage > 1);
-        const pagesToRender = effectiveSpread ? [this.currentPage, this.currentPage + 1] : [this.currentPage];
-        const dpr = window.devicePixelRatio || 1;
-
-        for (const pageNum of pagesToRender) {
-          if (pageNum > this.pdfDoc.numPages) continue;
-
-          const page = await this.pdfDoc.getPage(pageNum);
-          const viewport = page.getViewport({ scale: this.scale * dpr });
-
-          const canvas = document.createElement('canvas');
-          canvas.className = 'ai-pdf-viewer-canvas-{{ ai_gen_id }}';
-          const context = canvas.getContext('2d');
-          canvas.height = viewport.height;
-          canvas.width = viewport.width;
-          canvas.style.width = (viewport.width / dpr) + 'px';
-          canvas.style.height = (viewport.height / dpr) + 'px';
-
-          const renderContext = {
-            canvasContext: context,
-            viewport: viewport
-          };
-
-          await page.render(renderContext).promise;
-          this.canvasWrapper.appendChild(canvas);
+        if (this._renderInProgress) {
+          this._renderQueued = true;
+          return;
         }
+        this._renderInProgress = true;
 
-        this.updateControls();
+        try {
+          this.canvasWrapper.innerHTML = '';
+
+          const effectiveSpread = this.isMobile ? false : (this.isDoubleSpread && this.currentPage > 1);
+          const pagesToRender = effectiveSpread ? [this.currentPage, this.currentPage + 1] : [this.currentPage];
+          const dpr = window.devicePixelRatio || 1;
+
+          for (const pageNum of pagesToRender) {
+            if (pageNum > this.pdfDoc.numPages) continue;
+
+            const page = await this.pdfDoc.getPage(pageNum);
+            const viewport = page.getViewport({ scale: this.scale * dpr });
+
+            const canvas = document.createElement('canvas');
+            canvas.className = 'ai-pdf-viewer-canvas-{{ ai_gen_id }}';
+            const context = canvas.getContext('2d');
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            canvas.style.width = (viewport.width / dpr) + 'px';
+            canvas.style.height = (viewport.height / dpr) + 'px';
+
+            await page.render({ canvasContext: context, viewport }).promise;
+            this.canvasWrapper.appendChild(canvas);
+          }
+
+          this.updateControls();
+        } finally {
+          this._renderInProgress = false;
+          if (this._renderQueued) {
+            this._renderQueued = false;
+            this.renderPage();
+          }
+        }
       }
 
       async renderFullscreenPage() {
