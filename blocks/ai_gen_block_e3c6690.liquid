@@ -488,9 +488,13 @@
         this.pinchStartDistance = null;
         this.pinchStartScale = 1.0;
         this._pendingPinchScale = null;
+        this._pendingPinchFsScale = null;
         this._pinchRafPending = false;
         this._renderInProgress = false;
         this._renderQueued = false;
+        this.fullscreenScale = null;
+        this._fsRenderInProgress = false;
+        this._fsRenderQueued = false;
       }
 
       connectedCallback() {
@@ -544,7 +548,7 @@
 
         const fullscreenCanvasContainer = this.querySelector('.ai-pdf-viewer-fullscreen-canvas-container-{{ ai_gen_id }}');
         fullscreenCanvasContainer.addEventListener('touchstart', (e) => this.handleFullscreenTouchStart(e), { passive: true });
-        fullscreenCanvasContainer.addEventListener('touchmove', (e) => this.handleTouchMove(e), { passive: false });
+        fullscreenCanvasContainer.addEventListener('touchmove', (e) => this.handleFullscreenTouchMove(e), { passive: false });
         fullscreenCanvasContainer.addEventListener('touchend', (e) => this.handleFullscreenTouchEnd(e), { passive: true });
       }
 
@@ -610,9 +614,31 @@
             e.touches[0].clientX - e.touches[1].clientX,
             e.touches[0].clientY - e.touches[1].clientY
           );
-          this.pinchStartScale = this.scale;
+          this.pinchStartScale = this.fullscreenScale || 1.0;
         } else {
           this.touchStartX = e.changedTouches[0].screenX;
+        }
+      }
+
+      handleFullscreenTouchMove(e) {
+        if (e.touches.length === 2 && this.pinchStartDistance) {
+          e.preventDefault();
+          const distance = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+          );
+          this._pendingPinchFsScale = Math.min(5.0, Math.max(0.3, this.pinchStartScale * (distance / this.pinchStartDistance)));
+          if (!this._pinchRafPending) {
+            this._pinchRafPending = true;
+            requestAnimationFrame(() => {
+              this._pinchRafPending = false;
+              if (this._pendingPinchFsScale !== null) {
+                this.fullscreenScale = this._pendingPinchFsScale;
+                this._pendingPinchFsScale = null;
+                this.renderFullscreenPage();
+              }
+            });
+          }
         }
       }
 
@@ -731,39 +757,51 @@
       async renderFullscreenPage() {
         if (!this.pdfDoc) return;
 
-        this.fullscreenCanvasWrapper.innerHTML = '';
+        if (this._fsRenderInProgress) {
+          this._fsRenderQueued = true;
+          return;
+        }
+        this._fsRenderInProgress = true;
 
-        const page = await this.pdfDoc.getPage(this.fullscreenPage);
-        const dpr = window.devicePixelRatio || 1;
+        try {
+          this.fullscreenCanvasWrapper.innerHTML = '';
 
-        const fsContainer = this.fullscreenOverlay.querySelector('.ai-pdf-viewer-fullscreen-canvas-container-{{ ai_gen_id }}');
-        const containerWidth = (fsContainer ? fsContainer.clientWidth : window.innerWidth) - 40;
-        const containerHeight = (fsContainer ? fsContainer.clientHeight : window.innerHeight) - 40;
+          const page = await this.pdfDoc.getPage(this.fullscreenPage);
+          const dpr = window.devicePixelRatio || 1;
 
-        const viewport = page.getViewport({ scale: 1.0 });
-        const scaleX = containerWidth / viewport.width;
-        const scaleY = containerHeight / viewport.height;
-        const scale = Math.min(scaleX, scaleY);
+          const fsContainer = this.fullscreenOverlay.querySelector('.ai-pdf-viewer-fullscreen-canvas-container-{{ ai_gen_id }}');
+          const containerWidth = (fsContainer ? fsContainer.clientWidth : window.innerWidth) - 40;
+          const containerHeight = (fsContainer ? fsContainer.clientHeight : window.innerHeight) - 40;
 
-        const scaledViewport = page.getViewport({ scale: scale * dpr });
+          // Auto-fit on first open (fullscreenScale === null), then use stored value for pinch
+          if (this.fullscreenScale === null) {
+            const baseViewport = page.getViewport({ scale: 1.0 });
+            const scaleX = containerWidth / baseViewport.width;
+            const scaleY = containerHeight / baseViewport.height;
+            this.fullscreenScale = Math.min(scaleX, scaleY);
+          }
 
-        const canvas = document.createElement('canvas');
-        canvas.className = 'ai-pdf-viewer-canvas-{{ ai_gen_id }}';
-        const context = canvas.getContext('2d');
-        canvas.height = scaledViewport.height;
-        canvas.width = scaledViewport.width;
-        canvas.style.width = (scaledViewport.width / dpr) + 'px';
-        canvas.style.height = (scaledViewport.height / dpr) + 'px';
+          const scaledViewport = page.getViewport({ scale: this.fullscreenScale * dpr });
 
-        const renderContext = {
-          canvasContext: context,
-          viewport: scaledViewport
-        };
+          const canvas = document.createElement('canvas');
+          canvas.className = 'ai-pdf-viewer-canvas-{{ ai_gen_id }}';
+          const context = canvas.getContext('2d');
+          canvas.width = scaledViewport.width;
+          canvas.height = scaledViewport.height;
+          canvas.style.width = (scaledViewport.width / dpr) + 'px';
+          canvas.style.height = (scaledViewport.height / dpr) + 'px';
 
-        await page.render(renderContext).promise;
-        this.fullscreenCanvasWrapper.appendChild(canvas);
+          await page.render({ canvasContext: context, viewport: scaledViewport }).promise;
+          this.fullscreenCanvasWrapper.appendChild(canvas);
 
-        this.updateFullscreenControls();
+          this.updateFullscreenControls();
+        } finally {
+          this._fsRenderInProgress = false;
+          if (this._fsRenderQueued) {
+            this._fsRenderQueued = false;
+            this.renderFullscreenPage();
+          }
+        }
       }
 
       updateControls() {
@@ -859,6 +897,7 @@
       fullscreenPrevPage() {
         if (this.fullscreenPage > 1) {
           this.fullscreenPage--;
+          this.fullscreenScale = null; // auto-fit new page
           this.renderFullscreenPage();
         }
       }
@@ -866,6 +905,7 @@
       fullscreenNextPage() {
         if (this.fullscreenPage < this.pdfDoc.numPages) {
           this.fullscreenPage++;
+          this.fullscreenScale = null; // auto-fit new page
           this.renderFullscreenPage();
         }
       }
@@ -900,6 +940,7 @@
 
       openFullscreen() {
         this.fullscreenPage = this.currentPage;
+        this.fullscreenScale = null; // reset → auto-fit on open
         // Move overlay to body to escape any stacking context from the block/section
         if (this.fullscreenOverlay.parentElement !== document.body) {
           this._overlayPlaceholder = document.createComment('fullscreen-overlay-placeholder');
