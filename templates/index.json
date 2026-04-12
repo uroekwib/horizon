@@ -3316,8 +3316,8 @@
               "name": "t:names.button",
               "settings": {
                 "label": "Catalogue สินค้าพร้อมไกด์ราคา",
-                "link": "https://drive.google.com/file/d/1G0FnUMkav24rLRe75ggqNEqbjoe7hzDC/view?usp=sharing",
-                "open_in_new_tab": false,
+                "link": "shopify://pages/catalogue_inquiry",
+                "open_in_new_tab": true,
                 "style_class": "button",
                 "width": "fit-content",
                 "custom_width": 100,
