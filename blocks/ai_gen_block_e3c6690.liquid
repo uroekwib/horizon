@@ -488,6 +488,8 @@
         this.pinchStartDistance = null;
         this.pinchStartScale = 1.0;
         this._lastPinchRatio = null;
+        this._pinchOriginX = 0;
+        this._pinchOriginY = 0;
         this._renderInProgress = false;
         this._renderQueued = false;
         this.fullscreenScale = null;
@@ -557,6 +559,11 @@
             e.touches[0].clientY - e.touches[1].clientY
           );
           this.pinchStartScale = this.scale;
+          const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+          const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+          const rect = this.canvasWrapper.getBoundingClientRect();
+          this._pinchOriginX = midX - rect.left;
+          this._pinchOriginY = midY - rect.top;
         } else {
           this.touchStartX = e.changedTouches[0].screenX;
         }
@@ -573,7 +580,7 @@
           this._lastPinchRatio = ratio;
           // CSS transform only — no re-render during pinch
           const clampedRatio = Math.min(3.0 / this.pinchStartScale, Math.max(0.5 / this.pinchStartScale, ratio));
-          this.canvasWrapper.style.transformOrigin = 'center center';
+          this.canvasWrapper.style.transformOrigin = `${this._pinchOriginX}px ${this._pinchOriginY}px`;
           this.canvasWrapper.style.transform = `scale(${clampedRatio})`;
         }
       }
@@ -613,6 +620,11 @@
             e.touches[0].clientY - e.touches[1].clientY
           );
           this.pinchStartScale = this.fullscreenScale || 1.0;
+          const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+          const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+          const rect = this.fullscreenCanvasWrapper.getBoundingClientRect();
+          this._pinchOriginX = midX - rect.left;
+          this._pinchOriginY = midY - rect.top;
         } else {
           this.touchStartX = e.changedTouches[0].screenX;
         }
@@ -629,7 +641,7 @@
           this._lastPinchRatio = ratio;
           // CSS transform only — no re-render during pinch
           const clampedRatio = Math.min(5.0 / this.pinchStartScale, Math.max(0.3 / this.pinchStartScale, ratio));
-          this.fullscreenCanvasWrapper.style.transformOrigin = 'center center';
+          this.fullscreenCanvasWrapper.style.transformOrigin = `${this._pinchOriginX}px ${this._pinchOriginY}px`;
           this.fullscreenCanvasWrapper.style.transform = `scale(${clampedRatio})`;
         }
       }
