@@ -8,7 +8,7 @@
     4. Page navigation — prev/next buttons with current page / total pages display
     5. Responsive layout — single-page forced on small screens even if double-page mode selected
     
-    Block settings: pdf_url, catalogue_title, viewer_height (default 700px), accent_color
+    Block settings: pdf_url, catalogue_title, viewer_height (default 900px), accent_color
     Toolbar layout: [Fit Screen] [−] [Zoom%] [+] [Single|Double toggle] [◀ Page X / Y ▶]
     Use PDF.js from CDN. Render pages to canvas elements. In double-page mode, render two consecutive pages side by side. Zoom state persists when toggling spread mode.
     
@@ -335,7 +335,7 @@
           <rect x="2" y="3" width="20" height="18" rx="2"></rect>
           <line x1="12" y1="3" x2="12" y2="21"></line>
         </svg>
-        <span class="ai-pdf-viewer-spread-label-{{ ai_gen_id }}">Double</span>
+        <span class="ai-pdf-viewer-spread-label-{{ ai_gen_id }}">Single</span>
       </button>
     </div>
 
@@ -447,8 +447,8 @@
         this.currentPage = 1;
         this.fullscreenPage = 1;
         this.scale = 1.0;
-        this.isDoubleSpread = false;
         this.isMobile = window.innerWidth < 750;
+        this.isDoubleSpread = !this.isMobile;
         this.touchStartX = 0;
         this.touchEndX = 0;
       }
@@ -601,20 +601,23 @@
 
         this.canvasWrapper.innerHTML = '';
 
-        const effectiveSpread = this.isMobile ? false : this.isDoubleSpread;
+        const effectiveSpread = this.isMobile ? false : (this.isDoubleSpread && this.currentPage > 1);
         const pagesToRender = effectiveSpread ? [this.currentPage, this.currentPage + 1] : [this.currentPage];
+        const dpr = window.devicePixelRatio || 1;
 
         for (const pageNum of pagesToRender) {
           if (pageNum > this.pdfDoc.numPages) continue;
 
           const page = await this.pdfDoc.getPage(pageNum);
-          const viewport = page.getViewport({ scale: this.scale });
+          const viewport = page.getViewport({ scale: this.scale * dpr });
 
           const canvas = document.createElement('canvas');
           canvas.className = 'ai-pdf-viewer-canvas-{{ ai_gen_id }}';
           const context = canvas.getContext('2d');
           canvas.height = viewport.height;
           canvas.width = viewport.width;
+          canvas.style.width = (viewport.width / dpr) + 'px';
+          canvas.style.height = (viewport.height / dpr) + 'px';
 
           const renderContext = {
             canvasContext: context,
@@ -634,22 +637,25 @@
         this.fullscreenCanvasWrapper.innerHTML = '';
 
         const page = await this.pdfDoc.getPage(this.fullscreenPage);
-        
+        const dpr = window.devicePixelRatio || 1;
+
         const containerWidth = window.innerWidth - 40;
         const containerHeight = window.innerHeight - 200;
-        
+
         const viewport = page.getViewport({ scale: 1.0 });
         const scaleX = containerWidth / viewport.width;
         const scaleY = containerHeight / viewport.height;
         const scale = Math.min(scaleX, scaleY);
-        
-        const scaledViewport = page.getViewport({ scale: scale });
+
+        const scaledViewport = page.getViewport({ scale: scale * dpr });
 
         const canvas = document.createElement('canvas');
         canvas.className = 'ai-pdf-viewer-canvas-{{ ai_gen_id }}';
         const context = canvas.getContext('2d');
         canvas.height = scaledViewport.height;
         canvas.width = scaledViewport.width;
+        canvas.style.width = (scaledViewport.width / dpr) + 'px';
+        canvas.style.height = (scaledViewport.height / dpr) + 'px';
 
         const renderContext = {
           canvasContext: context,
@@ -663,7 +669,7 @@
       }
 
       updateControls() {
-        const effectiveSpread = this.isMobile ? false : this.isDoubleSpread;
+        const effectiveSpread = this.isMobile ? false : (this.isDoubleSpread && this.currentPage > 1);
         const displayPage = effectiveSpread && this.currentPage < this.pdfDoc.numPages 
           ? `${this.currentPage}-${this.currentPage + 1}` 
           : this.currentPage;
@@ -714,7 +720,7 @@
         const viewport = page.getViewport({ scale: 1.0 });
         
         const containerWidth = this.canvasContainer.clientWidth - 40;
-        const effectiveSpread = this.isMobile ? false : this.isDoubleSpread;
+        const effectiveSpread = this.isMobile ? false : (this.isDoubleSpread && this.currentPage > 1);
         const pageWidth = effectiveSpread ? viewport.width * 2 + 10 : viewport.width;
         
         this.scale = containerWidth / pageWidth;
@@ -722,7 +728,7 @@
       }
 
       prevPage() {
-        const effectiveSpread = this.isMobile ? false : this.isDoubleSpread;
+        const effectiveSpread = this.isMobile ? false : (this.isDoubleSpread && this.currentPage > 1);
         const step = effectiveSpread ? 2 : 1;
         
         if (this.currentPage > 1) {
@@ -732,7 +738,7 @@
       }
 
       nextPage() {
-        const effectiveSpread = this.isMobile ? false : this.isDoubleSpread;
+        const effectiveSpread = this.isMobile ? false : (this.isDoubleSpread && this.currentPage > 1);
         const step = effectiveSpread ? 2 : 1;
         
         if (effectiveSpread) {
@@ -764,16 +770,17 @@
 
       toggleSpread() {
         this.isDoubleSpread = !this.isDoubleSpread;
-        
+
         if (this.isDoubleSpread) {
           this.spreadLabel.textContent = 'Single';
-          if (this.currentPage % 2 === 0) {
-            this.currentPage = Math.max(1, this.currentPage - 1);
+          // align to odd page for clean spreads (page 1 is always cover/single)
+          if (this.currentPage > 1 && this.currentPage % 2 === 0) {
+            this.currentPage = Math.max(2, this.currentPage - 1);
           }
         } else {
           this.spreadLabel.textContent = 'Double';
         }
-        
+
         this.renderPage();
       }
 
