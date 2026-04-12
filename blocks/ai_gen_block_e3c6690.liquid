@@ -212,7 +212,7 @@
     align-items: center;
     justify-content: center;
     padding: 20px;
-    touch-action: pan-x pan-y;
+    touch-action: none;
   }
 
   .ai-pdf-viewer-fullscreen-controls-{{ ai_gen_id }} {
@@ -262,6 +262,7 @@
       min-height: 200px;
       padding: 10px;
       overflow: hidden;
+      touch-action: none;
     }
 
     .ai-pdf-viewer-spread-toggle-{{ ai_gen_id }} {
@@ -785,17 +786,19 @@
       prevPage() {
         const effectiveSpread = this.isMobile ? false : (this.isDoubleSpread && this.currentPage > 1);
         const step = effectiveSpread ? 2 : 1;
-        
+
         if (this.currentPage > 1) {
-          this.currentPage = Math.max(1, this.currentPage - step);
-          this.renderPage();
+          const newPage = Math.max(1, this.currentPage - step);
+          const spreadChanging = !this.isMobile && this.isDoubleSpread && newPage === 1;
+          this.currentPage = newPage;
+          spreadChanging ? this.fitToScreen() : this.renderPage();
         }
       }
 
       nextPage() {
         const effectiveSpread = this.isMobile ? false : (this.isDoubleSpread && this.currentPage > 1);
         const step = effectiveSpread ? 2 : 1;
-        
+
         if (effectiveSpread) {
           if (this.currentPage < this.pdfDoc.numPages - 1) {
             this.currentPage = Math.min(this.pdfDoc.numPages - 1, this.currentPage + step);
@@ -803,8 +806,10 @@
           }
         } else {
           if (this.currentPage < this.pdfDoc.numPages) {
+            const wasOnCover = this.currentPage === 1;
             this.currentPage = Math.min(this.pdfDoc.numPages, this.currentPage + step);
-            this.renderPage();
+            const spreadChanging = wasOnCover && !this.isMobile && this.isDoubleSpread;
+            spreadChanging ? this.fitToScreen() : this.renderPage();
           }
         }
       }
