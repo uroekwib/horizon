@@ -18,7 +18,7 @@
 {%- enddoc -%}
 
 {% liquid
-  assign widths = widths | default: '240, 320, 352, 384, 420, 480, 560, 640, 720, 800, 832, 960, 1120, 1280, 1440, 1600, 1920, 2200, 2560, 3200, 3840'
+  assign widths = widths | default: '240, 320, 352, 384, 420, 480, 560, 640, 720, 800, 832, 960, 1120, 1280, 1440, 1600, 1920, 2200, 2560, 3200'
   assign sizes = sizes | default: '(min-width: 1200px) 640px, (min-width: 750px) 50vw, calc(100vw - 32px)'
   if is_main_product_media
   assign loading = 'eager'
@@ -38,7 +38,7 @@ endif
   data-media-id="{{ media.id }}"
 >
   {% liquid
-    assign high_res_url = media.preview_image | image_url: width: 3840
+    assign high_res_url = media.preview_image | image_url: width: 2000
     assign fetch_priority = 'auto'
     if is_main_product_media
       assign fetch_priority = 'high'
@@ -52,7 +52,7 @@ endif
 
   {{
     media.preview_image
-    | image_url: width: 3840
+    | image_url: width: 2000
     | image_tag:
       widths: widths,
       alt: media.alt,
@@ -78,7 +78,7 @@ endif
           >
             {{
               media.preview_image
-              | image_url: width: 3840
+              | image_url: width: 2000
               | image_tag:
                 widths: widths,
                 alt: media.alt,
