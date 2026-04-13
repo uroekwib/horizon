@@ -77,11 +77,11 @@
               "type": "text",
               "name": "t:names.heading",
               "settings": {
-                "text": "<h2>ติดต่อเรา ทำป้ายโฆษณา สื่อสิ่งพิมพ์</h2>",
+                "text": "<h1>ติดต่อเรา ทำป้ายโฆษณา สื่อสิ่งพิมพ์</h1>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
-                "type_preset": "rte",
+                "type_preset": "h2",
                 "font": "var(--font-body--family)",
                 "font_size": "1rem",
                 "line_height": "normal",
