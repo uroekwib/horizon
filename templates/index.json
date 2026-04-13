@@ -261,11 +261,11 @@
               "type": "text",
               "name": "t:names.heading",
               "settings": {
-                "text": "<h1>OCTOPUS MEDIA SOLUTIONS</h1>",
+                "text": "<h2>OCTOPUS MEDIA SOLUTIONS</h2>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
-                "type_preset": "h2",
+                "type_preset": "h1",
                 "font": "var(--font-body--family)",
                 "font_size": "1rem",
                 "line_height": "normal",
