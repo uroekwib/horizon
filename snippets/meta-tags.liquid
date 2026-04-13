@@ -105,7 +105,11 @@
   {{ page_title }}
   {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
   {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
-  {%- unless page_title contains 'Octopus' %} &ndash; Octopus | ออคโทพุส{% endunless -%}
+  {%- unless page_title contains 'Octopus' or page_title contains 'ออคโทพุส' -%}
+    {%- if request.locale.iso_code == 'en' %} &ndash; Octopus
+    {%- else %} &ndash; ออคโทพุส
+    {%- endif -%}
+  {%- endunless -%}
 </title>
 
 <link
