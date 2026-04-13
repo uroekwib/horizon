@@ -38,7 +38,7 @@ endif
   data-media-id="{{ media.id }}"
 >
   {% liquid
-    assign high_res_url = media.preview_image | image_url: width: 2000
+    assign high_res_url = media.preview_image | image_url: width: 1200
     assign fetch_priority = 'auto'
     if is_main_product_media
       assign fetch_priority = 'high'
