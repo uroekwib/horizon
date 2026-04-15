@@ -2182,6 +2182,39 @@ button.shopify-payment-button__button--unbranded:hover {
   margin-bottom: 0;
 }
 
+
+/* Table thead — reference: design-system section 07
+   th: #f3f4f6 bg + dark text (ไม่ใช่ gradient ซึ่งตัดเป็นช่องๆ แต่ละ th)
+   tr::after: rainbow gradient เส้น 2px ด้านล่าง thead (animated) */
+.product-description [class$="-spec-table"] thead th,
+.product-description [class$="-price-table"] thead th,
+.divtable-spec thead th,
+.divtable.price thead th {
+  background: #f3f4f6 !important;
+  color: var(--oc-ink, #1A202C) !important;
+  font-weight: 700 !important;
+  font-size: .8em !important;
+}
+.product-description [class$="-spec-table"] thead tr,
+.product-description [class$="-price-table"] thead tr,
+.divtable-spec thead tr,
+.divtable.price thead tr {
+  position: relative;
+}
+.product-description [class$="-spec-table"] thead tr::after,
+.product-description [class$="-price-table"] thead tr::after,
+.divtable-spec thead tr::after,
+.divtable.price thead tr::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,#14c9df,#17a9bb 28%,#818CF8 60%,#A78BFA 82%,#14c9df 100%);
+  background-size: 200% auto;
+  animation: oc-rainbow-move 4s linear infinite;
+  display: block;
+}
+
 /* Benefit list */
 .product-description [class$="-list"] {
   margin-top: 16px;
