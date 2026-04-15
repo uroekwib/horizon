@@ -2129,3 +2129,87 @@ button.shopify-payment-button__button--unbranded:hover {
         display: block; /* Or display: inline, inline-block, flex, etc., depending on the element type you want to show */
     }
 }
+
+/* ============================================================
+   §DNA  DNA Component Spacing Standards
+   กำหนด spacing มาตรฐานสำหรับ DNA product descriptions ทุกชิ้น
+   แก้ปัญหา margin ไม่สม่ำเสมอระหว่าง divline / icon / component
+   ============================================================ */
+
+/* Divider line: เพิ่ม margin-top เพื่อให้ห่างจาก component ก่อนหน้า */
+.divline {
+  margin-top: 28px;
+  margin-bottom: 0;
+}
+
+/* Icon divider: ชิดกับ divline ด้านบน, ห่างจาก component ด้านล่าง */
+.how-to-icon,
+.idea-icon,
+.pin-active-icon,
+.cart-icon,
+.write-icon,
+.news-active-icon,
+.new-active-icon {
+  margin-top: 0 !important;
+  margin-bottom: 20px !important;
+}
+
+/* Section header bar */
+.product-description [class$="-sh"] {
+  margin-top: 0;
+  margin-bottom: 14px;
+}
+
+/* Block-level grid components */
+.product-description [class$="-feat-grid"],
+.product-description [class$="-stat-row"],
+.product-description [class$="-steps"],
+.product-description [class$="-grid3"],
+.product-description [class$="-compare"] {
+  margin-top: 14px;
+  margin-bottom: 0;
+}
+
+/* Chip row */
+.product-description [class$="-chip-row"] {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+/* Table wrappers */
+.product-description [class$="-table-wrap"] {
+  margin-top: 14px;
+  margin-bottom: 0;
+}
+
+/* Benefit list */
+.product-description [class$="-list"] {
+  margin-top: 16px;
+  margin-bottom: 0;
+}
+
+/* Quote / blockquote */
+.product-description [class$="-quote"],
+.product-description blockquote {
+  margin-top: 14px;
+  margin-bottom: 14px;
+}
+
+/* CTA block */
+.product-description [class$="-cta"] {
+  margin-top: 28px;
+  margin-bottom: 0;
+}
+
+/* FAQ block */
+.product-description [class$="-faq"] {
+  margin-top: 20px;
+  margin-bottom: 0;
+}
+
+/* Intro / body paragraph */
+.product-description [class$="-intro"],
+.product-description [class$="-body-p"] {
+  margin-top: 0;
+  margin-bottom: 14px;
+}
