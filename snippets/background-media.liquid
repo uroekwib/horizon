@@ -28,31 +28,11 @@
         assign sizes = '(min-width: 750px) ' | append: media_width_desktop | append: ', ' | append: media_width_mobile
         assign widths = '240, 352, 832, 1200, 1600, 1920, 2560'
       %}
-
-      {%- if background_video.preview_image != blank -%}
-        {%- assign preview_image_url = background_video.preview_image | image_url -%}
-        {%- if preview_image_url contains '.svg' -%}
-          {{
-            background_video.preview_image
-            | image_url
-            | image_tag:
-              width: background_video.preview_image.width,
-              sizes: sizes,
-              class: 'background-media__image background-media__image--svg'
-          }}
-        {%- else -%}
-          {{
-            background_video.preview_image
-            | image_url: width: 1600, format: 'webp'
-            | image_tag:
-              width: 1100,
-              widths: widths,
-              sizes: sizes,
-              class: 'background-media__image'
-          }}
-        {%- endif -%}
-      {%- endif -%}
-
+      {{
+        background_video.preview_image
+        | image_url: width: 1600, format: 'jpg'
+        | image_tag: width: 1100, widths: widths, sizes: sizes
+      }}
       <video
         playsinline
         muted
@@ -78,24 +58,29 @@
       {{ placeholder_name | placeholder_svg_tag }}
     </div>
   {%- endif -%}
-
 {% elsif background_media == 'image' %}
   <div
     class="background-image-container{% if background_image_position == 'fit' %} background-image-fit{% endif %}"
   >
     {% liquid
+      # Define sizes based on page width setting whether this is called from a section or block
+
       if block.settings
         if section.settings.section_width == 'full-width'
           assign sizes = '100vw'
         else
           case settings.page_width
             when 'narrow'
+              # Narrow: max 90rem (1440px)
               assign sizes = '(min-width: 1440px) 1440px, 100vw'
             when 'normal'
+              # Normal: max 120rem (1920px)
               assign sizes = '(min-width: 1920px) 1920px, 100vw'
             when 'wide'
+              # Wide: max 150rem (2400px)
               assign sizes = '(min-width: 2400px) 2400px, 100vw'
             else
+              # Fallback to full width
               assign sizes = '100vw'
           endcase
         endif
@@ -118,32 +103,11 @@
           assign loading = 'eager'
         endif
       %}
-
-      {%- assign background_image_url = background_image | image_url -%}
-      {%- if background_image_url contains '.svg' -%}
-        <div class="background-media__svg-wrap">
-          {{
-            background_image
-            | image_url
-            | image_tag:
-              sizes: sizes,
-              class: 'background-media__image background-media__image--svg',
-              loading: loading,
-              fetchpriority: fetch_priority
-          }}
-        </div>
-      {%- else -%}
-        {{
-          background_image
-          | image_url: width: 1600, format: 'webp'
-          | image_tag:
-            sizes: sizes,
-            widths: widths,
-            class: 'background-media__image',
-            loading: loading,
-            fetchpriority: fetch_priority
-        }}
-      {%- endif -%}
+      {{
+        background_image
+        | image_url: width: 1600, format: 'jpg'
+        | image_tag: sizes: sizes, widths: widths, loading: loading, fetchpriority: fetch_priority
+      }}
     {%- else -%}
       {%- assign placeholder_name = placeholder | default: 'hero-apparel-2' -%}
       {%- if placeholder_name == blank -%}
@@ -159,34 +123,5 @@
     video-background-component video {
       display: none;
     }
-  }
-
-  .background-media__image {
-    display: block;
-    width: 100%;
-    height: auto;
-    background: transparent !important;
-    filter: none !important;
-    mix-blend-mode: normal !important;
-    opacity: 1 !important;
-  }
-
-  .background-media__svg-wrap {
-    display: block;
-    width: 100%;
-    height: 100%;
-    background: #fff !important;
-    overflow: hidden;
-  }
-
-  .background-media__image--svg {
-    display: block;
-    width: 100%;
-    height: auto;
-    object-fit: contain !important;
-    background: transparent !important;
-    filter: none !important;
-    mix-blend-mode: normal !important;
-    opacity: 1 !important;
   }
 {% endstylesheet %}
