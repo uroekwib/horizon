@@ -1,5 +1,3 @@
-
-
 {% liquid
   assign block_settings = block.settings
   assign ratio = 1
@@ -42,17 +40,34 @@
 
 {% capture image %}
   {%- if block_settings.image -%}
-    {{
-      block_settings.image
-      | image_url: width: 1600, format: 'jpg'
-      | image_tag:
-        width: block_settings.image.width,
-        widths: widths,
-        height: block_settings.image.height,
-        class: 'image-block__image border-style',
-        style: image_border_style,
-        sizes: sizes
-    }}
+    {%- assign original_image_url = block_settings.image | image_url -%}
+
+    {%- if original_image_url contains '.svg' -%}
+      {{
+        block_settings.image
+        | image_url
+        | image_tag:
+          class: 'image-block__image border-style',
+          style: image_border_style,
+          sizes: sizes,
+          loading: 'lazy',
+          alt: block_settings.image.alt
+      }}
+    {%- else -%}
+      {{
+        block_settings.image
+        | image_url: width: 1600, format: 'webp'
+        | image_tag:
+          width: block_settings.image.width,
+          widths: widths,
+          height: block_settings.image.height,
+          class: 'image-block__image border-style',
+          style: image_border_style,
+          sizes: sizes,
+          loading: 'lazy',
+          alt: block_settings.image.alt
+      }}
+    {%- endif -%}
   {%- else -%}
     <div class="placeholder-image border-style size-style" style="{{ image_border_style }}">
       {{ 'detailed-apparel-1' | placeholder_svg_tag: 'hero__media' }}
@@ -90,7 +105,7 @@
     display: flex;
 
     /* When the image is nested in a group, section, etc, respect the parent's horizontal alignment */
-    justify-content: var(--horizontal-alignment, 'inline-start');
+    justify-content: var(--horizontal-alignment, inline-start);
   }
 
   .image-block--height-fill .image-block__image {
@@ -98,8 +113,12 @@
   }
 
   .image-block__image {
+    display: block;
     object-fit: cover;
     aspect-ratio: var(--ratio);
+    background: transparent !important;
+    filter: none !important;
+    mix-blend-mode: normal !important;
   }
 {% endstylesheet %}
 
