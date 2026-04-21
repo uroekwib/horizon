@@ -36,10 +36,13 @@
   endcapture
 %}
 
+
 <product-price
   class="text-block {{ text_block_classes }} text-{{ block_settings.alignment }} {{ block_settings.type_preset | default: 'paragraph' }} spacing-style"
   data-block-id="{{ block.id }}"
   data-product-id="{{ product_resource.id }}"
+  data-money-format="{{ shop.money_format | escape }}"
+  data-variants="{{ product_resource.variants | json | escape }}"
   style="
     {% render 'typography-style', settings: block_settings %}
     {% render 'spacing-style', settings: block_settings %}
@@ -48,19 +51,15 @@
   {{ block.shopify_attributes }}
 >
 
-<div
-  class="price-wrapper"
-  data-price="{{ product_resource.selected_or_first_available_variant.price }}"
->
-  <span id="variant-price">
-    {%- assign formatted_price = product_resource.selected_or_first_available_variant.price | money_without_trailing_zeros -%}
-    {{ 'content.price_from' | t: price: formatted_price }}
-  </span>
-  {% if product_resource.metafields.custom.product_price != blank %}
-    <span id="price-unit">/{{ product_resource.metafields.custom.product_price }}</span>
-  {% endif %}
-</div>
-
+  <div class="price-wrapper">
+    <span id="variant-price">
+      {%- assign formatted_price = selected_variant.price | money_without_trailing_zeros -%}
+      {{ 'content.price_from' | t: price: formatted_price }}
+    </span>
+    {% if product_resource.metafields.custom.product_price != blank %}
+      <span id="price-unit">/{{ product_resource.metafields.custom.product_price }}</span>
+    {% endif %}
+  </div>
 
   {% if block_settings.show_tax_info %}
     <div class="tax-note">
@@ -71,7 +70,6 @@
       {%- elsif cart.duties_included -%}
         {{ 'content.duties_included' | t }}
       {%- endif -%}
-
       {%- if shop.shipping_policy.body != blank -%}
         {{ 'content.shipping_policy' | t }}
       {%- endif -%}
@@ -82,32 +80,38 @@
     <div class="installments">
       {%- assign product_form_installment_id = 'product-form-installment-' | append: block.id -%}
       {%- form 'product', product_resource, id: product_form_installment_id, class: 'payment-terms' -%}
-        <input
-          type="hidden"
-          name="id"
-          value="{{ selected_variant.id }}"
-        >
+        <input type="hidden" name="id" value="{{ selected_variant.id }}">
         {{ form | payment_terms }}
       {%- endform -%}
     </div>
   {%- endif -%}
+
 </product-price>
 
-
 {% # theme-check-disable %}
-
 <script>
-document.addEventListener('variant:changed', (event) => {
-  const variant = event.detail.variant;
-  if (!variant) return;
+(function() {
+  const el = document.querySelector('product-price[data-block-id="{{ block.id }}"]');
+  if (!el) return;
 
-  const priceEl = document.getElementById('variant-price');
-  if (priceEl) {
-    // format ราคาตาม locale ของ Shopify
-    priceEl.textContent = Shopify.formatMoney(variant.price, theme.moneyFormat);
-  }
-});
+  const fmt = el.dataset.moneyFormat || '฿{{amount_no_decimals}}';
+  const variants = JSON.parse(el.dataset.variants || '[]');
+  const map = {};
+  variants.forEach(v => { map[String(v.id)] = v.price; });
+
+  document.addEventListener('variant:selected', (e) => {
+    const id = String(e.detail?.resource?.id);
+    const price = map[id];
+    if (price == null) return;
+    const amount = Math.round(price / 100).toLocaleString('th-TH');
+    const formatted = fmt.replace('{{amount_no_decimals}}', amount).replace('{{amount}}', amount);
+    const priceEl = el.querySelector('#variant-price');
+    if (priceEl) priceEl.textContent = formatted;
+  });
+})();
 </script>
+
+
 {% stylesheet %}
   .tax-note:empty {
     display: none;
