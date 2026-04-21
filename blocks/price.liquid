@@ -104,33 +104,26 @@
   const map = {};
   variants.forEach(v => { map[String(v.id)] = v.price; });
 
-  // ขั้น 1: แสดงราคาทันทีจาก map
-  document.addEventListener('variant:selected', () => {
+  function updatePrice() {
     const variantId = new URL(location.href).searchParams.get('variant');
+    if (!variantId) return;
     const price = map[variantId];
-    const priceEl = el.querySelector('[ref="priceContainer"]');
+    const priceEl = el.querySelector('#variant-price');
     if (!priceEl) return;
+    if (price == null) { priceEl.classList.remove('is-loading'); return; }
+    const amount = Math.round(price / 100).toLocaleString('th-TH');
+    priceEl.textContent = fmt.replace(/\{\{amount[^}]*\}\}/g, amount);
+    priceEl.classList.remove('is-loading');
+  }
 
-    priceEl.style.transition = 'opacity 0.15s ease';
-    priceEl.style.opacity = '0.35';
-
-    if (price != null) {
-      const amount = Math.round(price / 100).toLocaleString('th-TH');
-      const formatted = fmt.replace(/\{\{amount[^}]*\}\}/g, amount);
-      // อัปเดตเฉพาะ text node แรก ไม่แตะ /ชุด
-      const textSpan = priceEl.querySelector('span:first-child');
-      if (textSpan) textSpan.textContent = formatted;
-    }
+  document.addEventListener('variant:selected', () => {
+    const priceEl = el.querySelector('#variant-price');
+    if (priceEl) priceEl.classList.add('is-loading');
   });
 
-  // ขั้น 2: Horizon replace HTML จริงแล้ว → fade กลับ
-  document.addEventListener('variant:update', () => {
-    const priceEl = el.querySelector('[ref="priceContainer"]');
-    if (priceEl) priceEl.style.opacity = '1';
-  });
+  document.addEventListener('variant:update', updatePrice);
 })();
 </script>
-
 
 
 {% stylesheet %}
