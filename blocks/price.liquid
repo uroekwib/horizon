@@ -95,19 +95,26 @@
 
 
 {% # theme-check-disable %}
-
 <script>
-document.addEventListener('variant:changed', (event) => {
-  const variant = event.detail.variant;
-  if (!variant) return;
+(function() {
+  const blockId = {{ block.id | json }};
+  const priceEl = document.querySelector(`.js-variant-price[data-block-id="${blockId}"]`);
+  const moneyFormat = priceEl?.closest('product-price')?.dataset.moneyFormat || '฿{{amount}}';
 
-  const priceEl = document.getElementById('variant-price');
-  if (priceEl) {
-    // format ราคาตาม locale ของ Shopify
-    priceEl.textContent = Shopify.formatMoney(variant.price, theme.moneyFormat);
+  function formatMoney(cents, format) {
+    const amount = Math.round(cents / 100).toLocaleString('th-TH');
+    return format.replace('{{amount}}', amount)
+                 .replace('{{amount_no_decimals}}', amount);
   }
-});
+
+  document.addEventListener('variant:selected', (event) => {
+    const variant = event.detail?.resource;
+    if (!variant || !priceEl) return;
+    priceEl.textContent = formatMoney(variant.price, moneyFormat);
+  });
+})();
 </script>
+
 {% stylesheet %}
   .tax-note:empty {
     display: none;
