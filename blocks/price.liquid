@@ -51,15 +51,15 @@
   {{ block.shopify_attributes }}
 >
 
-  <div class="price-wrapper">
-    <span id="variant-price">
-      {%- assign formatted_price = selected_variant.price | money_without_trailing_zeros -%}
-      {{ 'content.price_from' | t: price: formatted_price }}
-    </span>
-    {% if product_resource.metafields.custom.product_price != blank %}
-      <span id="price-unit">/{{ product_resource.metafields.custom.product_price }}</span>
-    {% endif %}
-  </div>
+  <div class="price-wrapper" ref="priceContainer">
+  <span>
+    {%- assign formatted_price = selected_variant.price | money_without_trailing_zeros -%}
+    {{ 'content.price_from' | t: price: formatted_price }}
+  </span>
+  {% if product_resource.metafields.custom.product_price != blank %}
+    <span>/{{ product_resource.metafields.custom.product_price }}</span>
+  {% endif %}
+</div>
 
   {% if block_settings.show_tax_info %}
     <div class="tax-note">
