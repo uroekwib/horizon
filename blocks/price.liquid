@@ -48,16 +48,19 @@
   {{ block.shopify_attributes }}
 >
 
-<div style="display: flex; align-items: baseline; gap: 0.25rem; flex-wrap: wrap;">
-  <span style="display: inline-flex; align-items: baseline; gap: 0.25rem; flex-wrap: wrap;">
-  {%- assign formatted_price = product_resource.price | money_without_trailing_zeros -%}
-  <span>{{ 'content.price_from' | t: price: formatted_price }}</span>
+<div
+  class="price-wrapper"
+  data-price="{{ product_resource.selected_or_first_available_variant.price }}"
+>
+  <span id="variant-price">
+    {%- assign formatted_price = product_resource.selected_or_first_available_variant.price | money_without_trailing_zeros -%}
+    {{ 'content.price_from' | t: price: formatted_price }}
+  </span>
   {% if product_resource.metafields.custom.product_price != blank %}
-    <span>/{{ product_resource.metafields.custom.product_price }}</span>
+    <span id="price-unit">/{{ product_resource.metafields.custom.product_price }}</span>
   {% endif %}
-</span>
-
 </div>
+
 
   {% if block_settings.show_tax_info %}
     <div class="tax-note">
@@ -90,7 +93,21 @@
   {%- endif -%}
 </product-price>
 
+
 {% # theme-check-disable %}
+
+<script>
+document.addEventListener('variant:changed', (event) => {
+  const variant = event.detail.variant;
+  if (!variant) return;
+
+  const priceEl = document.getElementById('variant-price');
+  if (priceEl) {
+    // format ราคาตาม locale ของ Shopify
+    priceEl.textContent = Shopify.formatMoney(variant.price, theme.moneyFormat);
+  }
+});
+</script>
 {% stylesheet %}
   .tax-note:empty {
     display: none;
