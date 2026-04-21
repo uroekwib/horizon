@@ -101,14 +101,9 @@
   variants.forEach(v => { map[String(v.id)] = v.price; });
 
   function formatMoney(cents, format) {
-  const amount = Math.round(cents / 100).toLocaleString('th-TH');
-  return format
-    .replace('{{amount_no_decimals}}', amount)
-    .replace('{{amount_with_comma_separator}}', amount)
-    .replace('{{amount_no_decimals_with_comma_separator}}', amount)
-    .replace('{{amount}}', amount);
-}
-
+    const amount = Math.round(cents / 100).toLocaleString('th-TH');
+    return format.replace('{{amount_no_decimals}}', amount).replace('{{amount}}', amount);
+  }
 
   function updatePrice() {
     const variantId = new URL(location.href).searchParams.get('variant');
