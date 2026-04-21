@@ -51,13 +51,13 @@
   {{ block.shopify_attributes }}
 >
 
-  <div class="price-wrapper">
-    <span id="variant-price">
+  <div class="price-wrapper" ref="priceContainer">
+    <span class="price-text">
       {%- assign formatted_price = selected_variant.price | money_without_trailing_zeros -%}
       {{ 'content.price_from' | t: price: formatted_price }}
     </span>
     {% if product_resource.metafields.custom.product_price != blank %}
-      <span id="price-unit">/{{ product_resource.metafields.custom.product_price }}</span>
+      <span class="price-unit">/{{ product_resource.metafields.custom.product_price }}</span>
     {% endif %}
   </div>
 
@@ -104,59 +104,52 @@
   const map = {};
   variants.forEach(v => { map[String(v.id)] = v.price; });
 
-  function updatePrice() {
-    const variantId = new URL(location.href).searchParams.get('variant');
-    if (!variantId) return;
-    const price = map[variantId];
-    const priceEl = el.querySelector('#variant-price');
-    if (!priceEl) return;
-    if (price == null) { priceEl.classList.remove('is-loading'); return; }
-    const amount = Math.round(price / 100).toLocaleString('th-TH');
-    priceEl.textContent = fmt.replace(/\{\{amount[^}]*\}\}/g, amount);
-    priceEl.classList.remove('is-loading');
-  }
-
-  
   document.addEventListener('variant:selected', () => {
-    const priceEl = el.querySelector('#variant-price');
-    if (priceEl) priceEl.classList.add('is-loading');
+    const priceContainer = el.querySelector('[ref="priceContainer"]');
+    if (!priceContainer) return;
+
+    // shimmer ทันที
+    priceContainer.classList.add('is-loading');
+
+    // อัปเดตราคาจาก map ก่อนรอ server
+    const variantId = new URL(location.href).searchParams.get('variant');
+    const price = map[variantId];
+    if (price != null) {
+      const amount = Math.round(price / 100).toLocaleString('th-TH');
+      const textEl = priceContainer.querySelector('.price-text');
+      if (textEl) textEl.textContent = fmt.replace(/\{\{amount[^}]*\}\}/g, amount);
+    }
   });
 
-  document.addEventListener('variant:update', updatePrice);
+  document.addEventListener('variant:update', () => {
+    const priceContainer = el.querySelector('[ref="priceContainer"]');
+    if (priceContainer) priceContainer.classList.remove('is-loading');
+  });
 })();
 </script>
 
 
 {% stylesheet %}
-
-#variant-price {
-  transition: opacity 0.2s ease;
-}
-
-#variant-price.is-loading {
-  opacity: 0.3;
-
-}
-
 @keyframes shimmer {
   0% { background-position: -200% center; }
   100% { background-position: 200% center; }
 }
 
-[ref="priceContainer"].is-loading {
+.price-wrapper.is-loading {
   background: linear-gradient(
     90deg,
     transparent 25%,
-    rgba(0, 0, 0, 0.06) 50%,
+    rgba(0, 0, 0, 0.08) 50%,
     transparent 75%
   );
   background-size: 200% 100%;
-  animation: shimmer 1.2s infinite linear;
+  animation: shimmer 1s infinite linear;
   border-radius: 4px;
   color: transparent !important;
   pointer-events: none;
   min-width: 80px;
   display: inline-block;
+  transition: color 0.2s ease;
 }
 
   .tax-note:empty {
