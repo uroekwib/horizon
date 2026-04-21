@@ -99,15 +99,15 @@
   const map = {};
   variants.forEach(v => { map[String(v.id)] = v.price; });
 
-  document.addEventListener('variant:selected', (e) => {
-    const id = String(e.detail?.resource?.id);
-    const price = map[id];
-    if (price == null) return;
-    const amount = Math.round(price / 100).toLocaleString('th-TH');
-    const formatted = fmt.replace('{{amount_no_decimals}}', amount).replace('{{amount}}', amount);
-    const priceEl = el.querySelector('#variant-price');
-    if (priceEl) priceEl.textContent = formatted;
-  });
+  document.addEventListener('variant:update', (e) => {
+  const html = e.detail?.data?.html;
+  console.log('html keys:', Object.keys(html || {}));
+  console.log('html nodeName:', html?.nodeName);
+  console.log('html querySelector input[name=id]:', html?.querySelector?.('input[name="id"]')?.value);
+  // ลอง URL ใน address bar ด้วย
+  console.log('current URL variant:', new URL(location.href).searchParams.get('variant'));
+});
+
 })();
 </script>
 
