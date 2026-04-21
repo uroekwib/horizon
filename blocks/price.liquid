@@ -58,7 +58,7 @@
     {% endif %}
   </div>
   
-</product-price>
+
 
 
   {% if block_settings.show_tax_info %}
@@ -94,11 +94,15 @@
 
 
 {% # theme-check-disable %}
+
 <script>
 (function() {
   const blockId = {{ block.id | json }};
   const priceEl = document.querySelector(`.js-variant-price[data-block-id="${blockId}"]`);
-  const moneyFormat = priceEl?.closest('product-price')?.dataset.moneyFormat || '฿{{amount}}';
+  const moneyFormat = priceEl?.closest('product-price')?.dataset.moneyFormat || '฿{{amount_no_decimals}}';
+
+  console.log('[price-block] priceEl:', priceEl);
+  console.log('[price-block] moneyFormat:', moneyFormat);
 
   function formatMoney(cents, format) {
     const amount = Math.round(cents / 100).toLocaleString('th-TH');
@@ -108,11 +112,13 @@
 
   document.addEventListener('variant:selected', (event) => {
     const variant = event.detail?.resource;
+    console.log('[price-block] variant:selected', variant);
     if (!variant || !priceEl) return;
     priceEl.textContent = formatMoney(variant.price, moneyFormat);
   });
 })();
 </script>
+
 
 {% stylesheet %}
   .tax-note:empty {
