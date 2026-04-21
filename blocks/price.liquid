@@ -122,10 +122,38 @@
 })();
 </script>
 
+function updatePrice() {
+  const variantId = new URL(location.href).searchParams.get('variant');
+  if (!variantId) return;
+  const price = map[variantId];
+  if (price == null) return;
+  const priceEl = el.querySelector('#variant-price');
+  if (!priceEl) return;
+
+  const amount = Math.round(price / 100).toLocaleString('th-TH');
+  priceEl.textContent = fmt.replace(/\{\{amount[^}]*\}\}/g, amount);
+  priceEl.classList.remove('is-loading');
+}
+
+document.addEventListener('variant:selected', () => {
+  const priceEl = el.querySelector('#variant-price');
+  if (priceEl) priceEl.classList.add('is-loading');
+});
+
+document.addEventListener('variant:update', updatePrice);
 
 
 
 {% stylesheet %}
+
+#variant-price {
+  transition: opacity 0.2s ease;
+}
+
+#variant-price.is-loading {
+  opacity: 0.3;
+}
+
   .tax-note:empty {
     display: none;
   }
