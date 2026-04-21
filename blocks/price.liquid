@@ -135,21 +135,19 @@
   100% { background-position: 200% center; }
 }
 
-.price-wrapper.is-loading {
+.price-wrapper.is-loading .price-text {
   background: linear-gradient(
     90deg,
-    transparent 25%,
-    rgba(0, 0, 0, 0.08) 50%,
-    transparent 75%
+    #ccc 25%,
+    #e8e8e8 50%,
+    #ccc 75%
   );
   background-size: 200% 100%;
   animation: shimmer 1s infinite linear;
-  border-radius: 4px;
-  color: transparent !important;
-  pointer-events: none;
-  min-width: 80px;
-  display: inline-block;
-  transition: color 0.2s ease;
+  border-radius: 3px;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
 }
 
   .tax-note:empty {
