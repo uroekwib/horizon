@@ -90,10 +90,9 @@
 
 
 {% # theme-check-disable %}
-
+{% # theme-check-disable %}
 <script>
 (function() {
-  // ป้องกัน init ซ้ำ
   if (window.__priceBlockInit) return;
   window.__priceBlockInit = true;
 
@@ -109,40 +108,23 @@
     const variantId = new URL(location.href).searchParams.get('variant');
     if (!variantId) return;
     const price = map[variantId];
-    if (price == null) return;
     const priceEl = el.querySelector('#variant-price');
     if (!priceEl) return;
-
-    // replace เฉพาะ pattern ที่มีจริง
+    if (price == null) { priceEl.classList.remove('is-loading'); return; }
     const amount = Math.round(price / 100).toLocaleString('th-TH');
     priceEl.textContent = fmt.replace(/\{\{amount[^}]*\}\}/g, amount);
+    priceEl.classList.remove('is-loading');
   }
+
+  document.addEventListener('variant:selected', () => {
+    const priceEl = el.querySelector('#variant-price');
+    if (priceEl) priceEl.classList.add('is-loading');
+  });
 
   document.addEventListener('variant:update', updatePrice);
 })();
-
-
-function updatePrice() {
-  const variantId = new URL(location.href).searchParams.get('variant');
-  if (!variantId) return;
-  const price = map[variantId];
-  if (price == null) return;
-  const priceEl = el.querySelector('#variant-price');
-  if (!priceEl) return;
-
-  const amount = Math.round(price / 100).toLocaleString('th-TH');
-  priceEl.textContent = fmt.replace(/\{\{amount[^}]*\}\}/g, amount);
-  priceEl.classList.remove('is-loading');
-}
-
-document.addEventListener('variant:selected', () => {
-  const priceEl = el.querySelector('#variant-price');
-  if (priceEl) priceEl.classList.add('is-loading');
-});
-
-document.addEventListener('variant:update', updatePrice);
-
 </script>
+
 
 {% stylesheet %}
 
