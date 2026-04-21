@@ -116,6 +116,7 @@
     priceEl.classList.remove('is-loading');
   }
 
+  
   document.addEventListener('variant:selected', () => {
     const priceEl = el.querySelector('#variant-price');
     if (priceEl) priceEl.classList.add('is-loading');
@@ -134,6 +135,28 @@
 
 #variant-price.is-loading {
   opacity: 0.3;
+
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+[ref="priceContainer"].is-loading {
+  background: linear-gradient(
+    90deg,
+    transparent 25%,
+    rgba(0, 0, 0, 0.06) 50%,
+    transparent 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite linear;
+  border-radius: 4px;
+  color: transparent !important;
+  pointer-events: none;
+  min-width: 80px;
+  display: inline-block;
 }
 
   .tax-note:empty {
