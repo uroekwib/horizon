@@ -40,6 +40,7 @@
   class="text-block {{ text_block_classes }} text-{{ block_settings.alignment }} {{ block_settings.type_preset | default: 'paragraph' }} spacing-style"
   data-block-id="{{ block.id }}"
   data-product-id="{{ product_resource.id }}"
+  data-money-format="{{ shop.money_format | escape }}"
   style="
     {% render 'typography-style', settings: block_settings %}
     {% render 'spacing-style', settings: block_settings %}
@@ -47,19 +48,17 @@
   "
   {{ block.shopify_attributes }}
 >
-
-<div
-  class="price-wrapper"
-  data-price="{{ product_resource.selected_or_first_available_variant.price }}"
->
-  <span id="variant-price">
-    {%- assign formatted_price = product_resource.selected_or_first_available_variant.price | money_without_trailing_zeros -%}
-    {{ 'content.price_from' | t: price: formatted_price }}
-  </span>
-  {% if product_resource.metafields.custom.product_price != blank %}
-    <span id="price-unit">/{{ product_resource.metafields.custom.product_price }}</span>
-  {% endif %}
-</div>
+  <div class="price-wrapper">
+    <span class="js-variant-price" data-block-id="{{ block.id }}">
+      {%- assign formatted_price = selected_variant.price | money_without_trailing_zeros -%}
+      {{ 'content.price_from' | t: price: formatted_price }}
+    </span>
+    {% if product_resource.metafields.custom.product_price != blank %}
+      <span class="js-price-unit">/{{ product_resource.metafields.custom.product_price }}</span>
+    {% endif %}
+  </div>
+  ...
+</product-price>
 
 
   {% if block_settings.show_tax_info %}
