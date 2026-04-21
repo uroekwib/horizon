@@ -90,8 +90,13 @@
 
 
 {% # theme-check-disable %}
+
 <script>
 (function() {
+  // ป้องกัน init ซ้ำ
+  if (window.__priceBlockInit) return;
+  window.__priceBlockInit = true;
+
   const el = document.querySelector('product-price[data-block-id="{{ block.id }}"]');
   if (!el) return;
 
@@ -100,23 +105,23 @@
   const map = {};
   variants.forEach(v => { map[String(v.id)] = v.price; });
 
-  function formatMoney(cents, format) {
-    const amount = Math.round(cents / 100).toLocaleString('th-TH');
-    return format.replace('{{amount_no_decimals}}', amount).replace('{{amount}}', amount);
-  }
-
   function updatePrice() {
     const variantId = new URL(location.href).searchParams.get('variant');
     if (!variantId) return;
     const price = map[variantId];
     if (price == null) return;
     const priceEl = el.querySelector('#variant-price');
-    if (priceEl) priceEl.textContent = formatMoney(price, fmt);
+    if (!priceEl) return;
+
+    // replace เฉพาะ pattern ที่มีจริง
+    const amount = Math.round(price / 100).toLocaleString('th-TH');
+    priceEl.textContent = fmt.replace(/\{\{amount[^}]*\}\}/g, amount);
   }
 
   document.addEventListener('variant:update', updatePrice);
 })();
 </script>
+
 
 
 
