@@ -89,6 +89,7 @@
 </product-price>
 
 {% # theme-check-disable %}
+{% # theme-check-disable %}
 <script>
 (function() {
   const el = document.querySelector('product-price[data-block-id="{{ block.id }}"]');
@@ -99,17 +100,24 @@
   const map = {};
   variants.forEach(v => { map[String(v.id)] = v.price; });
 
-  document.addEventListener('variant:update', (e) => {
-  const html = e.detail?.data?.html;
-  console.log('html keys:', Object.keys(html || {}));
-  console.log('html nodeName:', html?.nodeName);
-  console.log('html querySelector input[name=id]:', html?.querySelector?.('input[name="id"]')?.value);
-  // ลอง URL ใน address bar ด้วย
-  console.log('current URL variant:', new URL(location.href).searchParams.get('variant'));
-});
+  function formatMoney(cents, format) {
+    const amount = Math.round(cents / 100).toLocaleString('th-TH');
+    return format.replace('{{amount_no_decimals}}', amount).replace('{{amount}}', amount);
+  }
 
+  function updatePrice() {
+    const variantId = new URL(location.href).searchParams.get('variant');
+    if (!variantId) return;
+    const price = map[variantId];
+    if (price == null) return;
+    const priceEl = el.querySelector('#variant-price');
+    if (priceEl) priceEl.textContent = formatMoney(price, fmt);
+  }
+
+  document.addEventListener('variant:update', updatePrice);
 })();
 </script>
+
 
 
 {% stylesheet %}
