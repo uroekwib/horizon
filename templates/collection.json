@@ -15,6 +15,7 @@
         "text_tqQTNE": {
           "type": "text",
           "name": "Title",
+          "disabled": true,
           "settings": {
             "text": "<h1>หมวด : {{ closest.collection.title }}ทั้งหมด</h1>",
             "width": "fit-content",
