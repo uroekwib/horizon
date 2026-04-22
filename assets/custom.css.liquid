@@ -2248,3 +2248,13 @@ button.shopify-payment-button__button--unbranded:hover {
 }
 
 .skip-to-content-link { display:none !important; }
+
+
+/* ============================================================
+   §17 KICKER SPACE FIX 2026-04-22
+   Reset margin-block-start for first child inside namespace div
+   Rollback: remove this block
+   ============================================================ */
+.text-block > div:first-of-type > *:first-child {
+  margin-block-start: 0 !important;
+}
