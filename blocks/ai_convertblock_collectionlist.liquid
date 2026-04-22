@@ -21,6 +21,19 @@
   {% endif %}
 {% endfor %}
 
+{% comment %} ── หา page title ที่ถูกต้อง ── {% endcomment %}
+{% for i in (1..10) %}
+  {% assign col_key = 'collection_' | append: i %}
+  {% assign col_item = block.settings[col_key] %}
+  {% if col_item != blank and col_item.metafields.custom.subcollections.value != blank %}
+    {% for sub in col_item.metafields.custom.subcollections.value %}
+      {% if sub.handle == collection.handle %}
+        {% assign page_title = sub.title %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endfor %}
+
 {% assign initial_products_limit = block.settings.products_per_page %}
 {% assign rendered_count = 0 %}
 {% assign preload_image = blank %}
@@ -67,6 +80,15 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
+  }
+
+  .ocf__page-title-{{ ai_gen_id }} {
+    margin: 0 0 4px;
+    font-size: clamp(24px, 3.2vw, 40px);
+    line-height: 1.15;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--color-foreground);
   }
 
   .ocf__row-{{ ai_gen_id }} {
@@ -376,6 +398,11 @@
   }
 
   @media screen and (max-width: 749px) {
+    .ocf__page-title-{{ ai_gen_id }} {
+      font-size: clamp(22px, 8vw, 32px);
+      line-height: 1.15;
+    }
+
     .ocf__grid-{{ ai_gen_id }} {
       grid-template-columns: repeat({{ block.settings.products_per_row_mobile }}, 1fr) !important;
     }
@@ -403,6 +430,8 @@
   {{ block.shopify_attributes }}
 >
   <div class="ocf__wrap-{{ ai_gen_id }}">
+
+    <h1 class="ocf__page-title-{{ ai_gen_id }}">{{ page_title }}</h1>
 
     <div class="ocf__row-{{ ai_gen_id }}">
       {% for i in (1..10) %}
@@ -557,32 +586,6 @@
 </script>
 
 <script>
-(function() {
-  const titleEl = document.querySelector('[data-collection-title]');
-  if (!titleEl) return;
-
-  // Map handle → title จาก subcollection pills
-  const pillMap = {};
-  document.querySelectorAll('.ocf__subpill-{{ ai_gen_id }}').forEach(btn => {
-    pillMap[btn.dataset.subHandle] = btn.textContent.trim();
-  });
-  document.querySelectorAll('.ocf__pill-{{ ai_gen_id }} span').forEach(pill => {
-    const href = pill.closest('a').href;
-    const handle = href.split('/collections/')[1];
-    if (handle) pillMap[handle] = pill.textContent.trim();
-  });
-
-  // Set title ตาม active handle ปัจจุบัน
-  const activeHandle = document.querySelector('.ocf__wrap-{{ ai_gen_id }}')
-    ?.dataset.activeHandle;
-  if (activeHandle && pillMap[activeHandle]) {
-    titleEl.textContent = pillMap[activeHandle];
-  }
-})();
-</script>
-
-
-<script>
 (function () {
   var root = document.querySelector('.ocf-{{ ai_gen_id }}');
   if (!root) return;
@@ -592,6 +595,7 @@
   var viewBtns = root.querySelectorAll('[data-view]');
   var counter = root.querySelector('.ocf__counter-{{ ai_gen_id }}');
   var loadingMore = root.querySelector('[data-loading-more]');
+  var titleEl = root.querySelector('.ocf__page-title-{{ ai_gen_id }}');
 
   var perPage = parseInt(root.dataset.productsPerPage, 10) || 8;
   var defCols = parseInt(root.dataset.desktopCols, 10) || 4;
@@ -602,6 +606,20 @@
   if (countEl) {
     try { countMap = JSON.parse(countEl.textContent); } catch (e) {}
   }
+
+  var titleMap = {};
+  root.querySelectorAll('.ocf__pill-{{ ai_gen_id }}').forEach(function (pill) {
+    var href = pill.getAttribute('href') || '';
+    var match = href.match(/\/collections\/([^/?#]+)/);
+    if (match && match[1]) {
+      titleMap[match[1]] = pill.textContent.trim();
+    }
+  });
+  root.querySelectorAll('.ocf__subpill-{{ ai_gen_id }}').forEach(function (btn) {
+    if (btn.dataset.subHandle) {
+      titleMap[btn.dataset.subHandle] = btn.textContent.trim();
+    }
+  });
 
   var state = {
     handle: root.dataset.activeHandle || '',
@@ -624,6 +642,13 @@
     if (!counter) return;
     var total = countMap[handle];
     counter.textContent = total != null ? total + ' รายการ' : '';
+  }
+
+  function updateTitle(handle) {
+    if (!titleEl || !handle) return;
+    if (titleMap[handle]) {
+      titleEl.textContent = titleMap[handle];
+    }
   }
 
   function escapeHtml(str) {
@@ -725,21 +750,22 @@
     state.mode = 'reset';
   }
 
- async function loadProducts(reset) {
-  if (state.isLoading) return;
-  if (!state.handle) return;
+  async function loadProducts(reset) {
+    if (state.isLoading) return;
+    if (!state.handle) return;
 
-  if (reset) {
-    resetStateForNewHandle();
-    grid.innerHTML = skeletonHTML(perPage);
-    showLoadingMore(false);
-    updateCounter(state.handle);
-  } else {
-    if (!state.hasMore) return;
-    showLoadingMore(true);
-  }
+    if (reset) {
+      resetStateForNewHandle();
+      grid.innerHTML = skeletonHTML(perPage);
+      showLoadingMore(false);
+      updateCounter(state.handle);
+      updateTitle(state.handle);
+    } else {
+      if (!state.hasMore) return;
+      showLoadingMore(true);
+    }
 
-  state.isLoading = true;
+    state.isLoading = true;
 
     var requestPage = state.page;
     var url = '/collections/' + state.handle + '/products.json?limit=' + perPage + '&page=' + requestPage;
@@ -823,6 +849,7 @@
 
       btn.classList.add('active');
       state.handle = nextHandle;
+      updateTitle(nextHandle);
       loadProducts(true);
     }, { passive: true });
   });
@@ -845,6 +872,7 @@
   });
 
   updateCounter(state.handle);
+  updateTitle(state.handle);
 })();
 </script>
 
