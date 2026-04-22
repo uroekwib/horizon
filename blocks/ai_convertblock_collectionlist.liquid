@@ -557,6 +557,32 @@
 </script>
 
 <script>
+(function() {
+  const titleEl = document.querySelector('[data-collection-title]');
+  if (!titleEl) return;
+
+  // Map handle → title จาก subcollection pills
+  const pillMap = {};
+  document.querySelectorAll('.ocf__subpill-{{ ai_gen_id }}').forEach(btn => {
+    pillMap[btn.dataset.subHandle] = btn.textContent.trim();
+  });
+  document.querySelectorAll('.ocf__pill-{{ ai_gen_id }} span').forEach(pill => {
+    const href = pill.closest('a').href;
+    const handle = href.split('/collections/')[1];
+    if (handle) pillMap[handle] = pill.textContent.trim();
+  });
+
+  // Set title ตาม active handle ปัจจุบัน
+  const activeHandle = document.querySelector('.ocf__wrap-{{ ai_gen_id }}')
+    ?.dataset.activeHandle;
+  if (activeHandle && pillMap[activeHandle]) {
+    titleEl.textContent = pillMap[activeHandle];
+  }
+})();
+</script>
+
+
+<script>
 (function () {
   var root = document.querySelector('.ocf-{{ ai_gen_id }}');
   if (!root) return;
