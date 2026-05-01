@@ -9,55 +9,6 @@
  */
 {
   "sections": {
-    "main": {
-      "type": "main-page",
-      "blocks": {
-        "text_w3f6MW": {
-          "type": "text",
-          "name": "t:names.heading",
-          "settings": {
-            "text": "<h1>ผลการค้นหาสินค้า</h1>",
-            "width": "fit-content",
-            "max_width": "normal",
-            "alignment": "left",
-            "type_preset": "rte",
-            "font": "var(--font-body--family)",
-            "font_size": "1rem",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "pretty",
-            "color": "var(--color-foreground)",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 24,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
-        "page-content": {
-          "type": "page-content",
-          "settings": {},
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "text_w3f6MW",
-        "page-content"
-      ],
-      "disabled": true,
-      "name": "search-result",
-      "settings": {
-        "content_direction": "column",
-        "gap": 0,
-        "color_scheme": "scheme-2",
-        "padding-block-start": 24,
-        "padding-block-end": 24
-      }
-    },
     "section_Qn8qrL": {
       "type": "section",
       "blocks": {
@@ -2667,6 +2618,55 @@
         "padding-block-end": 48
       }
     },
+    "main": {
+      "type": "main-page",
+      "blocks": {
+        "text_w3f6MW": {
+          "type": "text",
+          "name": "t:names.heading",
+          "disabled": true,
+          "settings": {
+            "text": "<h1>ผลการค้นหาสินค้า</h1>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "rte",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 24,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "page-content": {
+          "type": "page-content",
+          "settings": {},
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "text_w3f6MW",
+        "page-content"
+      ],
+      "name": "search-result",
+      "settings": {
+        "content_direction": "column",
+        "gap": 0,
+        "color_scheme": "scheme-2",
+        "padding-block-start": 24,
+        "padding-block-end": 24
+      }
+    },
     "section_96bLCW": {
       "type": "section",
       "blocks": {
@@ -3056,6 +3056,7 @@
         "text_GjAgjQ",
         "accordion_pNhfUX"
       ],
+      "disabled": true,
       "name": "t:names.faq_section",
       "settings": {
         "content_direction": "column",
@@ -3087,7 +3088,6 @@
     }
   },
   "order": [
-    "main",
     "section_Qn8qrL",
     "carousel_ycN8mp",
     "carousel_MUCHbT",
@@ -3095,6 +3095,7 @@
     "carousel_mgDVbR",
     "carousel_xgW4CN",
     "carousel_MRPUPn",
+    "main",
     "section_96bLCW"
   ]
 }
