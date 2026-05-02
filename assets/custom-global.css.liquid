@@ -110,6 +110,11 @@
   --spacing-sections-mobile:       48px;
   --grid-desktop-vertical-spacing: 20px;
   --grid-desktop-horizontal-spacing: 20px;
+
+  /* ── Default font-weight for base.css * { font-weight: var(--font-weight) } ── */
+  /* Horizon sections override locally (e.g. heading sections → 700)            */
+  /* Without this default, undefined var cascades incorrectly from parent scope  */
+  --font-weight:                   400;
 }
 
 /* ── Fix: margin หลัง <style> tag ใน product description (Horizon base.css override) ── */
