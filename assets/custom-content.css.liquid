@@ -1,0 +1,917 @@
+/* ============================================================
+   OCTOPUS MEDIA SOLUTIONS — HORIZON THEME
+   custom-content.css.liquid  |  Product + Blog styles
+   Loads on: product / article / page templates only
+
+   §13 Tables (divtable, price table, spec table)
+   §DNA DNA Component Spacing Standards
+   §17 Kicker Space Fix
+   §OC-ARTICLE Blog article CI styles
+   §18 Shared DNA Components (chip, stat, grid, faq, cta…)
+   ============================================================ */
+
+   §13 TABLES
+   ============================================================ */
+/* ============================================================
+   TABLE SYSTEM RESET + VC STYLE ADAPTER FOR GLOBAL NAMES
+   ใช้กับ:
+   .divtable
+   .divtable.price
+   .divtable-spec
+   .divtable-title
+   .divtable-note
+   ============================================================ */
+
+/* ---------- shared wrappers ---------- */
+.divtable,
+.divtable-spec {
+  width: 100%;
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--oc-ink-15) transparent;
+}
+
+.divtable::-webkit-scrollbar,
+.divtable-spec::-webkit-scrollbar {
+  height: 4px;
+}
+
+.divtable::-webkit-scrollbar-thumb,
+.divtable-spec::-webkit-scrollbar-thumb {
+  background: var(--oc-ink-15);
+  border-radius: 999px;
+}
+
+/* ---------- base table ---------- */
+.divtable table,
+.divtable-spec table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+  white-space: nowrap;
+  background: #fff;
+  box-shadow: unset;
+  min-width: 480px;
+}
+
+@media (max-width: 768px) {
+  .divtable table,
+  .divtable-spec table {
+    min-width: 550px;
+  }
+}
+
+.divtable th,
+.divtable td,
+.divtable-spec th,
+.divtable-spec td {
+  padding: 9px 12px;
+  font-size: var(--fs-base);
+  line-height: 1.45;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.divtable thead th,
+.divtable-spec thead th {
+  background: #f3f4f6;
+  color: var(--oc-ink);
+  font-weight: 700;
+  font-size: var(--fs-base);
+  text-align: center;
+  border-bottom: 1px solid var(--oc-ink-15);
+}
+
+.divtable thead th:first-child,
+.divtable-spec thead th:first-child,
+.divtable tbody td:first-child,
+.divtable-spec tbody td:first-child,
+.divtable-spec tbody th[scope="row"] {
+  text-align: left;
+  padding-left: 16px;
+}
+
+.divtable tbody tr,
+.divtable-spec tbody tr {
+  border-bottom: 1px solid var(--oc-ink-15);
+}
+
+.divtable tbody tr:last-child,
+.divtable-spec tbody tr:last-child {
+  border-bottom: none;
+}
+
+.divtable tbody tr:nth-child(even) td,
+.divtable-spec tbody tr:nth-child(even) td,
+.divtable-spec tbody tr:nth-child(even) th[scope="row"] {
+  background: #f9fafb;
+}
+
+.divtable tbody td:first-child,
+.divtable-spec tbody td:first-child,
+.divtable-spec tbody th[scope="row"] {
+  font-weight: 700;
+  color: var(--oc-ink);
+  border-right: 1px solid var(--oc-ink-15);
+  background: #fff;
+}
+
+.divtable tbody tr:nth-child(even) td:first-child,
+.divtable-spec tbody tr:nth-child(even) td:first-child,
+.divtable-spec tbody tr:nth-child(even) th[scope="row"] {
+  background: #f9fafb;
+}
+
+/* ============================================================
+   PRICE TABLE = ใช้หน้าตาแบบ VC แต่ชื่อยังเป็น .divtable.price
+   ============================================================ */
+
+.divtable.price {
+  border: 1px solid var(--oc-ink-15);
+  border-radius: var(--oc-radius-lg);
+  overflow: hidden;
+  background: #fff;
+  box-shadow: var(--oc-shadow-sm);
+}
+
+.divtable.price table {
+  min-width: 480px;
+  font-size: var(--fs-base);
+}
+
+@media (max-width: 768px) {
+  .divtable.price table {
+    min-width: 550px;
+  }
+}
+
+.divtable.price thead {
+  position: relative;
+}
+
+.divtable.price thead tr {
+  position: relative;
+}
+
+.divtable.price thead tr::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    #14c9df,
+    #17a9bb 28%,
+    #818cf8 60%,
+    #a78bfa 82%,
+    #14c9df 100%
+  );
+  background-size: 200% auto;
+  animation: oc-rainbow-move 4s linear infinite;
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+.divtable.price thead th {
+  background: #f3f4f6;
+  color: var(--oc-ink);
+  font-weight: 700;
+  font-size: var(--fs-base);
+  padding: 10px 12px;
+  text-align: center;
+  border-bottom: none;
+}
+
+.divtable.price thead th:first-child {
+  text-align: left;
+  padding-left: 16px;
+}
+
+.divtable.price tbody td {
+  padding: 9px 12px;
+  text-align: center;
+  border-bottom: 1px solid var(--oc-ink-15);
+  transition: background 0.12s ease, color 0.12s ease;
+  cursor: pointer;
+}
+
+.divtable.price tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.divtable.price tbody td:first-child {
+  text-align: left;
+  padding-left: 16px;
+  font-weight: 700;
+  color: var(--oc-ink);
+  border-right: 1px solid var(--oc-ink-15);
+  background: #fff;
+}
+
+.divtable.price tbody tr:nth-child(even) td {
+  background: #f9fafb;
+}
+
+.divtable.price tbody tr:nth-child(even) td:first-child {
+  background: #f9fafb;
+}
+
+.divtable.price tbody tr:hover td {
+  background: var(--oc-purple-l) !important;
+}
+
+.divtable.price tbody tr:hover td:first-child {
+  color: var(--oc-purple-d) !important;
+}
+
+/* heat levels */
+.divtable.price td.h1 { color: #6B7280; font-weight: 400; }
+.divtable.price td.h2 { color: #17a9bb; font-weight: 400; }
+.divtable.price td.h3 { color: #0284c7; font-weight: 400; }
+.divtable.price td.h4 { color: #7C3AED; font-weight: 400; }
+
+/* optional selected state */
+.divtable.price td.selected {
+  background: var(--oc-cyan-l) !important;
+  outline: 2px solid var(--oc-cyan);
+  outline-offset: -2px;
+  border-radius: 4px;
+}
+
+/* optional best row */
+.divtable.price tbody tr.best td:first-child::before {
+  content: '★ ';
+  font-size: 0.72em;
+  color: var(--oc-cyan-vv);
+}
+
+.divtable.price tbody tr.best td:first-child {
+  color: var(--oc-cyan);
+}
+
+/* ---------- title / note ---------- */
+.divtable-title {
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--oc-ink-15);
+  background: #fff;
+  color: var(--oc-ink);
+  font-weight: 700;
+  font-size: var(--fs-md);
+}
+
+.divtable-note {
+  padding: 12px 16px;
+  border-top: 1px solid var(--oc-ink-15);
+  background: #fff;
+  color: var(--oc-ink-40);
+  font-size: var(--fs-xs);
+  line-height: 1.7;
+}
+
+/* ============================================================
+   SPEC TABLE
+   ============================================================ */
+
+.divtable-spec {
+  border: 1px solid var(--oc-ink-15);
+  border-radius: var(--oc-radius-lg);
+  background: #fff;
+  box-shadow: var(--oc-shadow-sm);
+}
+
+.divtable-spec table {
+  min-width: 480px;
+}
+
+.divtable-spec thead th {
+  background: #f3f4f6;
+  color: var(--oc-ink);
+  font-weight: 700;
+  text-align: center;
+}
+
+.divtable-spec tbody th[scope="row"] {
+  min-width: 140px;
+}
+
+/* ---------- optional legacy helper ---------- */
+.p-table {
+  margin: 0.1em 0 0 0;
+  font-weight: 600;
+}
+
+/* ── Spec Table ── */
+.spec-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  table-layout: auto;
+  background: #fff;
+}
+.spec-table th,
+.spec-table td {
+  white-space: nowrap;
+  text-align: left;
+  padding: 0.6rem 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+.spec-table thead th {
+  position: sticky;
+  top: 0; z-index: 3;
+  background: #bef3f3 !important;
+  text-align: center;
+  font-weight: 600;
+}
+.spec-table thead th:first-child { background: #bef3f3 !important; }
+.spec-table th:first-child,
+.spec-table td:first-child {
+  position: sticky;
+  left: 0; z-index: 2;
+  background: #fff !important;
+  min-width: 120px;
+}
+.spec-table .subhead th {
+  padding: 0.6rem;
+  background-color: #f5f5f5 !important;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border-bottom: 1px solid #e5e7eb;
+}
+.spec-table tbody tr { background: #fff !important; }
+@media (max-width: 768px) {
+  .spec-table { min-width: 560px; }
+}
+
+
+/* ============================================================
+   §DNA  DNA Component Spacing Standards
+   กำหนด spacing มาตรฐานสำหรับ DNA product descriptions ทุกชิ้น
+   แก้ปัญหา margin ไม่สม่ำเสมอระหว่าง divline / icon / component
+   ============================================================ */
+
+/* Divider line: เพิ่ม margin-top เพื่อให้ห่างจาก component ก่อนหน้า */
+.divline {
+  margin-top: 28px;
+  margin-bottom: 0;
+}
+
+/* Icon divider: ชิดกับ divline ด้านบน, ห่างจาก component ด้านล่าง */
+.how-to-icon,
+.idea-icon,
+.pin-active-icon,
+.cart-icon,
+.write-icon,
+.news-active-icon,
+.new-active-icon {
+  margin-top: 0 !important;
+  margin-bottom: 20px !important;
+}
+
+/* Section header bar */
+.product-description [class$="-sh"] {
+  margin-top: 0;
+  margin-bottom: 14px;
+}
+
+/* Block-level grid components */
+.product-description [class$="-feat-grid"],
+.product-description [class$="-stat-row"],
+.product-description [class$="-steps"],
+.product-description [class$="-grid3"],
+.product-description [class$="-compare"] {
+  margin-top: 14px;
+  margin-bottom: 0;
+}
+
+/* Chip row */
+.product-description [class$="-chip-row"] {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+/* Table wrappers */
+.product-description [class$="-table-wrap"] {
+  margin-top: 14px;
+  margin-bottom: 0;
+}
+
+
+/* Table thead — reference: design-system section 07
+   th: #f3f4f6 bg + dark text (ไม่ใช่ gradient ซึ่งตัดเป็นช่องๆ แต่ละ th)
+   tr::after: rainbow gradient เส้น 2px ด้านล่าง thead (animated) */
+.product-description [class$="-spec-table"] thead th,
+.product-description [class$="-price-table"] thead th,
+.divtable-spec thead th,
+.divtable.price thead th {
+  background: #f3f4f6 !important;
+  color: var(--oc-ink, #1A202C) !important;
+  font-weight: 700 !important;
+  font-size: .8em !important;
+}
+.product-description [class$="-spec-table"] thead tr,
+.product-description [class$="-price-table"] thead tr,
+.divtable-spec thead tr,
+.divtable.price thead tr {
+  position: relative;
+}
+.product-description [class$="-spec-table"] thead tr::after,
+.product-description [class$="-price-table"] thead tr::after,
+.divtable-spec thead tr::after,
+.divtable.price thead tr::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,#14c9df,#17a9bb 28%,#818CF8 60%,#A78BFA 82%,#14c9df 100%);
+  background-size: 200% auto;
+  animation: oc-rainbow-move 4s linear infinite;
+  display: block;
+}
+
+/* Benefit list */
+.product-description [class$="-list"] {
+  margin-top: 16px;
+  margin-bottom: 0;
+}
+
+/* Quote / blockquote */
+.product-description [class$="-quote"],
+.product-description blockquote {
+  margin-top: 14px;
+  margin-bottom: 14px;
+}
+
+/* CTA block */
+.product-description [class$="-cta"] {
+  margin-top: 28px;
+  margin-bottom: 0;
+}
+
+/* FAQ block */
+.product-description [class$="-faq"] {
+  margin-top: 20px;
+  margin-bottom: 0;
+}
+
+/* Intro / body paragraph */
+.product-description [class$="-intro"],
+.product-description [class$="-body-p"] {
+  margin-top: 0;
+  margin-bottom: 14px;
+}
+
+.skip-to-content-link { display:none !important; }
+
+
+/* ============================================================
+   §17 KICKER SPACE FIX 2026-04-22
+   Reset margin-block-start for first child inside namespace div
+   Rollback: remove this block
+   ============================================================ */
+.text-block > div:first-of-type > *:first-child {
+  margin-block-start: 0 !important;
+}
+
+
+/* ============================================================
+   §OC-ARTICLE  Blog article CI styles
+   v2 — 2026-04-24 — teal/indigo/burgundy palette
+   ============================================================ */
+
+/* ── base ── */
+.oc-article { font-size:var(--fs-md); line-height:1.8; color:#374151; }
+.oc-article h2 { font-size:22px!important; font-weight:800!important; color:#1e293b!important; margin:32px 0 12px!important; line-height:1.3!important; }
+.oc-article p  { margin:0 0 14px!important; }
+.oc-article strong { font-weight:700; color:#1e293b; }
+.oc-article a  { color:#17a9bb; text-decoration:underline; }
+.oc-article img { border-radius:12px; margin:24px 0; max-width:100%; display:block; }
+
+/* ── section label + lead ── */
+.oc-section { padding:40px 0; border-top:1px solid #e2e8f0; }
+.oc-section:first-child { border-top:none; }
+.section-label { display:inline-block!important; font-size:var(--fs-xs)!important; font-weight:700!important; letter-spacing:2px!important; text-transform:uppercase!important; color:#17a9bb!important; margin-bottom:8px!important; }
+.lead { color:#64748b!important; font-size:var(--fs-base)!important; margin-bottom:28px!important; line-height:1.85!important; }
+
+/* ── tier cards ── */
+.oc-tier { border-radius:16px; border:2px solid transparent; margin-bottom:20px; overflow:hidden; }
+.oc-tier--teal   { border-color:#99f6e4; }
+.oc-tier--indigo { border-color:#c7d2fe; }
+.oc-tier--burg   { border-color:#f9a8d4; }
+
+.oc-tier__head { display:flex!important; align-items:center!important; gap:14px!important; padding:18px 22px!important; }
+.oc-tier--teal   .oc-tier__head { background:#f0fdfa!important; }
+.oc-tier--indigo .oc-tier__head { background:#eef2ff!important; }
+.oc-tier--burg   .oc-tier__head { background:#fdf2f8!important; }
+
+.oc-tier__icon { width:46px!important; height:46px!important; border-radius:12px!important; display:flex!important; align-items:center!important; justify-content:center!important; flex-shrink:0!important; }
+.oc-tier--teal   .oc-tier__icon { background:#ccfbf1!important; }
+.oc-tier--indigo .oc-tier__icon { background:#e0e7ff!important; }
+.oc-tier--burg   .oc-tier__icon { background:#fce7f3!important; }
+
+.oc-tier__badge { font-size:var(--fs-2xs)!important; font-weight:700!important; letter-spacing:1.5px!important; text-transform:uppercase!important; margin-bottom:3px!important; }
+.oc-tier--teal   .oc-tier__badge { color:#0d9488!important; }
+.oc-tier--indigo .oc-tier__badge { color:#4f46e5!important; }
+.oc-tier--burg   .oc-tier__badge { color:#9d174d!important; }
+
+.oc-tier__title { font-size:var(--fs-lg)!important; font-weight:800!important; color:#1e293b!important; line-height:1.2!important; }
+.oc-tier__body  { background:#fff!important; padding:18px 22px!important; }
+.oc-tier__desc  { font-size:var(--fs-base)!important; color:#374151!important; line-height:1.85!important; margin-bottom:16px!important; }
+
+/* ── dim mini-grid ── */
+.oc-dim { display:grid!important; grid-template-columns:repeat(3,1fr)!important; gap:1px!important; background:#e2e8f0!important; border:1px solid #e2e8f0!important; border-radius:10px!important; overflow:hidden!important; margin-bottom:16px!important; }
+.oc-dim__cell { background:#f8fafc!important; padding:11px 13px!important; }
+.oc-dim__cell:first-child { background:#fff!important; }
+.oc-dim__label { font-size:var(--fs-2xs)!important; font-weight:700!important; letter-spacing:1px!important; text-transform:uppercase!important; color:#64748b!important; margin-bottom:4px!important; }
+.oc-dim__val   { font-size:var(--fs-sm)!important; font-weight:600!important; line-height:1.5!important; }
+.oc-dim__val--pass { color:#0d9488!important; }
+.oc-dim__val--warn { color:#4f46e5!important; }
+.oc-dim__val--stop { color:#9d174d!important; }
+
+/* ── tip box ── */
+.oc-tip { display:flex!important; gap:10px!important; align-items:flex-start!important; border-radius:9px!important; padding:11px 14px!important; margin-bottom:16px!important; font-size:var(--fs-base)!important; line-height:1.75!important; }
+.oc-tier--teal   .oc-tip { background:#ccfbf1!important; color:#134e4a!important; }
+.oc-tier--indigo .oc-tip { background:#e0e7ff!important; color:#312e81!important; }
+.oc-tier--burg   .oc-tip { background:#fce7f3!important; color:#831843!important; }
+
+/* ── tags ── */
+.oc-tag-row { display:flex!important; flex-wrap:wrap!important; gap:6px!important; }
+.oc-tag { padding:3px 11px!important; border-radius:100px!important; font-size:var(--fs-xs)!important; font-weight:600!important; }
+.oc-tier--teal   .oc-tag { background:#ccfbf1!important; color:#134e4a!important; }
+.oc-tier--indigo .oc-tag { background:#e0e7ff!important; color:#312e81!important; }
+.oc-tier--burg   .oc-tag { background:#fce7f3!important; color:#831843!important; }
+
+/* ── feas intro box ── */
+.feas-intro { background:#fff!important; border:1.5px solid #e2e8f0!important; border-radius:14px!important; padding:20px 24px!important; margin-bottom:24px!important; display:flex!important; gap:16px!important; align-items:flex-start!important; }
+.feas-intro-icon { font-size:26px!important; flex-shrink:0!important; }
+.feas-intro-text { font-size:var(--fs-base)!important; color:#374151!important; line-height:1.85!important; }
+.feas-intro-text strong { display:block!important; font-size:var(--fs-md)!important; font-weight:800!important; color:#1e293b!important; margin-bottom:6px!important; }
+
+/* ── feasibility grid ── */
+.oc-feas-grid { display:grid!important; grid-template-columns:repeat(3,1fr)!important; gap:16px!important; margin:20px 0!important; }
+.oc-feas-card { background:#fff!important; border-radius:12px!important; border:1.5px solid #e2e8f0!important; border-left:4px solid #17a9bb!important; overflow:hidden!important; }
+.oc-feas-card__head { padding:14px 16px 12px!important; border-bottom:1px solid #f1f5f9!important; }
+.oc-feas-card__icon { margin-bottom:7px!important; }
+.oc-feas-card__label { font-size:var(--fs-xs)!important; font-weight:700!important; letter-spacing:1.5px!important; text-transform:uppercase!important; color:#64748b!important; margin-bottom:3px!important; }
+.oc-feas-card__title  { font-size:var(--fs-lg)!important; font-weight:800!important; color:#0f172a!important; line-height:1.3!important; }
+.oc-feas-card__body   { padding:14px 16px!important; }
+.oc-feas-card__desc   { font-size:var(--fs-base)!important; color:#374151!important; line-height:1.75!important; margin-bottom:12px!important; }
+.oc-feas-list { list-style:none!important; padding:0!important; margin:0!important; display:flex!important; flex-direction:column!important; gap:10px!important; }
+.oc-feas-list li { font-size:var(--fs-base)!important; line-height:1.65!important; font-weight:600!important; color:#1e293b!important; padding-left:16px!important; position:relative!important; }
+.oc-feas-list li::before { content:"–"!important; position:absolute!important; left:0!important; color:#94a3b8!important; font-weight:700!important; font-size:var(--fs-xs)!important; top:1px!important; }
+.oc-feas-list li span { color:#4b5563!important; font-size:var(--fs-sm)!important; display:block!important; font-style:italic!important; font-weight:400!important; margin-top:2px!important; }
+
+/* ── feas consult strip ── */
+.feas-consult { background:linear-gradient(135deg,#fdf2f8,#eef2ff)!important; border:1.5px solid #c7d2fe!important; border-radius:14px!important; padding:18px 22px!important; margin-top:20px!important; display:flex!important; gap:14px!important; align-items:flex-start!important; }
+.feas-consult-icon { flex-shrink:0!important; }
+.feas-consult-text { font-size:var(--fs-base)!important; color:#312e81!important; line-height:1.8!important; }
+.feas-consult-text strong { display:block!important; font-weight:800!important; color:#312e81!important; margin-bottom:3px!important; }
+
+/* ── process + designer flow grid ── */
+.flow-grid { display:grid!important; grid-template-columns:1fr 1fr!important; gap:22px!important; margin-top:28px!important; }
+.flow-card { background:#fff!important; border:1.5px solid #e2e8f0!important; border-radius:14px!important; padding:22px 20px!important; }
+.flow-card-title { font-size:var(--fs-md)!important; font-weight:800!important; color:#1e293b!important; margin-bottom:20px!important; padding-bottom:14px!important; border-bottom:2px solid #f0fdfa!important; display:flex!important; align-items:center!important; gap:10px!important; }
+.mini-steps { display:flex!important; flex-direction:column!important; }
+.mini-step { display:grid!important; grid-template-columns:30px 1fr!important; gap:0 12px!important; position:relative!important; }
+.mini-step:not(:last-child)::before { content:""!important; position:absolute!important; left:14px!important; top:32px!important; bottom:0!important; width:2px!important; background:#e2e8f0!important; }
+.mini-num { width:30px!important; height:30px!important; border-radius:50%!important; background:linear-gradient(135deg,#14c9df,#17a9bb)!important; color:#fff!important; font-weight:800!important; font-size:var(--fs-base)!important; display:flex!important; align-items:center!important; justify-content:center!important; flex-shrink:0!important; position:relative!important; z-index:1!important; box-shadow:0 2px 8px rgba(20,201,223,.3)!important; }
+.mini-body { padding:4px 0 20px!important; }
+.mini-body strong { display:block!important; font-size:var(--fs-base)!important; font-weight:700!important; color:#1e293b!important; margin-bottom:2px!important; }
+.mini-body p { font-size:var(--fs-base)!important; color:#64748b!important; line-height:1.7!important; margin:0!important; }
+
+/* ── designer checklist ── */
+.check-divider {
+  font-size:var(--fs-base)!important;
+  font-weight:800!important;
+  letter-spacing:.3px!important;
+  text-transform:none!important;
+  color:#0f172a!important;
+  margin:20px 0 12px!important;
+  padding:12px 14px!important;
+  border-top:none!important;
+  border-left:3px solid #17a9bb!important;
+  background:#f8fafc!important;
+  border-radius:0 8px 8px 0!important;
+  display:block!important;
+}
+.check-list { list-style:none!important; padding:0!important; margin:0 0 4px!important; display:flex!important; flex-direction:column!important; gap:10px!important; }
+.check-list li { display:flex!important; flex-direction:row!important; align-items:flex-start!important; gap:12px!important; font-size:var(--fs-base)!important; line-height:1.75!important; color:#374151!important; padding-left:0!important; position:static!important; }
+.check-list li::before {
+  content:"✓"!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:22px!important; height:22px!important; min-width:22px!important;
+  border-radius:50%!important;
+  background:#ccfbf1!important;
+  color:#0d9488!important;
+  font-weight:900!important; font-size:var(--fs-base)!important; line-height:1!important;
+  flex-shrink:0!important; position:static!important; margin-top:1px!important;
+}
+.check-list.bad li::before {
+  content:"✕"!important;
+  background:#fce7f3!important;
+  color:#9d174d!important;
+}
+.check-list.bad li { color:#374151!important; }
+.referral-strip { background:linear-gradient(135deg,#f0fdfa,#eef2ff)!important; border:1.5px solid #99f6e4!important; border-radius:12px!important; padding:16px 18px!important; font-size:var(--fs-base)!important; color:#134e4a!important; line-height:1.8!important; margin-top:16px!important; }
+.referral-strip strong { display:block!important; font-weight:800!important; font-size:var(--fs-base)!important; color:#0d9488!important; margin-bottom:4px!important; }
+
+/* ── CTA strip ── */
+.oc-article-cta { background:linear-gradient(135deg,#0f172a,#1e293b)!important; border-radius:16px!important; padding:32px 28px!important; text-align:center!important; margin:36px 0!important; }
+.oc-article-cta h2 { color:#fff!important; margin-top:0!important; }
+.oc-article-cta p { color:#94a3b8!important; font-size:var(--fs-base)!important; margin-bottom:20px!important; }
+.oc-article-cta .oc-btn-line { display:inline-flex!important; align-items:center!important; gap:8px!important; background:linear-gradient(135deg,#14c9df,#17a9bb)!important; color:#fff!important; font-weight:700!important; font-size:var(--fs-base)!important; padding:12px 28px!important; border-radius:100px!important; text-decoration:none!important; }
+
+/* ── responsive ── */
+@media(max-width:680px){ .oc-feas-grid { grid-template-columns:1fr!important; } }
+@media(max-width:640px){ .flow-grid { grid-template-columns:1fr!important; } }
+@media(max-width:560px){
+  .oc-dim { grid-template-columns:1fr 1fr!important; }
+  .oc-dim__cell:nth-child(3){ grid-column:span 2!important; }
+  .oc-tier__head,.oc-tier__body { padding-left:16px!important; padding-right:16px!important; }
+}
+
+
+
+/* ============================================================
+   §18  SHARED DNA COMPONENTS
+   Canonical .oc-* classes สำหรับ component ที่ทุก product ใช้ร่วมกัน
+   แทน per-product namespace (.fl-chip, .pw-chip ฯลฯ)
+
+   วิธีใช้ใน product HTML:
+     เดิม → <div class="fl-chip">
+     ใหม่ → <div class="oc-chip">
+             หรือ  <div class="oc-chip fl-chip"> (ระหว่าง migrate)
+
+   Product <style> block เหลือเฉพาะ layout ที่ต่างกัน
+   เช่น .fl-grid { grid-template-columns: 1fr 2fr; }
+   ============================================================ */
+
+
+/* ── §18a  Chip / Tag ── */
+
+.oc-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 22px;
+}
+
+.oc-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: var(--oc-radius-pill);
+  background: var(--oc-cyan-l);
+  color: var(--oc-cyan-d);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  border: 1px solid rgba(23,169,187,.2);
+  line-height: 1.3;
+}
+
+.oc-chip.secondary {
+  background: var(--oc-ink-05);
+  color: var(--oc-ink-70);
+  border-color: var(--oc-ink-15);
+}
+
+.oc-chip.purple {
+  background: var(--oc-purple-l);
+  color: var(--oc-purple-d);
+  border-color: rgba(124,58,237,.2);
+}
+
+
+/* ── §18b  Stat / KPI row ── */
+
+.oc-stat-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0 0 22px;
+}
+
+.oc-stat {
+  flex: 1 1 100px;
+  background: var(--oc-grad-ci);
+  border-radius: var(--oc-radius);
+  padding: 16px 12px;
+  text-align: center;
+  color: #fff;
+  box-shadow: var(--oc-shadow-sm);
+}
+
+.oc-stat-num {
+  display: block;
+  font-size: var(--fs-lg);
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.oc-stat-label {
+  display: block;
+  font-size: var(--fs-2xs);
+  font-weight: 600;
+  opacity: .85;
+  margin-top: 4px;
+  line-height: 1.3;
+}
+
+
+/* ── §18c  Layout grids ── */
+
+.oc-grid3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 12px 0 18px;
+}
+
+.oc-grid2,
+.oc-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 12px 0 18px;
+}
+
+.oc-feat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin: 12px 0 18px;
+}
+
+.oc-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin: 14px 0 20px;
+}
+
+@media (max-width: 749px) {
+  .oc-grid3  { grid-template-columns: 1fr; }
+  .oc-grid2,
+  .oc-compare { grid-template-columns: 1fr; }
+  .oc-feat-grid { grid-template-columns: repeat(2, 1fr); }
+  .oc-steps   { grid-template-columns: 1fr 1fr; }
+}
+
+
+/* ── §18d  Step card ── */
+
+.oc-step {
+  background: #fff;
+  border: 1px solid var(--oc-ink-15);
+  border-radius: var(--oc-radius);
+  padding: 16px 12px;
+  text-align: center;
+  box-shadow: var(--oc-shadow-sm);
+}
+
+.oc-step-n {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--oc-grad-ci);
+  color: #fff;
+  font-size: var(--fs-2xs);
+  font-weight: 800;
+  margin: 0 auto 10px;
+}
+
+.oc-step-title {
+  font-size: var(--fs-base);
+  font-weight: 700;
+  color: var(--oc-ink);
+  margin-bottom: 6px;
+  line-height: 1.35;
+}
+
+.oc-step-body {
+  font-size: var(--fs-sm);
+  color: var(--oc-ink-70);
+  line-height: 1.65;
+}
+
+
+/* ── §18e  FAQ accordion (Pattern B — oc-faq grid-template-rows) ── */
+
+.oc-faq-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 14px 0 0;
+}
+
+.oc-faq-item {
+  border: 1px solid var(--oc-ink-15);
+  border-radius: var(--oc-radius-sm);
+  overflow: hidden;
+}
+
+.oc-faq-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 13px 16px;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fs-base);
+  font-weight: 700;
+  color: var(--oc-ink);
+  text-align: left;
+  line-height: 1.4;
+}
+
+.oc-faq-btn:hover { background: var(--oc-cyan-l); }
+
+.oc-faq-chev {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  transition: transform .25s var(--oc-ease-smooth);
+}
+
+.oc-faq-item[open] .oc-faq-chev,
+.oc-faq-item.open  .oc-faq-chev { transform: rotate(180deg); }
+
+.oc-faq-ans {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows .28s var(--oc-ease-smooth);
+}
+
+.oc-faq-item[open] .oc-faq-ans,
+.oc-faq-item.open  .oc-faq-ans  { grid-template-rows: 1fr; }
+
+.oc-faq-ans > div {
+  overflow: hidden;
+  padding: 0 16px 14px;
+  font-size: var(--fs-base);
+  color: var(--oc-ink-70);
+  line-height: 1.75;
+}
+
+
+/* ── §18f  Blockquote ── */
+
+.oc-bq {
+  margin: 0 0 22px;
+  padding: 14px 16px;
+  background: #f0fafc;
+  border-left: 3px solid var(--oc-cyan);
+  border-radius: 0 var(--oc-radius-sm) var(--oc-radius-sm) 0;
+  font-size: var(--fs-base);
+  color: var(--oc-ink-70);
+  line-height: 1.75;
+  font-style: italic;
+}
+
+
+/* ── §18g  CTA block ── */
+
+.oc-cta {
+  background: linear-gradient(135deg, #eaf7fa 0%, #d5eef3 100%);
+  border: 1px solid #c5e3ea;
+  border-radius: var(--oc-radius-lg);
+  padding: 28px 24px;
+  text-align: center;
+  margin: 28px 0 0;
+}
+
+.oc-cta-title {
+  font-size: var(--fs-lg);
+  font-weight: 800;
+  color: var(--oc-ink);
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.oc-cta-body {
+  font-size: var(--fs-base);
+  color: var(--oc-ink-70);
+  line-height: 1.7;
+  margin-bottom: 18px;
+}
+
+.oc-cta-btns {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
