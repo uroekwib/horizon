@@ -220,6 +220,10 @@
   --font-xs--size: clamp(0.85rem, 0.82rem + 0.18vw, 1.1rem);
 }
 
+@media (min-width: 1200px) {
+  html { font-size: clamp(16px, calc(14px + 0.25vw), 19px); }
+}
+
 /* [CLEANUP] ลบได้เมื่อ Liquid ทุกไฟล์ใช้ var(--font-body--family) แทน inline font-family
    ตรวจ: theme.liquid, header.liquid, collection.liquid, blog.liquid */
 @media (max-width: 767px) {
