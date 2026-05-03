@@ -1166,3 +1166,11 @@ body.gm-menu-installed .gm-menu ul {
 [class$="-vs"]    { margin-bottom: 18px; }
 [class$="-types"] { margin-bottom: 18px; }
 
+/* ── Suppress Horizon margin-block on h2 inside DNA namespace containers ──
+   Horizon's .text-block h2 adds margin-block which conflicts with inline styles.
+   Product description h2 controls its own margin — let it. ── */
+.text-block .desc_container h2,
+.rte .desc_container h2 {
+  margin-block: 0;
+}
+
