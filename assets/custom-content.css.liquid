@@ -598,7 +598,9 @@
    Solves: 198 products use .oc-list (undefined) + 197 namespace prefixes
    (.au-list, .psn-list, .brp-list, ...) define same pattern inconsistently.
 
-   Strategy:
+   Card-style design adopted from /products/composite-inkjet-uv (.ci-item):
+   white bg + border + radius + soft shadow + typography normalization.
+
    • .oc-list / .oc-item / .oc-dot                = primary utility classes (always-on)
    • [class$="-list/-item/-dot"] in :where()      = zero-spec namespace fallback
      :where() makes scope contribute 0 specificity → product <style> rules
@@ -607,9 +609,6 @@
 
 /* === Primary utility classes — always loaded === */
 .oc-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
   margin: 0 0 18px;
   padding: 0;
   list-style: none;
@@ -617,7 +616,16 @@
 .oc-item {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 12px;
+  padding: 10px 14px;
+  margin-bottom: 7px;
+  border-radius: var(--oc-radius);
+  background: #fff;
+  border: 1px solid var(--oc-ink-15);
+  box-shadow: var(--oc-shadow-sm);
+  font-size: 0.96em;
+  color: var(--oc-ink-70);
+  line-height: 1.65;
 }
 .oc-dot {
   display: block;
@@ -627,14 +635,11 @@
   min-width: 10px;
   border-radius: 50%;
   background: var(--oc-grad-ci);
-  margin-top: 7px;
+  margin-top: 5px;
 }
 
-/* === Namespace fallback (modern browsers only via :where/:has) === */
+/* === Namespace fallback (modern browsers only — :where + :has) === */
 :where(.text-block, .desc_container) [class$="-list"] {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
   margin: 0 0 18px;
   padding: 0;
   list-style: none;
@@ -642,7 +647,16 @@
 :where(.text-block, .desc_container) [class$="-item"]:has(> [class$="-dot"]) {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 12px;
+  padding: 10px 14px;
+  margin-bottom: 7px;
+  border-radius: var(--oc-radius);
+  background: #fff;
+  border: 1px solid var(--oc-ink-15);
+  box-shadow: var(--oc-shadow-sm);
+  font-size: 0.96em;
+  color: var(--oc-ink-70);
+  line-height: 1.65;
 }
 :where(.text-block, .desc_container) [class$="-dot"] {
   display: block;
@@ -652,7 +666,7 @@
   min-width: 10px;
   border-radius: 50%;
   background: var(--oc-grad-ci);
-  margin-top: 7px;
+  margin-top: 5px;
 }
 
 /* ── §H2-NORMALIZE — single source of truth for product desc h2 (2026-05-03) ──
