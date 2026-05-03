@@ -597,15 +597,15 @@
 /* ── §LIST-NORMALIZE — .oc-list/-item/-dot utility + namespace fallback (2026-05-03) ──
    Solves: 198 products use .oc-list (undefined) + 197 namespace prefixes
    (.au-list, .psn-list, .brp-list, ...) define same pattern inconsistently.
-   
-   Strategy:
-   • .oc-list / .oc-item / .oc-dot                = primary utility classes
-   • :where(...) [class$="-list/-item/-dot"]      = zero-specificity fallback
-     for products with namespace classes that don't define them
-   • :where() makes scope contribute 0 specificity → product <style> rules
-     of equal specificity (.xx-list = 0,1,0) win via source order ── */
 
-:where(.text-block, .desc_container) [class$="-list"],
+   Strategy:
+   • .oc-list / .oc-item / .oc-dot                = primary utility classes (always-on)
+   • [class$="-list/-item/-dot"] in :where()      = zero-spec namespace fallback
+     :where() makes scope contribute 0 specificity → product <style> rules
+     (.xx-list = 0,1,0) win via source order
+   • Rules split so :has()/:where() unsupported in old browser drops only fallback ── */
+
+/* === Primary utility classes — always loaded === */
 .oc-list {
   display: flex;
   flex-direction: column;
@@ -614,16 +614,37 @@
   padding: 0;
   list-style: none;
 }
-
-:where(.text-block, .desc_container) [class$="-item"]:has(> [class$="-dot"]),
 .oc-item {
   display: flex;
   align-items: flex-start;
   gap: 10px;
 }
-
-:where(.text-block, .desc_container) [class$="-dot"],
 .oc-dot {
+  display: block;
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  min-width: 10px;
+  border-radius: 50%;
+  background: var(--oc-grad-ci);
+  margin-top: 7px;
+}
+
+/* === Namespace fallback (modern browsers only via :where/:has) === */
+:where(.text-block, .desc_container) [class$="-list"] {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0 0 18px;
+  padding: 0;
+  list-style: none;
+}
+:where(.text-block, .desc_container) [class$="-item"]:has(> [class$="-dot"]) {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+:where(.text-block, .desc_container) [class$="-dot"] {
   display: block;
   flex-shrink: 0;
   width: 10px;
