@@ -359,6 +359,7 @@
         "image_4hNQY4": {
           "type": "image",
           "settings": {
+            "eager_load": true,
             "image": "shopify://shop_images/Banner_Octopus_Team.jpg",
             "link": "",
             "image_ratio": "adapt",
@@ -632,6 +633,7 @@
                   "type": "image",
                   "name": "t:names.image",
                   "settings": {
+                    "eager_load": false,
                     "image": "shopify://shop_images/Label_Silver-492823.jpg",
                     "link": "shopify://pages/sticker-label",
                     "image_ratio": "portrait",
@@ -715,6 +717,7 @@
                   "type": "image",
                   "name": "t:names.image",
                   "settings": {
+                    "eager_load": false,
                     "image": "shopify://shop_images/barrisol_balenciaga.jpg",
                     "link": "https://www.barrisol-thailand.com",
                     "image_ratio": "portrait",
@@ -798,6 +801,7 @@
                   "type": "image",
                   "name": "t:names.image",
                   "settings": {
+                    "eager_load": false,
                     "image": "shopify://shop_images/mini_truck_mobile_service_cockpit_car_wrap.jpg",
                     "link": "shopify://products/sticker-car-wrap",
                     "image_ratio": "portrait",
@@ -881,6 +885,7 @@
                   "type": "image",
                   "name": "t:names.image",
                   "settings": {
+                    "eager_load": false,
                     "image": "shopify://shop_images/IMG_2006.png",
                     "link": "https://alphadigital.co",
                     "image_ratio": "portrait",
@@ -964,6 +969,7 @@
                   "type": "image",
                   "name": "t:names.image",
                   "settings": {
+                    "eager_load": false,
                     "image": "shopify://shop_images/img_1603-1666405641223.webp",
                     "link": "shopify://pages/company-signage",
                     "image_ratio": "portrait",
@@ -3195,6 +3201,7 @@
               "type": "image",
               "name": "t:names.image",
               "settings": {
+                "eager_load": false,
                 "image": "shopify://shop_images/14771108_website_57_2683b6b7-50f6-4329-9150-2e7cb2804704.png",
                 "link": "https://drive.google.com/file/d/1G0FnUMkav24rLRe75ggqNEqbjoe7hzDC/view?usp=sharing",
                 "image_ratio": "adapt",
