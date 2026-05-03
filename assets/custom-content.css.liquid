@@ -372,29 +372,29 @@
 }
 
 /* Section header bar */
-.product-description [class$="-sh"] {
+.desc_container [class$="-sh"] {
   margin-top: 0;
   margin-bottom: 14px;
 }
 
 /* Block-level grid components */
-.product-description [class$="-feat-grid"],
-.product-description [class$="-stat-row"],
-.product-description [class$="-steps"],
-.product-description [class$="-grid3"],
-.product-description [class$="-compare"] {
+.desc_container [class$="-feat-grid"],
+.desc_container [class$="-stat-row"],
+.desc_container [class$="-steps"],
+.desc_container [class$="-grid3"],
+.desc_container [class$="-compare"] {
   margin-top: 14px;
   margin-bottom: 0;
 }
 
 /* Chip row */
-.product-description [class$="-chip-row"] {
+.desc_container [class$="-chip-row"] {
   margin-top: 0;
   margin-bottom: 16px;
 }
 
 /* Table wrappers */
-.product-description [class$="-table-wrap"] {
+.desc_container [class$="-table-wrap"] {
   margin-top: 14px;
   margin-bottom: 0;
 }
@@ -403,8 +403,8 @@
 /* Table thead — reference: design-system section 07
    th: #f3f4f6 bg + dark text (ไม่ใช่ gradient ซึ่งตัดเป็นช่องๆ แต่ละ th)
    tr::after: rainbow gradient เส้น 2px ด้านล่าง thead (animated) */
-.product-description [class$="-spec-table"] thead th,
-.product-description [class$="-price-table"] thead th,
+.desc_container [class$="-spec-table"] thead th,
+.desc_container [class$="-price-table"] thead th,
 .divtable-spec thead th,
 .divtable.price thead th {
   background: #f3f4f6 !important;
@@ -412,14 +412,14 @@
   font-weight: 700 !important;
   font-size: .8em !important;
 }
-.product-description [class$="-spec-table"] thead tr,
-.product-description [class$="-price-table"] thead tr,
+.desc_container [class$="-spec-table"] thead tr,
+.desc_container [class$="-price-table"] thead tr,
 .divtable-spec thead tr,
 .divtable.price thead tr {
   position: relative;
 }
-.product-description [class$="-spec-table"] thead tr::after,
-.product-description [class$="-price-table"] thead tr::after,
+.desc_container [class$="-spec-table"] thead tr::after,
+.desc_container [class$="-price-table"] thead tr::after,
 .divtable-spec thead tr::after,
 .divtable.price thead tr::after {
   content: '';
@@ -433,33 +433,33 @@
 }
 
 /* Benefit list */
-.product-description [class$="-list"] {
+.desc_container [class$="-list"] {
   margin-top: 16px;
   margin-bottom: 0;
 }
 
 /* Quote / blockquote */
-.product-description [class$="-quote"],
-.product-description blockquote {
+.desc_container [class$="-quote"],
+.desc_container blockquote {
   margin-top: 14px;
   margin-bottom: 14px;
 }
 
 /* CTA block */
-.product-description [class$="-cta"] {
+.desc_container [class$="-cta"] {
   margin-top: 28px;
   margin-bottom: 0;
 }
 
 /* FAQ block */
-.product-description [class$="-faq"] {
+.desc_container [class$="-faq"] {
   margin-top: 20px;
   margin-bottom: 0;
 }
 
 /* Intro / body paragraph */
-.product-description [class$="-intro"],
-.product-description [class$="-body-p"] {
+.desc_container [class$="-intro"],
+.desc_container [class$="-body-p"] {
   margin-top: 0;
   margin-bottom: 14px;
 }
@@ -1114,35 +1114,35 @@ body.gm-menu-installed .gm-menu ul {
    ─────────────────────────────────────────────────────────────────────── */
 
 /* A — container bottom margin */
-.product-description [class$="-chip"],
-.product-description [class$="-chips"] {
+.desc_container [class$="-chip"],
+.desc_container [class$="-chips"] {
   margin-bottom: 16px;
 }
-.product-description [class$="-feat"],
-.product-description [class$="-step"],
-.product-description [class$="-grid"],
-.product-description [class$="-grid3"],
-.product-description [class$="-feat-row"],
-.product-description [class$="-step-row"] {
+.desc_container [class$="-feat"],
+.desc_container [class$="-step"],
+.desc_container [class$="-grid"],
+.desc_container [class$="-grid3"],
+.desc_container [class$="-feat-row"],
+.desc_container [class$="-step-row"] {
   margin-bottom: 22px;
 }
-.product-description [class$="-bq"],
-.product-description [class$="-qt"],
-.product-description [class$="-table"],
-.product-description [class$="-spec"],
-.product-description [class$="-badge-row"] {
+.desc_container [class$="-bq"],
+.desc_container [class$="-qt"],
+.desc_container [class$="-table"],
+.desc_container [class$="-spec"],
+.desc_container [class$="-badge-row"] {
   margin-bottom: 18px;
 }
 
 /* B — adjacent sibling after section headings gets top breathing room */
-.product-description [class$="-sh"] + *,
-.product-description .oc-bar-wrap + *,
-.product-description [class$="-kicker"] + * {
+.desc_container [class$="-sh"] + *,
+.desc_container .oc-bar-wrap + *,
+.desc_container [class$="-kicker"] + * {
   margin-top: 14px;
 }
 
 /* img inside product desc — never let it collapse to zero margin */
-.product-description img:not([class*="oc-icon"]) {
+.desc_container img:not([class*="oc-icon"]) {
   display: block;
   margin-bottom: 14px;
 }
