@@ -594,6 +594,46 @@
 }/* ── DNA Spacing — suffix-based, no parent qualifier needed ── */
 /* covers ALL namespace variants (psc-, flr-, dir-, sp-, etc.)  */
 
+/* ── §LIST-NORMALIZE — .oc-list/-item/-dot utility + namespace fallback (2026-05-03) ──
+   Solves: 198 products use .oc-list (undefined) + 197 namespace prefixes
+   (.au-list, .psn-list, .brp-list, ...) define same pattern inconsistently.
+   
+   Strategy:
+   • .oc-list / .oc-item / .oc-dot                = primary utility classes
+   • :where(...) [class$="-list/-item/-dot"]      = zero-specificity fallback
+     for products with namespace classes that don't define them
+   • :where() makes scope contribute 0 specificity → product <style> rules
+     of equal specificity (.xx-list = 0,1,0) win via source order ── */
+
+:where(.text-block, .desc_container) [class$="-list"],
+.oc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0 0 18px;
+  padding: 0;
+  list-style: none;
+}
+
+:where(.text-block, .desc_container) [class$="-item"]:has(> [class$="-dot"]),
+.oc-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+:where(.text-block, .desc_container) [class$="-dot"],
+.oc-dot {
+  display: block;
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  min-width: 10px;
+  border-radius: 50%;
+  background: var(--oc-grad-ci);
+  margin-top: 7px;
+}
+
 /* ── §H2-NORMALIZE — single source of truth for product desc h2 (2026-05-03) ──
    Apply 1.25em uniformly across all 564 product descriptions. Wins over any
    inline non-!important font-size. Inline !important must be stripped (see
