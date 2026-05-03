@@ -301,7 +301,7 @@
    ============================================================ */
 
 /* ── base ── */
-.oc-article { font-size:var(--fs-md); line-height:1.8; color:#374151; }.oc-article h2 { font-size:22px!important; font-weight:800!important; color:#1e293b!important; margin:32px 0 12px!important; line-height:1.3!important; }.oc-article p  { margin:0 0 14px!important; }.oc-article strong { font-weight:700; color:#1e293b; }.oc-article a  { color:#17a9bb; text-decoration:underline; }.oc-article img { border-radius:12px; margin:24px 0; max-width:100%; display:block; }/* ── section label + lead ── */
+.oc-article { font-size:var(--fs-md); line-height:1.8; color:#374151; }.text-block .oc-article h2 { font-size:22px!important; font-weight:800!important; color:#1e293b!important; margin:32px 0 12px!important; line-height:1.3!important; }.oc-article p  { margin:0 0 14px!important; }.oc-article strong { font-weight:700; color:#1e293b; }.oc-article a  { color:#17a9bb; text-decoration:underline; }.oc-article img { border-radius:12px; margin:24px 0; max-width:100%; display:block; }/* ── section label + lead ── */
 .oc-section { padding:40px 0; border-top:1px solid #e2e8f0; }.oc-section:first-child { border-top:none; }.section-label { display:inline-block!important; font-size:var(--fs-xs)!important; font-weight:700!important; letter-spacing:2px!important; text-transform:uppercase!important; color:#17a9bb!important; margin-bottom:8px!important; }.lead { color:#64748b!important; font-size:var(--fs-base)!important; margin-bottom:28px!important; line-height:1.85!important; }/* ── tier cards ── */
 .oc-tier { border-radius:16px; border:2px solid transparent; margin-bottom:20px; overflow:hidden; }.oc-tier--teal   { border-color:#99f6e4; }.oc-tier--indigo { border-color:#c7d2fe; }.oc-tier--burg   { border-color:#f9a8d4; }.oc-tier__head { display:flex!important; align-items:center!important; gap:14px!important; padding:18px 22px!important; }.oc-tier--teal   .oc-tier__head { background:#f0fdfa!important; }.oc-tier--indigo .oc-tier__head { background:#eef2ff!important; }.oc-tier--burg   .oc-tier__head { background:#fdf2f8!important; }.oc-tier__icon { width:46px!important; height:46px!important; border-radius:12px!important; display:flex!important; align-items:center!important; justify-content:center!important; flex-shrink:0!important; }.oc-tier--teal   .oc-tier__icon { background:#ccfbf1!important; }.oc-tier--indigo .oc-tier__icon { background:#e0e7ff!important; }.oc-tier--burg   .oc-tier__icon { background:#fce7f3!important; }.oc-tier__badge { font-size:var(--fs-2xs)!important; font-weight:700!important; letter-spacing:1.5px!important; text-transform:uppercase!important; margin-bottom:3px!important; }.oc-tier--teal   .oc-tier__badge { color:#0d9488!important; }.oc-tier--indigo .oc-tier__badge { color:#4f46e5!important; }.oc-tier--burg   .oc-tier__badge { color:#9d174d!important; }.oc-tier__title { font-size:var(--fs-lg)!important; font-weight:800!important; color:#1e293b!important; line-height:1.2!important; }.oc-tier__body  { background:#fff!important; padding:18px 22px!important; }.oc-tier__desc  { font-size:var(--fs-base)!important; color:#374151!important; line-height:1.85!important; margin-bottom:16px!important; }/* ── dim mini-grid ── */
 .oc-dim { display:grid!important; grid-template-columns:repeat(auto-fit,minmax(120px,1fr))!important; gap:1px!important; background:#e2e8f0!important; border:1px solid #e2e8f0!important; border-radius:10px!important; overflow:hidden!important; margin-bottom:16px!important; }.oc-dim__cell { background:#f8fafc!important; padding:11px 13px!important; }.oc-dim__cell:first-child { background:#fff!important; }.oc-dim__label { font-size:var(--fs-2xs)!important; font-weight:700!important; letter-spacing:1px!important; text-transform:uppercase!important; color:#64748b!important; margin-bottom:4px!important; }.oc-dim__val   { font-size:var(--fs-sm)!important; font-weight:600!important; line-height:1.5!important; }.oc-dim__val--pass { color:#0d9488!important; }.oc-dim__val--warn { color:#4f46e5!important; }.oc-dim__val--stop { color:#9d174d!important; }/* ── tip box ── */
@@ -593,6 +593,16 @@
   justify-content: center;
 }/* ── DNA Spacing — suffix-based, no parent qualifier needed ── */
 /* covers ALL namespace variants (psc-, flr-, dir-, sp-, etc.)  */
+
+/* ── §H2-NORMALIZE — single source of truth for product desc h2 (2026-05-03) ──
+   Apply 1.25em uniformly across all 564 product descriptions. Wins over any
+   inline non-!important font-size. Inline !important must be stripped (see
+   batch script). Blog articles (.text-block .oc-article h2) keep 22px via
+   higher-specificity rule above. ── */
+.text-block h2,
+.desc_container h2 {
+  font-size: 1.25em !important;
+}
 
 /* ── Suppress Horizon margin-block on h2 inside DNA namespace containers ──
    Horizon's .text-block h2 adds margin-block which conflicts with inline styles.
