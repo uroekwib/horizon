@@ -1392,6 +1392,85 @@
 }
 
 
+
+/* ─── §14b  COMPARE PANEL (.xx-cp) — same body shape as -box, separate semantic ───
+   .xx-cp = "compare panel" — wraps head (colored) + body (white) for A/B comparison
+   Fallback gives baseline white card + margin so panels don't stick together.
+   Per-product <style> overrides head/body coloring naturally. ──────────────────── */
+
+:where(.text-block, .desc_container) [class$="-cp"] {
+  background: #fff;
+  border: 1px solid var(--oc-ink-15);
+  border-radius: var(--oc-radius);
+  overflow: hidden;
+  box-shadow: var(--oc-shadow-sm);
+  margin-bottom: 14px;
+}
+
+:where(.text-block, .desc_container) [class$="-cp"]:last-child {
+  margin-bottom: 0;
+}
+
+:where([class$="-grid"], [class$="-row"], [class$="-hero"], [class*="oc-grid"]) > [class$="-cp"] {
+  margin-bottom: 0;
+}
+
+/* ─── §14c  OPTION CARD (.xx-opt) — same shape as -box, used for variant/option cards ─── */
+
+:where(.text-block, .desc_container) [class$="-opt"] {
+  background: #fff;
+  border: 1px solid var(--oc-ink-15);
+  border-radius: var(--oc-radius);
+  padding: 14px;
+  box-shadow: var(--oc-shadow-sm);
+  margin-bottom: 12px;
+}
+
+:where(.text-block, .desc_container) [class$="-opt"]:last-child {
+  margin-bottom: 0;
+}
+
+/* ─── §14d  SMART GRID BALANCING — auto-pick rows that divide evenly ───
+   When a [class$="-grid"] has N children, override grid-template-columns
+   to a count that divides evenly so we never end with orphan cells.
+   Specificity boost via `.text-block` ancestor (0,2,2) wins over
+   typical product `.xx-grid` rule (0,1,0). 
+   Skips hero/sys grids by checking that children count > 3. ────────────────── */
+
+/* 4 children → 2 cols (2×2) */
+.text-block [class$="-grid"]:has(> :nth-child(4):last-child),
+.desc_container [class$="-grid"]:has(> :nth-child(4):last-child) {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* 6 children → 3 cols (2 rows of 3) — fixes the "4-col + 2 leftover" problem */
+.text-block [class$="-grid"]:has(> :nth-child(6):last-child),
+.desc_container [class$="-grid"]:has(> :nth-child(6):last-child) {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* 8 children → 4 cols (2 rows of 4) */
+.text-block [class$="-grid"]:has(> :nth-child(8):last-child),
+.desc_container [class$="-grid"]:has(> :nth-child(8):last-child) {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+/* 9 children → 3 cols (3 rows of 3) */
+.text-block [class$="-grid"]:has(> :nth-child(9):last-child),
+.desc_container [class$="-grid"]:has(> :nth-child(9):last-child) {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* Mobile: all forced to 1 col on narrow screens */
+@media (max-width: 600px) {
+  .text-block [class$="-grid"]:has(> :nth-child(4):last-child),
+  .text-block [class$="-grid"]:has(> :nth-child(6):last-child),
+  .text-block [class$="-grid"]:has(> :nth-child(8):last-child),
+  .text-block [class$="-grid"]:has(> :nth-child(9):last-child) {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    §15  CHIPS / TAGS / KICKER / BARS
    .oc-chip, .oc-tag, .oc-tag-row, .oc-kicker, .oc-bar*, .oc-pill*, [-kicker] fallback
