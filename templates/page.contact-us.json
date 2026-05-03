@@ -144,6 +144,7 @@
               "type": "image",
               "name": "t:names.image",
               "settings": {
+                "eager_load": false,
                 "image": "shopify://shop_images/Line-QR-Code-Octopus.jpg",
                 "link": "",
                 "image_ratio": "adapt",
@@ -258,6 +259,7 @@
               "type": "image",
               "name": "t:names.image",
               "settings": {
+                "eager_load": true,
                 "image": "shopify://shop_images/18_3ef1b714-b8d3-4db9-92e3-4213f4455056.jpg",
                 "link": "",
                 "image_ratio": "adapt",
@@ -348,6 +350,7 @@
               "type": "image",
               "name": "t:names.image",
               "settings": {
+                "eager_load": false,
                 "image": "shopify://shop_images/BTS_4_180_1.jpg",
                 "link": "",
                 "image_ratio": "adapt",
@@ -1024,6 +1027,7 @@
               "type": "image",
               "name": "t:names.image",
               "settings": {
+                "eager_load": false,
                 "image": "shopify://shop_images/14771108_website_57_2683b6b7-50f6-4329-9150-2e7cb2804704.png",
                 "link": "",
                 "image_ratio": "adapt",
