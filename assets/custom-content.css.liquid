@@ -669,6 +669,188 @@
   margin-top: 5px;
 }
 
+/* ── §DNA-MOVED-FROM-GLOBAL — relocated to content for proper scoping (2026-05-03) ──
+   These DNA component rules previously lived in custom-global.css.liquid but
+   are only used inside product/article descriptions. Moved here to reduce
+   CSS bloat on non-content pages (home, collection, cart, etc.). ── */
+
+.oc-faq-answer {
+  color: var(--oc-ink-70);
+  font-size: var(--font-paragraph--size);
+  line-height: 1.75;
+  padding-bottom: 16px;
+}
+.oc-step-row {
+  display: flex; flex-wrap: wrap; gap: 0;
+  align-items: flex-start; justify-content: center;
+}
+.oc-step-item {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 8px; flex: 1; min-width: 80px; max-width: 130px;
+}
+.oc-step-bubble { position: relative; width: 64px; height: 64px; }
+.oc-step-num {
+  position: absolute; top: -10px; left: -10px;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--oc-grad-ci); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: var(--fs-2xs); font-weight: 800; z-index: 1;
+  box-shadow: 0 2px 6px rgba(20, 201, 223, .30);
+}
+.oc-step-icon {
+  width: 64px; height: 64px; border-radius: 14px;
+  background: #f3f4f6; border: 1.5px solid #e5e7eb;
+  display: flex; align-items: center; justify-content: center;
+}
+.oc-step-icon img { width: 68%; height: 68%; object-fit: contain; }
+.oc-step-label {
+  font-size: var(--fs-sm); font-weight: 600;
+  color: var(--oc-ink); text-align: center; line-height: 1.4;
+}
+.oc-step-arrow {
+  flex-shrink: 0; display: flex; align-items: center;
+  padding-bottom: 28px; color: var(--oc-cyan);
+  font-size: 16px;
+}
+.oc-article { font-size:var(--fs-md); line-height:1.8; color:#374151; }
+.oc-article h2 { font-size:22px!important; font-weight:800!important; color:#1e293b!important; margin:32px 0 12px!important; line-height:1.3!important; }
+.oc-tier { border-radius:16px; border:2px solid transparent; margin-bottom:20px; overflow:hidden; }
+.oc-dim { display:grid!important; grid-template-columns:repeat(auto-fit,minmax(120px,1fr))!important; gap:1px!important; background:#e2e8f0!important; border:1px solid #e2e8f0!important; border-radius:10px!important; overflow:hidden!important; margin-bottom:16px!important; }
+.oc-tip { display:flex!important; gap:10px!important; align-items:flex-start!important; border-radius:9px!important; padding:11px 14px!important; margin-bottom:16px!important; font-size:var(--fs-base)!important; line-height:1.75!important; }
+.oc-tag-row { display:flex!important; flex-wrap:wrap!important; gap:6px!important; }
+.oc-feas-grid { display:grid!important; grid-template-columns:repeat(auto-fit,minmax(160px,1fr))!important; gap:16px!important; margin:20px 0!important; }
+.oc-article-cta { background:linear-gradient(135deg,#0f172a,#1e293b)!important; border-radius:16px!important; padding:32px 28px!important; text-align:center!important; margin:36px 0!important; }
+.oc-tier__head,.oc-tier__body { padding-left:16px!important; padding-right:16px!important; }
+.oc-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 22px;
+}
+.oc-stat-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0 0 22px;
+}
+.oc-grid3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin: 12px 0 18px;
+}
+.oc-faq-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 14px 0 0;
+}
+.oc-cta {
+  background: linear-gradient(135deg, #eaf7fa 0%, #d5eef3 100%);
+  border: 1px solid #c5e3ea;
+  border-radius: var(--oc-radius-lg);
+  padding: 28px 24px;
+  text-align: center;
+  margin: 28px 0 0;
+}
+.oc-bar-wrap {
+  display: flex; align-items: stretch; gap: 12px;
+  margin-top: 22px;
+  margin-bottom: 14px;
+}
+.oc-cta [class$="-btns"],
+.oc-cta [class$="-btn-row"],
+.oc-cta [class*="-btns"],
+.oc-cta-btns {
+  justify-content: center;
+}
+
+/* ── §STAT-NORMALIZE — .oc-stat-* aliases + namespace fallback (2026-05-03) ──
+   Solves spelling chaos:
+   • .oc-stat-lbl / .oc-stat-l   = aliases of .oc-stat-label (11+3 broken)
+   • .oc-stat-n                  = alias of .oc-stat-num (3 broken)
+   • .oc-stat-desc / .oc-stat-unit = new descriptor / unit utilities
+   • [class$="-stat-num"] etc.   = namespace fallback for .xx-stat-num, .xx-kpi-n etc.
+
+   Per-product <style> rules win via source order on equal specificity.
+   Container .xx-stat / .xx-kpi NOT in fallback — too divergent (grid/flex/card). ── */
+
+/* === Aliases of canonical .oc-stat-label === */
+.oc-stat-label,
+.oc-stat-lbl,
+.oc-stat-l {
+  display: block;
+  font-size: var(--fs-2xs);
+  font-weight: 600;
+  opacity: .85;
+  margin-top: 4px;
+  line-height: 1.3;
+}
+
+/* === Alias of canonical .oc-stat-num === */
+.oc-stat-num,
+.oc-stat-n {
+  display: block;
+  font-size: var(--fs-lg);
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--oc-cyan);
+}
+
+/* === New: descriptor (paragraph below stat) === */
+.oc-stat-desc {
+  display: block;
+  font-size: var(--fs-xs);
+  color: var(--oc-ink-70);
+  line-height: 1.5;
+  margin-top: 2px;
+}
+
+/* === New: unit (small suffix beside number) === */
+.oc-stat-unit {
+  font-size: 0.6em;
+  font-weight: 600;
+  color: var(--oc-ink-70);
+  margin-left: 2px;
+}
+
+/* === Namespace fallback — number === */
+:where(.text-block, .desc_container) [class$="-stat-num"],
+:where(.text-block, .desc_container) [class$="-stat-n"],
+:where(.text-block, .desc_container) [class$="-kpi-num"],
+:where(.text-block, .desc_container) [class$="-kpi-n"] {
+  display: block;
+  font-size: var(--fs-lg);
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--oc-cyan);
+}
+
+/* === Namespace fallback — label === */
+:where(.text-block, .desc_container) [class$="-stat-label"],
+:where(.text-block, .desc_container) [class$="-stat-lbl"],
+:where(.text-block, .desc_container) [class$="-stat-l"],
+:where(.text-block, .desc_container) [class$="-kpi-label"],
+:where(.text-block, .desc_container) [class$="-kpi-lbl"] {
+  display: block;
+  font-size: var(--fs-2xs);
+  font-weight: 600;
+  opacity: .85;
+  margin-top: 4px;
+  line-height: 1.3;
+}
+
+/* === Namespace fallback — kicker (eyebrow above section title) === */
+:where(.text-block, .desc_container) [class$="-kicker"] {
+  font-size: var(--fs-sm);
+  color: var(--oc-cyan);
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+  display: inline-block;
+}
+
 /* ── §H2-NORMALIZE — single source of truth for product desc h2 (2026-05-03) ──
    Apply 1.25em uniformly across all 564 product descriptions. Wins over any
    inline non-!important font-size. Inline !important must be stripped (see
