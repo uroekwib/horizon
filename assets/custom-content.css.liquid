@@ -874,13 +874,16 @@
   text-align: center;
 }
 
-/* ── §FEAT-CARD — numbered feature/step card (was .au-box, .zh-box, etc.) ──
-   White card with optional icon + title + body. NOT a stat tile.
-   Distinct from .oc-feat-strip (compact horizontal feat strip).
-   Note: [class$="-box"] NOT in fallback (too ambiguous — used for spec wraps,
-   QC notes, generic boxes). Use .oc-feat-card explicitly. ── */
+/* ── §FEAT-CARD — white content card (was .au-box, .zh-box, .oc-box, etc.) ──
+   White card with border + padding + soft shadow. Generic content container.
+   Distinct from .oc-feat-strip (compact horizontal strip with small icons).
+   Fallback covers all .xx-box namespace variants found across products
+   (.au-box, .zh-box, .oc-box, .tr-qc-box, .nb-spec-box …).
+   Scoped to .text-block / .desc_container to avoid touching theme classes
+   like .lightbox. Per-product <style> overrides win via source order. ── */
 
-.oc-feat-card {
+.oc-feat-card,
+:where(.text-block, .desc_container) [class$="-box"] {
   background: #fff;
   border: 1px solid var(--oc-ink-15);
   border-radius: var(--oc-radius);
