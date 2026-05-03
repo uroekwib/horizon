@@ -166,6 +166,7 @@
               "type": "image",
               "name": "t:names.image",
               "settings": {
+                "eager_load": true,
                 "image": "shopify://shop_images/Banner_Octopus_Team_3_db3fa09a-507c-47a0-9c9d-1b4ce625fc95.jpg",
                 "link": "",
                 "image_ratio": "adapt",
@@ -1269,6 +1270,7 @@
         "image_tmAxxJ": {
           "type": "image",
           "settings": {
+            "eager_load": false,
             "image": "shopify://shop_images/HP_LAtex_800_3524f733-a76f-4e16-bfc4-69b961185baa.jpg",
             "link": "",
             "image_ratio": "landscape",
@@ -1575,6 +1577,7 @@
         "image_xUjx7a": {
           "type": "image",
           "settings": {
+            "eager_load": false,
             "image": "shopify://shop_images/14771108_website_53_135c30d3-e25c-4afa-9fad-405a28c57df7.png",
             "link": "",
             "image_ratio": "landscape",
@@ -1634,6 +1637,7 @@
         "image_6rrnUB": {
           "type": "image",
           "settings": {
+            "eager_load": false,
             "image": "shopify://shop_images/14771108_website_54_99b4128d-255f-47eb-bffe-ccd5103f87dc.png",
             "link": "",
             "image_ratio": "landscape",
@@ -1939,6 +1943,7 @@
         "image_4ewrjm": {
           "type": "image",
           "settings": {
+            "eager_load": false,
             "image": "shopify://shop_images/mimaki_1ab5a44e-5c71-4649-9ed9-73c6918f13d0.png",
             "link": "",
             "image_ratio": "landscape",
@@ -1999,6 +2004,7 @@
         "image_tBQaB4": {
           "type": "image",
           "settings": {
+            "eager_load": false,
             "image": "shopify://shop_images/Epson_Surecolor_05453011-aecf-475a-9503-ef63e032df9a.jpg",
             "link": "",
             "image_ratio": "landscape",
@@ -2304,6 +2310,7 @@
         "image_UbqjpB": {
           "type": "image",
           "settings": {
+            "eager_load": false,
             "image": "shopify://shop_images/KonicaMinolta.png",
             "link": "",
             "image_ratio": "landscape",
@@ -2363,6 +2370,7 @@
         "image_YihzYV": {
           "type": "image",
           "settings": {
+            "eager_load": false,
             "image": "shopify://shop_images/wizard-x22_4bbd3c62-03bc-408a-99e0-35ed7863071b.png",
             "link": "",
             "image_ratio": "landscape",
@@ -2668,6 +2676,7 @@
         "image_EqPdRP": {
           "type": "image",
           "settings": {
+            "eager_load": false,
             "image": "shopify://shop_images/14771108_website_48_6f7da717-1b06-4220-80a1-03ac5e164fd6.png",
             "link": "",
             "image_ratio": "landscape",
@@ -2727,6 +2736,7 @@
         "image_mMwq7L": {
           "type": "image",
           "settings": {
+            "eager_load": false,
             "image": "shopify://shop_images/co2_laser_jowuey.jpg",
             "link": "",
             "image_ratio": "landscape",
@@ -3032,6 +3042,7 @@
         "image_xgBHM3": {
           "type": "image",
           "settings": {
+            "eager_load": false,
             "image": "shopify://shop_images/14771108_website_51_1916c867-e213-4061-9a02-30381c2c5734.png",
             "link": "",
             "image_ratio": "landscape",
