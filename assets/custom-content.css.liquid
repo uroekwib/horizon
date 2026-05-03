@@ -1150,9 +1150,15 @@ body.gm-menu-installed .gm-menu ul {
 /* ── DNA Spacing — suffix-based, no parent qualifier needed ── */
 /* covers ALL namespace variants (psc-, flr-, dir-, sp-, etc.)  */
 
-[class$="-stats"] { margin-bottom: 18px; }
-[class$="-feats"] { margin-bottom: 18px; }
-[class$="-kpi"]   { margin-bottom: 18px; }
+[class$="-stats"],
+[class$="-stat-row"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+[class$="-feats"] { display:flex; flex-wrap:wrap; gap:10px; margin-bottom: 18px; }
+[class$="-kpi"]   { display:flex; flex-wrap:wrap; gap:10px; margin-bottom: 18px; }
 [class$="-sh"]    { margin-top: 22px; margin-bottom: 12px; }
 [class$="-head"]  { margin-top: 22px; margin-bottom: 12px; }
 [class$="-hero"]  { margin-bottom: 22px; }
