@@ -37,7 +37,8 @@
    readable defaults if products forget to style. Per-product <style> still wins
    (source order on equal specificity). ─────────────────────────────────────────── */
 
-:where(.text-block, .desc_container) [class$="-tag"] {
+.text-block [class$="-tag"],
+.desc_container [class$="-tag"] {
   display: block;
   font-size: 0.86em;
   font-weight: 500;
@@ -541,8 +542,9 @@
   margin-top: 5px;
 }
 
-:where(.text-block, .desc_container) [class$="-list"] {
-  margin: 0 0 18px;
+.text-block [class$="-list"],
+.desc_container [class$="-list"] {
+  margin: 0 0 22px;
   padding: 0;
   list-style: none;
 }
@@ -1240,7 +1242,8 @@
 }
 
 .oc-feat-card,
-:where(.text-block, .desc_container) [class$="-box"] {
+.text-block [class$="-box"],
+.desc_container [class$="-box"] {
   background: #fff;
   border: 1px solid var(--oc-ink-15);
   border-radius: var(--oc-radius);
@@ -1277,7 +1280,8 @@
    Fallback gives baseline white card + margin so panels don't stick together.
    Per-product <style> overrides head/body coloring naturally. ──────────────────── */
 
-:where(.text-block, .desc_container) [class$="-cp"] {
+.text-block [class$="-cp"],
+.desc_container [class$="-cp"] {
   background: #fff;
   border: 1px solid var(--oc-ink-15);
   border-radius: var(--oc-radius);
@@ -1297,7 +1301,8 @@
    Used in 37 products as a 2-tier card. Container fallback adds the missing margin
    so cards don't stick together. Per-product <style> overrides body coloring. ── */
 
-:where(.text-block, .desc_container) [class$="-col"] {
+.text-block [class$="-col"],
+.desc_container [class$="-col"] {
   background: #fff;
   border: 1px solid var(--oc-ink-15);
   border-radius: var(--oc-radius);
@@ -1312,7 +1317,8 @@
 
 /* ─── §14c  OPTION CARD (.xx-opt) — same shape as -box, used for variant/option cards ─── */
 
-:where(.text-block, .desc_container) [class$="-opt"] {
+.text-block [class$="-opt"],
+.desc_container [class$="-opt"] {
   background: #fff;
   border: 1px solid var(--oc-ink-15);
   border-radius: var(--oc-radius);
