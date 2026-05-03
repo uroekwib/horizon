@@ -889,6 +889,22 @@
   border-radius: var(--oc-radius);
   padding: 14px;
   box-shadow: var(--oc-shadow-sm);
+  margin-bottom: 12px;
+}
+
+/* Last-child reset — no trailing space below the last card */
+.oc-feat-card:last-child,
+:where(.text-block, .desc_container) [class$="-box"]:last-child {
+  margin-bottom: 0;
+}
+
+/* Inside flex/grid containers (parent uses gap), suppress margin
+   so it doesn't compound with parent's gap. Detected via :has() — covers
+   .oc-grid2, .oc-grid3, .oc-feat-grid, .oc-feas-grid, and product-specific
+   grids with namespace -grid, -row, -hero suffixes. */
+:where([class$="-grid"], [class$="-row"], [class$="-hero"], [class$="-hero-main"], [class*="oc-grid"]) > .oc-feat-card,
+:where([class$="-grid"], [class$="-row"], [class$="-hero"], [class$="-hero-main"], [class*="oc-grid"]) > [class$="-box"] {
+  margin-bottom: 0;
 }
 
 .oc-feat-card-icon {
