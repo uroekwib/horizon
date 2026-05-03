@@ -390,12 +390,13 @@
   gap: 10px;
   margin: 0 0 22px;
 }.oc-stat {
-  flex: 1 1 100px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
   background: var(--oc-grad-ci);
   border-radius: var(--oc-radius);
-  padding: 16px 12px;
-  text-align: center;
-  color: #fff;
+  overflow: hidden;
+  margin: 0 0 22px;
   box-shadow: var(--oc-shadow-sm);
 }.oc-stat-num {
   display: block;
@@ -849,6 +850,53 @@
   text-transform: uppercase;
   margin-bottom: 2px;
   display: inline-block;
+}
+
+
+/* ── §STAT-TILE — canonical tile inside .oc-stat container (2026-05-03) ──
+   Solves naming chaos for the metric tile (1 number + label):
+   • .oc-stat-tile               = canonical
+   • [class$="-kpi"]             = namespace fallback (.of-kpi, .wg-kpi, .sr-kpi …)
+   • [class$="-ki"]              = namespace fallback (.ci-ki …)
+   • [class$="-tile"]            = namespace fallback (.xx-tile)
+
+   Children of .oc-stat get hairline gaps (gap:1px on parent) so the cyan
+   parent shows through as a thin divider line. ── */
+
+.oc-stat-tile,
+:where(.oc-stat) [class$="-kpi"],
+:where(.oc-stat) [class$="-ki"],
+:where(.oc-stat) [class$="-tile"] {
+  flex: 1;
+  min-width: 100px;
+  padding: 16px 12px;
+  background: #fff;
+  text-align: center;
+}
+
+/* ── §FEAT-CARD — numbered feature/step card (was .au-box, .zh-box, etc.) ──
+   White card with optional icon + title + body. NOT a stat tile.
+   Distinct from .oc-feat-strip (compact horizontal feat strip).
+   Note: [class$="-box"] NOT in fallback (too ambiguous — used for spec wraps,
+   QC notes, generic boxes). Use .oc-feat-card explicitly. ── */
+
+.oc-feat-card {
+  background: #fff;
+  border: 1px solid var(--oc-ink-15);
+  border-radius: var(--oc-radius);
+  padding: 14px;
+  box-shadow: var(--oc-shadow-sm);
+}
+
+.oc-feat-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--oc-radius-sm, 8px);
+  background: var(--oc-cyan-l, #e3f8fb);
+  margin-bottom: 10px;
 }
 
 /* ── §H2-NORMALIZE — single source of truth for product desc h2 (2026-05-03) ──
