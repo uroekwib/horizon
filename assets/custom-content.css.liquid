@@ -1107,3 +1107,43 @@ body.gm-menu-installed .gm-menu ul {
 .tiny    { font-size: 0.8rem; line-height: 1.6rem; font-weight: 700; }
 .prod_h2 { font-size: 1.4rem; line-height: 1.8rem; }
 .prod_h4 { font-size: 1.2rem; line-height: 1.6rem; }
+
+/* ── §DNA-SPACING  Component spacing — Option C fix (2026-05-03) ──────────
+   Glyph A: safe container suffixes (verified 95-100% container usage)
+   Glyph B: adjacent-sibling after section headings
+   ─────────────────────────────────────────────────────────────────────── */
+
+/* A — container bottom margin */
+.product-description [class$="-chip"],
+.product-description [class$="-chips"] {
+  margin-bottom: 16px;
+}
+.product-description [class$="-feat"],
+.product-description [class$="-step"],
+.product-description [class$="-grid"],
+.product-description [class$="-grid3"],
+.product-description [class$="-feat-row"],
+.product-description [class$="-step-row"] {
+  margin-bottom: 22px;
+}
+.product-description [class$="-bq"],
+.product-description [class$="-qt"],
+.product-description [class$="-table"],
+.product-description [class$="-spec"],
+.product-description [class$="-badge-row"] {
+  margin-bottom: 18px;
+}
+
+/* B — adjacent sibling after section headings gets top breathing room */
+.product-description [class$="-sh"] + *,
+.product-description .oc-bar-wrap + *,
+.product-description [class$="-kicker"] + * {
+  margin-top: 14px;
+}
+
+/* img inside product desc — never let it collapse to zero margin */
+.product-description img:not([class*="oc-icon"]) {
+  display: block;
+  margin-bottom: 14px;
+}
+
