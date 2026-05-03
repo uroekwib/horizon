@@ -25,7 +25,6 @@
    §16 Interactions & Micro-animations
    ============================================================ */
 
-
 /* ============================================================
    §1  FONT LOADING
 
@@ -85,7 +84,6 @@
   unicode-range: U+0E00-U+0E7F;
 }
 
-
 /* ============================================================
    §2  HORIZON VARIABLE OVERRIDES
    ============================================================ */
@@ -118,7 +116,7 @@
 }
 
 /* ── Fix: margin หลัง <style> tag ใน product description (Horizon base.css override) ── */
-.text-block > style + * { margin-block-start: 1rem; }
+
 .text-block > .oc-hd-bar,
 .text-block > .oc-feat-strip,oc-pill-row
 .text-block > .oc-step-row,
@@ -221,7 +219,6 @@
 
 }
 
-
 /* ============================================================
    §4  TYPOGRAPHY
    ============================================================ */
@@ -279,19 +276,10 @@ u {
   background: linear-gradient(108deg,rgba(223,213,254,.7) 0%,rgba(215,252,240,.7) 100%);
   text-decoration: none;          /* ตัด underline เส้นเดิมออก */
 }
-.desc_container span[style*="underline"] {
-  display: inline-block;
-  padding: 0px;
-  padding-left: 5px;
-  padding-right: 5px;
-  background: linear-gradient(108deg,rgba(223,213,254,.7) 0%,rgba(215,252,240,.7) 100%);
-  text-decoration: none !important;
-}
 
 /* ── Global letter-spacing ── */
 * { letter-spacing: 0.03em; }
 h1, h2, h3, h4 { letter-spacing: 0; }
-
 
 .field__label {
   font-size: var(--fs-xs);
@@ -304,7 +292,6 @@ h1, h2, h3, h4 { letter-spacing: 0; }
   font-family: var(--font-body--family) !important;
   font-weight: 700 !important;
 }
-
 
 /* ============================================================
    §5  KEYFRAME ANIMATIONS
@@ -378,7 +365,6 @@ h1, h2, h3, h4 { letter-spacing: 0; }
     transition-duration: 0.01ms !important;
   }
 }
-
 
 /* ============================================================
    §6  SECTION BACKGROUND COLOR SCHEMES
@@ -455,14 +441,19 @@ h1, h2, h3, h4 { letter-spacing: 0; }
 
 /* ── LINE CTA button ── */
 .oc-btn-line {
-  background: linear-gradient(135deg,#14c9df,#17a9bb);
-  color: #fff;
-  border: none;
-  border-radius: var(--oc-radius-pill);
-  padding: 10px 24px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: filter var(--oc-dur-fast), transform var(--oc-dur-fast);
+  background: linear-gradient(135deg,#14c9df,#17a9bb)!important;
+  color: #fff!important;
+  border: none!important;
+  border-radius: 100px!important;
+  padding: 12px 28px!important;
+  font-weight: 700!important;
+  cursor: pointer!important;
+  transition: filter var(--oc-dur-fast), transform var(--oc-dur-fast)!important;
+  display: inline-flex!important;
+  align-items: center!important;
+  gap: 8px!important;
+  font-size: var(--fs-base)!important;
+  text-decoration: none!important;
 }
 .oc-btn-line:hover {
   filter: brightness(1.1);
@@ -659,7 +650,6 @@ input[type="radio"]:checked + .variant-option__button-label {
   border: 0;
 }
 
-
 /* ============================================================
    §9  COMPONENTS
    ============================================================ */
@@ -734,7 +724,6 @@ input[type="checkbox"] {
   color: #707070;
 }
 
-
 /* ── §9b Announce Bar ── */
 .shopify-section-group-header-group .announcement-bar,
 .oc-announce-bar {
@@ -745,7 +734,6 @@ input[type="checkbox"] {
   border-bottom: 1px solid rgba(20, 201, 223, 0.15);
   min-height: var(--oc-announce-h);
 }
-
 
 /* ── §9c Breadcrumb ── */
 .oc-breadcrumb {
@@ -759,7 +747,6 @@ input[type="checkbox"] {
 .oc-breadcrumb a { color: var(--oc-ink-40); text-decoration: none; }
 .oc-breadcrumb a:hover { color: var(--oc-cyan-d); }
 .oc-breadcrumb-sep { color: var(--oc-ink-15); }
-
 
 /* ── §9e Sticky Contact Bar ── */
 .oc-sticky-contacts {
@@ -845,7 +832,6 @@ input[type="checkbox"] {
   }
 }
 
-
 /* ── §9f Background Blobs ── */
 .oc-bg-blob {
   position: fixed;
@@ -872,7 +858,6 @@ input[type="checkbox"] {
   background: radial-gradient(circle, rgba(20,201,223,0.16), transparent 70%);
   animation-delay: -10s;
 }
-
 
 /* ── §9g Product recommendations mobile fix ── */
 @media screen and (max-width: 749px) {
@@ -923,7 +908,6 @@ input[type="checkbox"] {
   }
 }
 
-
 /* ============================================================
    §9h COMPONENTS — Named Classes
    ============================================================ */
@@ -957,7 +941,6 @@ input[type="checkbox"] {
 @media (max-width: 480px) {
   .octo-black-ribbon { width: 64px; bottom: 0 !important; }*/
 }
-
 
 /* ============================================================
    §11 HORIZON NATIVE OVERRIDES
@@ -1015,7 +998,6 @@ input[type="checkbox"] {
      {{ 'oc-lang-toggle.css'   | asset_url | stylesheet_tag }}
 */
 
-
 /* ============================================================
    §12 PAGE-SPECIFIC
    ============================================================ */
@@ -1042,7 +1024,6 @@ input[type="checkbox"] {
 ::-webkit-scrollbar-thumb    { background: #bbb; border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: #aaa; }
 
-
 /* ============================================================
    §15 MEDIA / IMAGE FIXES
    ============================================================ */
@@ -1050,7 +1031,6 @@ input[type="checkbox"] {
 img    { max-width: 100%; height: auto; }
 video  { max-width: 100%; height: auto; }
 canvas { max-width: 100%; height: auto; }
-
 
 .button,
 .button--primary,
@@ -1180,16 +1160,7 @@ button.shopify-payment-button__button--unbranded {
 }
 
 /* ── §9d FAQ (GEO / rich snippet) ── */
-.oc-faq-item { border-bottom: 1px solid var(--oc-ink-15); }
-.oc-faq-question {
-  font-weight: 700;
-  color: var(--oc-ink);
-  padding: 16px 0;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+
 .oc-faq-answer {
   color: var(--oc-ink-70);
   font-size: var(--font-paragraph--size);
@@ -1310,11 +1281,7 @@ button.shopify-payment-button__button--unbranded {
 /* ── Heading Style B ── */
 .oc-hd-bar    { display: flex; flex-direction: column; gap: 8px; }
 .oc-kicker{font-size:var(--fs-sm);color:var(--oc-cyan,#17a9bb);font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:2px;line-height:1.2}
-.oc-bar-wrap  { display: flex; align-items: stretch; gap: 12px; }
-.oc-bar {
-  width: 3px; min-height: 32px; border-radius: 99px;
-  background: var(--oc-grad-ci); flex-shrink: 0; align-self: stretch;
-}
+
 .oc-keyword   { color: var(--oc-cyan); }
 
 /* ── Badge ── */
@@ -1412,7 +1379,6 @@ button.shopify-payment-button__button--unbranded {
   font-weight: 600;
 }
 
-
 /* ============================================================
    §16 INTERACTIONS & MICRO-ANIMATIONS
    ============================================================ */
@@ -1467,7 +1433,6 @@ button.shopify-payment-button__button--unbranded {
   animation: oc-badge-pulse 0.5s var(--oc-ease-back) forwards;
 }
 
-
 /* ── §16b Button Animations ── */
 .button {
   position: relative;
@@ -1516,7 +1481,6 @@ button.shopify-payment-button__button--unbranded:hover {
     var(--oc-shadow-glow-cyan) !important;
 }
 
-
 /* ── §16c Link & Nav Animations ── */
 .oc-link-slide {
   position: relative;
@@ -1556,7 +1520,6 @@ button.shopify-payment-button__button--unbranded:hover {
 .header__menu-item:hover,
 .menu__link:hover { color: var(--oc-cyan-d) !important; }
 
-
 /* ── §16d Input & Form Animations ── */
 .field__input,
 .select__select,
@@ -1589,7 +1552,6 @@ button.shopify-payment-button__button--unbranded:hover {
 .field__input:not(:placeholder-shown) ~ .field__label {
   color: var(--oc-cyan-d) !important;
 }
-
 
 /* ── §16e Variant Swatches & Buttons ── */
 .swatch-input__input + .swatch-input__label,
