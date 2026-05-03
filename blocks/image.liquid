@@ -58,19 +58,32 @@
         }}
       </div>
     {%- else -%}
-      {{
-        block_settings.image
-        | image_url: width: 1600, format: 'webp'
-        | image_tag:
-          width: block_settings.image.width,
-          widths: widths,
-          height: block_settings.image.height,
-          class: 'image-block__image border-style',
-          style: image_border_style,
-          sizes: sizes,
-          loading: 'lazy',
-          alt: block_settings.image.alt
-      }}
+      {% assign image_loading = 'lazy' %}
+{% assign image_preload = false %}
+{% assign image_fetchpriority = 'auto' %}
+
+{% if request.page_type == 'index' and block_settings.eager_load %}
+  {% assign image_loading = 'eager' %}
+  {% assign image_preload = true %}
+  {% assign image_fetchpriority = 'high' %}
+{% endif %}
+
+{{
+  block_settings.image
+  | image_url: width: 1600, format: 'webp'
+  | image_tag:
+    width: block_settings.image.width,
+    widths: widths,
+    height: block_settings.image.height,
+    class: 'image-block__image border-style',
+    style: image_border_style,
+    sizes: sizes,
+    loading: image_loading,
+    preload: image_preload,
+    fetchpriority: image_fetchpriority,
+    alt: block_settings.image.alt
+}}
+
     {%- endif -%}
   {%- else -%}
     <div class="placeholder-image border-style size-style" style="{{ image_border_style }}">
@@ -153,6 +166,15 @@
   "name": "t:names.image",
   "tag": null,
   "settings": [
+
+    {
+  "type": "checkbox",
+  "id": "eager_load",
+  "label": "Eager load image (LCP)",
+  "default": false,
+  "info": "Enable for the hero image above the fold to improve LCP score."
+},
+
     {
       "type": "image_picker",
       "id": "image",
