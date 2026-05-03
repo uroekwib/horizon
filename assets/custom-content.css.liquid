@@ -51,6 +51,23 @@
   margin-bottom: 0;
 }
 
+/* ─── §15b  TAG PILL VARIANT — when tag contains <svg> child ───
+   29 products use [class$="-tag"] as pill chip (e.g. .lb-tag, .pb-tag) with
+   <svg> icon + short label inline. Override the block-style baseline so SVG +
+   text stay on one line (no wrap inside pill). Text wrap can still happen at
+   parent level via flex-wrap. ─────────────────────────────────────────────── */
+
+.text-block [class$="-tag"]:has(> svg),
+.desc_container [class$="-tag"]:has(> svg) {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  margin-bottom: 0;
+  font-size: 0.82em;
+  line-height: 1;
+}
+
 .oc-box-gray,
 .grayBG,
 .home-paragraph {
