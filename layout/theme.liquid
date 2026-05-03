@@ -62,27 +62,24 @@
     <script src="https://analytics.ahrefs.com/analytics.js" data-key="+eGeh2TabSnAKPxKnL1ohw" async></script>
 
     {% if request.page_type == 'index' %}
-  {% for section in template.sections %}
-    {% if section.id == 'section_N7HmhE' %}
-      {% assign lcp_image = section.settings.image %}
-      {% if lcp_image %}
-        {% if request.page_type == 'index' %}
-  {% for section in template.sections %}
-    {% if section.id == 'section_N7HmhE' %}
-      {% assign lcp_image = section.settings.image %}
-      {% if lcp_image %}
-        {{ lcp_image | image_url: width: 900 | preload_tag: as: 'image' }}
-      {% endif %}
+      {% for section in template.sections %}
+        {% if section.id == 'section_N7HmhE' %}
+          {% assign lcp_image = section.settings.image %}
+          {% if lcp_image %}
+            {% if request.page_type == 'index' %}
+              {% for section in template.sections %}
+                {% if section.id == 'section_N7HmhE' %}
+                  {% assign lcp_image = section.settings.image %}
+                  {% if lcp_image %}
+                    {{ lcp_image | image_url: width: 900 | preload_tag: as: 'image' }}
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
     {% endif %}
-  {% endfor %}
-{% endif %}
-
-      {% endif %}
-    {% endif %}
-  {% endfor %}
-{% endif %}
-
-
   </head>
 
   <body class="page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }}">
