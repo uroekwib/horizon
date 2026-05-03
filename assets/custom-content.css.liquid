@@ -870,6 +870,20 @@
 }
 
 
+/* ── §STAT-NUM-CONTRAST — readable num on cyan tile (Pattern B) ──
+   When .oc-stat is itself a tile (cyan bg, color:#fff), the cyan-colored
+   .oc-stat-num would be cyan-on-cyan = invisible.
+   Cancel cyan and inherit white from parent in this case. ── */
+
+.oc-stat:not(:has(> div)) > .oc-stat-num,
+.oc-stat:not(:has(> div)) > .oc-stat-n,
+.oc-stat:not(:has(> div)) > [class$="-stat-num"],
+.oc-stat:not(:has(> div)) > [class$="-stat-n"],
+.oc-stat:not(:has(> div)) > [class$="-kpi-num"],
+.oc-stat:not(:has(> div)) > [class$="-kpi-n"] {
+  color: inherit;
+}
+
 /* ── §STAT-TILE — canonical tile inside .oc-stat container (2026-05-03) ──
    Solves naming chaos for the metric tile (1 number + label):
    • .oc-stat-tile               = canonical
