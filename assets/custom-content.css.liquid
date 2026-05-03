@@ -30,6 +30,26 @@
    H2 normalize, sibling spacing, .oc-keyword/.oc-highlight, .oc-rainbow-text, .oc-link-slide, .lead, .tiny, .prod_h2/h4
    ═══════════════════════════════════════════════════════════════════════════ */
 
+/* ─── §15a  TAG BASELINE (.xx-tag — subtitle/meta line under hero heading) ───
+   179 products use [class$="-tag"] as a subtitle line — small italic text in muted
+   color showing meta info ("อะคริลิค · สแตนเลส · LED · UV"). Most products override
+   color (cyan/ink-70/ink-40) and margin via their own <style>. This baseline gives
+   readable defaults if products forget to style. Per-product <style> still wins
+   (source order on equal specificity). ─────────────────────────────────────────── */
+
+:where(.text-block, .desc_container) [class$="-tag"] {
+  display: block;
+  font-size: 0.86em;
+  font-weight: 500;
+  color: var(--oc-ink-70, #374151);
+  line-height: 1.5;
+  margin: 0 0 16px;
+}
+
+:where(.text-block, .desc_container) [class$="-tag"]:last-child {
+  margin-bottom: 0;
+}
+
 .oc-box-gray,
 .grayBG,
 .home-paragraph {
@@ -1229,11 +1249,6 @@
   margin-bottom: 12px;
 }
 
-.oc-feat-card:last-child,
-:where(.text-block, .desc_container) [class$="-box"]:last-child {
-  margin-bottom: 0;
-}
-
 :where([class$="-grid"], [class$="-row"], [class$="-hero"], [class$="-hero-main"], [class*="oc-grid"]) > .oc-feat-card,
 :where([class$="-grid"], [class$="-row"], [class$="-hero"], [class$="-hero-main"], [class*="oc-grid"]) > [class$="-box"] {
   margin-bottom: 0;
@@ -1271,10 +1286,6 @@
   margin-bottom: 14px;
 }
 
-:where(.text-block, .desc_container) [class$="-cp"]:last-child {
-  margin-bottom: 0;
-}
-
 :where([class$="-grid"], [class$="-row"], [class$="-hero"], [class*="oc-grid"]) > [class$="-cp"] {
   margin-bottom: 0;
 }
@@ -1295,10 +1306,6 @@
   margin-bottom: 12px;
 }
 
-:where(.text-block, .desc_container) [class$="-col"]:last-child {
-  margin-bottom: 0;
-}
-
 :where([class$="-grid"], [class$="-row"], [class$="-hero"], [class*="oc-grid"]) > [class$="-col"] {
   margin-bottom: 0;
 }
@@ -1312,10 +1319,6 @@
   padding: 14px;
   box-shadow: var(--oc-shadow-sm);
   margin-bottom: 12px;
-}
-
-:where(.text-block, .desc_container) [class$="-opt"]:last-child {
-  margin-bottom: 0;
 }
 
 /* ─── §14d  SMART GRID BALANCING — auto-pick rows that divide evenly ───
