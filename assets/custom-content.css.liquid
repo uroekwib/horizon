@@ -390,6 +390,18 @@
   gap: 10px;
   margin: 0 0 22px;
 }.oc-stat {
+  /* Default: TILE — when .oc-stat is a leaf (children are <span>) */
+  flex: 1 1 100px;
+  background: var(--oc-grad-ci);
+  border-radius: var(--oc-radius);
+  padding: 16px 12px;
+  text-align: center;
+  color: #fff;
+  box-shadow: var(--oc-shadow-sm);
+}
+
+/* Container override — when .oc-stat HAS direct <div> children (= it's holding tiles) */
+.oc-stat:has(> div) {
   display: flex;
   flex-wrap: wrap;
   gap: 1px;
@@ -398,6 +410,11 @@
   overflow: hidden;
   margin: 0 0 22px;
   box-shadow: var(--oc-shadow-sm);
+  /* Unset tile specifics */
+  flex: initial;
+  padding: 0;
+  color: inherit;
+  text-align: initial;
 }.oc-stat-num {
   display: block;
   font-size: var(--fs-lg);
