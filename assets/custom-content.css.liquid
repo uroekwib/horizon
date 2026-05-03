@@ -372,29 +372,29 @@
 }
 
 /* Section header bar */
-.desc_container [class$="-sh"] {
+[class$="-sh"] {
   margin-top: 0;
   margin-bottom: 14px;
 }
 
 /* Block-level grid components */
-.desc_container [class$="-feat-grid"],
-.desc_container [class$="-stat-row"],
-.desc_container [class$="-steps"],
-.desc_container [class$="-grid3"],
-.desc_container [class$="-compare"] {
+[class$="-feat-grid"],
+[class$="-stat-row"],
+[class$="-steps"],
+[class$="-grid3"],
+[class$="-compare"] {
   margin-top: 14px;
   margin-bottom: 14px;
 }
 
 /* Chip row */
-.desc_container [class$="-chip-row"] {
+[class$="-chip-row"] {
   margin-top: 0;
   margin-bottom: 8px;
 }
 
 /* Table wrappers */
-.desc_container [class$="-table-wrap"] {
+[class$="-table-wrap"] {
   margin-top: 14px;
   margin-bottom: 0;
 }
@@ -403,8 +403,8 @@
 /* Table thead — reference: design-system section 07
    th: #f3f4f6 bg + dark text (ไม่ใช่ gradient ซึ่งตัดเป็นช่องๆ แต่ละ th)
    tr::after: rainbow gradient เส้น 2px ด้านล่าง thead (animated) */
-.desc_container [class$="-spec-table"] thead th,
-.desc_container [class$="-price-table"] thead th,
+[class$="-spec-table"] thead th,
+[class$="-price-table"] thead th,
 .divtable-spec thead th,
 .divtable.price thead th {
   background: #f3f4f6 !important;
@@ -412,14 +412,14 @@
   font-weight: 700 !important;
   font-size: .8em !important;
 }
-.desc_container [class$="-spec-table"] thead tr,
-.desc_container [class$="-price-table"] thead tr,
+[class$="-spec-table"] thead tr,
+[class$="-price-table"] thead tr,
 .divtable-spec thead tr,
 .divtable.price thead tr {
   position: relative;
 }
-.desc_container [class$="-spec-table"] thead tr::after,
-.desc_container [class$="-price-table"] thead tr::after,
+[class$="-spec-table"] thead tr::after,
+[class$="-price-table"] thead tr::after,
 .divtable-spec thead tr::after,
 .divtable.price thead tr::after {
   content: '';
@@ -433,33 +433,33 @@
 }
 
 /* Benefit list */
-.desc_container [class$="-list"] {
+[class$="-list"] {
   margin-top: 16px;
   margin-bottom: 0;
 }
 
 /* Quote / blockquote */
-.desc_container [class$="-quote"],
-.desc_container blockquote {
+[class$="-quote"],
+blockquote {
   margin-top: 14px;
   margin-bottom: 14px;
 }
 
 /* CTA block */
-.desc_container [class$="-cta"] {
+[class$="-cta"] {
   margin-top: 24px;
   margin-bottom: 24px;
 }
 
 /* FAQ block */
-.desc_container [class$="-faq"] {
+[class$="-faq"] {
   margin-top: 20px;
   margin-bottom: 0;
 }
 
 /* Intro / body paragraph */
-.desc_container [class$="-intro"],
-.desc_container [class$="-body-p"] {
+[class$="-intro"],
+[class$="-body-p"] {
   margin-top: 0;
   margin-bottom: 14px;
 }
@@ -1106,28 +1106,28 @@ body.gm-menu-installed .gm-menu ul {
    ─────────────────────────────────────────────────────────────────────── */
 
 /* A — container bottom margin */
-.desc_container [class$="-chip"],
-.desc_container [class$="-chips"] {
+[class$="-chip"],
+[class$="-chips"] {
   margin-bottom: 8px;
 }
-.desc_container [class$="-feat"],
-.desc_container [class$="-step"],
-.desc_container [class$="-grid"],
-.desc_container [class$="-grid3"],
-.desc_container [class$="-feat-row"],
-.desc_container [class$="-step-row"] {
+[class$="-feat"],
+[class$="-step"],
+[class$="-grid"],
+[class$="-grid3"],
+[class$="-feat-row"],
+[class$="-step-row"] {
   margin-bottom: 22px;
 }
-.desc_container [class$="-bq"],
-.desc_container [class$="-qt"],
-.desc_container [class$="-table"],
-.desc_container [class$="-spec"],
-.desc_container [class$="-badge-row"] {
+[class$="-bq"],
+[class$="-qt"],
+[class$="-table"],
+[class$="-spec"],
+[class$="-badge-row"] {
   margin-bottom: 18px;
 }
 
 /* B — adjacent sibling after section headings gets top breathing room */
-.desc_container [class$="-sh"] + *,
+[class$="-sh"] + *,
 .oc-bar-wrap {
   margin-top: 22px;
   margin-bottom: 14px;
@@ -1140,10 +1140,29 @@ body.gm-menu-installed .gm-menu ul {
 /* img inside product desc — never let it collapse to zero margin */
 
 /* ── CTA button rows — force center regardless of namespace ── */
-.desc_container .oc-cta [class$="-btns"],
-.desc_container .oc-cta [class$="-btn-row"],
-.desc_container .oc-cta [class*="-btns"],
-.desc_container .oc-cta-btns {
+.oc-cta [class$="-btns"],
+.oc-cta [class$="-btn-row"],
+.oc-cta [class*="-btns"],
+.oc-cta-btns {
   justify-content: center;
 }
+
+/* ── DNA Spacing — suffix-based, no parent qualifier needed ── */
+/* covers ALL namespace variants (psc-, flr-, dir-, sp-, etc.)  */
+
+[class$="-chips"] { margin-bottom: 14px; }
+[class$="-stats"] { margin-bottom: 18px; }
+[class$="-feats"] { margin-bottom: 18px; }
+[class$="-kpi"]   { margin-bottom: 18px; }
+[class$="-sh"]    { margin-top: 22px; margin-bottom: 12px; }
+[class$="-head"]  { margin-top: 22px; margin-bottom: 12px; }
+[class$="-hero"]  { margin-bottom: 22px; }
+[class$="-meta"]  { margin-bottom: 18px; }
+[class$="-strip"] { margin-bottom: 18px; }
+[class$="-tags"]  { margin-bottom: 12px; }
+[class$="-alert"] { margin-bottom: 16px; }
+[class$="-callout"]{ margin-bottom: 18px; }
+[class$="-split"] { margin-bottom: 18px; }
+[class$="-vs"]    { margin-bottom: 18px; }
+[class$="-types"] { margin-bottom: 18px; }
 
