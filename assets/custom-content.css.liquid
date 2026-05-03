@@ -25,7 +25,6 @@
 ═══════════════════════════════════════════════════════════════════════════════
 {%- endcomment -%}
 
-
 /* ═══════════════════════════════════════════════════════════════════════════
    §1  TYPOGRAPHY
    H2 normalize, sibling spacing, .oc-keyword/.oc-highlight, .oc-rainbow-text, .oc-link-slide, .lead, .tiny, .prod_h2/h4
@@ -96,34 +95,12 @@
   border-radius: 4px;
 }
 
-.oc-keyword   { color: var(--oc-cyan); }
-
-.oc-link-slide {
-  position: relative;
-  display: inline-block;
-  text-decoration: none;
-}
-
-.oc-link-slide::after {
-  content: '';
-  position: absolute;
-  left: 0; bottom: -2px;
-  width: 0; height: 2px;
-  background: var(--oc-grad-btn);
-  border-radius: 2px;
-  transition: width var(--oc-dur-base) var(--oc-ease-expo);
-}
-
-.oc-link-slide:hover::after { width: 100%; }
-
-
 /* ═══════════════════════════════════════════════════════════════════════════
    §2  RESPONSIVE
    @media breakpoints, @supports
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* (empty — reserved for future @media breakpoints) */
-
 
 /* ═══════════════════════════════════════════════════════════════════════════
    §3  ARTICLE & SECTION
@@ -150,35 +127,6 @@
 
 .oc-article-cta p { color:#94a3b8!important; font-size:var(--fs-base)!important; margin-bottom:20px!important; }
 
-.oc-section-white    { background: var(--oc-surface-white); }
-
-.oc-section-soft     { background: var(--oc-surface-soft); }
-
-.oc-section-tint     { background: var(--oc-surface-tint); }
-
-.oc-section-warm     { background: var(--brand-grad-warm); }
-
-.oc-section-canvas   {
-  background: linear-gradient(140deg,
-    rgba(241, 236, 255, 1) 22%,
-    rgba(235, 252, 255, 0.85) 45%,
-    rgba(236, 255, 254, 0.81) 74%,
-    rgba(242, 255, 250, 1) 100%
-  );
-}
-
-.oc-section-vivid    { background: linear-gradient(177deg, #c3f9ff 0%, #c78ff2 100%); }
-
-.oc-section-dark     { background: var(--oc-surface-dark); }
-
-.oc-section-dark-teal { background: var(--oc-surface-dark-teal); }
-
-.oc-section-rainbow  {
-  background: var(--oc-grad-btn-rev);
-  background-size: 200% 100%;
-  animation: oc-rainbow-move 8s ease infinite;
-}
-
 .oc-article h2 { font-size:22px!important; font-weight:800!important; color:#1e293b!important; margin:32px 0 12px!important; line-height:1.3!important; }
 
 .text-block > .oc-hd-bar,
@@ -187,46 +135,6 @@
 .text-block > .divtable-spec,
 .text-block > .divtable { margin-block-start: 1.2rem; margin-block-end: 1.2rem; }
 
-.oc-bg-blob {
-  position: fixed;
-  border-radius: 50%;
-  filter: blur(70px);
-  pointer-events: none;
-  z-index: 0;
-  animation: oc-orb-drift 14s ease-in-out infinite alternate;
-}
-
-.oc-bg-blob-1 {
-  width: 700px; height: 700px;
-  top: -150px; left: -120px;
-  background: radial-gradient(circle, rgba(195,249,255,0.5), transparent 70%);
-}
-
-.oc-bg-blob-2 {
-  width: 600px; height: 600px;
-  top: 25%; right: -180px;
-  background: radial-gradient(circle, rgba(199,143,242,0.2), transparent 70%);
-  animation-delay: -6s;
-}
-
-.oc-bg-blob-3 {
-  width: 500px; height: 500px;
-  bottom: 15%; left: 25%;
-  background: radial-gradient(circle, rgba(20,201,223,0.16), transparent 70%);
-  animation-delay: -10s;
-}
-
-.oc-bg-grad   { background: var(--oc-grad); }
-
-.oc-bg-grad-v { background: var(--brand-grad-1); }
-
-.oc-bg-glass {
-  background: var(--oc-glass);
-  backdrop-filter: var(--oc-blur);
-  -webkit-backdrop-filter: var(--oc-blur);
-  border: 1px solid var(--oc-glass-border-subtle);
-}
-
 .oc-hd::after {
   content: ''; position: absolute; bottom: 0; left: 0;
   width: 100%; height: 3px; border-radius: 2px;
@@ -234,7 +142,6 @@
 }
 
 .oc-hd-bar    { display: flex; flex-direction: column; gap: 8px; }
-
 
 /* ═══════════════════════════════════════════════════════════════════════════
    §4  GRIDS & DIVIDERS
@@ -253,14 +160,12 @@
   margin: 12px 0 18px;
 }
 
-.oc-grid2,
 .oc-compare {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 12px;
   margin: 12px 0 18px;
 }
-
 
 /* ═══════════════════════════════════════════════════════════════════════════
    §5  TABLES
@@ -579,7 +484,6 @@
   display: block;
 }
 
-
 /* ═══════════════════════════════════════════════════════════════════════════
    §6  LISTS / ITEMS / DOTS
    .oc-list, .oc-item, .oc-dot + namespace fallback, .rte li, .product-description ul/li
@@ -679,7 +583,6 @@
   font-weight: 600;
 }
 
-
 /* ═══════════════════════════════════════════════════════════════════════════
    §7  BLOCKQUOTE
    .oc-bq, blockquote inside .text-block
@@ -708,7 +611,6 @@
   line-height: 1.75;
   font-style: italic;
 }
-
 
 /* ═══════════════════════════════════════════════════════════════════════════
    §8  STAT / KPI
@@ -833,17 +735,13 @@
   color: inherit;
 }
 
-.oc-stat-tile,
-:where(.oc-stat) [class$="-kpi"],
-:where(.oc-stat) [class$="-ki"],
-:where(.oc-stat) [class$="-tile"] {
+:where(.oc-stat) [class$="-kpi"], :where(.oc-stat) [class$="-ki"], :where(.oc-stat) [class$="-tile"] {
   flex: 1;
   min-width: 100px;
   padding: 16px 12px;
   background: #fff;
   text-align: center;
 }
-
 
 /* ═══════════════════════════════════════════════════════════════════════════
    §9  DIM MINI-GRID
@@ -865,7 +763,6 @@
 .oc-dim__val--warn { color:#4f46e5!important; }
 
 .oc-dim__val--stop { color:#9d174d!important; }
-
 
 /* ═══════════════════════════════════════════════════════════════════════════
    §10  TIERS / FEAS / TIPS
@@ -969,7 +866,6 @@
 .flow-grid { display:grid!important; grid-template-columns:1fr 1fr!important; gap:22px!important; margin-top:28px!important; }
 
 .oc-tier__head,.oc-tier__body { padding-left:16px!important; padding-right:16px!important; }
-
 
 /* ═══════════════════════════════════════════════════════════════════════════
    §11  STEP CARDS
@@ -1152,7 +1048,6 @@
   font-size: 16px;
 }
 
-
 /* ═══════════════════════════════════════════════════════════════════════════
    §12  FAQ ACCORDION
    .oc-faq-wrap, -item, -btn, -question, -answer, -chev
@@ -1225,17 +1120,6 @@
   padding-bottom: 16px;
 }
 
-.oc-faq-question {
-  font-weight: 700;
-  color: var(--oc-ink);
-  padding: 16px 0;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-
 /* ═══════════════════════════════════════════════════════════════════════════
    §13  CTA BLOCKS
    .oc-cta, -body, -btns, -title, .oc-article-cta, .oc-btn-grad/-outline/-line
@@ -1248,21 +1132,6 @@
   padding: 28px 24px;
   text-align: center;
   margin: 28px 0 0;
-}
-
-.oc-cta-title {
-  font-size: var(--fs-lg);
-  font-weight: 800;
-  color: var(--oc-ink);
-  margin-bottom: 8px;
-  line-height: 1.3;
-}
-
-.oc-cta-body {
-  font-size: var(--fs-base);
-  color: var(--oc-ink-70);
-  line-height: 1.7;
-  margin-bottom: 18px;
 }
 
 .oc-cta-btns {
@@ -1337,7 +1206,6 @@
   transform: translateY(-1px);
 }
 
-
 /* ═══════════════════════════════════════════════════════════════════════════
    §14  FEAT CARDS / BOXES
    .oc-feat-card (+icon), .oc-feat-strip/item/icon/grid, .oc-card-grid, [-box] fallback
@@ -1370,39 +1238,6 @@
   margin-bottom: 0;
 }
 
-.oc-feat-card-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  border-radius: var(--oc-radius-sm, 8px);
-  background: var(--oc-cyan-l, #e3f8fb);
-  margin-bottom: 10px;
-}
-
-.oc-card-grid > * {
-  animation: oc-fade-up 0.4s var(--oc-ease-expo) both;
-}
-
-.oc-card-grid > *:nth-child(1) { animation-delay: 0.04s; }
-
-.oc-card-grid > *:nth-child(2) { animation-delay: 0.08s; }
-
-.oc-card-grid > *:nth-child(3) { animation-delay: 0.12s; }
-
-.oc-card-grid > *:nth-child(4) { animation-delay: 0.16s; }
-
-.oc-card-grid > *:nth-child(5) { animation-delay: 0.20s; }
-
-.oc-card-grid > *:nth-child(6) { animation-delay: 0.24s; }
-
-.oc-card-grid > *:nth-child(7) { animation-delay: 0.28s; }
-
-.oc-card-grid > *:nth-child(8) { animation-delay: 0.32s; }
-
-.oc-card-grid > *:nth-child(9) { animation-delay: 0.36s; }
-
 .oc-feat-strip {
   display: flex; flex-wrap: wrap; gap: 10px;
   padding: 16px 20px; background: #fff;
@@ -1420,8 +1255,6 @@
   display: grid; place-items: center;
   font-size: var(--fs-base); flex-shrink: 0;
 }
-
-
 
 /* ─── §14b  COMPARE PANEL (.xx-cp) — same body shape as -box, separate semantic ───
    .xx-cp = "compare panel" — wraps head (colored) + body (white) for A/B comparison
@@ -1624,7 +1457,6 @@
 
 .oc-pill-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 
-
 /* ═══════════════════════════════════════════════════════════════════════════
    §16  ICONS
    Blog tab icons (.how-to-icon, .cart-icon, .pin-active-icon …) — inline SVG data URIs
@@ -1731,7 +1563,6 @@
    background-image: url('data:image/svg+xml;utf8, <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="42.871" height="44.697" viewBox="0 0 42.871 44.697"><defs><style>.a{fill:url(%23a);}.b{fill:%2317a9bb;opacity:0.3;}</style><linearGradient id="a" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="%232bc1d1"/><stop offset="1" stop-color="%23ac57a0"/></linearGradient></defs><g transform="translate(0 9.18)"><g transform="translate(16.718 4.161)"><path class="a" d="M242.026,59.99a1.041,1.041,0,1,0,0,2.081,6.251,6.251,0,0,1,6.245,6.244,1.041,1.041,0,1,0,2.081,0A8.335,8.335,0,0,0,242.026,59.99Z" transform="translate(-240.985 -59.99)"/></g><g transform="translate(5.273)"><g transform="translate(0 0)"><path class="a" d="M85.814.291a12.48,12.48,0,0,0-6.653,20.492,8.107,8.107,0,0,1,2.051,5.312v2.081a3.127,3.127,0,0,0,2.157,2.968,5.19,5.19,0,0,0,10.254,0,3.127,3.127,0,0,0,2.157-2.969V26.094a8.215,8.215,0,0,1,2.112-5.381A12.489,12.489,0,0,0,85.814.291ZM88.5,33.448a3.184,3.184,0,0,1-2.944-2.157H91.44A3.184,3.184,0,0,1,88.5,33.448Zm5.2-5.272a1.042,1.042,0,0,1-1.041,1.041H84.334a1.042,1.042,0,0,1-1.041-1.041V27.135H93.7Zm2.628-8.834a10.435,10.435,0,0,0-2.571,5.712H83.236a10.284,10.284,0,0,0-2.52-5.655,10.406,10.406,0,1,1,15.611-.057Z" transform="translate(-76.01 -0.012)"/></g></g><g transform="translate(0 12.486)"><path class="a" d="M3.122,179.99H1.041a1.041,1.041,0,1,0,0,2.081H3.122a1.041,1.041,0,1,0,0-2.081Z" transform="translate(0 -179.99)"/></g><g transform="translate(0.305 5.506)"><path class="a" d="M7.641,81.16,6.17,79.688A1.041,1.041,0,0,0,4.7,81.16L6.17,82.632A1.041,1.041,0,1,0,7.641,81.16Z" transform="translate(-4.394 -79.383)"/></g><g transform="translate(0.305 17.993)"><path class="a" d="M7.641,259.688a1.041,1.041,0,0,0-1.472,0L4.7,261.16a1.041,1.041,0,0,0,1.472,1.472l1.472-1.472A1.041,1.041,0,0,0,7.641,259.688Z" transform="translate(-4.393 -259.384)"/></g><g transform="translate(31.356 12.486)"><path class="a" d="M455.122,179.99h-2.081a1.041,1.041,0,0,0,0,2.081h2.081a1.041,1.041,0,0,0,0-2.081Z" transform="translate(-452 -179.99)"/></g><g transform="translate(31.661 5.506)"><path class="a" d="M459.641,79.688a1.04,1.04,0,0,0-1.472,0L456.7,81.16a1.041,1.041,0,0,0,1.472,1.472l1.472-1.472A1.04,1.04,0,0,0,459.641,79.688Z" transform="translate(-456.394 -79.383)"/></g><g transform="translate(31.661 17.993)"><path class="a" d="M459.641,261.16l-1.472-1.472a1.041,1.041,0,0,0-1.472,1.472l1.472,1.472a1.041,1.041,0,0,0,1.472-1.472Z" transform="translate(-456.394 -259.384)"/></g></g><circle class="b" cx="15" cy="15" r="15" transform="translate(12.871)"/></svg>');
  
 }
-
 
 /* ═══════════════════════════════════════════════════════════════════════════
    §17  MISC
