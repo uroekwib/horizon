@@ -1445,6 +1445,30 @@
   margin-bottom: 0;
 }
 
+/* ─── §14e  COLUMN CARD (.xx-col) — vertical card with colored head + white body ───
+   .xx-col       = container (white card, border, overflow:hidden, shadow)
+   .xx-col-h     = colored head section (cyan/grad bg, white text)
+   .xx-col-body  = white body section
+   Used in 37 products as a 2-tier card. Container fallback adds the missing margin
+   so cards don't stick together. Per-product <style> overrides body coloring. ── */
+
+:where(.text-block, .desc_container) [class$="-col"] {
+  background: #fff;
+  border: 1px solid var(--oc-ink-15);
+  border-radius: var(--oc-radius);
+  overflow: hidden;
+  box-shadow: var(--oc-shadow-sm);
+  margin-bottom: 12px;
+}
+
+:where(.text-block, .desc_container) [class$="-col"]:last-child {
+  margin-bottom: 0;
+}
+
+:where([class$="-grid"], [class$="-row"], [class$="-hero"], [class*="oc-grid"]) > [class$="-col"] {
+  margin-bottom: 0;
+}
+
 /* ─── §14c  OPTION CARD (.xx-opt) — same shape as -box, used for variant/option cards ─── */
 
 :where(.text-block, .desc_container) [class$="-opt"] {
