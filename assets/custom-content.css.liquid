@@ -1139,4 +1139,11 @@ body.gm-menu-installed .gm-menu ul {
 
 /* img inside product desc — never let it collapse to zero margin */
 
+/* ── CTA button rows — force center regardless of namespace ── */
+.desc_container .oc-cta [class$="-btns"],
+.desc_container .oc-cta [class$="-btn-row"],
+.desc_container .oc-cta [class*="-btns"],
+.desc_container .oc-cta-btns {
+  justify-content: center;
+}
 
