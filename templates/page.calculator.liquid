@@ -1,0 +1,2112 @@
+{% comment %}
+  Octopus Calculator — Free online calculator for signage and printing.
+  URL: /pages/calculator
+  Page handle: calculator · template_suffix: calculator
+{% endcomment %}
+
+<style>
+.oc-calc-page {
+  background: #f3f7fa;
+  padding: 32px 16px 64px;
+  min-height: 60vh;
+}
+.oc-calc-page-inner {
+  max-width: 880px;
+  margin: 0 auto;
+}
+.oc-calc-page h1 {
+  font-size: clamp(24px, 4vw, 34px);
+  font-weight: 700;
+  text-align: center;
+  margin: 0 0 8px;
+  color: #0f172a;
+  line-height: 1.25;
+}
+.oc-calc-page .lead {
+  text-align: center;
+  color: #475569;
+  font-size: 15px;
+  max-width: 620px;
+  margin: 0 auto 28px;
+  line-height: 1.6;
+}
+.oc-calc-page .calc-mount {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+.oc-calc-page h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 36px 0 14px;
+  color: #0f172a;
+}
+.oc-calc-page h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 18px 0 10px;
+  color: #17a9bb;
+}
+.oc-calc-page p {
+  color: #334155;
+  line-height: 1.7;
+  margin: 0 0 12px;
+  font-size: 15px;
+}
+.oc-calc-page .uses {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  margin: 16px 0 8px;
+}
+.oc-calc-page .uses .item {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.oc-calc-page .uses .item-title {
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+.oc-calc-page .uses .item-desc {
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.55;
+}
+.oc-calc-page .examples {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin: 14px 0 8px;
+}
+.oc-calc-page .examples .ex {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px 18px;
+}
+.oc-calc-page .examples .ex h3 {
+  margin-top: 0;
+}
+.oc-calc-page .ex-table {
+  width: 100%;
+  font-size: 13px;
+  border-collapse: collapse;
+  margin: 8px 0 4px;
+}
+.oc-calc-page .ex-table th,
+.oc-calc-page .ex-table td {
+  text-align: left;
+  padding: 6px 8px;
+  border-bottom: 1px solid #f1f5f9;
+}
+.oc-calc-page .ex-table th {
+  color: #64748b;
+  font-weight: 500;
+  font-size: 12px;
+}
+.oc-calc-page .ex-table td {
+  color: #0f172a;
+  font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", monospace;
+}
+.oc-calc-page details {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0;
+  margin-bottom: 8px;
+}
+.oc-calc-page details summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 12px 16px;
+  font-weight: 600;
+  color: #0f172a;
+  font-size: 15px;
+}
+.oc-calc-page details summary::-webkit-details-marker { display: none; }
+.oc-calc-page details summary::before {
+  content: "+";
+  display: inline-block;
+  margin-right: 10px;
+  color: #17a9bb;
+  font-weight: 700;
+  width: 14px;
+}
+.oc-calc-page details[open] summary::before { content: "−"; }
+.oc-calc-page details[open] {
+  border-color: #17a9bb;
+}
+.oc-calc-page details > div {
+  padding: 0 16px 14px;
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.oc-calc-page .related-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  margin: 12px 0 0;
+}
+.oc-calc-page .related-links a {
+  display: block;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  text-decoration: none;
+  color: #0f172a;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.18s ease;
+}
+.oc-calc-page .related-links a:hover {
+  border-color: #17a9bb;
+  background: #eaf7fa;
+  color: #17a9bb;
+  transform: translateY(-2px);
+}
+.oc-calc-page .related-links a::after {
+  content: " →";
+  color: #94a3b8;
+}
+.oc-calc-page .related-links a:hover::after {
+  color: #17a9bb;
+}
+.oc-calc-page .credit {
+  text-align: center;
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+}
+@media (max-width: 640px) {
+  .oc-calc-page { padding: 24px 12px 48px; }
+  .oc-calc-page .uses,
+  .oc-calc-page .examples { gap: 10px; }
+}
+</style>
+
+<style>
+/* ===========================================================
+   Octopus Calculator — scoped component
+   Theme: data-theme="light" | "dark"
+   Customize accent: override --accent / --accent-2
+   =========================================================== */
+.octopus-calc {
+  --bg: #ffffff;
+  --surface: #f4f4f5;
+  --surface-2: #ffffff;
+  --text-1: #18181b;
+  --text-2: #71717a;
+  --text-3: #a1a1aa;
+  --accent: #17a9bb;
+  --accent-2: #14c9df;
+  --accent-bg: #eaf7fa;
+  --accent-bg-strong: #d5eef3;
+  --danger: #d43f5c;
+  --danger-bg: #ffe4ea;
+  --border: rgba(0, 0, 0, 0.08);
+  --border-2: rgba(0, 0, 0, 0.16);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --shadow: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06);
+  --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", "Noto Sans Thai", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", "Consolas", "Roboto Mono", monospace;
+
+  font-family: var(--font-sans);
+  color: var(--text-1);
+  background: var(--bg);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  width: 100%;
+  max-width: 380px;
+  box-sizing: border-box;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.octopus-calc[data-theme="dark"] {
+  --bg: #18181b;
+  --surface: #27272a;
+  --surface-2: #1f1f22;
+  --text-1: #fafafa;
+  --text-2: #a1a1aa;
+  --text-3: #52525b;
+  --accent: #14c9df;
+  --accent-2: #17a9bb;
+  --accent-bg: rgba(20, 201, 223, 0.12);
+  --accent-bg-strong: rgba(20, 201, 223, 0.22);
+  --danger: #f87171;
+  --danger-bg: rgba(212, 63, 92, 0.16);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-2: rgba(255, 255, 255, 0.16);
+  --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.4);
+}
+
+.octopus-calc *,
+.octopus-calc *::before,
+.octopus-calc *::after { box-sizing: border-box; }
+
+/* Toolbar (theme + lang) */
+.octopus-calc__toolbar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.octopus-calc .tool-btn {
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--border-2);
+  background: transparent;
+  color: var(--text-2);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: all 0.12s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.octopus-calc .tool-btn:hover {
+  background: var(--surface);
+  color: var(--text-1);
+  border-color: var(--text-3);
+}
+.octopus-calc .tool-btn--icon {
+  width: 28px;
+  padding: 0;
+}
+.octopus-calc #oc-dp {
+  font-family: var(--font-mono);
+  min-width: 64px;
+}
+.octopus-calc #oc-dp .dp-pre {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  opacity: 0.7;
+  margin-right: 5px;
+}
+.octopus-calc .tool-btn svg { display: block; }
+
+/* Mode toggle */
+.octopus-calc__modes {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.octopus-calc__modes .mode-btn {
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 10px;
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all 0.12s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.octopus-calc__modes .mode-btn:hover {
+  background: var(--surface);
+  color: var(--text-1);
+}
+.octopus-calc__modes .mode-btn.is-active {
+  background: var(--accent-bg);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Display */
+.octopus-calc .display {
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  padding: 18px 16px 14px;
+  margin-bottom: 12px;
+  min-height: 92px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.12s ease;
+  position: relative;
+}
+.octopus-calc .display:hover { background: var(--accent-bg); }
+.octopus-calc .display:active { transform: scale(0.995); }
+.octopus-calc .display.is-copied { background: var(--accent-bg-strong); }
+.octopus-calc .display__history {
+  font-size: 13px;
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  min-height: 16px;
+  text-align: right;
+  word-break: break-all;
+  line-height: 1.4;
+}
+.octopus-calc .display__current {
+  font-size: 32px;
+  font-weight: 500;
+  font-family: var(--font-mono);
+  text-align: right;
+  word-break: break-all;
+  line-height: 1.2;
+  margin-top: 4px;
+  color: var(--text-1);
+}
+
+/* Button grid */
+.octopus-calc .grid {
+  display: grid;
+  gap: 8px;
+}
+.octopus-calc .grid--simple { grid-template-columns: repeat(4, 1fr); }
+.octopus-calc .grid--adv { grid-template-columns: repeat(5, 1fr); }
+.octopus-calc .grid button {
+  height: 48px;
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 500;
+  padding: 0;
+  line-height: 1;
+  background: var(--surface-2);
+  color: var(--text-1);
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: transform 0.06s ease, background 0.12s ease, border-color 0.12s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.octopus-calc .grid button:hover {
+  background: var(--surface);
+  border-color: var(--text-3);
+}
+.octopus-calc .grid button:active { transform: scale(0.96); }
+.octopus-calc .grid .op {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+.octopus-calc .grid .op:hover { background: var(--accent-bg-strong); }
+.octopus-calc .grid .eq {
+  background: linear-gradient(135deg, var(--accent-2), var(--accent));
+  color: #ffffff;
+  border-color: transparent;
+}
+.octopus-calc .grid .eq:hover { filter: brightness(1.05); }
+.octopus-calc .grid .fn {
+  color: var(--text-2);
+  font-size: 13px;
+}
+.octopus-calc .grid .clr {
+  color: var(--danger);
+  background: var(--danger-bg);
+  border-color: var(--danger);
+}
+.octopus-calc .grid .span2 { grid-column: span 2; }
+
+/* Hint */
+.octopus-calc__hint {
+  font-size: 11px;
+  color: var(--text-3);
+  text-align: center;
+  margin-top: 12px;
+  font-family: var(--font-mono);
+  min-height: 14px;
+  line-height: 1.4;
+}
+
+/* Convert mode */
+.octopus-calc .cats {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.octopus-calc .cats button {
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 7px 6px;
+  flex: 1;
+  min-width: 56px;
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all 0.12s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.octopus-calc .cats button:hover {
+  background: var(--surface);
+  color: var(--text-1);
+}
+.octopus-calc .cats button.is-active {
+  background: var(--accent-bg);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.octopus-calc .conv-row {
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.octopus-calc .conv-row input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 26px;
+  font-weight: 500;
+  color: var(--text-1);
+  text-align: right;
+  padding: 0;
+  outline: none;
+  min-width: 0;
+  width: 100%;
+}
+.octopus-calc .conv-row input::-webkit-outer-spin-button,
+.octopus-calc .conv-row input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.octopus-calc .conv-row select {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 8px;
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text-1);
+  min-width: 110px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.octopus-calc .conv-swap {
+  display: flex;
+  justify-content: center;
+  margin: 8px 0;
+}
+.octopus-calc .conv-swap button {
+  height: 36px;
+  width: 36px;
+  font-size: 16px;
+  padding: 0;
+  line-height: 1;
+  border-radius: 50%;
+  background: var(--surface-2);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  cursor: pointer;
+  transition: transform 0.18s ease, background 0.12s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.octopus-calc .conv-swap button:hover {
+  background: var(--accent-bg);
+  transform: rotate(180deg);
+}
+
+.octopus-calc__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* Area / Shape mode */
+.octopus-calc .shape-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.octopus-calc .shape-tabs button {
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 7px 12px;
+  flex: 1;
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all 0.12s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.octopus-calc .shape-tabs button:hover {
+  background: var(--surface);
+  color: var(--text-1);
+}
+.octopus-calc .shape-tabs button.is-active {
+  background: var(--accent-bg);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.octopus-calc .shape-inputs {
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  margin-bottom: 12px;
+}
+.octopus-calc .shape-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+}
+.octopus-calc .shape-row + .shape-row {
+  border-top: 1px solid var(--border);
+}
+.octopus-calc .shape-row label {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+  width: 28px;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+.octopus-calc .shape-row input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--text-1);
+  text-align: right;
+  padding: 0;
+  outline: none;
+  min-width: 0;
+}
+.octopus-calc .shape-row select.shape-unit {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 6px;
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text-1);
+  width: 64px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.octopus-calc .shape-unit-spacer { width: 64px; flex-shrink: 0; }
+.octopus-calc .shape-results {
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  padding: 4px 16px;
+  margin-bottom: 12px;
+  min-height: 56px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.octopus-calc .shape-result {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 8px 0;
+}
+.octopus-calc .shape-result + .shape-result {
+  border-top: 1px solid var(--border);
+}
+.octopus-calc .shape-result-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.octopus-calc .shape-result-value {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-1);
+  text-align: right;
+}
+.octopus-calc .shape-result-value .unit {
+  color: var(--text-3);
+  font-size: 13px;
+  margin-left: 4px;
+}
+.octopus-calc .shape-result-value .alt {
+  display: block;
+  font-size: 12px;
+  color: var(--text-3);
+  margin-top: 2px;
+}
+.octopus-calc .shape-send {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, var(--accent-2), var(--accent));
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: filter 0.12s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.octopus-calc .shape-send:hover { filter: brightness(1.05); }
+.octopus-calc .shape-send:disabled {
+  background: var(--surface);
+  color: var(--text-3);
+  cursor: not-allowed;
+  filter: none;
+}
+
+/* Ratio / Rule-of-three mode */
+.octopus-calc .ratio-block {
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  padding: 12px 16px 14px;
+  margin-bottom: 8px;
+}
+.octopus-calc .ratio-block-label {
+  font-size: 10px;
+  color: var(--text-2);
+  font-weight: 600;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.octopus-calc .ratio-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.octopus-calc .ratio-row input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--text-1);
+  text-align: right;
+  outline: none;
+  min-width: 0;
+  width: 100%;
+  padding: 0;
+}
+.octopus-calc .ratio-row input.is-computed {
+  color: var(--accent);
+}
+.octopus-calc .ratio-row input::placeholder {
+  color: var(--text-3);
+  font-family: var(--font-sans);
+  font-weight: 400;
+}
+.octopus-calc .ratio-times {
+  font-family: var(--font-mono);
+  color: var(--text-3);
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.octopus-calc .ratio-info {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 4px 0 8px;
+}
+.octopus-calc .ratio-chip {
+  background: var(--accent-bg);
+  color: var(--accent);
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+}
+.octopus-calc .ratio-chip.is-empty {
+  background: transparent;
+  color: var(--text-3);
+  border-color: var(--border);
+}
+.octopus-calc .ratio-presets {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.octopus-calc .ratio-presets button {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 6px 10px;
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-2);
+  cursor: pointer;
+  flex: 1;
+  min-width: 50px;
+  transition: all 0.12s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.octopus-calc .ratio-presets button:hover {
+  background: var(--accent-bg);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.octopus-calc .ratio-clear {
+  display: flex;
+  justify-content: center;
+  margin-top: 6px;
+}
+.octopus-calc .ratio-clear button {
+  font-family: inherit;
+  font-size: 11px;
+  color: var(--text-2);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 12px;
+  text-decoration: underline;
+  -webkit-tap-highlight-color: transparent;
+}
+.octopus-calc .ratio-clear button:hover { color: var(--text-1); }
+</style>
+
+<div class="oc-calc-page">
+  <div class="oc-calc-page-inner">
+
+    <h1>เครื่องคิดเลข + แปลงหน่วย ออนไลน์ฟรี</h1>
+    <p class="lead">
+      สำหรับงานป้าย พิมพ์ และคำนวณสัดส่วน — รวมเครื่องคิดเลขพื้นฐาน วิทยาศาสตร์ แปลงหน่วย metric ↔ imperial
+      หน่วยไทย (ตร.วา · ไร่) อัตราแลกเปลี่ยนสด คำนวณสัดส่วนภาพ และพื้นที่จากรูปทรง โดย Octopus Media Solutions
+    </p>
+
+    <div class="calc-mount">
+<div class="octopus-calc" role="application" data-theme="light" id="oc-root">
+  <h2 class="octopus-calc__sr-only" data-i18n="appLabel">Octopus Calculator</h2>
+
+  <div class="octopus-calc__toolbar">
+    <button class="tool-btn" id="oc-dp" type="button" aria-label="Decimal places"><span class="dp-pre">Round</span>auto</button>
+    <button class="tool-btn" id="oc-lang" type="button" data-i18n-aria="langSwitch" aria-label="Switch language">EN</button>
+    <button class="tool-btn tool-btn--icon" id="oc-theme" type="button" data-i18n-aria="themeSwitch" aria-label="Toggle theme"></button>
+  </div>
+
+  <div class="octopus-calc__modes">
+    <button class="mode-btn is-active" data-mode="simple"><span data-i18n="modeSimple">Simple</span></button>
+    <button class="mode-btn" data-mode="adv"><span data-i18n="modeAdv">Advanced</span></button>
+    <button class="mode-btn" data-mode="conv"><span data-i18n="modeConv">Convert</span></button>
+    <button class="mode-btn" data-mode="ratio"><span data-i18n="modeRatio">Ratio</span></button>
+    <button class="mode-btn" data-mode="shape"><span data-i18n="modeShape">Area</span></button>
+  </div>
+
+  <div class="octopus-calc__body" id="oc-body">
+    <div class="display">
+      <div class="display__history" id="oc-hist">&nbsp;</div>
+      <div class="display__current" id="oc-cur">0</div>
+    </div>
+    <div class="grid grid--simple" id="oc-grid"></div>
+  </div>
+
+  <div class="octopus-calc__hint" id="oc-hint" data-i18n="hintCalc">
+    keys: 0–9 . + − × ÷ ( ) ^ ! · Enter = · Esc clear · ⌫ back
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ===== I18N =====
+  var I18N = {
+    en: {
+      appLabel: 'Octopus Calculator',
+      modeSimple: 'Simple',
+      modeAdv: 'Advanced',
+      modeConv: 'Convert',
+      modeShape: 'Area',
+      shapeRect: 'Rectangle',
+      shapeBox: 'Box',
+      shapeWidth: 'Width',
+      shapeLength: 'Length',
+      shapeHeight: 'Height',
+      shapeArea: 'Area',
+      shapePerimeter: 'Perimeter',
+      shapeSurface: 'Surface area (6 sides)',
+      shapeVolume: 'Volume',
+      shapeSendToCalc: 'Use this value →',
+      shapeEnterDims: 'Enter dimensions',
+      hintShape: 'Auto-computes as you type · result sends to calculator',
+      catLength: 'Length',
+      catArea: 'Area',
+      catWeight: 'Weight',
+      catVolume: 'Volume',
+      catTemp: 'Temp',
+      catMoney: 'Money',
+      modeRatio: 'Ratio',
+      ratioOriginal: 'Original',
+      ratioTarget: 'Target',
+      ratioPresets: 'Presets',
+      ratioClear: 'Clear all',
+      ratioHint: 'Fill any 3 fields · the 4th auto-fills',
+      abbrW: 'W',
+      abbrL: 'L',
+      abbrH: 'H',
+      placeWidth: 'Width',
+      placeHeight: 'Height',
+      hintCalc: 'keys: 0–9 . + − × ÷ ( ) ^ ! · Enter = · Esc clear · ⌫ back',
+      hintConv: 'Type either side · ⇅ to swap units',
+      hintTapCopy: 'tap result to copy',
+      copied: 'Copied!',
+      ratesAsOf: 'rates as of',
+      ratesLoading: 'loading rates…',
+      ratesError: 'rates unavailable — check connection',
+      langSwitch: 'Switch language',
+      themeSwitch: 'Toggle theme',
+      dpSwitch: 'Decimal places',
+      dpLabel: 'Round',
+      dpAuto: 'auto',
+      dpDecimals: 'decimals',
+      swapUnits: 'Swap units',
+      fromValue: 'From value',
+      fromUnit: 'From unit',
+      toValue: 'To value',
+      toUnit: 'To unit',
+      unit_t: 'ton (m)',
+      unit_ha: 'hectare',
+      unit_galUS: 'gal (US)',
+      unit_galUK: 'gal (UK)'
+    },
+    th: {
+      appLabel: 'เครื่องคิดเลข Octopus',
+      modeSimple: 'พื้นฐาน',
+      modeAdv: 'ขั้นสูง',
+      modeConv: 'แปลงหน่วย',
+      modeShape: 'พื้นที่',
+      shapeRect: 'สี่เหลี่ยม',
+      shapeBox: 'กล่อง',
+      shapeWidth: 'กว้าง',
+      shapeLength: 'ยาว',
+      shapeHeight: 'สูง',
+      shapeArea: 'พื้นที่',
+      shapePerimeter: 'เส้นรอบรูป',
+      shapeSurface: 'พื้นที่ผิว 6 ด้าน',
+      shapeVolume: 'ปริมาตร',
+      shapeSendToCalc: 'ใช้ค่านี้ →',
+      shapeEnterDims: 'ใส่ค่ากว้าง × ยาว',
+      hintShape: 'คำนวณอัตโนมัติขณะพิมพ์ · ส่งผลเข้าเครื่องคิดเลข',
+      catLength: 'ความยาว',
+      catArea: 'พื้นที่',
+      catWeight: 'น้ำหนัก',
+      catVolume: 'ปริมาตร',
+      catTemp: 'อุณหภูมิ',
+      catMoney: 'เงิน',
+      modeRatio: 'สัดส่วน',
+      ratioOriginal: 'ต้นฉบับ',
+      ratioTarget: 'ขนาดใหม่',
+      ratioPresets: 'พรีเซ็ต',
+      ratioClear: 'ล้างทั้งหมด',
+      ratioHint: 'ใส่ 3 ช่อง · ช่องที่เหลือคำนวณให้',
+      abbrW: 'ก',
+      abbrL: 'ย',
+      abbrH: 'ส',
+      placeWidth: 'กว้าง',
+      placeHeight: 'สูง',
+      hintCalc: 'คีย์: 0–9 . + − × ÷ ( ) ^ ! · Enter = · Esc ล้าง · ⌫ ลบ',
+      hintConv: 'พิมพ์ฝั่งไหนก็ได้ · ⇅ สลับหน่วย',
+      hintTapCopy: 'แตะผลลัพธ์เพื่อคัดลอก',
+      copied: 'คัดลอกแล้ว!',
+      ratesAsOf: 'เรทวันที่',
+      ratesLoading: 'กำลังโหลดเรท…',
+      ratesError: 'โหลดเรทไม่ได้ — เช็คเน็ต',
+      langSwitch: 'สลับภาษา',
+      themeSwitch: 'สลับธีม',
+      dpSwitch: 'ปัดเศษทศนิยม',
+      dpLabel: 'ปัดเศษ',
+      dpAuto: 'อัตโนมัติ',
+      dpDecimals: 'ตำแหน่ง',
+      swapUnits: 'สลับหน่วย',
+      fromValue: 'ค่าต้นทาง',
+      fromUnit: 'หน่วยต้นทาง',
+      toValue: 'ค่าปลายทาง',
+      toUnit: 'หน่วยปลายทาง',
+      unit_t: 'ตัน (ม.)',
+      unit_ha: 'เฮกตาร์',
+      unit_galUS: 'แกลลอน (US)',
+      unit_galUK: 'แกลลอน (UK)'
+    }
+  };
+
+  function t(key) {
+    return (I18N[state.lang] && I18N[state.lang][key]) || I18N.en[key] || key;
+  }
+
+  function applyI18n(scope) {
+    scope = scope || document;
+    var els = scope.querySelectorAll('[data-i18n]');
+    for (var i = 0; i < els.length; i++) {
+      els[i].textContent = t(els[i].getAttribute('data-i18n'));
+    }
+    var aEls = scope.querySelectorAll('[data-i18n-aria]');
+    for (var j = 0; j < aEls.length; j++) {
+      aEls[j].setAttribute('aria-label', t(aEls[j].getAttribute('data-i18n-aria')));
+    }
+    var pEls = scope.querySelectorAll('[data-i18n-placeholder]');
+    for (var k = 0; k < pEls.length; k++) {
+      pEls[k].setAttribute('placeholder', t(pEls[k].getAttribute('data-i18n-placeholder')));
+    }
+  }
+
+  // ===== Icons (button shows TARGET state) =====
+  var ICON_SUN = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>';
+  var ICON_MOON = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+
+  // ===== Decimal places cycle =====
+  var DP_STATES = ['auto', '0', '2', '4'];
+  function dpLabel(dp) { return dp === 'auto' ? 'AUTO' : dp + 'dp'; }
+
+  // ===== Button layouts =====
+  var SIMPLE_HTML =
+    '<button class="clr" data-k="clear">AC</button>' +
+    '<button class="fn" data-k="neg">±</button>' +
+    '<button class="fn" data-k="pct">%</button>' +
+    '<button class="op" data-k="/">÷</button>' +
+    '<button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button>' +
+    '<button class="op" data-k="*">×</button>' +
+    '<button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button>' +
+    '<button class="op" data-k="-">−</button>' +
+    '<button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button>' +
+    '<button class="op" data-k="+">+</button>' +
+    '<button class="span2" data-k="0">0</button>' +
+    '<button data-k=".">.</button>' +
+    '<button class="eq" data-k="eq">=</button>';
+
+  var ADV_HTML =
+    '<button class="fn" data-k="sin">sin</button><button class="fn" data-k="cos">cos</button><button class="fn" data-k="tan">tan</button><button class="fn" data-k="pi">π</button><button class="clr" data-k="clear">AC</button>' +
+    '<button class="fn" data-k="log">log</button><button class="fn" data-k="ln">ln</button><button class="fn" data-k="sqrt">√</button><button class="fn" data-k="ec">e</button><button class="clr" data-k="back">⌫</button>' +
+    '<button class="fn" data-k="sq">x²</button><button class="fn" data-k="pow">xʸ</button><button class="fn" data-k="fact">!</button><button class="fn" data-k="lp">(</button><button class="fn" data-k="rp">)</button>' +
+    '<button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button><button class="op" data-k="/">÷</button><button class="op" data-k="*">×</button>' +
+    '<button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button><button class="op" data-k="-">−</button><button class="op" data-k="+">+</button>' +
+    '<button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button><button class="fn" data-k="inv">1/x</button><button class="fn" data-k="neg">±</button>' +
+    '<button class="span2" data-k="0">0</button><button data-k=".">.</button><button class="fn" data-k="pct">%</button><button class="eq" data-k="eq">=</button>';
+
+  // ===== Unit definitions =====
+  // [key, defaultLabel, scale, offset?, i18nKey?]
+  var UNITS = {
+    length: {
+      u: [
+        ['mm', 'mm', 0.001], ['cm', 'cm', 0.01], ['m', 'm', 1], ['km', 'km', 1000],
+        ['in', 'in', 0.0254], ['ft', 'ft', 0.3048], ['yd', 'yd', 0.9144], ['mi', 'mi', 1609.344]
+      ], a: 'mm', b: 'in'
+    },
+    area: {
+      u: [
+        ['cm2', 'cm²', 0.0001], ['m2', 'm²', 1],
+        ['sqwa', 'ตร.วา', 4], ['rai', 'ไร่', 1600],
+        ['ha', 'hectare', 10000, 0, 'unit_ha'],
+        ['in2', 'in²', 0.00064516], ['ft2', 'ft²', 0.09290304], ['yd2', 'yd²', 0.83612736]
+      ], a: 'm2', b: 'ft2'
+    },
+    weight: {
+      u: [
+        ['g', 'g', 0.001], ['kg', 'kg', 1],
+        ['t', 'ton (m)', 1000, 0, 'unit_t'],
+        ['oz', 'oz', 0.0283495], ['lb', 'lb', 0.453592]
+      ], a: 'kg', b: 'lb'
+    },
+    volume: {
+      u: [
+        ['ml', 'ml', 0.001], ['L', 'L', 1], ['m3', 'm³', 1000],
+        ['floz', 'fl oz', 0.0295735],
+        ['galUS', 'gal (US)', 3.78541, 0, 'unit_galUS'],
+        ['galUK', 'gal (UK)', 4.54609, 0, 'unit_galUK']
+      ], a: 'L', b: 'galUS'
+    },
+    temp: {
+      u: [['C', '°C', 1, 0], ['F', '°F', 5 / 9, -160 / 9], ['K', 'K', 1, -273.15]],
+      a: 'C', b: 'F'
+    },
+    money: {
+      u: [
+        ['THB', '฿ THB', null], ['USD', '$ USD', null], ['EUR', '€ EUR', null],
+        ['GBP', '£ GBP', null], ['JPY', '¥ JPY', null], ['CNY', '¥ CNY', null],
+        ['KRW', '₩ KRW', null], ['SGD', 'S$ SGD', null], ['HKD', 'HK$ HKD', null],
+        ['MYR', 'RM MYR', null], ['AUD', 'A$ AUD', null], ['INR', '₹ INR', null]
+      ], a: 'THB', b: 'USD', isMoney: true
+    }
+  };
+
+  function findUnit(cat, key) {
+    var us = UNITS[cat].u;
+    for (var i = 0; i < us.length; i++) if (us[i][0] === key) return us[i];
+    return us[0];
+  }
+  function labelFor(unit) {
+    if (unit[4]) return t(unit[4]);
+    return unit[1];
+  }
+  function convert(cat, value, fromKey, toKey) {
+    if (cat === 'money') return convertMoney(value, fromKey, toKey);
+    var f = findUnit(cat, fromKey), tu = findUnit(cat, toKey);
+    var fOff = f[3] || 0, tOff = tu[3] || 0;
+    return ((value * f[2] + fOff) - tOff) / tu[2];
+  }
+  function convertMoney(value, fromKey, toKey) {
+    if (!moneyRates || !moneyRates.rates) return NaN;
+    var base = moneyRates.base, R = moneyRates.rates;
+    if (fromKey === toKey) return value;
+    // value -> base
+    var inBase = (fromKey === base) ? value : (R[fromKey] ? value / R[fromKey] : NaN);
+    if (isNaN(inBase)) return NaN;
+    // base -> toKey
+    if (toKey === base) return inBase;
+    return R[toKey] ? inBase * R[toKey] : NaN;
+  }
+  function fmtConv(n) {
+    if (!isFinite(n)) return '';
+    if (n === 0) return state.dp !== 'auto' ? (0).toFixed(parseInt(state.dp, 10)) : '0';
+    if (state.dp !== 'auto') return n.toFixed(parseInt(state.dp, 10));
+    var abs = Math.abs(n);
+    if (abs >= 1e9 || abs < 1e-6) return n.toExponential(4);
+    return parseFloat(n.toPrecision(6)).toString();
+  }
+
+  // ===== State =====
+  var state = {
+    expr: '', result: '0', hist: '', mode: 'simple', evald: false,
+    lang: 'en',
+    theme: 'light',
+    dp: 'auto'
+  };
+  var cv = { cat: 'length', ua: 'mm', ub: 'in', va: '1' };
+
+  // ===== FX rates (ExchangeRate-API open access — no key, daily updates) =====
+  var moneyRates = null;
+  var ratesLoading = false;
+  var RATES_TTL_MS = 6 * 60 * 60 * 1000; // refresh after 6 hours
+  var RATES_CACHE_KEY = 'oc-rates';
+  var RATES_API = 'https://open.er-api.com/v6/latest/USD';
+
+  function loadCachedRates() {
+    try {
+      var raw = localStorage.getItem(RATES_CACHE_KEY);
+      if (!raw) return null;
+      var parsed = JSON.parse(raw);
+      if (parsed && parsed.rates && parsed.base) return parsed;
+    } catch (e) {}
+    return null;
+  }
+  function ratesAreFresh(r) {
+    return r && r.ts && (Date.now() - r.ts) < RATES_TTL_MS;
+  }
+  function fetchRates() {
+    if (ratesLoading) return Promise.resolve(moneyRates);
+    ratesLoading = true;
+    return fetch(RATES_API)
+      .then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.json(); })
+      .then(function (data) {
+        if (data.result !== 'success' || !data.rates) throw new Error('bad response');
+        var date;
+        if (data.time_last_update_unix) {
+          date = new Date(data.time_last_update_unix * 1000).toISOString().slice(0, 10);
+        } else {
+          date = new Date().toISOString().slice(0, 10);
+        }
+        moneyRates = { base: data.base_code || 'USD', rates: data.rates, date: date, ts: Date.now() };
+        try { localStorage.setItem(RATES_CACHE_KEY, JSON.stringify(moneyRates)); } catch (e) {}
+        ratesLoading = false;
+        return moneyRates;
+      })
+      .catch(function (err) {
+        ratesLoading = false;
+        throw err;
+      });
+  }
+  function ensureRates() {
+    if (ratesAreFresh(moneyRates)) return Promise.resolve(moneyRates);
+    return fetchRates().catch(function () {
+      // fall back to stale cache if available
+      return moneyRates || null;
+    });
+  }
+
+  // ===== Shape (Area) mode =====
+  // Computes 2D rectangle area / 3D box surface area + volume
+  // All inputs in user-selected unit; results shown in native + m²/m³
+  var shape = { kind: 'rect', w: '', l: '', h: '', unit: 'cm' };
+  var SHAPE_UNITS = [
+    ['mm', 'mm', 0.001],
+    ['cm', 'cm', 0.01],
+    ['m', 'm', 1],
+    ['in', 'in', 0.0254],
+    ['ft', 'ft', 0.3048]
+  ];
+  function shapeUnitScale(key) {
+    for (var i = 0; i < SHAPE_UNITS.length; i++) if (SHAPE_UNITS[i][0] === key) return SHAPE_UNITS[i][2];
+    return 0.01;
+  }
+  function buildShapeUnitOpts() {
+    var h = '';
+    for (var i = 0; i < SHAPE_UNITS.length; i++) {
+      h += '<option value="' + SHAPE_UNITS[i][0] + '"' + (SHAPE_UNITS[i][0] === shape.unit ? ' selected' : '') + '>' + SHAPE_UNITS[i][1] + '</option>';
+    }
+    return h;
+  }
+  function computeShape() {
+    var w = parseFloat(shape.w), l = parseFloat(shape.l), h = parseFloat(shape.h);
+    if (isNaN(w) || isNaN(l) || w <= 0 || l <= 0) return null;
+    var s = shapeUnitScale(shape.unit);
+    var wm = w * s, lm = l * s;
+    if (shape.kind === 'rect') {
+      return {
+        area_native: w * l, area_m2: wm * lm,
+        perim_native: 2 * (w + l)
+      };
+    }
+    // box
+    if (isNaN(h) || h <= 0) return null;
+    var hm = h * s;
+    return {
+      surface_native: 2 * (w * l + w * h + l * h),
+      surface_m2:     2 * (wm * lm + wm * hm + lm * hm),
+      volume_native:  w * l * h,
+      volume_m3:      wm * lm * hm
+    };
+  }
+  function renderShapeResults() {
+    var resEl = document.getElementById('oc-sh-results');
+    var sendBtn = document.getElementById('oc-sh-send');
+    if (!resEl) return;
+    var r = computeShape();
+    var u = shape.unit, u2 = u + '²', u3 = u + '³';
+    if (!r) {
+      resEl.innerHTML = '<div class="shape-result"><span class="shape-result-label">' + t('shapeEnterDims') + '</span><span class="shape-result-value">—</span></div>';
+      if (sendBtn) sendBtn.disabled = true;
+      return;
+    }
+    if (sendBtn) sendBtn.disabled = false;
+    var html = '';
+    if (shape.kind === 'rect') {
+      html += '<div class="shape-result"><span class="shape-result-label">' + t('shapeArea') + '</span><span class="shape-result-value">' + fmtConv(r.area_native) + '<span class="unit">' + u2 + '</span><span class="alt">' + fmtConv(r.area_m2) + ' m²</span></span></div>';
+      html += '<div class="shape-result"><span class="shape-result-label">' + t('shapePerimeter') + '</span><span class="shape-result-value">' + fmtConv(r.perim_native) + '<span class="unit">' + u + '</span></span></div>';
+    } else {
+      html += '<div class="shape-result"><span class="shape-result-label">' + t('shapeSurface') + '</span><span class="shape-result-value">' + fmtConv(r.surface_native) + '<span class="unit">' + u2 + '</span><span class="alt">' + fmtConv(r.surface_m2) + ' m²</span></span></div>';
+      html += '<div class="shape-result"><span class="shape-result-label">' + t('shapeVolume') + '</span><span class="shape-result-value">' + fmtConv(r.volume_native) + '<span class="unit">' + u3 + '</span><span class="alt">' + fmtConv(r.volume_m3) + ' m³</span></span></div>';
+    }
+    resEl.innerHTML = html;
+  }
+  function bindShape() {
+    var w = document.getElementById('oc-sh-w');
+    var l = document.getElementById('oc-sh-l');
+    var h = document.getElementById('oc-sh-h');
+    var u = document.getElementById('oc-sh-u');
+    if (w) { w.value = shape.w; w.addEventListener('input', function () { shape.w = w.value; renderShapeResults(); }); }
+    if (l) { l.value = shape.l; l.addEventListener('input', function () { shape.l = l.value; renderShapeResults(); }); }
+    if (h) { h.value = shape.h; h.addEventListener('input', function () { shape.h = h.value; renderShapeResults(); }); }
+    if (u) { u.addEventListener('change', function () { shape.unit = u.value; renderShapeResults(); }); }
+    var tabs = document.querySelectorAll('#oc-sh-tabs button');
+    for (var i = 0; i < tabs.length; i++) {
+      (function (b) {
+        b.addEventListener('click', function () {
+          shape.kind = b.getAttribute('data-shape');
+          setMode('shape');
+        });
+      })(tabs[i]);
+    }
+    var send = document.getElementById('oc-sh-send');
+    if (send) send.addEventListener('click', sendShapeToCalc);
+  }
+  function sendShapeToCalc() {
+    var r = computeShape();
+    if (!r) return;
+    var value, label;
+    if (shape.kind === 'rect') {
+      value = r.area_m2;
+      label = t('shapeArea') + ' ' + fmtConv(r.area_native) + ' ' + shape.unit + '² (' + fmtConv(value) + ' m²)';
+    } else {
+      value = r.surface_m2;
+      label = t('shapeSurface') + ' ' + fmtConv(r.surface_native) + ' ' + shape.unit + '² (' + fmtConv(value) + ' m²)';
+    }
+    state.result = fmt(value);
+    state.expr = '';
+    state.hist = label + ' =';
+    state.evald = true;
+    setMode('simple');
+  }
+  function buildShapeHTML() {
+    var hRow = (shape.kind === 'box')
+      ? '<div class="shape-row"><label data-i18n="abbrH">H</label><input id="oc-sh-h" type="text" inputmode="decimal" placeholder="0" aria-label="' + t('shapeHeight') + '"><span class="shape-unit-spacer"></span></div>'
+      : '';
+    return '<div class="shape-tabs" id="oc-sh-tabs">' +
+        '<button class="' + (shape.kind === 'rect' ? 'is-active' : '') + '" data-shape="rect"><span data-i18n="shapeRect">Rectangle</span></button>' +
+        '<button class="' + (shape.kind === 'box' ? 'is-active' : '') + '" data-shape="box"><span data-i18n="shapeBox">Box</span></button>' +
+      '</div>' +
+      '<div class="shape-inputs">' +
+        '<div class="shape-row"><label data-i18n="abbrW">W</label><input id="oc-sh-w" type="text" inputmode="decimal" placeholder="0" aria-label="' + t('shapeWidth') + '"><select class="shape-unit" id="oc-sh-u">' + buildShapeUnitOpts() + '</select></div>' +
+        '<div class="shape-row"><label data-i18n="abbrL">L</label><input id="oc-sh-l" type="text" inputmode="decimal" placeholder="0" aria-label="' + t('shapeLength') + '"><span class="shape-unit-spacer"></span></div>' +
+        hRow +
+      '</div>' +
+      '<div class="shape-results" id="oc-sh-results"></div>' +
+      '<button class="shape-send" id="oc-sh-send" type="button"><span data-i18n="shapeSendToCalc">Use this value →</span></button>';
+  }
+
+  // ===== Calc core =====
+  function fmt(n) {
+    if (!isFinite(n)) return 'Error';
+    if (state.dp !== 'auto') return n.toFixed(parseInt(state.dp, 10));
+    if (Math.abs(n) > 1e15 || (n !== 0 && Math.abs(n) < 1e-9)) return n.toExponential(6);
+    return parseFloat(n.toPrecision(12)).toString();
+  }
+  function fact(n) {
+    n = Math.round(n);
+    if (n < 0 || n > 170) return NaN;
+    var r = 1;
+    for (var i = 2; i <= n; i++) r *= i;
+    return r;
+  }
+  function compute(s) {
+    var j = s
+      .replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-')
+      .replace(/π/g, '(' + Math.PI + ')')
+      .replace(/(?<![a-zA-Z])e(?![a-zA-Z0-9])/g, '(' + Math.E + ')');
+    j = j.replace(/sin\(/g, 'Math.sin(').replace(/cos\(/g, 'Math.cos(').replace(/tan\(/g, 'Math.tan(')
+         .replace(/log\(/g, 'Math.log10(').replace(/ln\(/g, 'Math.log(').replace(/√\(/g, 'Math.sqrt(');
+    j = j.replace(/(\d+(?:\.\d+)?)!/g, function (_, n) { return fact(parseFloat(n)); }).replace(/\^/g, '**');
+    try {
+      var r = Function('"use strict"; return (' + j + ')')();
+      return fmt(r);
+    } catch (e) { return 'Error'; }
+  }
+  function renderCalc() {
+    var H = document.getElementById('oc-hist');
+    var C = document.getElementById('oc-cur');
+    if (H) H.textContent = state.hist || '\u00a0';
+    if (C) C.textContent = state.expr || state.result;
+  }
+  function append(ch) {
+    if (state.evald) {
+      if (/[0-9.(]/.test(ch)) state.expr = ch;
+      else state.expr = (state.result === 'Error' ? '0' : state.result) + ch;
+      state.evald = false;
+      state.hist = '';
+    } else {
+      state.expr += ch;
+    }
+  }
+  var KMAP = { lp: '(', rp: ')', pi: 'π', ec: 'e' };
+  function press(k) {
+    if (k === 'clear') { state.expr = ''; state.result = '0'; state.hist = ''; state.evald = false; }
+    else if (k === 'back') { state.expr = state.expr.slice(0, -1); }
+    else if (k === 'eq') {
+      if (state.expr) {
+        var r = compute(state.expr);
+        state.hist = state.expr + ' =';
+        state.result = r;
+        state.expr = '';
+        state.evald = true;
+      }
+    }
+    else if (k === 'neg') {
+      var b = state.expr || (state.result !== '0' && state.result !== 'Error' ? state.result : '');
+      if (b) { state.expr = '-(' + b + ')'; state.evald = false; }
+    }
+    else if (k === 'pct') {
+      var b2 = state.expr || (state.result !== '0' && state.result !== 'Error' ? state.result : '');
+      if (b2) { state.expr = '(' + b2 + ')/100'; state.evald = false; }
+    }
+    else if (k === 'sq') {
+      var b3 = state.expr || (state.result !== '0' && state.result !== 'Error' ? state.result : '');
+      if (b3) { state.expr = '(' + b3 + ')^2'; state.evald = false; }
+    }
+    else if (k === 'inv') {
+      var b4 = state.expr || (state.result !== '0' && state.result !== 'Error' ? state.result : '');
+      if (b4) { state.expr = '1/(' + b4 + ')'; state.evald = false; }
+    }
+    else if (k === 'sqrt') append('√(');
+    else if (k === 'sin' || k === 'cos' || k === 'tan' || k === 'log' || k === 'ln') append(k + '(');
+    else if (k === 'pow') append('^');
+    else if (k === 'fact') append('!');
+    else if (KMAP[k]) append(KMAP[k]);
+    else if (k === '/') append('÷');
+    else if (k === '*') append('×');
+    else if (k === '-') append('−');
+    else append(k);
+    renderCalc();
+  }
+  function bindCalcButtons() {
+    var btns = document.querySelectorAll('#oc-grid button');
+    for (var i = 0; i < btns.length; i++) {
+      (function (b) {
+        b.addEventListener('click', function () { press(b.getAttribute('data-k')); });
+      })(btns[i]);
+    }
+    bindCopy();
+  }
+  function bindCopy() {
+    var disp = document.querySelector('#oc-body .display');
+    if (!disp) return;
+    disp.setAttribute('role', 'button');
+    disp.setAttribute('tabindex', '0');
+    disp.setAttribute('aria-label', t('hintTapCopy'));
+    var handler = function () {
+      var text = (state.expr || state.result || '').trim();
+      if (!text || text === '0') return;
+      copyText(text).then(function () { flashCopied(disp); });
+    };
+    disp.addEventListener('click', handler);
+    disp.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handler(); }
+    });
+  }
+  function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text);
+    }
+    return new Promise(function (resolve) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta);
+      resolve();
+    });
+  }
+  function flashCopied(el) {
+    var hist = document.getElementById('oc-hist');
+    if (!hist) return;
+    var prev = hist.textContent;
+    hist.textContent = t('copied');
+    hist.style.color = 'var(--accent)';
+    el.classList.add('is-copied');
+    clearTimeout(flashCopied._t);
+    flashCopied._t = setTimeout(function () {
+      hist.textContent = prev;
+      hist.style.color = '';
+      el.classList.remove('is-copied');
+    }, 1200);
+  }
+
+  // ===== Converter =====
+  function buildOpts(cat, sel) {
+    var us = UNITS[cat].u, h = '';
+    for (var i = 0; i < us.length; i++) {
+      // For money: only show currencies we have rates for (or the base)
+      if (cat === 'money' && moneyRates && us[i][0] !== moneyRates.base && !moneyRates.rates[us[i][0]]) continue;
+      h += '<option value="' + us[i][0] + '"' + (us[i][0] === sel ? ' selected' : '') + '>' + labelFor(us[i]) + '</option>';
+    }
+    return h;
+  }
+  function renderConv() {
+    var ia = document.getElementById('oc-cv-a');
+    var ib = document.getElementById('oc-cv-b');
+    var sa = document.getElementById('oc-cv-au');
+    var sb = document.getElementById('oc-cv-bu');
+    if (!ia) return;
+    sa.innerHTML = buildOpts(cv.cat, cv.ua);
+    sb.innerHTML = buildOpts(cv.cat, cv.ub);
+    var v = parseFloat(cv.va);
+    ia.value = cv.va;
+    if (isNaN(v)) { ib.value = ''; updateConvHint(); return; }
+    if (cv.cat === 'money' && !moneyRates) { ib.value = ''; updateConvHint(); return; }
+    var result = convert(cv.cat, v, cv.ua, cv.ub);
+    ib.value = isNaN(result) ? '' : fmtConv(result);
+    updateConvHint();
+  }
+  function updateConvHint() {
+    var hint = document.getElementById('oc-hint');
+    if (!hint) return;
+    if (state.mode !== 'conv') return;
+    if (cv.cat === 'money') {
+      hint.removeAttribute('data-i18n');
+      if (ratesLoading && !moneyRates) {
+        hint.textContent = t('ratesLoading');
+      } else if (moneyRates) {
+        // Validate date format YYYY-MM-DD before injecting
+        var safeDate = /^\d{4}-\d{2}-\d{2}$/.test(moneyRates.date) ? moneyRates.date : '';
+        hint.innerHTML = t('ratesAsOf') + ' ' + safeDate +
+          ' · <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;opacity:0.85">ExchangeRate-API</a>';
+      } else {
+        hint.textContent = t('ratesError');
+      }
+    } else {
+      hint.setAttribute('data-i18n', 'hintConv');
+      hint.textContent = t('hintConv');
+    }
+  }
+  function bindConv() {
+    var ia = document.getElementById('oc-cv-a');
+    var ib = document.getElementById('oc-cv-b');
+    var sa = document.getElementById('oc-cv-au');
+    var sb = document.getElementById('oc-cv-bu');
+    ia.addEventListener('input', function () {
+      cv.va = ia.value;
+      var v = parseFloat(ia.value);
+      if (isNaN(v)) { ib.value = ''; return; }
+      var r = convert(cv.cat, v, cv.ua, cv.ub);
+      ib.value = isNaN(r) ? '' : fmtConv(r);
+    });
+    ib.addEventListener('input', function () {
+      var v = parseFloat(ib.value);
+      if (isNaN(v)) { ia.value = ''; cv.va = ''; return; }
+      var a = convert(cv.cat, v, cv.ub, cv.ua);
+      ia.value = isNaN(a) ? '' : fmtConv(a);
+      cv.va = ia.value;
+    });
+    sa.addEventListener('change', function () { cv.ua = sa.value; renderConv(); });
+    sb.addEventListener('change', function () { cv.ub = sb.value; renderConv(); });
+    document.getElementById('oc-cv-swap').addEventListener('click', function () {
+      var tmp = cv.ua; cv.ua = cv.ub; cv.ub = tmp;
+      var av = ia.value; ia.value = ib.value; ib.value = av;
+      cv.va = ia.value;
+      renderConv();
+    });
+    var cats = document.querySelectorAll('#oc-cats button');
+    for (var i = 0; i < cats.length; i++) {
+      (function (b) {
+        b.addEventListener('click', function () {
+          var c = b.getAttribute('data-c');
+          cv.cat = c;
+          cv.ua = UNITS[c].a;
+          cv.ub = UNITS[c].b;
+          cv.va = '1';
+          for (var j = 0; j < cats.length; j++) cats[j].classList.toggle('is-active', cats[j] === b);
+          if (c === 'money') {
+            renderConv();
+            ensureRates().then(function () { renderConv(); }, function () { updateConvHint(); });
+          } else {
+            renderConv();
+          }
+        });
+      })(cats[i]);
+    }
+  }
+
+  // ===== Ratio / Rule of three =====
+  var rState = { W1: '', H1: '', W2: '', H2: '', set: [], computed: null };
+
+  function gcd(a, b) {
+    a = Math.abs(Math.round(a));
+    b = Math.abs(Math.round(b));
+    while (b) { var t = b; b = a % b; a = t; }
+    return a;
+  }
+  function ratioLabel(w, h) {
+    if (!isFinite(w) || !isFinite(h) || w <= 0 || h <= 0) return '—';
+    var wi = Math.round(w), hi = Math.round(h);
+    if (Math.abs(w - wi) < 0.001 && Math.abs(h - hi) < 0.001 && wi > 0 && hi > 0) {
+      var g = gcd(wi, hi);
+      if (g > 0) {
+        var a = wi / g, b = hi / g;
+        if (a <= 99 && b <= 99) return a + ' : ' + b;
+      }
+    }
+    return (w / h).toFixed(3) + ' : 1';
+  }
+
+  function buildRatioHTML() {
+    return '' +
+      '<div class="ratio-block">' +
+        '<div class="ratio-block-label" data-i18n="ratioOriginal">Original</div>' +
+        '<div class="ratio-row">' +
+          '<input type="text" inputmode="decimal" id="oc-r-W1" placeholder="W" data-i18n-placeholder="placeWidth" autocomplete="off">' +
+          '<span class="ratio-times">×</span>' +
+          '<input type="text" inputmode="decimal" id="oc-r-H1" placeholder="H" data-i18n-placeholder="placeHeight" autocomplete="off">' +
+        '</div>' +
+      '</div>' +
+      '<div class="ratio-info">' +
+        '<span class="ratio-chip is-empty" id="oc-r-ratio">—</span>' +
+        '<span class="ratio-chip is-empty" id="oc-r-scale">—</span>' +
+      '</div>' +
+      '<div class="ratio-block">' +
+        '<div class="ratio-block-label" data-i18n="ratioTarget">Target</div>' +
+        '<div class="ratio-row">' +
+          '<input type="text" inputmode="decimal" id="oc-r-W2" placeholder="W" data-i18n-placeholder="placeWidth" autocomplete="off">' +
+          '<span class="ratio-times">×</span>' +
+          '<input type="text" inputmode="decimal" id="oc-r-H2" placeholder="H" data-i18n-placeholder="placeHeight" autocomplete="off">' +
+        '</div>' +
+      '</div>' +
+      '<div class="ratio-presets">' +
+        '<button type="button" data-r="16:9">16:9</button>' +
+        '<button type="button" data-r="4:3">4:3</button>' +
+        '<button type="button" data-r="1:1">1:1</button>' +
+        '<button type="button" data-r="3:2">3:2</button>' +
+        '<button type="button" data-r="9:16">9:16</button>' +
+      '</div>' +
+      '<div class="ratio-clear">' +
+        '<button type="button" id="oc-r-clear" data-i18n="ratioClear">Clear all</button>' +
+      '</div>';
+  }
+
+  function rGetVal(k) { return parseFloat(rState[k]); }
+
+  function rRecompute() {
+    var keys = ['W1', 'H1', 'W2', 'H2'];
+    keys.forEach(function (k) {
+      var el = document.getElementById('oc-r-' + k);
+      if (el) el.classList.remove('is-computed');
+    });
+    rState.computed = null;
+
+    if (rState.set.length === 3) {
+      var unset = keys.filter(function (k) { return rState.set.indexOf(k) < 0; });
+      if (unset.length === 1) {
+        var target = unset[0];
+        var W1 = rGetVal('W1'), H1 = rGetVal('H1'), W2 = rGetVal('W2'), H2 = rGetVal('H2');
+        var result;
+        // Cross multiply: W1/H1 = W2/H2  →  W1·H2 = H1·W2
+        if (target === 'W1') result = (H1 * W2) / H2;
+        else if (target === 'H1') result = (W1 * H2) / W2;
+        else if (target === 'W2') result = (W1 * H2) / H1;
+        else if (target === 'H2') result = (H1 * W2) / W1;
+
+        if (isFinite(result) && !isNaN(result)) {
+          var formatted = fmtConv(result);
+          rState[target] = formatted;
+          var el = document.getElementById('oc-r-' + target);
+          if (el) {
+            el.value = formatted;
+            el.classList.add('is-computed');
+          }
+          rState.computed = target;
+        }
+      }
+    }
+    rUpdateChips();
+  }
+
+  function rUpdateChips() {
+    var ratioChip = document.getElementById('oc-r-ratio');
+    var scaleChip = document.getElementById('oc-r-scale');
+    if (!ratioChip || !scaleChip) return;
+    var W1 = rGetVal('W1'), H1 = rGetVal('H1'), W2 = rGetVal('W2'), H2 = rGetVal('H2');
+
+    // Ratio chip — prefer original pair if both present, else target
+    var rW = NaN, rH = NaN;
+    if (isFinite(W1) && isFinite(H1) && W1 > 0 && H1 > 0) { rW = W1; rH = H1; }
+    else if (isFinite(W2) && isFinite(H2) && W2 > 0 && H2 > 0) { rW = W2; rH = H2; }
+    if (isFinite(rW) && isFinite(rH)) {
+      ratioChip.textContent = ratioLabel(rW, rH);
+      ratioChip.classList.remove('is-empty');
+    } else {
+      ratioChip.textContent = '—';
+      ratioChip.classList.add('is-empty');
+    }
+
+    // Scale chip — W2 / W1 (or H2 / H1 if W1 unset)
+    var s = NaN;
+    if (isFinite(W1) && isFinite(W2) && W1 > 0) s = W2 / W1;
+    else if (isFinite(H1) && isFinite(H2) && H1 > 0) s = H2 / H1;
+    if (isFinite(s) && s > 0) {
+      var pct = Math.round(s * 100);
+      scaleChip.textContent = '×' + s.toFixed(2) + ' · ' + pct + '%';
+      scaleChip.classList.remove('is-empty');
+    } else {
+      scaleChip.textContent = '—';
+      scaleChip.classList.add('is-empty');
+    }
+  }
+
+  function rEdit(key, val) {
+    rState[key] = val;
+    if (val === '' || val === '-' || val === '.') {
+      // empty / partial — remove from set
+      var idx = rState.set.indexOf(key);
+      if (idx !== -1) rState.set.splice(idx, 1);
+    } else {
+      var i = rState.set.indexOf(key);
+      if (i !== -1) rState.set.splice(i, 1);
+      rState.set.push(key);
+      while (rState.set.length > 3) rState.set.shift();
+    }
+    rRecompute();
+  }
+
+  function rApplyPreset(ratioStr) {
+    var parts = ratioStr.split(':');
+    if (parts.length !== 2) return;
+    var w = parts[0], h = parts[1];
+    rState.W1 = w; rState.H1 = h;
+    var inW1 = document.getElementById('oc-r-W1');
+    var inH1 = document.getElementById('oc-r-H1');
+    if (inW1) inW1.value = w;
+    if (inH1) inH1.value = h;
+    // Mark W1, H1 as user-set (most recent)
+    ['W1', 'H1'].forEach(function (k) {
+      var idx = rState.set.indexOf(k);
+      if (idx !== -1) rState.set.splice(idx, 1);
+    });
+    rState.set.push('W1');
+    rState.set.push('H1');
+    while (rState.set.length > 3) rState.set.shift();
+    rRecompute();
+  }
+
+  function rClearAll() {
+    rState.W1 = ''; rState.H1 = ''; rState.W2 = ''; rState.H2 = '';
+    rState.set = []; rState.computed = null;
+    ['W1', 'H1', 'W2', 'H2'].forEach(function (k) {
+      var el = document.getElementById('oc-r-' + k);
+      if (el) { el.value = ''; el.classList.remove('is-computed'); }
+    });
+    rUpdateChips();
+  }
+
+  function bindRatio() {
+    ['W1', 'H1', 'W2', 'H2'].forEach(function (k) {
+      var el = document.getElementById('oc-r-' + k);
+      if (!el) return;
+      el.value = rState[k] || '';
+      el.addEventListener('input', function () { rEdit(k, el.value); });
+    });
+    var presets = document.querySelectorAll('.ratio-presets button');
+    for (var i = 0; i < presets.length; i++) {
+      (function (b) {
+        b.addEventListener('click', function () { rApplyPreset(b.getAttribute('data-r')); });
+      })(presets[i]);
+    }
+    var clr = document.getElementById('oc-r-clear');
+    if (clr) clr.addEventListener('click', rClearAll);
+  }
+
+  function renderRatio() {
+    // Re-format any computed value with current dp, then update chips
+    if (rState.computed) {
+      var n = parseFloat(rState[rState.computed]);
+      if (!isNaN(n)) {
+        rState[rState.computed] = fmtConv(n);
+        var el = document.getElementById('oc-r-' + rState.computed);
+        if (el) el.value = rState[rState.computed];
+      }
+    }
+    rUpdateChips();
+  }
+
+  // ===== Mode switching =====
+  function setMode(m) {
+    state.mode = m;
+    var modes = document.querySelectorAll('.octopus-calc__modes .mode-btn');
+    for (var i = 0; i < modes.length; i++) {
+      modes[i].classList.toggle('is-active', modes[i].getAttribute('data-mode') === m);
+    }
+    var body = document.getElementById('oc-body');
+    var hint = document.getElementById('oc-hint');
+    if (m === 'conv') {
+      body.innerHTML =
+        '<div class="cats" id="oc-cats">' +
+          '<button class="' + (cv.cat === 'length' ? 'is-active' : '') + '" data-c="length"><span data-i18n="catLength">Length</span></button>' +
+          '<button class="' + (cv.cat === 'area' ? 'is-active' : '') + '" data-c="area"><span data-i18n="catArea">Area</span></button>' +
+          '<button class="' + (cv.cat === 'weight' ? 'is-active' : '') + '" data-c="weight"><span data-i18n="catWeight">Weight</span></button>' +
+          '<button class="' + (cv.cat === 'volume' ? 'is-active' : '') + '" data-c="volume"><span data-i18n="catVolume">Volume</span></button>' +
+          '<button class="' + (cv.cat === 'temp' ? 'is-active' : '') + '" data-c="temp"><span data-i18n="catTemp">Temp</span></button>' +
+          '<button class="' + (cv.cat === 'money' ? 'is-active' : '') + '" data-c="money"><span data-i18n="catMoney">Money</span></button>' +
+        '</div>' +
+        '<div class="conv-row"><input type="text" inputmode="decimal" id="oc-cv-a" value="1" data-i18n-aria="fromValue"><select id="oc-cv-au" data-i18n-aria="fromUnit"></select></div>' +
+        '<div class="conv-swap"><button id="oc-cv-swap" type="button" data-i18n-aria="swapUnits">⇅</button></div>' +
+        '<div class="conv-row"><input type="text" inputmode="decimal" id="oc-cv-b" data-i18n-aria="toValue"><select id="oc-cv-bu" data-i18n-aria="toUnit"></select></div>';
+      hint.setAttribute('data-i18n', 'hintConv');
+      applyI18n(body);
+      applyI18n(hint);
+      bindConv();
+      if (cv.cat === 'money') {
+        renderConv();
+        ensureRates().then(function () { renderConv(); }, function () { updateConvHint(); });
+      } else {
+        renderConv();
+      }
+    } else if (m === 'shape') {
+      body.innerHTML = buildShapeHTML();
+      hint.setAttribute('data-i18n', 'hintShape');
+      applyI18n(body);
+      applyI18n(hint);
+      bindShape();
+      renderShapeResults();
+    } else if (m === 'ratio') {
+      body.innerHTML = buildRatioHTML();
+      hint.setAttribute('data-i18n', 'ratioHint');
+      applyI18n(body);
+      applyI18n(hint);
+      bindRatio();
+      renderRatio();
+    } else {
+      body.innerHTML =
+        '<div class="display"><div class="display__history" id="oc-hist">&nbsp;</div><div class="display__current" id="oc-cur">0</div></div>' +
+        '<div class="grid ' + (m === 'simple' ? 'grid--simple' : 'grid--adv') + '" id="oc-grid">' + (m === 'simple' ? SIMPLE_HTML : ADV_HTML) + '</div>';
+      hint.setAttribute('data-i18n', 'hintCalc');
+      applyI18n(hint);
+      bindCalcButtons();
+      renderCalc();
+    }
+  }
+
+  // ===== Theme =====
+  function applyTheme(theme) {
+    state.theme = theme;
+    document.getElementById('oc-root').setAttribute('data-theme', theme);
+    var btn = document.getElementById('oc-theme');
+    btn.innerHTML = theme === 'dark' ? ICON_SUN : ICON_MOON;
+    try { localStorage.setItem('oc-theme', theme); } catch (e) {}
+  }
+  function toggleTheme() {
+    applyTheme(state.theme === 'dark' ? 'light' : 'dark');
+  }
+
+  // ===== Language =====
+  function applyLang(lang) {
+    state.lang = lang;
+    document.documentElement.setAttribute('lang', lang);
+    document.getElementById('oc-lang').textContent = lang === 'en' ? 'TH' : 'EN';
+    applyI18n(document.getElementById('oc-root'));
+    if (state.mode === 'conv') renderConv();
+    // refresh dp button label (uses i18n string for AUTO)
+    var dpBtn = document.getElementById('oc-dp');
+    if (dpBtn) {
+      dpBtn.innerHTML = '<span class="dp-pre">' + t('dpLabel') + '</span>' + dpLabelText(state.dp);
+      var desc = (state.dp === 'auto' ? t('dpAuto') : state.dp + ' ' + t('dpDecimals'));
+      dpBtn.setAttribute('title', t('dpSwitch') + ' — ' + desc);
+      dpBtn.setAttribute('aria-label', t('dpSwitch') + ': ' + desc);
+    }
+    try { localStorage.setItem('oc-lang', lang); } catch (e) {}
+  }
+  function toggleLang() {
+    applyLang(state.lang === 'en' ? 'th' : 'en');
+  }
+
+  // ===== Decimal places =====
+  function applyDp(dp) {
+    state.dp = dp;
+    var btn = document.getElementById('oc-dp');
+    btn.innerHTML = '<span class="dp-pre">' + t('dpLabel') + '</span>' + dpLabelText(dp);
+    var desc = (dp === 'auto' ? t('dpAuto') : dp + ' ' + t('dpDecimals'));
+    btn.setAttribute('title', t('dpSwitch') + ' — ' + desc);
+    btn.setAttribute('aria-label', t('dpSwitch') + ': ' + desc);
+    try { localStorage.setItem('oc-dp', dp); } catch (e) {}
+    // Re-format current display
+    if (state.mode === 'conv') {
+      renderConv();
+    } else if (state.mode === 'shape') {
+      renderShapeResults();
+    } else if (state.mode === 'ratio') {
+      renderRatio();
+    } else {
+      if (state.result !== '0' && state.result !== 'Error') {
+        var n = parseFloat(state.result);
+        if (!isNaN(n)) state.result = fmt(n);
+      }
+      renderCalc();
+    }
+  }
+  function dpLabelText(dp) {
+    if (dp === 'auto') return 'auto';
+    if (dp === '0') return '0';
+    return '0.' + new Array(parseInt(dp, 10) + 1).join('0');
+  }
+  function cycleDp() {
+    var idx = DP_STATES.indexOf(state.dp);
+    var next = DP_STATES[(idx + 1) % DP_STATES.length];
+    applyDp(next);
+  }
+
+  // ===== Init =====
+  function init() {
+    // theme
+    var savedTheme = null;
+    try { savedTheme = localStorage.getItem('oc-theme'); } catch (e) {}
+    var initTheme = savedTheme || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    applyTheme(initTheme);
+
+    // language
+    var savedLang = null;
+    try { savedLang = localStorage.getItem('oc-lang'); } catch (e) {}
+    var initLang = savedLang || ((navigator.language || 'en').toLowerCase().indexOf('th') === 0 ? 'th' : 'en');
+    applyLang(initLang);
+
+    // decimal places
+    var savedDp = null;
+    try { savedDp = localStorage.getItem('oc-dp'); } catch (e) {}
+    var initDp = (savedDp && DP_STATES.indexOf(savedDp) !== -1) ? savedDp : 'auto';
+    applyDp(initDp);
+
+    // hydrate cached FX rates if any (don't fetch yet — wait for Money tab)
+    moneyRates = loadCachedRates();
+
+    // initial mode = simple
+    document.getElementById('oc-grid').innerHTML = SIMPLE_HTML;
+    bindCalcButtons();
+
+    // mode buttons
+    var modeBtns = document.querySelectorAll('.octopus-calc__modes .mode-btn');
+    for (var i = 0; i < modeBtns.length; i++) {
+      (function (b) {
+        b.addEventListener('click', function () { setMode(b.getAttribute('data-mode')); });
+      })(modeBtns[i]);
+    }
+
+    // toolbar
+    document.getElementById('oc-theme').addEventListener('click', toggleTheme);
+    document.getElementById('oc-lang').addEventListener('click', toggleLang);
+    document.getElementById('oc-dp').addEventListener('click', cycleDp);
+
+    // keyboard
+    document.addEventListener('keydown', function (e) {
+      if (state.mode === 'conv' || state.mode === 'shape') return;
+      var ae = document.activeElement;
+      if (ae && (ae.tagName === 'INPUT' || ae.tagName === 'SELECT' || ae.tagName === 'TEXTAREA')) return;
+      var k = e.key;
+      if (/^[0-9.]$/.test(k))                      { press(k); e.preventDefault(); }
+      else if (k === '+' || k === '-' || k === '*' || k === '/') { press(k); e.preventDefault(); }
+      else if (k === '(' || k === ')')             { press(k === '(' ? 'lp' : 'rp'); e.preventDefault(); }
+      else if (k === '^')                          { press('pow'); e.preventDefault(); }
+      else if (k === '!')                          { press('fact'); e.preventDefault(); }
+      else if (k === 'Enter' || k === '=')         { press('eq'); e.preventDefault(); }
+      else if (k === 'Backspace')                  { press('back'); e.preventDefault(); }
+      else if (k === 'Escape')                     { press('clear'); e.preventDefault(); }
+    });
+  }
+
+  init();
+})();
+</script>
+    </div>
+
+    <h2>ใช้คำนวณอะไรได้บ้าง</h2>
+    <div class="uses">
+      <div class="item">
+        <div class="item-title">เครื่องคิดเลขพื้นฐาน</div>
+        <div class="item-desc">บวก ลบ คูณ หาร เปอร์เซ็นต์ พร้อมประวัติคำนวณ และรองรับคีย์บอร์ด</div>
+      </div>
+      <div class="item">
+        <div class="item-title">เครื่องคิดเลขวิทยาศาสตร์</div>
+        <div class="item-desc">sin cos tan log ln √ x² xʸ ! π e และวงเล็บซ้อนหลายชั้น</div>
+      </div>
+      <div class="item">
+        <div class="item-title">แปลงหน่วยอัตโนมัติ</div>
+        <div class="item-desc">ความยาว · พื้นที่ · น้ำหนัก · ปริมาตร · อุณหภูมิ — รวม ตร.วา ไร่ และหน่วยไทยอื่นๆ</div>
+      </div>
+      <div class="item">
+        <div class="item-title">อัตราแลกเปลี่ยนเงิน</div>
+        <div class="item-desc">THB · USD · EUR · GBP · JPY · CNY และอีก 6 สกุล อัปเดตจาก ExchangeRate-API รายวัน</div>
+      </div>
+      <div class="item">
+        <div class="item-title">คำนวณสัดส่วน (บัญญัติไตรยางศ์)</div>
+        <div class="item-desc">ใส่ 3 ใน 4 ช่อง ระบบคำนวณช่องที่เหลือให้ พร้อม preset 16:9 · 4:3 · 1:1</div>
+      </div>
+      <div class="item">
+        <div class="item-title">หาพื้นที่และปริมาตร</div>
+        <div class="item-desc">สี่เหลี่ยมและกล่อง — แสดง ตร.ม. ตร.ฟุต และพื้นที่ผิวพร้อมกัน</div>
+      </div>
+    </div>
+
+    <h2>ตัวอย่างการใช้งาน</h2>
+    <div class="examples">
+      <div class="ex">
+        <h3>แปลง ตร.วา ↔ ตร.ม.</h3>
+        <p>1 ตารางวา = 4 ตารางเมตร เป็นค่ามาตรฐานที่ใช้ในการซื้อขายที่ดินและคำนวณพื้นที่ป้าย</p>
+        <table class="ex-table">
+          <thead><tr><th>ตร.วา</th><th>ตร.ม.</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>4</td></tr>
+            <tr><td>5</td><td>20</td></tr>
+            <tr><td>10</td><td>40</td></tr>
+            <tr><td>25</td><td>100</td></tr>
+            <tr><td>100</td><td>400</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ex">
+        <h3>แปลง ไร่ ↔ ตร.ม.</h3>
+        <p>1 ไร่ = 1,600 ตารางเมตร = 400 ตารางวา ใช้บ่อยในการประเมินพื้นที่ติดตั้งป้ายขนาดใหญ่</p>
+        <table class="ex-table">
+          <thead><tr><th>ไร่</th><th>ตร.ม.</th><th>ตร.วา</th></tr></thead>
+          <tbody>
+            <tr><td>0.25</td><td>400</td><td>100</td></tr>
+            <tr><td>0.5</td><td>800</td><td>200</td></tr>
+            <tr><td>1</td><td>1,600</td><td>400</td></tr>
+            <tr><td>5</td><td>8,000</td><td>2,000</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ex">
+        <h3>แปลง mm ↔ inch</h3>
+        <p>ใช้บ่อยตอนแปลงขนาด artwork จากอเมริกาเป็นมิลลิเมตรเพื่อพิมพ์ป้าย หรือสั่งวัสดุนำเข้า</p>
+        <table class="ex-table">
+          <thead><tr><th>inch</th><th>mm</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>25.4</td></tr>
+            <tr><td>4</td><td>101.6</td></tr>
+            <tr><td>8.5 (US Letter)</td><td>215.9</td></tr>
+            <tr><td>11</td><td>279.4</td></tr>
+            <tr><td>24</td><td>609.6</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ex">
+        <h3>คำนวณสัดส่วนภาพ 16:9</h3>
+        <p>ลูกค้าส่งไฟล์ artwork มา 1920×1080 อยากทำป้ายกว้าง 240 ซม. ระบบจะคำนวณให้ว่าสูงเท่าไหร่ — กรอก 1920, 1080, 2400 → ได้ 1350 mm</p>
+        <table class="ex-table">
+          <thead><tr><th>กว้างใหม่</th><th>สูงตามสัดส่วน 16:9</th></tr></thead>
+          <tbody>
+            <tr><td>1,920 mm</td><td>1,080 mm</td></tr>
+            <tr><td>2,400 mm</td><td>1,350 mm</td></tr>
+            <tr><td>3,000 mm</td><td>1,687.5 mm</td></tr>
+            <tr><td>4,000 mm</td><td>2,250 mm</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <h2>คำถามที่พบบ่อย</h2>
+
+    <details>
+      <summary>1 ตารางวา เท่ากับกี่ตารางเมตร</summary>
+      <div>1 ตารางวา = 4 ตารางเมตร · 100 ตารางวา = 400 ตารางเมตร · เป็นค่ามาตรฐานสำหรับการซื้อขายที่ดินและคำนวณพื้นที่ในประเทศไทย</div>
+    </details>
+
+    <details>
+      <summary>1 ไร่ เท่ากับกี่ตารางเมตร</summary>
+      <div>1 ไร่ = 1,600 ตารางเมตร = 400 ตารางวา · ครึ่งไร่ = 800 ตารางเมตร · ใช้ในการประเมินพื้นที่ติดตั้งป้ายโฆษณาขนาดใหญ่ พื้นที่ event และ outdoor advertising</div>
+    </details>
+
+    <details>
+      <summary>บัญญัติไตรยางศ์คืออะไร</summary>
+      <div>กฎการคำนวณสัดส่วน a : b = c : d เมื่อรู้ค่า 3 ตัวสามารถหาตัวที่ 4 ได้โดยการคูณไขว้ · ใช้ในการปรับขนาดภาพให้ได้สัดส่วนเดิม คำนวณราคาตามอัตราส่วน หรือสเกลขนาดป้าย ตัวอย่าง: ป้าย 1.5×3 ม. ราคา 1,500 บาท ป้ายใหม่ 2×4 ม. ราคา (4 × 1,500) ÷ 3 = 2,000 บาท</div>
+    </details>
+
+    <details>
+      <summary>1 mm เท่ากับกี่ inch</summary>
+      <div>1 มิลลิเมตร = 0.0394 นิ้ว · 1 นิ้ว = 25.4 มิลลิเมตร (ค่าตายตัวสากล) · ในวงการพิมพ์มักใช้ inch สำหรับ US/UK และ mm สำหรับ EU/Asia</div>
+    </details>
+
+    <details>
+      <summary>อัตราแลกเปลี่ยนมาจากไหน อัปเดตบ่อยแค่ไหน</summary>
+      <div>ดึงจาก ExchangeRate-API (open access) ซึ่งรวบรวมจาก central banks หลายแหล่งและ blend ด้วย algorithm เพื่อลดความคลาดเคลื่อน · อัปเดตวันละครั้ง · เป็น indicative midpoint rate เหมาะกับการประมาณราคา ไม่เหมาะใช้สำหรับ forex trading</div>
+    </details>
+
+    <details>
+      <summary>เครื่องคิดเลขนี้ฟรีจริงหรือ</summary>
+      <div>ฟรีไม่จำกัดการใช้งาน · ไม่ต้องสมัครสมาชิก · ไม่มีโฆษณา · ทำงานบน browser ทุกอย่าง offline ได้หลังโหลดครั้งแรก · ข้อมูลที่กรอกไม่ส่งกลับ server</div>
+    </details>
+
+    <details>
+      <summary>ใช้บนมือถือได้ไหม</summary>
+      <div>ออกแบบ responsive รองรับทั้ง iOS และ Android · ปุ่มขนาดใหญ่กดง่าย · แตะที่ผลลัพธ์เพื่อ copy ได้ทันที · รองรับ dark mode และสลับภาษาไทย-อังกฤษ</div>
+    </details>
+
+    <h2>ลิงก์ที่เกี่ยวข้อง</h2>
+    <div class="related-links">
+      <a href="/collections/signage">ป้ายไฟ ช่องอักษร</a>
+      <a href="/collections/sticker">สติ๊กเกอร์ไดคัท</a>
+      <a href="/collections/promotion_material">สื่อโฆษณา ป้ายโปร</a>
+      <a href="/collections/booth_equipment">บูธแสดงงาน</a>
+      <a href="/collections/inkjet-print">งานพิมพ์อิงค์เจ็ท</a>
+      <a href="/blogs/how-to">บทความ How-to</a>
+    </div>
+
+    <div class="credit">
+      © {{ 'now' | date: '%Y' }} Octopus Media Solutions · เครื่องมือฟรีสำหรับงานป้าย พิมพ์ และโฆษณา
+    </div>
+
+  </div>
+</div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Octopus Calculator",
+  "alternateName": "เครื่องคิดเลข Octopus",
+  "url": "{{ shop.url }}/pages/calculator",
+  "description": "เครื่องคิดเลขและแปลงหน่วยออนไลน์ฟรี สำหรับงานป้ายและพิมพ์ รองรับหน่วยไทย ตร.วา ไร่ อัตราแลกเปลี่ยนสด และคำนวณสัดส่วนภาพ",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "browserRequirements": "Requires JavaScript",
+  "inLanguage": ["th", "en"],
+  "isAccessibleForFree": true,
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "THB"
+  },
+  "creator": {
+    "@type": "Organization",
+    "name": "Octopus Media Solutions",
+    "url": "{{ shop.url }}"
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1 ตารางวา เท่ากับกี่ตารางเมตร",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "1 ตารางวา = 4 ตารางเมตร · 100 ตารางวา = 400 ตารางเมตร เป็นค่ามาตรฐานสำหรับการซื้อขายที่ดินในประเทศไทย"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "1 ไร่ เท่ากับกี่ตารางเมตร",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "1 ไร่ = 1,600 ตารางเมตร = 400 ตารางวา · ครึ่งไร่ = 800 ตารางเมตร"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "บัญญัติไตรยางศ์คืออะไร",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "กฎการคำนวณสัดส่วน a:b = c:d เมื่อรู้ค่า 3 ตัวสามารถหาตัวที่ 4 ได้โดยการคูณไขว้ ใช้ในงานปรับขนาดภาพ คำนวณราคาตามอัตราส่วน และสเกลขนาดป้าย"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "1 mm เท่ากับกี่ inch",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "1 มิลลิเมตร = 0.0394 นิ้ว · 1 นิ้ว = 25.4 มิลลิเมตร เป็นค่าตายตัวสากล"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "อัตราแลกเปลี่ยนมาจากไหน อัปเดตบ่อยแค่ไหน",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ดึงจาก ExchangeRate-API ซึ่งรวบรวมจาก central banks หลายแหล่ง อัปเดตวันละครั้ง เหมาะสำหรับการประมาณราคา"
+      }
+    }
+  ]
+}
+</script>
