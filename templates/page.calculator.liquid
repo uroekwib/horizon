@@ -697,6 +697,44 @@
   color: var(--text-3);
   margin-top: 2px;
 }
+
+/* Paper size match indicator — shown only in Rectangle mode */
+.octopus-calc .shape-paper-match {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: var(--accent-bg);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: var(--accent);
+  text-align: center;
+  font-weight: 500;
+  display: none;
+}
+.octopus-calc .shape-paper-match.is-shown { display: block; }
+.octopus-calc .shape-paper-match .pm-name {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 13px;
+}
+.octopus-calc .shape-paper-match .pm-dev {
+  color: var(--text-2);
+  font-size: 11px;
+  margin-left: 6px;
+}
+.octopus-calc .shape-paper-match.is-exact {
+  background: linear-gradient(135deg, rgba(20,201,223,.12), rgba(23,169,187,.12));
+  border-color: var(--accent-2);
+}
+@media (max-width: 480px) {
+  .octopus-calc .shape-paper-match {
+    margin-top: 6px;
+    padding: 7px 10px;
+    font-size: 11px;
+  }
+  .octopus-calc .shape-paper-match .pm-name { font-size: 12px; }
+  .octopus-calc .shape-paper-match .pm-dev { font-size: 10px; }
+}
 .octopus-calc .shape-send {
   width: 100%;
   padding: 12px;
@@ -1267,6 +1305,34 @@
     ['in', 'in', 0.0254],
     ['ft', 'ft', 0.3048]
   ];
+
+  // ===== ISO 216 paper sizes (mm) — for shape-rect proximity hint =====
+  var ISO_PAPER = [
+    ['A0',841,1189],['A1',595,841],['A2',420,594],['A3',297,420],
+    ['A4',210,297],['A5',149,210],['A6',105,149],['A7',74,105],
+    ['A8',53,74],['A9',37,53],['A10',26,37],
+    ['B0',1000,1414],['B1',707,1000],['B2',500,707],['B3',354,500],
+    ['B4',250,353],['B5',177,250],['B6',125,177],['B7',88,125],
+    ['B8',62,88],['B9',44,62],['B10',31,44],
+    ['C0',917,1297],['C1',648,917],['C2',458,648],['C3',324,459],
+    ['C4',229,324],['C5',162,229],['C6',115,162],['C7',81,115],
+    ['C8',57,81],['C9',41,57],['C10',29,41]
+  ];
+  function matchPaperSize(w_mm, l_mm) {
+    if (!w_mm || !l_mm) return null;
+    var short = Math.min(w_mm, l_mm), long = Math.max(w_mm, l_mm);
+    var best = null, bestDev = 999;
+    for (var i = 0; i < ISO_PAPER.length; i++) {
+      var p = ISO_PAPER[i], sw = p[1], lw = p[2];
+      var dev = Math.max(Math.abs(short - sw) / sw, Math.abs(long - lw) / lw);
+      if (dev < bestDev) { bestDev = dev; best = { name: p[0], sw: sw, lw: lw }; }
+    }
+    if (!best) return null;
+    var devPct = bestDev * 100;
+    if (devPct > 15) return null; // too far from any standard
+    return { name: best.name, sw: best.sw, lw: best.lw, devPct: devPct };
+  }
+
   function shapeUnitScale(key) {
     for (var i = 0; i < SHAPE_UNITS.length; i++) if (SHAPE_UNITS[i][0] === key) return SHAPE_UNITS[i][2];
     return 0.01;
@@ -1315,6 +1381,21 @@
     if (shape.kind === 'rect') {
       html += '<div class="shape-result"><span class="shape-result-label">' + t('shapeArea') + '</span><span class="shape-result-value">' + fmtConv(r.area_native) + '<span class="unit">' + u2 + '</span><span class="alt">' + fmtConv(r.area_m2) + ' m²</span></span></div>';
       html += '<div class="shape-result"><span class="shape-result-label">' + t('shapePerimeter') + '</span><span class="shape-result-value">' + fmtConv(r.perim_native) + '<span class="unit">' + u + '</span></span></div>';
+      // Paper-size proximity hint
+      var w_mm = parseFloat(shape.w) * shapeUnitScale(shape.unit) * 1000;
+      var l_mm = parseFloat(shape.l) * shapeUnitScale(shape.unit) * 1000;
+      var match = matchPaperSize(w_mm, l_mm);
+      if (match) {
+        var dev = match.devPct;
+        var prefix, klass = '';
+        if (dev < 1) { prefix = t('paperExact'); klass = ' is-exact'; }
+        else if (dev < 5) { prefix = t('paperClose'); }
+        else { prefix = t('paperNear'); }
+        html += '<div class="shape-paper-match is-shown' + klass + '">' +
+          prefix + ' <span class="pm-name">' + match.name + '</span>' +
+          ' <span class="pm-dev">' + match.sw + '×' + match.lw + ' mm' +
+          (dev >= 1 ? ' · ±' + dev.toFixed(1) + '%' : '') + '</span></div>';
+      }
     } else {
       html += '<div class="shape-result"><span class="shape-result-label">' + t('shapeSurface') + '</span><span class="shape-result-value">' + fmtConv(r.surface_native) + '<span class="unit">' + u2 + '</span><span class="alt">' + fmtConv(r.surface_m2) + ' m²</span></span></div>';
       html += '<div class="shape-result"><span class="shape-result-label">' + t('shapeVolume') + '</span><span class="shape-result-value">' + fmtConv(r.volume_native) + '<span class="unit">' + u3 + '</span><span class="alt">' + fmtConv(r.volume_m3) + ' m³</span></span></div>';
