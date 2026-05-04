@@ -793,16 +793,81 @@
   -webkit-tap-highlight-color: transparent;
 }
 .octopus-calc .ratio-clear button:hover { color: var(--text-1); }
+
+/* ===========================================================
+   Mobile breakpoint — Horizon theme injects different rules
+   on mobile. Re-assert layout aggressively + prevent iOS auto-zoom
+   (iOS Safari zooms in if input font-size < 16px on focus).
+   =========================================================== */
+@media (max-width: 480px) {
+  .octopus-calc {
+    padding: 14px;
+    border-radius: 14px;
+    max-width: 100%;
+  }
+  .octopus-calc__toolbar { gap: 4px; margin-bottom: 6px; }
+  .octopus-calc .tool-btn { font-size: 11px; height: 28px; padding: 0 8px; }
+  .octopus-calc .tool-btn--icon { width: 28px; }
+  .octopus-calc #oc-dp { min-width: 56px; font-size: 11px; }
+
+  .octopus-calc__modes { gap: 4px; }
+  .octopus-calc__modes .mode-btn { padding: 6px 8px; font-size: 12px; }
+
+  .octopus-calc .display { padding: 14px 12px 10px; min-height: 76px; }
+  .octopus-calc .display__history { font-size: 12px; }
+  .octopus-calc .display__current { font-size: 26px; }
+
+  .octopus-calc .grid { gap: 6px; }
+  .octopus-calc .grid > button {
+    height: 44px !important;
+    font-size: 15px !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+  }
+  .octopus-calc .grid > button.fn { font-size: 12px !important; }
+  .octopus-calc .grid.grid--adv > button { font-size: 13px !important; height: 40px !important; }
+  .octopus-calc .grid.grid--adv > button.fn { font-size: 11px !important; }
+
+  .octopus-calc .cats { gap: 4px; }
+  .octopus-calc .cats button { padding: 6px 4px; font-size: 11px; min-width: 48px; }
+
+  .octopus-calc .conv-row { padding: 10px 12px; gap: 8px; }
+  /* iOS auto-zoom prevention: input font-size MUST be ≥ 16px on focus */
+  .octopus-calc .conv-row input { font-size: 22px !important; }
+  .octopus-calc .conv-row select { font-size: 12px; min-width: 90px; padding: 5px 6px; }
+
+  .octopus-calc .shape-tabs button { padding: 7px 8px; font-size: 12px; }
+  .octopus-calc .shape-inputs { padding: 10px 12px; }
+  .octopus-calc .shape-row { gap: 8px; padding: 5px 0; }
+  .octopus-calc .shape-row label { width: 18px; font-size: 13px; }
+  .octopus-calc .shape-row input { font-size: 18px !important; }
+  .octopus-calc .shape-row select.shape-unit { width: 56px; font-size: 11px; padding: 4px 4px; }
+  .octopus-calc .shape-unit-spacer { width: 56px; }
+  .octopus-calc .shape-results { padding: 4px 12px; min-height: 50px; }
+  .octopus-calc .shape-result-label { font-size: 11px; }
+  .octopus-calc .shape-result-value { font-size: 14px; }
+  .octopus-calc .shape-result-value .alt { font-size: 11px; }
+  .octopus-calc .shape-send { padding: 11px; font-size: 13px; }
+
+  .octopus-calc__hint { font-size: 10px; line-height: 1.5; }
+}
+
+/* Very narrow screens (≤360px) — squeeze further */
+@media (max-width: 360px) {
+  .octopus-calc { padding: 10px; }
+  .octopus-calc .grid { gap: 5px; }
+  .octopus-calc .grid > button { height: 40px !important; font-size: 14px !important; }
+  .octopus-calc .grid.grid--adv > button { height: 36px !important; font-size: 12px !important; }
+  .octopus-calc .display__current { font-size: 22px; }
+}
+
 </style>
 
 <div class="oc-calc-page">
   <div class="oc-calc-page-inner">
 
-    <h1>เครื่องคิดเลข + แปลงหน่วย ออนไลน์ฟรี</h1>
-    <p class="lead">
-      สำหรับงานป้าย พิมพ์ และคำนวณสัดส่วน — รวมเครื่องคิดเลขพื้นฐาน วิทยาศาสตร์ แปลงหน่วย metric ↔ imperial
-      หน่วยไทย (ตร.วา · ไร่) อัตราแลกเปลี่ยนสด คำนวณสัดส่วนภาพ และพื้นที่จากรูปทรง โดย Octopus Media Solutions
-    </p>
+    <h1>เครื่องคิดเลข ออนไลน์ <span style="background:linear-gradient(135deg,#14c9df,#17a9bb);-webkit-background-clip:text;background-clip:text;color:transparent">+ แปลงหน่วย</span> ออนไลน์ฟรี</h1>
+    <p class="lead">เครื่องมือแก้โจทย์คณิต คำนวณสัดส่วน — รวมเครื่องคิดเลขพื้นฐาน วิทยาศาสตร์ แปลงหน่วย metric ↔ imperial หน่วยไทย (ตร.วา · ไร่) อัตราเงินแลกเปลี่ยน คำนวณสัดส่วนภาพ และพื้นที่จากรูปทรง</p>
 
     <div class="calc-mount">
 <div class="octopus-calc" role="application" data-theme="light" id="oc-root">
