@@ -1211,6 +1211,7 @@
       paperExact: 'Matches',
       paperClose: 'Close to',
       paperNear: 'Near',
+      paperFar: 'Far from',
       modeTax: 'Tax',
       taxFromNet: 'Add VAT',
       taxFromGross: 'Remove VAT',
@@ -1297,6 +1298,7 @@
       paperExact: 'ตรงกับขนาด',
       paperClose: 'ใกล้เคียงขนาด',
       paperNear: 'ใกล้ขนาด',
+      paperFar: 'ห่างจาก',
       modeTax: 'ภาษี',
       taxFromNet: 'บวก VAT',
       taxFromGross: 'ถอด VAT',
@@ -1545,16 +1547,33 @@
   function matchPaperSize(w_mm, l_mm) {
     if (!w_mm || !l_mm) return null;
     var short = Math.min(w_mm, l_mm), long = Math.max(w_mm, l_mm);
-    var best = null, bestDev = 999;
+    var bestA = null, bestA_dev = 999;
+    var bestBC = null, bestBC_dev = 999;
     for (var i = 0; i < ISO_PAPER.length; i++) {
       var p = ISO_PAPER[i], sw = p[1], lw = p[2];
       var dev = Math.max(Math.abs(short - sw) / sw, Math.abs(long - lw) / lw);
-      if (dev < bestDev) { bestDev = dev; best = { name: p[0], sw: sw, lw: lw }; }
+      if (p[0].charAt(0) === 'A') {
+        if (dev < bestA_dev) { bestA_dev = dev; bestA = { name: p[0], sw: sw, lw: lw }; }
+      } else {
+        if (dev < bestBC_dev) { bestBC_dev = dev; bestBC = { name: p[0], sw: sw, lw: lw }; }
+      }
     }
-    if (!best) return null;
-    var devPct = bestDev * 100;
-    if (devPct > 15) return null; // too far from any standard
-    return { name: best.name, sw: best.sw, lw: best.lw, devPct: devPct };
+    var THRESHOLD = 0.25;
+    var aInRange = bestA && bestA_dev <= THRESHOLD;
+    var bcInRange = bestBC && bestBC_dev <= THRESHOLD;
+    var primary = null, secondary = null;
+    if (aInRange) {
+      primary = { name: bestA.name, sw: bestA.sw, lw: bestA.lw, devPct: bestA_dev * 100 };
+      // Secondary only if it's meaningfully closer than A (≥5pp better)
+      if (bcInRange && bestBC_dev < bestA_dev - 0.05) {
+        secondary = { name: bestBC.name, sw: bestBC.sw, lw: bestBC.lw, devPct: bestBC_dev * 100 };
+      }
+    } else if (bcInRange) {
+      // No A in range — promote B/C to primary
+      primary = { name: bestBC.name, sw: bestBC.sw, lw: bestBC.lw, devPct: bestBC_dev * 100 };
+    }
+    if (!primary) return null;
+    return { primary: primary, secondary: secondary };
   }
 
   function shapeUnitScale(key) {
@@ -1605,20 +1624,26 @@
     if (shape.kind === 'rect') {
       html += '<div class="shape-result"><span class="shape-result-label">' + t('shapeArea') + '</span><span class="shape-result-value">' + fmtConv(r.area_native) + '<span class="unit">' + u2 + '</span><span class="alt">' + fmtConv(r.area_m2) + ' m²</span></span></div>';
       html += '<div class="shape-result"><span class="shape-result-label">' + t('shapePerimeter') + '</span><span class="shape-result-value">' + fmtConv(r.perim_native) + '<span class="unit">' + u + '</span></span></div>';
-      // Paper-size proximity hint
+      // Paper-size proximity hint (A always shown if ≤25% off; B/C as bonus)
       var w_mm = parseFloat(shape.w) * shapeUnitScale(shape.unit) * 1000;
       var l_mm = parseFloat(shape.l) * shapeUnitScale(shape.unit) * 1000;
       var match = matchPaperSize(w_mm, l_mm);
       if (match) {
-        var dev = match.devPct;
-        var prefix, klass = '';
-        if (dev < 1) { prefix = t('paperExact'); klass = ' is-exact'; }
-        else if (dev < 5) { prefix = t('paperClose'); }
-        else { prefix = t('paperNear'); }
-        html += '<div class="shape-paper-match is-shown' + klass + '">' +
-          prefix + ' <span class="pm-name">' + match.name + '</span>' +
-          ' <span class="pm-dev">' + match.sw + '×' + match.lw + ' mm' +
-          (dev >= 1 ? ' · ±' + dev.toFixed(1) + '%' : '') + '</span></div>';
+        function paperBadge(p, isSecondary) {
+          var dev = p.devPct;
+          var prefix, klass = '';
+          if (dev < 1)        { prefix = t('paperExact'); klass = ' is-exact'; }
+          else if (dev < 5)   { prefix = t('paperClose'); }
+          else if (dev < 15)  { prefix = t('paperNear'); }
+          else                { prefix = t('paperFar'); }
+          if (isSecondary)    { klass += ' is-secondary'; prefix = '+ ' + prefix; }
+          return '<div class="shape-paper-match is-shown' + klass + '">' +
+            prefix + ' <span class="pm-name">' + p.name + '</span>' +
+            ' <span class="pm-dev">' + p.sw + '×' + p.lw + ' mm' +
+            (dev >= 1 ? ' · ±' + dev.toFixed(1) + '%' : '') + '</span></div>';
+        }
+        html += paperBadge(match.primary, false);
+        if (match.secondary) html += paperBadge(match.secondary, true);
       }
     } else {
       html += '<div class="shape-result"><span class="shape-result-label">' + t('shapeSurface') + '</span><span class="shape-result-value">' + fmtConv(r.surface_native) + '<span class="unit">' + u2 + '</span><span class="alt">' + fmtConv(r.surface_m2) + ' m²</span></span></div>';
