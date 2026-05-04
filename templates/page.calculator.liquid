@@ -4,6 +4,37 @@
   Page handle: calculator · template_suffix: calculator
 {% endcomment %}
 
+{% comment %} SEO meta — sharing previews + canonical + i18n {% endcomment %}
+{%- assign canonical_url = shop.url | append: '/pages/calculator' -%}
+{%- capture og_title -%}เครื่องคิดเลข + แปลงหน่วย ออนไลน์ฟรี — รวมทุกฟังก์ชัน คิดเลข แปลงหน่วย ภาษี | Octopus{%- endcapture -%}
+{%- capture og_desc -%}เครื่องคิดเลขออนไลน์ฟรี รวม 6 โหมด: พื้นฐาน · วิทยาศาสตร์ · แปลงหน่วย metric/imperial หน่วยไทย ตร.วา ไร่ · อัตราแลกเปลี่ยน 12 สกุล · บัญญัติไตรยางศ์ · พื้นที่+ปริมาตร เทียบกระดาษ ISO · ภาษี VAT 7% และหัก ณ ที่จ่าย ไทย{%- endcapture -%}
+
+<link rel="canonical" href="{{ canonical_url }}">
+
+<meta property="og:type" content="website">
+<meta property="og:locale" content="th_TH">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:url" content="{{ canonical_url }}">
+<meta property="og:title" content="{{ og_title }}">
+<meta property="og:description" content="{{ og_desc }}">
+<meta property="og:site_name" content="Octopus Media Solutions">
+{%- if shop.brand.logo %}
+<meta property="og:image" content="{{ shop.brand.logo | image_url: width: 1200 }}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Octopus Media Solutions Calculator">
+{%- endif %}
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ og_title }}">
+<meta name="twitter:description" content="{{ og_desc }}">
+{%- if shop.brand.logo %}
+<meta name="twitter:image" content="{{ shop.brand.logo | image_url: width: 1200 }}">
+{%- endif %}
+
+<meta name="keywords" content="เครื่องคิดเลข, เครื่องคิดเลขออนไลน์, เครื่องคำนวณ, แปลงหน่วย, ตารางวาเป็นตารางเมตร, ไร่เป็นตารางเมตร, mm เป็น inch, scientific calculator, calculator online, อัตราแลกเปลี่ยน, currency converter, บัญญัติไตรยางศ์, aspect ratio, คำนวณพื้นที่, คำนวณ VAT, ถอดแวท, หัก ณ ที่จ่าย, withholding tax, ISO 216, A4 size">
+
+
 <style>
 .oc-calc-page {
   background: #f3f7fa;
@@ -2680,6 +2711,56 @@
     "name": "Octopus Media Solutions",
     "url": "{{ shop.url }}"
   }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "หน้าแรก", "item": "{{ shop.url }}"},
+    {"@type": "ListItem", "position": 2, "name": "เครื่องคิดเลข + แปลงหน่วย", "item": "{{ shop.url }}/pages/calculator"}
+  ]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "วิธีคำนวณภาษี VAT 7% และหัก ณ ที่จ่าย ออนไลน์",
+  "description": "วิธีใช้เครื่องคิดเลขออนไลน์เพื่อคำนวณ VAT บวก/ถอด และภาษีหัก ณ ที่จ่ายตามประเภทงาน",
+  "inLanguage": "th-TH",
+  "totalTime": "PT1M",
+  "tool": [{"@type": "HowToTool", "name": "Octopus Calculator"}],
+  "step": [
+    {"@type": "HowToStep", "position": 1, "name": "เลือกโหมดภาษี", "text": "กดแท็บ ภาษี ในเครื่องคิดเลขออนไลน์"},
+    {"@type": "HowToStep", "position": 2, "name": "เลือกบวก VAT หรือถอด VAT", "text": "เลือกบวก VAT ถ้ากรอกราคาก่อนภาษี หรือเลือกถอด VAT ถ้ากรอกราคารวมแล้ว"},
+    {"@type": "HowToStep", "position": 3, "name": "กรอกจำนวนเงิน", "text": "พิมพ์จำนวนเงินลงในช่อง"},
+    {"@type": "HowToStep", "position": 4, "name": "เลือก % VAT", "text": "เลือก 7% (มาตรฐาน) หรือ 0% (ส่งออก)"},
+    {"@type": "HowToStep", "position": 5, "name": "เลือก % หัก ณ ที่จ่าย", "text": "เลือกตามประเภทงาน เช่น 1% ขนส่ง, 3% ค่าบริการและรับเหมา, 5% ค่าเช่า"},
+    {"@type": "HowToStep", "position": 6, "name": "ดูผลลัพธ์", "text": "ระบบแสดงราคาก่อน VAT, VAT, ยอดในใบกำกับ, ภาษีหัก ณ ที่จ่าย และยอดโอนจริง"}
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "วิธีแปลง ตร.วา เป็น ตร.ม. ออนไลน์",
+  "description": "วิธีแปลงหน่วยที่ดินไทยเป็นหน่วยสากลด้วยเครื่องแปลงหน่วยออนไลน์",
+  "inLanguage": "th-TH",
+  "totalTime": "PT30S",
+  "step": [
+    {"@type": "HowToStep", "position": 1, "name": "เลือกโหมดแปลงหน่วย", "text": "กดแท็บ Convert ในเครื่องคิดเลข"},
+    {"@type": "HowToStep", "position": 2, "name": "เลือกหมวดพื้นที่", "text": "กดปุ่ม Area ในแถบหมวดหน่วย"},
+    {"@type": "HowToStep", "position": 3, "name": "เลือกหน่วยต้นทางและปลายทาง", "text": "เลือก ตร.วา ในช่องบน และ ตร.ม. (m²) ในช่องล่าง"},
+    {"@type": "HowToStep", "position": 4, "name": "พิมพ์ตัวเลข", "text": "ใส่จำนวน ตร.วา ระบบจะแปลงเป็น ตร.ม. ทันที (1 ตร.วา = 4 ตร.ม.)"}
+  ]
 }
 </script>
 
