@@ -254,12 +254,40 @@
 .octopus-calc *::before,
 .octopus-calc *::after { box-sizing: border-box; }
 
+/* Override host theme button defaults that bleed into .octopus-calc */
+.octopus-calc button,
+.octopus-calc .grid button,
+.octopus-calc .grid > button {
+  margin: 0 !important;
+  width: auto !important;
+  flex: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  min-height: 0 !important;
+  font-family: var(--font-mono) !important;
+}
+.octopus-calc input,
+.octopus-calc select {
+  margin: 0;
+  font-family: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  box-shadow: none;
+}
+
+
 /* Toolbar (theme + lang) */
 .octopus-calc__toolbar {
-  display: flex;
+  display: flex !important;
   justify-content: flex-end;
   gap: 6px;
   margin-bottom: 8px;
+  flex-wrap: wrap;
 }
 .octopus-calc .tool-btn {
   font-family: inherit;
@@ -371,17 +399,20 @@
 
 /* Button grid */
 .octopus-calc .grid {
-  display: grid;
+  display: grid !important;
   gap: 8px;
+  width: 100%;
 }
-.octopus-calc .grid--simple { grid-template-columns: repeat(4, 1fr); }
-.octopus-calc .grid--adv { grid-template-columns: repeat(5, 1fr); }
-.octopus-calc .grid button {
-  height: 48px;
-  font-family: var(--font-mono);
+.octopus-calc .grid--simple { grid-template-columns: repeat(4, 1fr) !important; }
+.octopus-calc .grid--adv { grid-template-columns: repeat(5, 1fr) !important; }
+.octopus-calc .grid button,
+.octopus-calc .grid > button {
+  height: 48px !important;
+  width: auto !important;
+  font-family: var(--font-mono) !important;
   font-size: 16px;
   font-weight: 500;
-  padding: 0;
+  padding: 0 !important;
   line-height: 1;
   background: var(--surface-2);
   color: var(--text-1);
@@ -390,6 +421,10 @@
   cursor: pointer;
   transition: transform 0.06s ease, background 0.12s ease, border-color 0.12s ease;
   -webkit-tap-highlight-color: transparent;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: none !important;
 }
 .octopus-calc .grid button:hover {
   background: var(--surface);
@@ -417,7 +452,7 @@
   background: var(--danger-bg);
   border-color: var(--danger);
 }
-.octopus-calc .grid .span2 { grid-column: span 2; }
+.octopus-calc .grid .span2 { grid-column: span 2 !important; }
 
 /* Hint */
 .octopus-calc__hint {
