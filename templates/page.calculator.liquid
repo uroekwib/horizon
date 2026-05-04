@@ -871,6 +871,173 @@
 }
 .octopus-calc .ratio-clear button:hover { color: var(--text-1); }
 
+
+/* Tax mode */
+.octopus-calc .tax-input-card {
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+.octopus-calc .tax-toggle-row {
+  display: flex !important;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.octopus-calc .tax-toggle-row button {
+  flex: 1;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 8px 10px;
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all 0.12s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.octopus-calc .tax-toggle-row button.is-active {
+  background: var(--accent-bg);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.octopus-calc .tax-amount-row {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+}
+.octopus-calc .tax-amount-row label {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-2);
+  width: 84px;
+  flex-shrink: 0;
+}
+.octopus-calc .tax-amount-row input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--text-1);
+  text-align: right;
+  padding: 0;
+  outline: none;
+  min-width: 0;
+}
+.octopus-calc .tax-rate-row {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-top: 1px solid var(--border);
+}
+.octopus-calc .tax-rate-row + .tax-rate-row { border-top: 1px solid var(--border); }
+.octopus-calc .tax-rate-row label {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-2);
+  width: 84px;
+  flex-shrink: 0;
+}
+.octopus-calc .tax-rate-row select {
+  flex: 1;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  padding: 6px 8px;
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text-1);
+  cursor: pointer;
+}
+.octopus-calc .tax-results {
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  padding: 4px 16px;
+  margin-bottom: 12px;
+}
+.octopus-calc .tax-result-row {
+  display: flex !important;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 10px 0;
+}
+.octopus-calc .tax-result-row + .tax-result-row { border-top: 1px solid var(--border); }
+.octopus-calc .tax-result-row.is-highlight {
+  border-top: 2px solid var(--accent) !important;
+  margin-top: 4px;
+}
+.octopus-calc .tax-result-label {
+  font-size: 12px;
+  color: var(--text-2);
+  font-weight: 500;
+}
+.octopus-calc .tax-result-row.is-highlight .tax-result-label {
+  color: var(--accent);
+  font-weight: 600;
+}
+.octopus-calc .tax-result-value {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-1);
+  text-align: right;
+}
+.octopus-calc .tax-result-row.is-highlight .tax-result-value {
+  font-size: 18px;
+  color: var(--accent);
+  font-weight: 600;
+}
+.octopus-calc .tax-result-value .baht { color: var(--text-3); margin-right: 2px; font-size: 13px; }
+.octopus-calc .tax-result-value .pct {
+  font-size: 11px;
+  color: var(--text-3);
+  margin-left: 6px;
+  font-family: var(--font-sans);
+  font-weight: 400;
+}
+.octopus-calc .tax-send {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, var(--accent-2), var(--accent));
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: filter 0.12s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.octopus-calc .tax-send:hover { filter: brightness(1.05); }
+.octopus-calc .tax-send:disabled {
+  background: var(--surface);
+  color: var(--text-3);
+  cursor: not-allowed;
+}
+@media (max-width: 480px) {
+  .octopus-calc .tax-input-card { padding: 10px 12px; }
+  .octopus-calc .tax-toggle-row button { padding: 7px 6px; font-size: 11px; }
+  .octopus-calc .tax-amount-row label,
+  .octopus-calc .tax-rate-row label { width: 72px; font-size: 11px; }
+  .octopus-calc .tax-amount-row input { font-size: 18px !important; }
+  .octopus-calc .tax-rate-row select { font-size: 12px; padding: 5px 6px; }
+  .octopus-calc .tax-results { padding: 4px 12px; }
+  .octopus-calc .tax-result-row { padding: 8px 0; }
+  .octopus-calc .tax-result-label { font-size: 11px; }
+  .octopus-calc .tax-result-value { font-size: 14px; }
+  .octopus-calc .tax-result-row.is-highlight .tax-result-value { font-size: 16px; }
+  .octopus-calc .tax-send { padding: 11px; font-size: 12px; }
+}
+
 /* ===========================================================
    Mobile breakpoint — Horizon theme injects different rules
    on mobile. Re-assert layout aggressively + prevent iOS auto-zoom
@@ -962,6 +1129,7 @@
     <button class="mode-btn" data-mode="conv"><span data-i18n="modeConv">Convert</span></button>
     <button class="mode-btn" data-mode="ratio"><span data-i18n="modeRatio">Ratio</span></button>
     <button class="mode-btn" data-mode="shape"><span data-i18n="modeShape">Area</span></button>
+    <button class="mode-btn" data-mode="tax"><span data-i18n="modeTax">Tax</span></button>
   </div>
 
   <div class="octopus-calc__body" id="oc-body">
@@ -1440,6 +1608,126 @@
     state.evald = true;
     setMode('simple');
   }
+
+  // ===== Tax mode (VAT + Withholding tax for Thailand) =====
+  // WHT rates: 1%=transport, 2%=ads, 3%=service/contractor (default), 5%=rent/prize, 10%=professional, 15%=foreign interest
+  var tax = { dir: 'fromNet', amount: '', vatRate: 0.07, whtRate: 0.03, whtBase: 'net' };
+  var WHT_RATES = [
+    [0,    'noWHT'],
+    [0.01, 'wht1'],
+    [0.02, 'wht2'],
+    [0.03, 'wht3'],
+    [0.05, 'wht5'],
+    [0.10, 'wht10'],
+    [0.15, 'wht15']
+  ];
+  var VAT_RATES = [
+    [0.07, 'vat7'],
+    [0.00, 'vat0'],
+    [0.10, 'vat10']
+  ];
+  function computeTax() {
+    var amt = parseFloat(tax.amount);
+    if (isNaN(amt) || amt <= 0) return null;
+    var vr = tax.vatRate, wr = tax.whtRate;
+    var net, vat, gross;
+    if (tax.dir === 'fromNet') {
+      net = amt; vat = net * vr; gross = net + vat;
+    } else {
+      gross = amt; net = gross / (1 + vr); vat = gross - net;
+    }
+    var wht = net * wr;  // WHT computed from pre-VAT amount (Thai standard)
+    var transfer = gross - wht;
+    return { net: net, vat: vat, gross: gross, wht: wht, transfer: transfer };
+  }
+  function fmtBaht(n) {
+    if (state.dp !== 'auto') return n.toFixed(parseInt(state.dp, 10));
+    return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  function buildTaxHTML() {
+    var vatOpts = '', whtOpts = '';
+    for (var i = 0; i < VAT_RATES.length; i++) {
+      var r = VAT_RATES[i];
+      vatOpts += '<option value="' + r[0] + '"' + (Math.abs(r[0] - tax.vatRate) < 0.0001 ? ' selected' : '') +
+        '>' + (r[0] * 100).toFixed(0) + '% — ' + t(r[1]) + '</option>';
+    }
+    for (var j = 0; j < WHT_RATES.length; j++) {
+      var w = WHT_RATES[j];
+      whtOpts += '<option value="' + w[0] + '"' + (Math.abs(w[0] - tax.whtRate) < 0.0001 ? ' selected' : '') +
+        '>' + (w[0] * 100).toFixed(0) + '% — ' + t(w[1]) + '</option>';
+    }
+    return (
+      '<div class="tax-toggle-row" id="oc-tax-dir">' +
+        '<button class="' + (tax.dir === 'fromNet' ? 'is-active' : '') + '" data-dir="fromNet"><span data-i18n="taxFromNet">Add VAT</span></button>' +
+        '<button class="' + (tax.dir === 'fromGross' ? 'is-active' : '') + '" data-dir="fromGross"><span data-i18n="taxFromGross">Remove VAT</span></button>' +
+      '</div>' +
+      '<div class="tax-input-card">' +
+        '<div class="tax-amount-row"><label data-i18n="' + (tax.dir === 'fromNet' ? 'taxNet' : 'taxGross') + '">Amount</label>' +
+        '<input id="oc-tax-amt" type="text" inputmode="decimal" placeholder="0.00" aria-label="Amount"></div>' +
+        '<div class="tax-rate-row"><label data-i18n="taxVATRate">VAT</label>' +
+        '<select id="oc-tax-vat">' + vatOpts + '</select></div>' +
+        '<div class="tax-rate-row"><label data-i18n="taxWHTRate">WHT</label>' +
+        '<select id="oc-tax-wht">' + whtOpts + '</select></div>' +
+      '</div>' +
+      '<div class="tax-results" id="oc-tax-results"></div>' +
+      '<button class="tax-send" id="oc-tax-send" type="button"><span data-i18n="taxSend">Use transfer amount →</span></button>'
+    );
+  }
+  function renderTaxResults() {
+    var res = document.getElementById('oc-tax-results');
+    var sendBtn = document.getElementById('oc-tax-send');
+    if (!res) return;
+    var r = computeTax();
+    if (!r) {
+      res.innerHTML = '<div class="tax-result-row"><span class="tax-result-label">' + t('taxEnterAmt') + '</span><span class="tax-result-value">—</span></div>';
+      if (sendBtn) sendBtn.disabled = true;
+      return;
+    }
+    if (sendBtn) sendBtn.disabled = false;
+    var vatPct = (tax.vatRate * 100).toFixed(0);
+    var whtPct = (tax.whtRate * 100).toFixed(0);
+    var html = '';
+    html += '<div class="tax-result-row"><span class="tax-result-label">' + t('taxNetLabel') + '</span><span class="tax-result-value"><span class="baht">฿</span>' + fmtBaht(r.net) + '</span></div>';
+    html += '<div class="tax-result-row"><span class="tax-result-label">' + t('taxVATLabel') + ' <span class="pct">' + vatPct + '%</span></span><span class="tax-result-value"><span class="baht">฿</span>' + fmtBaht(r.vat) + '</span></div>';
+    html += '<div class="tax-result-row"><span class="tax-result-label">' + t('taxGrossLabel') + '</span><span class="tax-result-value"><span class="baht">฿</span>' + fmtBaht(r.gross) + '</span></div>';
+    if (tax.whtRate > 0) {
+      html += '<div class="tax-result-row"><span class="tax-result-label">' + t('taxWHTLabel') + ' <span class="pct">' + whtPct + '%</span></span><span class="tax-result-value">−<span class="baht">฿</span>' + fmtBaht(r.wht) + '</span></div>';
+    }
+    html += '<div class="tax-result-row is-highlight"><span class="tax-result-label">' + t('taxTransferLabel') + '</span><span class="tax-result-value"><span class="baht">฿</span>' + fmtBaht(r.transfer) + '</span></div>';
+    res.innerHTML = html;
+  }
+  function bindTax() {
+    var amt = document.getElementById('oc-tax-amt');
+    var vat = document.getElementById('oc-tax-vat');
+    var wht = document.getElementById('oc-tax-wht');
+    if (amt) {
+      amt.value = tax.amount;
+      amt.addEventListener('input', function () { tax.amount = amt.value; renderTaxResults(); });
+    }
+    if (vat) vat.addEventListener('change', function () { tax.vatRate = parseFloat(vat.value); renderTaxResults(); });
+    if (wht) wht.addEventListener('change', function () { tax.whtRate = parseFloat(wht.value); renderTaxResults(); });
+    var dirBtns = document.querySelectorAll('#oc-tax-dir button');
+    for (var i = 0; i < dirBtns.length; i++) {
+      (function (b) {
+        b.addEventListener('click', function () {
+          tax.dir = b.getAttribute('data-dir');
+          setMode('tax');
+        });
+      })(dirBtns[i]);
+    }
+    var send = document.getElementById('oc-tax-send');
+    if (send) send.addEventListener('click', sendTaxToCalc);
+  }
+  function sendTaxToCalc() {
+    var r = computeTax();
+    if (!r) return;
+    state.result = fmt(r.transfer);
+    state.expr = '';
+    state.hist = t('taxTransferLabel') + ' ฿' + fmtBaht(r.transfer) + ' =';
+    state.evald = true;
+    setMode('simple');
+  }
+
   function buildShapeHTML() {
     var hRow = (shape.kind === 'box')
       ? '<div class="shape-row"><label data-i18n="abbrH">H</label><input id="oc-sh-h" type="text" inputmode="decimal" placeholder="0" aria-label="' + t('shapeHeight') + '"><span class="shape-unit-spacer"></span></div>'
@@ -2058,7 +2346,7 @@
 
     // keyboard
     document.addEventListener('keydown', function (e) {
-      if (state.mode === 'conv' || state.mode === 'shape') return;
+      if (state.mode === 'conv' || state.mode === 'shape' || state.mode === 'tax') return;
       var ae = document.activeElement;
       if (ae && (ae.tagName === 'INPUT' || ae.tagName === 'SELECT' || ae.tagName === 'TEXTAREA')) return;
       var k = e.key;
