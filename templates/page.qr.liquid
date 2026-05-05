@@ -274,32 +274,89 @@
 /* ===== Batch mode ===== */
 .oqr-batch-panel { grid-column: 1 / -1; }
 .oqr-batch-drop {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   border: 2px dashed var(--accent);
   border-radius: var(--radius-md);
-  padding: 32px 20px;
+  padding: 28px 16px;
   text-align: center;
   background: var(--accent-bg);
   cursor: pointer;
   transition: all .12s;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+.oqr-batch-drop-icon {
+  font-size: 28px;
+  line-height: 1;
+  margin-bottom: 10px;
+}
+.oqr-batch-drop-title {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+.oqr-batch-drop-sub {
+  display: block;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.oqr-batch-drop-link {
+  color: var(--accent);
+  text-decoration: underline;
 }
 .oqr-batch-drop:hover, .oqr-batch-drop.is-dragover {
   background: var(--accent-bg-strong);
   border-color: var(--accent-2);
 }
-.oqr-batch-drop strong { display: block; font-size: 16px; color: var(--accent); margin-bottom: 6px; }
-.oqr-batch-drop > span { display: block; }
 .oqr-batch-drop input[type="file"] { display: none; }
 .oqr-batch-template {
   display: block;
-  margin-top: 12px; font-size: 12px; color: var(--text-2);
-  line-height: 1.6;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: var(--text-2);
+  line-height: 1.5;
+}
+.oqr-batch-tpl-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  align-items: center;
+  padding: 3px 0;
+  word-break: break-word;
+}
+.oqr-batch-tpl-line + .oqr-batch-tpl-line {
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+  margin-top: 4px;
+}
+.oqr-batch-template a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.oqr-batch-template a:hover {
+  text-decoration: underline;
 }
 .oqr-batch-template code {
-  background: var(--surface);
-  padding: 1px 5px;
+  background: var(--bg);
+  padding: 2px 6px;
   border-radius: 3px;
   font-family: var(--font-mono);
   font-size: 11px;
+  border: 1px solid var(--border);
+  white-space: nowrap;
 }
 .oqr-batch-template a { color: var(--accent); text-decoration: underline; }
 
@@ -387,8 +444,13 @@
   .oqr-preview-frame { padding: 10px; }
   .oqr-download-row { grid-template-columns: 1fr 1fr; gap: 6px; }
   .oqr-download-row button { padding: 10px; font-size: 12px; }
-  .oqr-batch-drop { padding: 24px 14px; }
-  .oqr-batch-drop strong { font-size: 14px; }
+  .oqr-batch-drop { padding: 22px 14px; }
+  .oqr-batch-drop-title { font-size: 14px; }
+  .oqr-batch-drop-sub { font-size: 12px; }
+  .oqr-batch-template { font-size: 11px; padding: 10px; }
+  .oqr-batch-tpl-line { gap: 4px 10px; }
+  .oqr-batch-template a { font-size: 11px; }
+  .oqr-batch-template code { font-size: 10px; }
   .oqr-batch-bar { flex-direction: column; gap: 6px; }
   .oqr-batch-bar button { font-size: 12px; padding: 10px; }
   .oqr-batch-row { grid-template-columns: 50px 1fr auto; gap: 8px; }
@@ -611,16 +673,19 @@
 
     <!-- ───── BATCH MODE ───── -->
     <div class="oqr-batch-panel" id="oqr-batch-panel" style="display:none">
-      <label class="oqr-batch-drop" id="oqr-batch-drop">
+      <div class="oqr-batch-drop" id="oqr-batch-drop">
         <input type="file" id="oqr-batch-input" accept=".csv,.xlsx,.xls,.tsv,text/csv">
-        <strong>📁 อัปโหลด CSV / Excel</strong>
-        <span>ลากไฟล์มาที่นี่ หรือคลิกเพื่อเลือก</span>
-        <div class="oqr-batch-template">
-          ตัวอย่าง columns: <code>label, data, type</code> · 
-          <a href="#" id="oqr-tpl-csv">โหลด CSV template</a> · 
-          <a href="#" id="oqr-tpl-xlsx">โหลด Excel template</a>
+        <div class="oqr-batch-drop-icon">📁</div>
+        <div class="oqr-batch-drop-title">อัปโหลด CSV / Excel</div>
+        <div class="oqr-batch-drop-sub">ลากไฟล์มาที่นี่ หรือ <span class="oqr-batch-drop-link">คลิกเพื่อเลือก</span></div>
+      </div>
+      <div class="oqr-batch-template">
+        <div class="oqr-batch-tpl-line">ตัวอย่าง columns: <code>label, data, type</code></div>
+        <div class="oqr-batch-tpl-line">
+          <a href="#" id="oqr-tpl-csv">↓ CSV template</a>
+          <a href="#" id="oqr-tpl-xlsx">↓ Excel template</a>
         </div>
-      </label>
+      </div>
 
       <div class="oqr-batch-results" id="oqr-batch-results" style="display:none"></div>
 
@@ -999,6 +1064,11 @@
   function bindBatch() {
     var drop = $('oqr-batch-drop');
     var input = $('oqr-batch-input');
+    // Click anywhere on drop area triggers file picker
+    drop.addEventListener('click', function (e) {
+      // Don't re-trigger if click came from input itself
+      if (e.target !== input) input.click();
+    });
     drop.addEventListener('dragover', function (e) { e.preventDefault(); drop.classList.add('is-dragover'); });
     drop.addEventListener('dragleave', function () { drop.classList.remove('is-dragover'); });
     drop.addEventListener('drop', function (e) {
