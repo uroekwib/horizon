@@ -326,6 +326,61 @@
 .oqr-batch-bar button:disabled { background: var(--border-2); color: var(--text-3); }
 
 /* ===== Hint ===== */
+/* Mobile overflow fixes */
+.oc-qr-page { overflow-x: hidden; }
+.octopus-qr { min-width: 0; max-width: 100%; }
+.oqr-input-panel { min-width: 0; max-width: 100%; }
+.oqr-preview-panel { min-width: 0; max-width: 100%; }
+.oqr-batch-panel { min-width: 0; max-width: 100%; }
+.octopus-qr select,
+.octopus-qr input[type="text"],
+.octopus-qr input[type="url"],
+.octopus-qr input[type="tel"],
+.octopus-qr input[type="email"],
+.octopus-qr input[type="number"],
+.octopus-qr textarea {
+  max-width: 100%;
+  min-width: 0;
+}
+@media (max-width: 768px) {
+  .oc-qr-page { padding: 16px 12px 40px; }
+  .oc-qr-page h1 { font-size: 1.4em; }
+  .octopus-qr { padding: 14px; gap: 14px; }
+  .oqr-tabs button { padding: 7px 10px; font-size: 12px; }
+  .oqr-form-row label { font-size: 11px; }
+  .oqr-form-row input, .oqr-form-row textarea, .oqr-form-row select {
+    font-size: 16px !important; /* iOS zoom prevention */
+    padding: 9px 10px;
+  }
+  .oqr-form-grid-2 { grid-template-columns: 1fr !important; gap: 8px !important; }
+  .oqr-style-section { padding: 12px; }
+  .oqr-style-section h3 { font-size: 12px; }
+  .oqr-style-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .oqr-style-btn { padding: 6px; }
+  .oqr-color-row label { font-size: 11px; }
+  .oqr-color-row .hex { font-size: 11px; width: auto; }
+  .oqr-color-row input[type="color"] { width: 40px; height: 28px; }
+  .oqr-preview-panel {
+    position: static !important;
+    padding: 14px;
+  }
+  .oqr-preview-frame { padding: 10px; }
+  .oqr-download-row { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .oqr-download-row button { padding: 10px; font-size: 12px; }
+  .oqr-batch-drop { padding: 24px 14px; }
+  .oqr-batch-drop strong { font-size: 14px; }
+  .oqr-batch-bar { flex-direction: column; gap: 6px; }
+  .oqr-batch-bar button { font-size: 12px; padding: 10px; }
+  .oqr-batch-row { grid-template-columns: 50px 1fr auto; gap: 8px; }
+  .oqr-batch-row .qr-thumb { width: 50px; height: 50px; }
+  .oqr-batch-row .qr-info { font-size: 12px; }
+  .oqr-batch-row .qr-data { font-size: 10px; }
+}
+@media (max-width: 480px) {
+  .oqr-style-grid { grid-template-columns: repeat(3, 1fr); }
+  .oqr-batch-template { font-size: 11px; }
+}
+
 .oqr-hint {
   font-size: 11px; color: var(--text-3);
   text-align: center; margin-top: 16px;
@@ -647,7 +702,7 @@
 </script>
 
 <!-- ===== Libraries ===== -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qr-code-styling/1.6.0-rc.1/qr-code-styling.js"></script>
+<script src="https://unpkg.com/qr-code-styling@1.6.0-rc.1/lib/qr-code-styling.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -802,6 +857,11 @@
   }
 
   function renderPreview() {
+    if (typeof QRCodeStyling === 'undefined') {
+      $('oqr-preview').innerHTML = '<div style="padding:20px;color:#999;font-size:13px;text-align:center">กำลังโหลด QR library...</div>';
+      setTimeout(renderPreview, 300);
+      return;
+    }
     var data = encodeByType(st.type, getFormFields());
     if (!data) data = ' ';
     st.qr = buildQR($('oqr-preview'), {
