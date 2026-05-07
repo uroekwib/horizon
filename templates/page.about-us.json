@@ -21,7 +21,6 @@
       "block_order": [
         "page-content"
       ],
-      "disabled": true,
       "settings": {
         "content_direction": "column",
         "gap": 0,
@@ -3098,7 +3097,6 @@
     }
   },
   "order": [
-    "main",
     "section_e4jXgh",
     "section_y84K8q",
     "section_48VRzd",
@@ -3116,6 +3114,7 @@
     "section_HcCC4b",
     "section_rDmDe3",
     "section_LRGrgQ",
-    "section_KKtjRC"
+    "section_KKtjRC",
+    "main"
   ]
 }
