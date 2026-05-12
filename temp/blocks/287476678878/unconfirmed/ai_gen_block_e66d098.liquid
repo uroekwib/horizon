@@ -1,6 +1,590 @@
+{% doc %}
+  @prompt
+    Create a customer reviews section that displays Google reviews. The section should include: a heading (e.g., "What Our Customers Say"), star rating display, reviewer name, review text, and review date. Support multiple review cards in a responsive grid layout. Allow the merchant to customize colors, heading text, and number of reviews shown. Reviews should be manually entered via section settings (name, rating 1-5 stars, review body, date). Include a Google logo or badge to indicate these are Google reviews.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-google-reviews-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    padding: {{ block.settings.section_padding }}px 0;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .ai-google-reviews-container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-google-reviews-header-{{ ai_gen_id }} {
+    text-align: {{ block.settings.heading_alignment }};
+    margin-bottom: 40px;
+  }
+
+  .ai-google-reviews-heading-{{ ai_gen_id }} {
+    color: {{ block.settings.heading_color }};
+    font-size: {{ block.settings.heading_size }}px;
+    margin: 0 0 16px 0;
+  }
+
+  .ai-google-reviews-badge-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: {{ block.settings.heading_alignment }};
+  }
+
+  .ai-google-reviews-google-logo-{{ ai_gen_id }} {
+    width: 80px;
+    height: auto;
+  }
+
+  .ai-google-reviews-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: {{ block.settings.card_gap }}px;
+  }
+
+  .ai-google-reviews-card-{{ ai_gen_id }} {
+    background-color: {{ block.settings.card_background_color }};
+    border: {{ block.settings.card_border_width }}px solid {{ block.settings.card_border_color }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .ai-google-reviews-card-header-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .ai-google-reviews-reviewer-{{ ai_gen_id }} {
+    flex: 1;
+  }
+
+  .ai-google-reviews-reviewer-name-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 4px 0;
+  }
+
+  .ai-google-reviews-date-{{ ai_gen_id }} {
+    color: {{ block.settings.date_color }};
+    font-size: 12px;
+  }
+
+  .ai-google-reviews-stars-{{ ai_gen_id }} {
+    display: flex;
+    gap: 2px;
+  }
+
+  .ai-google-reviews-star-{{ ai_gen_id }} {
+    width: 16px;
+    height: 16px;
+    fill: {{ block.settings.star_color }};
+  }
+
+  .ai-google-reviews-star-empty-{{ ai_gen_id }} {
+    fill: {{ block.settings.star_empty_color }};
+  }
+
+  .ai-google-reviews-text-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-google-reviews-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+    }
+
+    .ai-google-reviews-heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_size | times: 0.8 }}px;
+    }
+  }
+{% endstyle %}
+
+<google-reviews-{{ ai_gen_id }} class="ai-google-reviews-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-google-reviews-container-{{ ai_gen_id }}">
+    <div class="ai-google-reviews-header-{{ ai_gen_id }}">
+      {% if block.settings.heading != blank %}
+        <h2 class="ai-google-reviews-heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+      {% endif %}
+      
+      {% if block.settings.show_google_badge %}
+        <div class="ai-google-reviews-badge-{{ ai_gen_id }}">
+          <svg class="ai-google-reviews-google-logo-{{ ai_gen_id }}" viewBox="0 0 272 92" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#EA4335" d="M115.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18C71.25 34.32 81.24 25 93.5 25s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44S80.99 39.2 80.99 47.18c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z"/>
+            <path fill="#FBBC05" d="M163.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18c0-12.85 9.99-22.18 22.25-22.18s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44s-12.51 5.46-12.51 13.44c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z"/>
+            <path fill="#4285F4" d="M209.75 26.34v39.82c0 16.38-9.66 23.07-21.08 23.07-10.75 0-17.22-7.19-19.66-13.07l8.48-3.53c1.51 3.61 5.21 7.87 11.17 7.87 7.31 0 11.84-4.51 11.84-13v-3.19h-.34c-2.18 2.69-6.38 5.04-11.68 5.04-11.09 0-21.25-9.66-21.25-22.09 0-12.52 10.16-22.26 21.25-22.26 5.29 0 9.49 2.35 11.68 4.96h.34v-3.61h9.25zm-8.56 20.92c0-7.81-5.21-13.52-11.84-13.52-6.72 0-12.35 5.71-12.35 13.52 0 7.73 5.63 13.36 12.35 13.36 6.63 0 11.84-5.63 11.84-13.36z"/>
+            <path fill="#34A853" d="M225 3v65h-9.5V3h9.5z"/>
+            <path fill="#EA4335" d="M262.02 54.48l7.56 5.04c-2.44 3.61-8.32 9.83-18.48 9.83-12.6 0-22.01-9.74-22.01-22.18 0-13.19 9.49-22.18 20.92-22.18 11.51 0 17.14 9.16 18.98 14.11l1.01 2.52-29.65 12.28c2.27 4.45 5.8 6.72 10.75 6.72 4.96 0 8.4-2.44 10.92-6.14zm-23.27-7.98l19.82-8.23c-1.09-2.77-4.37-4.7-8.23-4.7-4.95 0-11.84 4.37-11.59 12.93z"/>
+            <path fill="#4285F4" d="M35.29 41.41V32H67c.31 1.64.47 3.58.47 5.68 0 7.06-1.93 15.79-8.15 22.01-6.05 6.3-13.78 9.66-24.02 9.66C16.32 69.35.36 53.89.36 34.91.36 15.93 16.32.47 35.3.47c10.5 0 17.98 4.12 23.6 9.49l-6.64 6.64c-4.03-3.78-9.49-6.72-16.97-6.72-13.86 0-24.7 11.17-24.7 25.03 0 13.86 10.84 25.03 24.7 25.03 8.99 0 14.11-3.61 17.39-6.89 2.66-2.66 4.41-6.46 5.1-11.65l-22.49.01z"/>
+          </svg>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="ai-google-reviews-grid-{{ ai_gen_id }}">
+      {% for i in (1..6) %}
+        {% liquid
+          assign review_enabled_key = 'review_' | append: i | append: '_enabled'
+          assign review_name_key = 'review_' | append: i | append: '_name'
+          assign review_rating_key = 'review_' | append: i | append: '_rating'
+          assign review_text_key = 'review_' | append: i | append: '_text'
+          assign review_date_key = 'review_' | append: i | append: '_date'
+
+          assign review_enabled = block.settings[review_enabled_key]
+          assign review_name = block.settings[review_name_key]
+          assign review_rating = block.settings[review_rating_key]
+          assign review_text = block.settings[review_text_key]
+          assign review_date = block.settings[review_date_key]
+        %}
+
+        {% if review_enabled %}
+          <div class="ai-google-reviews-card-{{ ai_gen_id }}">
+            <div class="ai-google-reviews-card-header-{{ ai_gen_id }}">
+              <div class="ai-google-reviews-reviewer-{{ ai_gen_id }}">
+                {% if review_name != blank %}
+                  <h3 class="ai-google-reviews-reviewer-name-{{ ai_gen_id }}">{{ review_name }}</h3>
+                {% endif %}
+                {% if review_date != blank %}
+                  <div class="ai-google-reviews-date-{{ ai_gen_id }}">{{ review_date }}</div>
+                {% endif %}
+              </div>
+              <div class="ai-google-reviews-stars-{{ ai_gen_id }}">
+                {% for star in (1..5) %}
+                  {% if star <= review_rating %}
+                    <svg class="ai-google-reviews-star-{{ ai_gen_id }}" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                    </svg>
+                  {% else %}
+                    <svg class="ai-google-reviews-star-{{ ai_gen_id }} ai-google-reviews-star-empty-{{ ai_gen_id }}" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                    </svg>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+            {% if review_text != blank %}
+              <p class="ai-google-reviews-text-{{ ai_gen_id }}">{{ review_text }}</p>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</google-reviews-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class GoogleReviews{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+      }
+    }
+
+    customElements.define('google-reviews-{{ ai_gen_id }}', GoogleReviews{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Google reviews",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "What our customers say"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "checkbox",
+      "id": "show_google_badge",
+      "label": "Show Google logo",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Section padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Card style"
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "label": "Gap between cards",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Card border radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "card_border_width",
+      "label": "Card border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "card_background_color",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Card border",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "date_color",
+      "label": "Date",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Star filled",
+      "default": "#FBBC05"
+    },
+    {
+      "type": "color",
+      "id": "star_empty_color",
+      "label": "Star empty",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "header",
+      "content": "Review 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "review_1_enabled",
+      "label": "Enable review 1",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "review_1_name",
+      "label": "Reviewer name",
+      "default": "Somchai P."
+    },
+    {
+      "type": "range",
+      "id": "review_1_rating",
+      "label": "Rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "textarea",
+      "id": "review_1_text",
+      "label": "Review text",
+      "default": "Excellent service and high-quality signage. The team was professional and delivered on time. Highly recommend!"
+    },
+    {
+      "type": "text",
+      "id": "review_1_date",
+      "label": "Review date",
+      "default": "2 weeks ago"
+    },
+    {
+      "type": "header",
+      "content": "Review 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "review_2_enabled",
+      "label": "Enable review 2",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "review_2_name",
+      "label": "Reviewer name",
+      "default": "Nattaya K."
+    },
+    {
+      "type": "range",
+      "id": "review_2_rating",
+      "label": "Rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "textarea",
+      "id": "review_2_text",
+      "label": "Review text",
+      "default": "Great quality materials and fast turnaround. The acrylic signs look amazing in our store!"
+    },
+    {
+      "type": "text",
+      "id": "review_2_date",
+      "label": "Review date",
+      "default": "1 month ago"
+    },
+    {
+      "type": "header",
+      "content": "Review 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "review_3_enabled",
+      "label": "Enable review 3",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "review_3_name",
+      "label": "Reviewer name",
+      "default": "Pongsakorn T."
+    },
+    {
+      "type": "range",
+      "id": "review_3_rating",
+      "label": "Rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "textarea",
+      "id": "review_3_text",
+      "label": "Review text",
+      "default": "Very satisfied with the metal letter signs. Good communication throughout the process."
+    },
+    {
+      "type": "text",
+      "id": "review_3_date",
+      "label": "Review date",
+      "default": "1 month ago"
+    },
+    {
+      "type": "header",
+      "content": "Review 4"
+    },
+    {
+      "type": "checkbox",
+      "id": "review_4_enabled",
+      "label": "Enable review 4",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "review_4_name",
+      "label": "Reviewer name",
+      "default": "Apinya S."
+    },
+    {
+      "type": "range",
+      "id": "review_4_rating",
+      "label": "Rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "textarea",
+      "id": "review_4_text",
+      "label": "Review text",
+      "default": "Outstanding work! The installation team was efficient and the final result exceeded our expectations."
+    },
+    {
+      "type": "text",
+      "id": "review_4_date",
+      "label": "Review date",
+      "default": "2 months ago"
+    },
+    {
+      "type": "header",
+      "content": "Review 5"
+    },
+    {
+      "type": "checkbox",
+      "id": "review_5_enabled",
+      "label": "Enable review 5",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "review_5_name",
+      "label": "Reviewer name",
+      "default": "Wanchai M."
+    },
+    {
+      "type": "range",
+      "id": "review_5_rating",
+      "label": "Rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "textarea",
+      "id": "review_5_text",
+      "label": "Review text",
+      "default": "Professional service from start to finish. The vinyl banners are durable and look fantastic."
+    },
+    {
+      "type": "text",
+      "id": "review_5_date",
+      "label": "Review date",
+      "default": "2 months ago"
+    },
+    {
+      "type": "header",
+      "content": "Review 6"
+    },
+    {
+      "type": "checkbox",
+      "id": "review_6_enabled",
+      "label": "Enable review 6",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "review_6_name",
+      "label": "Reviewer name",
+      "default": "Siriporn L."
+    },
+    {
+      "type": "range",
+      "id": "review_6_rating",
+      "label": "Rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "textarea",
+      "id": "review_6_text",
+      "label": "Review text",
+      "default": "Highly recommend for anyone looking for quality signage. Great prices and excellent customer service!"
+    },
+    {
+      "type": "text",
+      "id": "review_6_date",
+      "label": "Review date",
+      "default": "3 months ago"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Google reviews"
+    }
+  ]
+}
 {% endschema %}
