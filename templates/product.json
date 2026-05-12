@@ -401,12 +401,116 @@
                     "custom_liquid_YbqVge",
                     "custom_liquid_RyHhEn"
                   ]
+                },
+                "accordion_row_bhdBYN": {
+                  "type": "_accordion-row",
+                  "name": "t:names.accordion_row",
+                  "disabled": true,
+                  "settings": {
+                    "heading": "ฉันจะได้รับคำสั่งซื้อเมื่อไร",
+                    "open_by_default": false,
+                    "icon": "none",
+                    "width": 20
+                  },
+                  "blocks": {
+                    "ai_convertblock_blogwithfilter_TBzEzB": {
+                      "type": "ai_convertblock_blogwithfilter",
+                      "name": "Blog filter",
+                      "settings": {
+                        "blog_1": "",
+                        "blog_1_button_text": "",
+                        "blog_2": "",
+                        "blog_2_button_text": "",
+                        "blog_3": "",
+                        "blog_3_button_text": "",
+                        "filter_alignment": "center",
+                        "button_font_size": 14,
+                        "desktop_width_percent": 100,
+                        "posts_per_row": 3,
+                        "posts_per_row_mobile": "1",
+                        "grid_gap": 25,
+                        "image_aspect_ratio": 1.3,
+                        "show_blog_label": true,
+                        "show_date": true,
+                        "date_format": "%d %b %Y",
+                        "show_excerpt": true,
+                        "excerpt_length": 130,
+                        "blog_label_font_size": 11,
+                        "date_font_size": 12,
+                        "title_font_size": 18,
+                        "excerpt_font_size": 14,
+                        "date_color": "#9CA3AF",
+                        "title_color": "#1A202C",
+                        "excerpt_color": "#6B7280",
+                        "posts_per_page": 9,
+                        "load_more_text": "ดูเพิ่มเติม",
+                        "load_more_font_size": 14
+                      },
+                      "blocks": {}
+                    },
+                    "judge_me_reviews_review_widget_6aLKfT": {
+                      "type": "shopify://apps/judge-me-reviews/blocks/review_widget/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+                      "settings": {
+                        "review_data": "no_reviews",
+                        "max_width": 550,
+                        "show_shop_reviews": false,
+                        "empty_state": "empty_widget"
+                      }
+                    }
+                  },
+                  "block_order": [
+                    "ai_convertblock_blogwithfilter_TBzEzB",
+                    "judge_me_reviews_review_widget_6aLKfT"
+                  ]
+                },
+                "accordion_row_GQhPAW": {
+                  "type": "_accordion-row",
+                  "name": "t:names.accordion_row",
+                  "disabled": true,
+                  "settings": {
+                    "heading": "ฉันจะได้รับคำสั่งซื้อเมื่อไร",
+                    "open_by_default": false,
+                    "icon": "none",
+                    "width": 20
+                  },
+                  "blocks": {
+                    "text_Htee8X": {
+                      "type": "text",
+                      "settings": {
+                        "text": "<p>เราจะดำเนินการจัดส่งคำสั่งซื้อของคุณโดยเร็วที่สุด เมื่อคำสั่งซื้อของคุณถูกจัดส่งแล้ว คุณจะได้รับอีเมลพร้อมข้อมูลเพิ่มเติม ระยะเวลาในการจัดส่งจะแตกต่างกันไปขึ้นอยู่กับตำแหน่งที่ตั้งของคุณ</p>",
+                        "width": "100%",
+                        "max_width": "normal",
+                        "alignment": "left",
+                        "type_preset": "rte",
+                        "font": "var(--font-body--family)",
+                        "font_size": "1rem",
+                        "line_height": "normal",
+                        "letter_spacing": "normal",
+                        "case": "none",
+                        "wrap": "pretty",
+                        "color": "var(--color-foreground)",
+                        "background": false,
+                        "background_color": "#00000026",
+                        "corner_radius": 0,
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0
+                      },
+                      "blocks": {}
+                    }
+                  },
+                  "block_order": [
+                    "text_Htee8X"
+                  ]
                 }
               },
               "block_order": [
                 "accordion_row_iktznL",
                 "accordion_row_64YnxG",
-                "accordion_row_ACxkmx"
+                "accordion_row_ACxkmx",
+                "accordion_row_bhdBYN",
+                "accordion_row_GQhPAW"
               ]
             },
             "ai_convertblock_headerwithline_WyWHQ4": {
