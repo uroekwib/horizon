@@ -2714,3 +2714,20 @@ button.shopify-payment-button__button--unbranded:hover {
   flex-wrap: wrap;
 }
 
+
+
+/* OCTOPUS — Horizon img sizing defense (added May 2026)
+   Horizon base.css has `img{width:100%; height:auto}` which overrides the
+   HTML width/height attribute on inline SVG icons (oc-icon-*, third-party,
+   any svg-as-img). This makes bare <img> tags inside flex/grid cells balloon
+   to 100% of the column — first observed in cp-caution (composite-signage).
+   This scoped reset lets HTML attributes govern, while per-product CSS
+   like `.X img{width:Npx}` still wins (same specificity, loaded later
+   via inline <style> in body). Works for ANY image filename, not just oc-icon. */
+.desc_container img,
+.product-description img,
+.shopify-section--apps img.oc-svg {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+}
