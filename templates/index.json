@@ -384,9 +384,7 @@
         "group_GEiQJ3",
         "image_4hNQY4"
       ],
-      "custom_css": [
-        "h1 {font-family: google sans; font-weight: 600;}"
-      ],
+      "custom_css": [],
       "name": "t:names.image_with_text",
       "settings": {
         "content_direction": "row",
