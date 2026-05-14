@@ -384,7 +384,9 @@
         "group_GEiQJ3",
         "image_4hNQY4"
       ],
-      "custom_css": [],
+      "custom_css": [
+        "p{margin-block-end: 6px; }"
+      ],
       "name": "t:names.image_with_text",
       "settings": {
         "content_direction": "row",
