@@ -1,0 +1,299 @@
+{% form 'contact' %}
+
+{% if form.posted_successfully? %}
+  <div class="octo-card" style="border-color:rgba(11,107,255,.35)">
+    <b>ส่งใบสมัครเรียบร้อยแล้ว</b><br>
+    ทีมงานได้รับข้อมูลแล้ว ขอบคุณครับ
+  </div>
+{% endif %}
+
+{% if form.errors %}
+  <div class="octo-card" style="border-color:rgba(229,57,53,.35)">
+    <b>ส่งไม่สำเร็จ</b><br>
+    กรุณาตรวจสอบช่องที่จำเป็นอีกครั้ง
+    {{ form.errors | default_errors }}
+  </div>
+{% endif %}
+
+<!-- Octopus Media Solutions | Job Application -->
+<section class="octo-job-wrap">
+  <div class="octo-job-head">
+    <div class="octo-job-badge">Octopus Media Solutions</div>
+    <h2 class="octo-job-title">ใบสมัครงาน</h2>
+    <p class="octo-job-sub">กรุณากรอกข้อมูลให้ครบถ้วน และแนบรูป/เรซูเม่ (ถ้ามี) เพื่อให้ทีมงานพิจารณาได้รวดเร็ว</p>
+  </div>
+
+  <!-- Hidden meta -->
+  <input type="hidden" name="contact[tags]" value="JOB-APPLICATION, OCTOPUS">
+  <input type="hidden" name="contact[subject]" value="Job Application Submission">
+
+  <!-- 1) ตำแหน่งงาน -->
+  <div class="octo-card">
+    <div class="octo-card-top">
+      <h3 class="octo-card-title">ตำแหน่งงาน</h3>
+      <span class="octo-card-hint">* จำเป็น</span>
+    </div>
+
+    <div class="octo-grid-2">
+      <div class="octo-field">
+        <label>ตำแหน่งที่ต้องการสมัคร <span class="req">*</span></label>
+        <input type="text" name="contact[Position Applied]" placeholder="(ใส่หัวข้อ/ตำแหน่งเป็นไทย)" required>
+      </div>
+
+      <div class="octo-field">
+        <label>เงินเดือนที่คาดหวัง (บาท/เดือน)</label>
+        <input type="number" name="contact[Expected Salary]" placeholder="เช่น 25000" min="0">
+      </div>
+    </div>
+
+    <div class="octo-grid-2">
+      <div class="octo-field">
+        <label>วันที่พร้อมเริ่มงาน</label>
+        <input type="date" name="contact[Available Date]">
+      </div>
+      <div class="octo-field">
+        <label>แนบพอร์ต/ลิงก์ผลงาน (ถ้ามี)</label>
+        <input type="url" name="contact[Portfolio Link]" placeholder="เช่น https://...">
+      </div>
+    </div>
+  </div>
+
+  <!-- 2) ข้อมูลส่วนตัว -->
+  <div class="octo-card">
+    <div class="octo-card-top">
+      <h3 class="octo-card-title">ข้อมูลส่วนตัว</h3>
+    </div>
+
+    <div class="octo-grid-2">
+      <div class="octo-field">
+        <label>ชื่อ-นามสกุล (ภาษาไทย) <span class="req">*</span></label>
+        <input type="text" name="contact[name]" required>
+      </div>
+
+      <div class="octo-field">
+        <label>Name (English)</label>
+        <input type="text" name="contact[Full Name EN]">
+      </div>
+    </div>
+
+    <div class="octo-grid-2">
+      <div class="octo-field">
+        <label>เบอร์โทรศัพท์ <span class="req">*</span></label>
+        <input type="tel" name="contact[Phone]" required>
+      </div>
+
+      <div class="octo-field">
+        <label>อีเมลผู้สมัคร <span class="req">*</span></label>
+        <input type="email" name="contact[email]" required placeholder="example@email.com">
+      </div>
+    </div>
+
+    <div class="octo-grid-3">
+      <div class="octo-field">
+        <label>วันเดือนปีเกิด</label>
+        <input type="date" name="contact[Date of Birth]">
+      </div>
+      <div class="octo-field">
+        <label>จังหวัด</label>
+        <input type="text" name="contact[Province]" placeholder="เช่น กรุงเทพฯ">
+      </div>
+      <div class="octo-field">
+        <label>เขต/อำเภอ</label>
+        <input type="text" name="contact[District]" placeholder="เช่น บางเขน">
+      </div>
+    </div>
+
+    <div class="octo-field">
+      <label>ที่อยู่ปัจจุบัน</label>
+      <textarea name="contact[Current Address]" rows="3" placeholder="บ้านเลขที่/ซอย/ถนน/แขวง/เขต/จังหวัด/รหัสไปรษณีย์"></textarea>
+    </div>
+  </div>
+
+  <!-- 3) การศึกษา & ทักษะ -->
+  <div class="octo-card">
+    <div class="octo-card-top">
+      <h3 class="octo-card-title">การศึกษา & ทักษะ (แบบย่อ)</h3>
+      <span class="octo-card-note">เน้นข้อมูลที่ช่วยให้ทีมประเมินงานได้จริง</span>
+    </div>
+
+    <div class="octo-grid-2">
+      <div class="octo-field">
+        <label>วุฒิการศึกษาสูงสุด</label>
+        <input type="text" name="contact[Highest Education]" placeholder="เช่น ปวส./ปริญญาตรี/อื่นๆ">
+      </div>
+
+      <div class="octo-field">
+        <label>สถาบัน/สาขา</label>
+        <input type="text" name="contact[School & Major]" placeholder="เช่น ม.____ / สาขา____">
+      </div>
+    </div>
+
+    <div class="octo-field">
+      <label>ทักษะ/โปรแกรมที่ถนัด</label>
+      <textarea name="contact[Skills]" rows="3" placeholder="เช่น Illustrator, Photoshop, CAD, Shopify, Excel, งานพิมพ์, งานป้าย ฯลฯ"></textarea>
+    </div>
+
+    <div class="octo-field">
+      <label>ภาษาต่างประเทศ (ถ้ามี)</label>
+      <input type="text" name="contact[Language Skills]" placeholder="เช่น อังกฤษ: พูด/อ่าน/เขียน ระดับกลาง">
+    </div>
+  </div>
+
+  <!-- 4) ประสบการณ์ทำงาน -->
+  <div class="octo-card">
+    <div class="octo-card-top">
+      <h3 class="octo-card-title">ประสบการณ์ทำงาน (ล่าสุด)</h3>
+    </div>
+
+    <div class="octo-grid-2">
+      <div class="octo-field">
+        <label>บริษัทล่าสุด</label>
+        <input type="text" name="contact[Last Company]" placeholder="ชื่อบริษัท">
+      </div>
+
+      <div class="octo-field">
+        <label>ตำแหน่งล่าสุด</label>
+        <input type="text" name="contact[Last Position]" placeholder="ตำแหน่ง">
+      </div>
+    </div>
+
+    <div class="octo-grid-2">
+      <div class="octo-field">
+        <label>ระยะเวลาทำงาน</label>
+        <input type="text" name="contact[Period]" placeholder="เช่น ม.ค. 2023 - ธ.ค. 2025">
+      </div>
+
+      <div class="octo-field">
+        <label>เงินเดือนล่าสุด (ถ้าสะดวกแจ้ง)</label>
+        <input type="number" name="contact[Last Salary]" placeholder="บาท/เดือน" min="0">
+      </div>
+    </div>
+
+    <div class="octo-field">
+      <label>หน้าที่/ผลงานโดยย่อ</label>
+      <textarea name="contact[Job Description]" rows="4" placeholder="สรุปสิ่งที่ทำ/ผลงาน/ความรับผิดชอบ (ย่อแต่ชัด)"></textarea>
+    </div>
+  </div>
+
+  <!-- 5) ไฟล์แนบ -->
+  <div class="octo-card">
+    <div class="octo-card-top">
+      <h3 class="octo-card-title">ไฟล์แนบ</h3>
+      <span class="octo-card-note">ใช้ลิงก์เดียวรวมไฟล์ทั้งหมด</span>
+    </div>
+
+    <div class="octo-field">
+      <label>ลิงก์ไฟล์สมัครงาน <span class="req">*</span> <span style="color:#0b6bff">(* รูป + เรซูเม่ + พอร์ต ถ้ามี)</span></label>
+      <input type="url" name="contact[Application Files Link]" placeholder="เช่น https://drive.google.com/drive/folders/xxxxx" required>
+      <div class="octo-help">กรุณาตั้งค่าไฟล์เป็น <b>Anyone with the link can view</b></div>
+    </div>
+  </div>
+
+  <!-- 6) ข้อมูลเพิ่มเติม -->
+  <div class="octo-card">
+    <div class="octo-card-top">
+      <h3 class="octo-card-title">ข้อมูลเพิ่มเติม</h3>
+    </div>
+
+    <!-- ✅ FIX: Source เปลี่ยนเป็น RADIO (ไม่ error) -->
+    <div class="octo-field">
+      <label>ทราบข่าวรับสมัครจากช่องทางใด <span class="req">*</span></label>
+      <div class="octo-checks">
+        <label><input type="radio" name="contact[Source]" value="Website" required> เว็บไซต์</label>
+        <label><input type="radio" name="contact[Source]" value="Facebook"> Facebook</label>
+        <label><input type="radio" name="contact[Source]" value="Instagram"> Instagram</label>
+        <label><input type="radio" name="contact[Source]" value="TikTok"> TikTok</label>
+        <label><input type="radio" name="contact[Source]" value="Friend"> เพื่อนแนะนำ</label>
+        <label><input type="radio" name="contact[Source]" value="Other"> อื่นๆ</label>
+      </div>
+    </div>
+
+    <div class="octo-field">
+      <label>หมายเหตุ/ข้อความถึงทีม HR</label>
+      <textarea name="contact[Notes]" rows="3" placeholder="เช่น จุดแข็ง/สิ่งที่อยากทำ/เวลาสัมภาษณ์ที่สะดวก"></textarea>
+    </div>
+
+    <label class="octo-consent">
+      <input type="checkbox" name="contact[Consent]" value="Agree" required>
+      ข้าพเจ้ารับรองว่าข้อมูลที่กรอกเป็นความจริง และยินยอมให้บริษัทใช้ข้อมูลเพื่อพิจารณาการสมัครงาน <span class="req">*</span>
+    </label>
+  </div>
+
+  <!-- ปุ่มส่งเข้าหลังบ้าน -->
+  <div class="octo-actions">
+    <button type="submit" class="octo-submit">ส่งใบสมัครงาน</button>
+    <div class="octo-note">*หลังส่ง ระบบจะบันทึกเป็นข้อความติดต่อของ Shopify และแจ้งไปยังอีเมลที่ตั้งค่าไว้ในระบบ</div>
+  </div>
+</section>
+
+<style>
+/* Lightweight, self-contained styling (Octopus mood) */
+.octo-job-wrap{max-width:980px;margin:0 auto;padding:18px 14px}
+.octo-job-head{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:14px;padding:18px 18px 14px;box-shadow:0 6px 18px rgba(0,0,0,.06);margin-bottom:14px}
+.octo-job-badge{display:inline-block;font-size:12px;letter-spacing:.2px;padding:6px 10px;border-radius:999px;border:1px solid rgba(0,0,0,.12);background:rgba(0,0,0,.02);margin-bottom:8px}
+.octo-job-title{margin:0 0 6px;font-size:26px;line-height:1.2}
+.octo-job-sub{margin:0;color:rgba(0,0,0,.72);font-size:14px}
+.octo-card{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:14px;padding:16px;box-shadow:0 6px 18px rgba(0,0,0,.05);margin-bottom:12px}
+.octo-card-top{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:10px}
+.octo-card-title{margin:0;font-size:16px}
+.octo-card-hint{font-size:12px;color:#0b6bff}
+.octo-card-note{font-size:12px;color:rgba(0,0,0,.6)}
+.octo-field{margin-bottom:10px}
+.octo-field label{display:block;font-size:13px;margin-bottom:6px;color:rgba(0,0,0,.8)}
+.octo-field input[type="text"],
+.octo-field input[type="email"],
+.octo-field input[type="tel"],
+.octo-field input[type="url"],
+.octo-field input[type="number"],
+.octo-field input[type="date"],
+.octo-field textarea{
+  width:100%;
+  border:1px solid rgba(0,0,0,.16);
+  border-radius:12px;
+  padding:10px 12px;
+  font-size:14px;
+  outline:none;
+  background:#fff;
+}
+.octo-field textarea{resize:vertical}
+.octo-field input:focus,
+.octo-field textarea:focus{border-color:rgba(11,107,255,.55);box-shadow:0 0 0 4px rgba(11,107,255,.12)}
+.octo-help{margin-top:6px;font-size:12px;color:rgba(0,0,0,.55)}
+.octo-grid-2{display:grid;grid-template-columns:1fr;gap:10px}
+.octo-grid-3{display:grid;grid-template-columns:1fr;gap:10px}
+@media (min-width: 780px){
+  .octo-grid-2{grid-template-columns:1fr 1fr}
+  .octo-grid-3{grid-template-columns:1fr 1fr 1fr}
+}
+.octo-checks{display:flex;flex-wrap:wrap;gap:10px}
+.octo-checks label{display:flex;align-items:center;gap:8px;font-size:13px;margin:0;padding:8px 10px;border:1px solid rgba(0,0,0,.10);border-radius:999px;background:rgba(0,0,0,.02)}
+.octo-checks input{width:16px;height:16px}
+.octo-consent{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.45;color:rgba(0,0,0,.78);padding:10px 12px;border:1px dashed rgba(0,0,0,.18);border-radius:12px;background:rgba(0,0,0,.02)}
+.octo-consent input{margin-top:2px;width:16px;height:16px}
+.octo-actions{display:flex;flex-direction:column;gap:10px;align-items:stretch;margin-top:6px}
+.octo-submit{
+  border:0;
+  border-radius:14px;
+  padding:12px 14px;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+  background:linear-gradient(90deg, rgba(11,107,255,1) 0%, rgba(19,173,255,1) 100%);
+  color:#fff;
+  box-shadow:0 10px 24px rgba(11,107,255,.22);
+}
+.octo-submit:hover{filter:brightness(.98)}
+.octo-note{font-size:12px;color:rgba(0,0,0,.6);text-align:center}
+.req{color:#e53935;font-weight:700;margin-left:4px}
+</style>
+
+{% endform %}
+
+{% schema %}
+{
+  "name": "Job Form",
+  "presets": [
+    { "name": "Job Form" }
+  ]
+}
+{% endschema %}
