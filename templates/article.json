@@ -92,6 +92,7 @@
     },
     "job_application_Q7QpqP": {
       "type": "job-application",
+      "disabled": true,
       "name": "Job Form",
       "settings": {}
     }
