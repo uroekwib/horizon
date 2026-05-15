@@ -89,9 +89,15 @@
         "padding-block-start": 40,
         "padding-block-end": 40
       }
+    },
+    "job_application_y6czN8": {
+      "type": "job-application",
+      "name": "Job Form",
+      "settings": {}
     }
   },
   "order": [
-    "section"
+    "section",
+    "job_application_y6czN8"
   ]
 }
