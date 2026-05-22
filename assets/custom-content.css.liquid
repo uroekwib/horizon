@@ -1752,63 +1752,6 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   §19  CHIP / BADGE / KICKER SPACING FIX — 2026-05-22
-   When <p> is itself a badge (display:inline-block via .oc-badge-X) OR contains
-   inline badges as direct children, the natural <p> margin collapses making the
-   chip row stick to adjacent blocks. This restores vertical breathing room.
-   Scoped to both .desc_container and .text-block product wrappers.
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-/* Block-level chips (where the badge class is on <p> directly) — each gets
-   vertical margin so the row of inline-block chips has visible spacing. */
-.desc_container p.oc-badge,
-.desc_container p.oc-badge-cyan,
-.desc_container p.oc-badge-purple,
-.desc_container p.oc-badge-green,
-.desc_container p.oc-badge-orange,
-.desc_container p.oc-badge-ci,
-.text-block p.oc-badge,
-.text-block p.oc-badge-cyan,
-.text-block p.oc-badge-purple,
-.text-block p.oc-badge-green,
-.text-block p.oc-badge-orange,
-.text-block p.oc-badge-ci {
-  margin-top: 14px;
-  margin-bottom: 14px;
-  margin-right: 6px;
-}
-
-/* <p> wrapper containing inline badges/chips — give the line its own block margin */
-.desc_container p:has(> .oc-badge),
-.desc_container p:has(> [class*="oc-badge-"]),
-.desc_container p:has(> .oc-pill),
-.desc_container p:has(> .oc-chip),
-.text-block p:has(> .oc-badge),
-.text-block p:has(> [class*="oc-badge-"]),
-.text-block p:has(> .oc-pill),
-.text-block p:has(> .oc-chip) {
-  margin-top: 18px;
-  margin-bottom: 18px;
-  line-height: 2.2;  /* keep multi-line badge rows from squishing */
-}
-
-/* Kicker label (subtitle/meta line above heading) — was scoped to text-block/desc_container
-   via :where() which only applies if those wrappers exist; ensure baseline visual presence
-   inside .desc_container too. */
-.desc_container [class$="-kicker"],
-.text-block [class$="-kicker"] {
-  font-size: var(--fs-sm, 0.9375rem);
-  color: var(--oc-cyan, #17a9bb);
-  font-weight: 700;
-  letter-spacing: .05em;
-  text-transform: uppercase;
-  margin-top: 18px;
-  margin-bottom: 6px;
-  display: inline-block;
-}
-
-
-/* ═══════════════════════════════════════════════════════════════════════════
    §18  BLOG ARTICLE LAYOUT FIX — 2026-05-22
    Comprehensive override for blog articles wrapped in .blog-post-content.
    The upstream sections §3, §9, §10, §11, §13, §14, §15 used legacy scope
@@ -2040,4 +1983,60 @@
   .blog-post-content .oc-dim { grid-template-columns:1fr 1fr!important; }
   .blog-post-content .oc-dim__cell:nth-child(3){ grid-column:span 2!important; }
   .blog-post-content .oc-tier__head,.blog-post-content .oc-tier__body { padding-left:18px!important; padding-right:18px!important; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   §19  CHIP / BADGE / KICKER SPACING FIX — 2026-05-22
+   When <p> is itself a badge (display:inline-block via .oc-badge-X) OR contains
+   inline badges as direct children, the natural <p> margin collapses making the
+   chip row stick to adjacent blocks. This restores vertical breathing room.
+   Scoped to both .desc_container and .text-block product wrappers.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Block-level chips (where the badge class is on <p> directly) — each gets
+   vertical margin so the row of inline-block chips has visible spacing. */
+.desc_container p.oc-badge,
+.desc_container p.oc-badge-cyan,
+.desc_container p.oc-badge-purple,
+.desc_container p.oc-badge-green,
+.desc_container p.oc-badge-orange,
+.desc_container p.oc-badge-ci,
+.text-block p.oc-badge,
+.text-block p.oc-badge-cyan,
+.text-block p.oc-badge-purple,
+.text-block p.oc-badge-green,
+.text-block p.oc-badge-orange,
+.text-block p.oc-badge-ci {
+  margin-top: 14px;
+  margin-bottom: 14px;
+  margin-right: 6px;
+}
+
+/* <p> wrapper containing inline badges/chips — give the line its own block margin */
+.desc_container p:has(> .oc-badge),
+.desc_container p:has(> [class*="oc-badge-"]),
+.desc_container p:has(> .oc-pill),
+.desc_container p:has(> .oc-chip),
+.text-block p:has(> .oc-badge),
+.text-block p:has(> [class*="oc-badge-"]),
+.text-block p:has(> .oc-pill),
+.text-block p:has(> .oc-chip) {
+  margin-top: 18px;
+  margin-bottom: 18px;
+  line-height: 2.2;  /* keep multi-line badge rows from squishing */
+}
+
+/* Kicker label (subtitle/meta line above heading) — was scoped to text-block/desc_container
+   via :where() which only applies if those wrappers exist; ensure baseline visual presence
+   inside .desc_container too. */
+.desc_container [class$="-kicker"],
+.text-block [class$="-kicker"] {
+  font-size: var(--fs-sm, 0.9375rem);
+  color: var(--oc-cyan, #17a9bb);
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  margin-top: 18px;
+  margin-bottom: 6px;
+  display: inline-block;
 }
