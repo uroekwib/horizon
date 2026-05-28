@@ -1,0 +1,222 @@
+{% comment %}
+  ป้ายไทยช่วยไทยพลัส — Logo Placer Script
+  วางไฟล์นี้ที่: snippets/thai-help-placer.liquid
+  แล้วเรียกจาก sections/product-page.liquid ด้วย:
+  {% render 'thai-help-placer' %}
+  (วางหลัง {{ product.description }})
+{% endcomment %}
+<script>
+
+/* Logo Placer */
+(function(){
+  var THP = 'https://cdn.shopify.com/s/files/1/0098/2653/3433/files/thai-chuay-thai-plus-60-40.jpg?v=1779723847';
+  var svg = document.getElementById('tpPlacerSvg');
+  if(!svg) return;
+  var currentType='sticker-a4', shopUrl=null, logoW=80, logoH=80, shopX=50, shopY=50, bgMode='white';
+  var BG_IMG='https://cdn.shopify.com/s/files/1/0098/2653/3433/files/01f8f2568c680c2afc1b1186f83b981a.jpg?v=1779782942';
+  var HAS_BG_IMAGE=['sticker-a4','acrylic','vinyl-8012','vinyl-12024','jflag-60160','board-6090'];
+  var dragState=null;
+
+  var SCENES = {
+    'sticker-a4':{vb:'0 0 281 400',bg:'<image href="https://cdn.shopify.com/s/files/1/0098/2653/3433/files/Help_A3-A4.png?v=1779937123" x="0" y="0" width="281" height="400" preserveAspectRatio="xMidYMid meet"/>',sx:0,sy:0,sw:281,sh:400},
+    'sticker-a3':{bg:'<rect width="400" height="280" fill="#b8d0e8"/><rect x="14" y="14" width="372" height="252" fill="#d5e8f5" opacity=".7"/><rect x="8" y="8" width="5" height="18" fill="#8aaacc" rx="1"/><rect x="8" y="8" width="18" height="5" fill="#8aaacc" rx="1"/><rect x="387" y="8" width="5" height="18" fill="#8aaacc" rx="1"/><rect x="374" y="8" width="18" height="5" fill="#8aaacc" rx="1"/><rect x="8" y="254" width="5" height="18" fill="#8aaacc" rx="1"/><rect x="8" y="262" width="18" height="5" fill="#8aaacc" rx="1"/><rect x="387" y="254" width="5" height="18" fill="#8aaacc" rx="1"/><rect x="374" y="262" width="18" height="5" fill="#8aaacc" rx="1"/><rect x="56" y="14" width="288" height="252" fill="rgba(255,255,255,.9)" rx="2"/>',sx:58,sy:16,sw:284,sh:248},
+    'board-a3':{bg:'<rect width="400" height="280" fill="#f0ede8"/><rect x="150" y="250" width="100" height="20" fill="#c0bdb5" rx="3"/><rect x="192" y="186" width="16" height="66" fill="#b0ada5"/><rect x="56" y="14" width="288" height="218" fill="#f5f0e8" rx="4"/><rect x="59" y="17" width="282" height="212" fill="white" rx="3"/>',sx:61,sy:19,sw:278,sh:208},
+    'board-6090':{vb:'0 0 400 210',bg:'<rect width="400" height="210" fill="#f5f5f5"/><image href="https://cdn.shopify.com/s/files/1/0098/2653/3433/files/Help_Vinyl_240x120_4f3f86d0-bee4-4d5c-a057-832d485344b4.png?v=1779937123" x="5" y="5" width="390" height="200" preserveAspectRatio="xMidYMid meet"/>',sx:5,sy:5,sw:390,sh:200},
+    'tentcard':{bg:'<rect width="400" height="280" fill="#f0ede8"/><rect x="135" y="10" width="130" height="260" fill="white" stroke="#d5d0ca" stroke-width="1.5" rx="2"/><rect x="135" y="10" width="130" height="20" fill="#e8e3dc" rx="2"/><rect x="135" y="30" width="130" height="1" fill="#d5d0ca"/>',sx:137,sy:32,sw:126,sh:236},
+    'vinyl-8012':{vb:'0 0 400 267',bg:'<image href="https://cdn.shopify.com/s/files/1/0098/2653/3433/files/Help_Vinyl_120x80_c7b23b4b-7b1a-4ab0-ac56-0e6cce557e96.png?v=1779937123" x="0" y="0" width="400" height="267" preserveAspectRatio="xMidYMid meet"/>',sx:0,sy:0,sw:400,sh:267},
+    'vinyl-12024':{vb:'0 0 400 210',bg:'<rect width="400" height="210" fill="#f5f5f5"/><image href="https://cdn.shopify.com/s/files/1/0098/2653/3433/files/Help_Vinyl_240x120_4f3f86d0-bee4-4d5c-a057-832d485344b4.png?v=1779937123" x="5" y="5" width="390" height="200" preserveAspectRatio="xMidYMid meet"/>',sx:5,sy:5,sw:390,sh:200},
+    'jflag-60160':{vb:'0 0 133 400',bg:'<image href="https://cdn.shopify.com/s/files/1/0098/2653/3433/files/Help_J_Flag_50x150_24e50d67-2fd3-4a0e-bdc8-bf46a3e5235b.png?v=1779937123" x="0" y="0" width="133" height="400" preserveAspectRatio="xMidYMid meet"/>',sx:0,sy:0,sw:133,sh:400},
+    'acrylic':{vb:'0 0 281 400',bg:'<image href="https://cdn.shopify.com/s/files/1/0098/2653/3433/files/Help_A3-A4.png?v=1779937123" x="0" y="0" width="281" height="400" preserveAspectRatio="xMidYMid meet"/>',sx:0,sy:0,sw:281,sh:400}
+  };
+
+  function render(){
+    var sc = SCENES[currentType];
+    var canvasEl = document.querySelector('.tp-placer-canvas');
+    canvasEl.classList.toggle('jflag', currentType === 'jflag-60160');
+    svg.setAttribute('viewBox', sc.vb || '0 0 400 280');
+    var out = sc.bg;
+    if(bgMode==='campaign'){
+      out += '<image href="'+BG_IMG+'" x="'+sc.sx+'" y="'+sc.sy+'" width="'+sc.sw+'" height="'+sc.sh+'" preserveAspectRatio="xMidYMid slice" opacity="1"/>';
+    } else if(HAS_BG_IMAGE.indexOf(currentType)===-1){
+      out += '<image id="tpThp" href="'+THP+'" x="'+sc.sx+'" y="'+sc.sy+'" width="'+sc.sw+'" height="'+sc.sh+'" preserveAspectRatio="xMidYMid slice" opacity="1"/>';
+    }
+    if(shopUrl){
+      out += '<image id="tpShop" href="'+shopUrl+'" x="'+shopX+'" y="'+shopY+'" width="'+logoW+'" height="'+logoH+'" preserveAspectRatio="xMidYMid meet" style="cursor:move"/>';
+      out += '<rect id="tpFrame" x="'+(shopX-2)+'" y="'+(shopY-2)+'" width="'+(logoW+4)+'" height="'+(logoH+4)+'" fill="none" stroke="#17a9bb" stroke-width="1.5" stroke-dasharray="4,3" rx="3"/>';
+    }
+    svg.innerHTML = out;
+    var shop = svg.querySelector('#tpShop');
+    if(!shop) return;
+    shop.addEventListener('pointerdown', function(e){
+      e.preventDefault();
+      shop.setPointerCapture(e.pointerId);
+      var r = svg.getBoundingClientRect();
+      var vb = svg.viewBox.baseVal;
+      dragState={
+        sx: e.clientX * (vb.width / r.width),
+        sy: e.clientY * (vb.height / r.height),
+        ox: shopX,
+        oy: shopY
+      };
+    });
+    shop.addEventListener('pointermove', function(e){
+      if(!dragState) return;
+      var r = svg.getBoundingClientRect();
+      var vb = svg.viewBox.baseVal;
+      var dx = (e.clientX * (vb.width / r.width)) - dragState.sx;
+      var dy = (e.clientY * (vb.height / r.height)) - dragState.sy;
+      var sc2=SCENES[currentType];
+      shopX=Math.max(sc2.sx,Math.min(sc2.sx+sc2.sw-logoW,dragState.ox+dx));
+      shopY=Math.max(sc2.sy,Math.min(sc2.sy+sc2.sh-logoH,dragState.oy+dy));
+      shop.setAttribute('x',shopX); shop.setAttribute('y',shopY);
+      var fr=svg.querySelector('#tpFrame');
+      if(fr){fr.setAttribute('x',shopX-2);fr.setAttribute('y',shopY-2);}
+    });
+    shop.addEventListener('pointerup',function(){dragState=null;});
+  }
+
+  document.querySelectorAll('.tp-sign-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      document.querySelectorAll('.tp-sign-btn').forEach(function(b){b.classList.remove('active');});
+      btn.classList.add('active');
+      currentType=btn.dataset.type;
+      var sc=SCENES[currentType];
+      shopX=sc.sx+20; shopY=sc.sy+20;
+      render();
+    });
+  });
+
+  var uz=document.getElementById('tpUploadZone');
+  uz.addEventListener('click',function(){document.getElementById('tpFileInput').click();});
+  uz.addEventListener('dragover',function(e){e.preventDefault();});
+  uz.addEventListener('drop',function(e){e.preventDefault();if(e.dataTransfer.files[0])loadFile(e.dataTransfer.files[0]);});
+  document.getElementById('tpFileInput').addEventListener('change',function(e){if(e.target.files[0])loadFile(e.target.files[0]);});
+
+  function loadFile(file){
+    var rd=new FileReader();
+    rd.onload=function(ev){
+      shopUrl=ev.target.result;
+      var sc=SCENES[currentType];
+      shopX=sc.sx+20; shopY=sc.sy+20;
+      document.getElementById('tpLogoCtrl').style.display='';
+      document.getElementById('tpUploadBadge').style.display='inline';
+      document.getElementById('tpNoLogo').style.display='none';
+      document.getElementById('tpPlacerHint').innerHTML='ลากโลโก้ร้าน (กรอบฟ้า) ไปวางตำแหน่งที่ต้องการบนป้าย &nbsp;·&nbsp; <strong>วางตำแหน่งแล้วกด "บันทึกรูป" แล้วส่งมาใน LINE <a href="https://lin.ee/uDrVbvY" target="_blank" style="color:var(--c);font-weight:700">@octopusdesign</a> ได้เลยครับ</strong>';
+      render();
+    };
+    rd.readAsDataURL(file);
+  }
+
+  document.getElementById('tpSizeSlider').addEventListener('input',function(e){
+    logoW=+e.target.value; logoH=+e.target.value;
+    document.getElementById('tpSizeVal').textContent=logoW;
+    render();
+  });
+  document.getElementById('tpOpacSlider').addEventListener('input',function(e){
+    document.getElementById('tpOpacVal').textContent=e.target.value;
+    var el=svg.querySelector('#tpShop');
+    if(el)el.setAttribute('opacity',e.target.value/100);
+  });
+  document.getElementById('tpClearLogo').addEventListener('click',function(){
+    shopUrl = null;
+    document.getElementById('tpLogoCtrl').style.display = 'none';
+    document.getElementById('tpUploadBadge').style.display = 'none';
+    document.getElementById('tpNoLogo').style.display = '';
+    document.getElementById('tpFileInput').value = '';
+    document.getElementById('tpSizeSlider').value = 80;
+    document.getElementById('tpSizeVal').textContent = 80;
+    document.getElementById('tpOpacSlider').value = 100;
+    document.getElementById('tpOpacVal').textContent = 100;
+    logoW = 80; logoH = 80;
+    document.getElementById('tpPlacerHint').textContent = 'เลือกรูปแบบป้าย แล้วอัพโหลดโลโก้ร้านเพื่อวางตำแหน่ง';
+    render();
+  });
+
+  document.getElementById('tpResetPos').addEventListener('click',function(){
+    var sc=SCENES[currentType];
+    shopX=sc.sx+20; shopY=sc.sy+20;
+    render();
+  });
+
+  document.getElementById('tpSaveBtn').addEventListener('click', async function(){
+    var btn = this;
+    btn.textContent = '⏳ กำลังบันทึก...';
+    btn.disabled = true;
+    try {
+      var svgClone = svg.cloneNode(true);
+      var frameEl = svgClone.querySelector('#tpFrame');
+      if(frameEl) frameEl.remove();
+      var vbArr = svg.getAttribute('viewBox').split(' ');
+      var vw = +vbArr[2], vh = +vbArr[3];
+      var images = svgClone.querySelectorAll('image');
+      for (var i = 0; i < images.length; i++) {
+        var href = images[i].getAttribute('href');
+        if (href && href.startsWith('http')) {
+          try {
+            var resp = await fetch(href);
+            var blob = await resp.blob();
+            var b64 = await new Promise(function(res){
+              var r = new FileReader();
+              r.onload = function(e){ res(e.target.result); };
+              r.readAsDataURL(blob);
+            });
+            images[i].setAttribute('href', b64);
+          } catch(e) {}
+        }
+      }
+      var svgStr = new XMLSerializer().serializeToString(svgClone);
+      var svgBlob = new Blob([svgStr], {type:'image/svg+xml'});
+      var url = URL.createObjectURL(svgBlob);
+      var scale = 3;
+      var canvas = document.createElement('canvas');
+      canvas.width = vw * scale;
+      canvas.height = vh * scale;
+      var ctx = canvas.getContext('2d');
+      var img = new Image();
+      img.onload = function(){
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        URL.revokeObjectURL(url);
+        var link = document.createElement('a');
+        link.download = 'thai-chuay-thai-plus-mockup.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        btn.textContent = '💾 บันทึกรูป';
+        btn.disabled = false;
+      };
+      img.onerror = function(){
+        URL.revokeObjectURL(url);
+        btn.textContent = '💾 บันทึกรูป';
+        btn.disabled = false;
+        alert('ไม่สามารถบันทึกได้ กรุณาลองใหม่อีกครั้ง');
+      };
+      img.src = url;
+    } catch(e) {
+      btn.textContent = '💾 บันทึกรูป';
+      btn.disabled = false;
+      alert('ไม่สามารถบันทึกได้: ' + e.message);
+    }
+  });
+
+  document.querySelectorAll('.tp-bg-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      document.querySelectorAll('.tp-bg-btn').forEach(function(b){b.classList.remove('active');});
+      btn.classList.add('active');
+      bgMode=btn.dataset.bg;
+      render();
+    });
+  });
+
+  render();
+})();
+
+(function(){
+  document.querySelectorAll('.tp-faq-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var item=btn.closest('.tp-faq-i'),faq=btn.closest('.tp-faq'),isOpen=item.classList.contains('open');
+      faq.querySelectorAll('.tp-faq-i').forEach(function(i){i.classList.remove('open');i.querySelector('.tp-faq-body').classList.remove('open');});
+      if(!isOpen){item.classList.add('open');item.querySelector('.tp-faq-body').classList.add('open');}
+    });
+  });
+})();
+
+</script>
