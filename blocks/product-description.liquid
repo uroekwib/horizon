@@ -9,6 +9,7 @@
 %}
 
 {% render 'text', fallback_text: text, block: block %}
+{% if product.handle == 'thai-help-thai-plus' %}{% render 'thai-help-placer' %}{% endif %}
 
 {% schema %}
 {
