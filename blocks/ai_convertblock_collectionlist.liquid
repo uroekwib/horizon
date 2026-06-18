@@ -601,6 +601,16 @@
   var defCols = parseInt(root.dataset.desktopCols, 10) || 4;
   var initialCount = parseInt(root.dataset.initialCount, 10) || 0;
 
+  // ใช้ locale ปัจจุบันของ Shopify เช่น / สำหรับภาษาไทย และ /en/ สำหรับภาษาอังกฤษ
+  var localeRoot = (window.Shopify && Shopify.routes && Shopify.routes.root)
+    ? Shopify.routes.root
+    : '/';
+
+  // ป้องกันกรณี locale root ไม่มี slash ปิดท้าย
+  if (localeRoot.charAt(localeRoot.length - 1) !== '/') {
+    localeRoot += '/';
+  }
+
   var countMap = {};
   var countEl = document.getElementById('ocf-counts-{{ ai_gen_id }}');
   if (countEl) {
@@ -717,7 +727,7 @@
     var highPriority = currentPage === 1 && index === 0;
     var priceFromTpl = root.dataset.i18nPriceFrom || 'เริ่มจาก __PRICE__';
 
-    return '<a href="/products/' + p.handle + '" class="ocf__card-{{ ai_gen_id }}">'
+    return '<a href="' + localeRoot + 'products/' + encodeURIComponent(p.handle) + '" class="ocf__card-{{ ai_gen_id }}">'
       + getImageHtml(img, title, eager, highPriority)
       + '<div class="ocf__card-body-{{ ai_gen_id }}">'
       + '<h3 class="ocf__card-title-{{ ai_gen_id }}">' + title + '</h3>'
@@ -768,7 +778,13 @@
     state.isLoading = true;
 
     var requestPage = state.page;
-    var url = '/collections/' + state.handle + '/products.json?limit=' + perPage + '&page=' + requestPage;
+    var url = localeRoot
+      + 'collections/'
+      + encodeURIComponent(state.handle)
+      + '/products.json?limit='
+      + perPage
+      + '&page='
+      + requestPage;
 
     if (sortMap[state.sort]) {
       url += '&sort_by=' + sortMap[state.sort];
