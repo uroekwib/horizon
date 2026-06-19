@@ -44,7 +44,7 @@
           "type": "text",
           "name": "t:names.text",
           "settings": {
-            "text": "<h3>การให้บริการ</h3><p><a href=\"https://www.octopus.co.th/pages/how-to-order\">วิธีการสั่งซื้อ</a></p><p><a href=\"/pages/file-preparation-guide\" title=\"การเตรียมไฟล์ artwork\">วิธีเตรียมไฟล์ artwork</a></p><p><a href=\"https://www.octopus.co.th/blogs/support/policies\">นโยบายการให้บริการ</a></p><p><a href=\"https://drive.google.com/file/d/1aTDN2yQ_vlC-xUxWJjzUKuPrPlvCCe_9/view?usp=sharing\">ใบภพ.20 หนังสือรับรองบริษัท</a></p><p><a href=\"https://www.octopus.co.th/blogs/product/apply-job\">ร่วมงานกับเรา</a></p>",
+            "text": "<h3>การให้บริการ</h3><p><a href=\"https://www.octopus.co.th/pages/how-to-order\">วิธีการสั่งซื้อ</a></p><p><a href=\"/pages/file-preparation-guide\" title=\"การเตรียมไฟล์ artwork\">วิธีเตรียมไฟล์ artwork</a></p><p><a href=\"https://www.octopus.co.th/blogs/support/terms-and-warranty\" title=\"https://www.octopus.co.th/pages/terms-and-warranty\">นโยบายการให้บริการ</a></p><p><a href=\"https://drive.google.com/file/d/1aTDN2yQ_vlC-xUxWJjzUKuPrPlvCCe_9/view?usp=sharing\">ใบภพ.20 หนังสือรับรองบริษัท</a></p><p><a href=\"https://www.octopus.co.th/blogs/product/apply-job\">ร่วมงานกับเรา</a></p>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
