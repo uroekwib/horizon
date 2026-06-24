@@ -74,6 +74,38 @@
       {% sections 'header-group' %}
     </div>
 
+    <!-- Fix invalid ARIA role for Shopify generated menu buttons -->
+    <script>
+      (function () {
+        function fixInvalidMenuRoles() {
+          document.querySelectorAll('button[role="listitem"]').forEach(function (button) {
+            button.removeAttribute('role');
+
+            if (!button.hasAttribute('type')) {
+              button.setAttribute('type', 'button');
+            }
+          });
+        }
+
+        fixInvalidMenuRoles();
+
+        document.addEventListener('DOMContentLoaded', fixInvalidMenuRoles);
+        window.addEventListener('load', fixInvalidMenuRoles);
+
+        setTimeout(fixInvalidMenuRoles, 100);
+        setTimeout(fixInvalidMenuRoles, 500);
+        setTimeout(fixInvalidMenuRoles, 1000);
+
+        var observer = new MutationObserver(fixInvalidMenuRoles);
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: ['role']
+        });
+      })();
+    </script>
+
     <!-- Google Tag Manager (noscript) -->
     <noscript>
       <iframe
@@ -198,36 +230,6 @@
         }
 
         document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', init) : init();
-      })();
-    </script>
-
-    <!-- Fix invalid ARIA role for Shopify generated menu buttons -->
-    <script>
-      (function () {
-        function fixMenuListItemRole() {
-          document
-            .querySelectorAll('button[role="listitem"].menu-list__link, button[role="listitem"].button-unstyled, button[role="listitem"]')
-            .forEach(function (button) {
-              button.removeAttribute('role');
-
-              if (!button.hasAttribute('type')) {
-                button.setAttribute('type', 'button');
-              }
-            });
-        }
-
-        document.readyState === 'loading'
-          ? document.addEventListener('DOMContentLoaded', fixMenuListItemRole)
-          : fixMenuListItemRole();
-
-        var observer = new MutationObserver(function () {
-          fixMenuListItemRole();
-        });
-
-        observer.observe(document.body, {
-          childList: true,
-          subtree: true
-        });
       })();
     </script>
   </body>
