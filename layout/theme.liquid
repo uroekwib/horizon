@@ -44,13 +44,16 @@
     {{ 'NotoSansThai-Bold.woff' | asset_url | preload_tag: as: 'font', type: 'font/woff' }}
     {{ 'GoogleSans-Regular.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2' }}
     {{ 'NotoSansThai-Regular.woff' | asset_url | preload_tag: as: 'font', type: 'font/woff' }}
+
     {%- render 'meta-tags' -%}
     {%- render 'stylesheets' -%}
     {%- render 'fonts' -%}
     {%- render 'scripts' -%}
     {%- render 'theme-styles-variables' -%}
     {%- render 'color-schemes' -%}
+
     {{ 'custom-global.css' | asset_url | stylesheet_tag }}
+
     {%- if template.name == 'product' or template.name == 'article' or template.name == 'page' -%}
       {{ 'custom-content.css' | asset_url | stylesheet_tag }}
     {%- endif -%}
@@ -60,25 +63,28 @@
     {% endif %}
 
     {{ content_for_header }}
-    <script src="https://analytics.ahrefs.com/analytics.js" data-key="+eGeh2TabSnAKPxKnL1ohw" async></script>
 
+    <script src="https://analytics.ahrefs.com/analytics.js" data-key="+eGeh2TabSnAKPxKnL1ohw" async></script>
   </head>
 
   <body class="page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }}">
     {% render 'skip-to-content-link', href: '#MainContent', text: 'accessibility.skip_to_text' %}
+
     <div id="header-group">
       {% sections 'header-group' %}
     </div>
+
     <!-- Google Tag Manager (noscript) -->
-    <noscript
-      ><iframe
+    <noscript>
+      <iframe
         src="https://www.googletagmanager.com/ns.html?id=GTM-P7D7TZH"
         height="0"
         width="0"
         style="display:none;visibility:hidden"
-      ></iframe
-    ></noscript>
+      ></iframe>
+    </noscript>
     <!-- End Google Tag Manager (noscript) -->
+
     <script>
       // Inline header height and menu style calculations to prevent layout shift
       // Note: Updates in calculateHeaderGroupHeight(), updateTransparentHeaderOffset() and setHeaderMenuStyle() utilities.js should be kept in sync with this function
@@ -124,7 +130,6 @@
          * Updates CSS custom properties for transparent header offset calculation
          * Mimic updateTransparentHeaderOffset() in utilities.js
          */
-
         if (!hasHeaderSection || !header?.hasAttribute('transparent')) {
           document.body.style.setProperty('--transparent-header-offset-boolean', '0');
           return;
@@ -172,7 +177,6 @@
 
     {% section 'social-bar' %}
 
-    <!-- Search auto-focus fix -->
     <!-- Search: sync Searchanise back button กับ native closeDialog -->
     <script>
       (function () {
@@ -194,6 +198,36 @@
         }
 
         document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', init) : init();
+      })();
+    </script>
+
+    <!-- Fix invalid ARIA role for Shopify generated menu buttons -->
+    <script>
+      (function () {
+        function fixMenuListItemRole() {
+          document
+            .querySelectorAll('button[role="listitem"].menu-list__link, button[role="listitem"].button-unstyled, button[role="listitem"]')
+            .forEach(function (button) {
+              button.removeAttribute('role');
+
+              if (!button.hasAttribute('type')) {
+                button.setAttribute('type', 'button');
+              }
+            });
+        }
+
+        document.readyState === 'loading'
+          ? document.addEventListener('DOMContentLoaded', fixMenuListItemRole)
+          : fixMenuListItemRole();
+
+        var observer = new MutationObserver(function () {
+          fixMenuListItemRole();
+        });
+
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true
+        });
       })();
     </script>
   </body>
