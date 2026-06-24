@@ -362,6 +362,7 @@
             "eager_load": true,
             "image": "shopify://shop_images/Banner_Octopus_Team.jpg",
             "link": "",
+            "link_label": "Open image link",
             "image_ratio": "adapt",
             "width": "fill",
             "custom_width": 100,
@@ -385,7 +386,7 @@
         "image_4hNQY4"
       ],
       "custom_css": [
-        "p{margin-block-end: 6px; }"
+        "p {margin-block-end: 6px;}"
       ],
       "name": "t:names.image_with_text",
       "settings": {
@@ -636,6 +637,7 @@
                     "eager_load": false,
                     "image": "shopify://shop_images/Label_Silver-492823.jpg",
                     "link": "shopify://pages/sticker-label",
+                    "link_label": "Open image link",
                     "image_ratio": "portrait",
                     "width": "fill",
                     "custom_width": 100,
@@ -720,6 +722,7 @@
                     "eager_load": false,
                     "image": "shopify://shop_images/barrisol_balenciaga.jpg",
                     "link": "https://www.barrisol-thailand.com",
+                    "link_label": "Visit Barrisol Thailand website",
                     "image_ratio": "portrait",
                     "width": "fill",
                     "custom_width": 100,
@@ -804,6 +807,7 @@
                     "eager_load": false,
                     "image": "shopify://shop_images/mini_truck_mobile_service_cockpit_car_wrap.jpg",
                     "link": "shopify://products/sticker-car-wrap",
+                    "link_label": "Open image link",
                     "image_ratio": "portrait",
                     "width": "fill",
                     "custom_width": 100,
@@ -888,6 +892,7 @@
                     "eager_load": false,
                     "image": "shopify://shop_images/IMG_2006.png",
                     "link": "https://alphadigital.co",
+                    "link_label": "Open image link",
                     "image_ratio": "portrait",
                     "width": "fill",
                     "custom_width": 100,
@@ -972,6 +977,7 @@
                     "eager_load": false,
                     "image": "shopify://shop_images/img_1603-1666405641223.webp",
                     "link": "shopify://pages/company-signage",
+                    "link_label": "Open image link",
                     "image_ratio": "portrait",
                     "width": "fill",
                     "custom_width": 100,
@@ -3204,6 +3210,7 @@
                 "eager_load": false,
                 "image": "shopify://shop_images/14771108_website_57_2683b6b7-50f6-4329-9150-2e7cb2804704.png",
                 "link": "https://drive.google.com/file/d/1G0FnUMkav24rLRe75ggqNEqbjoe7hzDC/view?usp=sharing",
+                "link_label": "Open image link",
                 "image_ratio": "adapt",
                 "width": "custom",
                 "custom_width": 75,
