@@ -1,5 +1,7 @@
 {% liquid
   assign block_settings = block.settings
+  assign image_alt = block_settings.image.alt | default: block_settings.link_label | default: 'Image'
+  assign link_label = block_settings.link_label | default: block_settings.image.alt | default: 'Open image link'
   assign ratio = 1
 
   case block_settings.image_ratio
@@ -54,35 +56,35 @@
             class: 'image-block__image image-block__image--svg',
             loading: 'lazy',
             sizes: sizes,
-            alt: block_settings.image.alt
+            alt: image_alt
         }}
       </div>
     {%- else -%}
       {% assign image_loading = 'lazy' %}
-{% assign image_preload = false %}
-{% assign image_fetchpriority = 'auto' %}
+      {% assign image_preload = false %}
+      {% assign image_fetchpriority = 'auto' %}
 
-{% if request.page_type == 'index' and block_settings.eager_load %}
-  {% assign image_loading = 'eager' %}
-  {% assign image_preload = true %}
-  {% assign image_fetchpriority = 'high' %}
-{% endif %}
+      {% if request.page_type == 'index' and block_settings.eager_load %}
+        {% assign image_loading = 'eager' %}
+        {% assign image_preload = true %}
+        {% assign image_fetchpriority = 'high' %}
+      {% endif %}
 
-{{
-  block_settings.image
-  | image_url: width: 1600, format: 'webp'
-  | image_tag:
-    width: block_settings.image.width,
-    widths: widths,
-    height: block_settings.image.height,
-    class: 'image-block__image border-style',
-    style: image_border_style,
-    sizes: sizes,
-    loading: image_loading,
-    preload: image_preload,
-    fetchpriority: image_fetchpriority,
-    alt: block_settings.image.alt
-}}
+      {{
+        block_settings.image
+        | image_url: width: 1600, format: 'webp'
+        | image_tag:
+          width: block_settings.image.width,
+          widths: widths,
+          height: block_settings.image.height,
+          class: 'image-block__image border-style',
+          style: image_border_style,
+          sizes: sizes,
+          loading: image_loading,
+          preload: image_preload,
+          fetchpriority: image_fetchpriority,
+          alt: image_alt
+      }}
 
     {%- endif -%}
   {%- else -%}
@@ -105,6 +107,7 @@
     href="{{ block_settings.link }}"
     class="{{ class }}"
     style="{{ style }}"
+    aria-label="{{ link_label | escape }}"
     {{ block.shopify_attributes }}
   >
     {{ image }}
@@ -173,7 +176,6 @@
       "default": false,
       "info": "Enable for the hero image above the fold to improve LCP score."
     },
-
     {
       "type": "image_picker",
       "id": "image",
@@ -183,6 +185,13 @@
       "type": "url",
       "id": "link",
       "label": "t:settings.link"
+    },
+    {
+      "type": "text",
+      "id": "link_label",
+      "label": "Link label for accessibility",
+      "info": "Used as aria-label when the image has a link.",
+      "default": "Open image link"
     },
     {
       "type": "header",
