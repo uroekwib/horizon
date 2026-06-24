@@ -58,6 +58,45 @@
       {%- render 'theme-editor' -%}
     {% endif %}
 
+    <script>
+      (function () {
+        var originalSetAttribute = Element.prototype.setAttribute;
+
+        Element.prototype.setAttribute = function (name, value) {
+          if (
+            this.tagName === 'BUTTON' &&
+            name &&
+            name.toLowerCase() === 'role' &&
+            String(value).toLowerCase() === 'listitem'
+          ) {
+            return;
+          }
+
+          return originalSetAttribute.apply(this, arguments);
+        };
+
+        function cleanInvalidButtonRoles() {
+          document.querySelectorAll('button[role="listitem"]').forEach(function (button) {
+            button.removeAttribute('role');
+
+            if (!button.hasAttribute('type')) {
+              button.setAttribute('type', 'button');
+            }
+          });
+        }
+
+        document.addEventListener('DOMContentLoaded', cleanInvalidButtonRoles);
+        window.addEventListener('load', cleanInvalidButtonRoles);
+
+        new MutationObserver(cleanInvalidButtonRoles).observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: ['role']
+        });
+      })();
+    </script>
+
     {{ content_for_header }}
     <script src="https://analytics.ahrefs.com/analytics.js" data-key="+eGeh2TabSnAKPxKnL1ohw" async></script>
 
