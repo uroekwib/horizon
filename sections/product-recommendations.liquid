@@ -1,4 +1,3 @@
-
 <script
   src="{{ 'product-recommendations.js' | asset_url }}"
   type="module"
@@ -47,8 +46,8 @@
       gap-style
     "
     style="
-      {%  render 'spacing-style', settings: section.settings %}
-      {%  render 'gap-style', value: section.settings.gap %}
+      {% render 'spacing-style', settings: section.settings %}
+      {% render 'gap-style', value: section.settings.gap %}
       {{ styles }}
     "
   >
@@ -160,7 +159,7 @@
         {% for i in (1..section.settings.columns) %}
           <div
             class="product-recommendations__skeleton-item"
-            aria-label="{{ 'accessibility.loading_product_recommendations' | t }}"
+            aria-hidden="true"
           ></div>
         {% endfor %}
       </div>
