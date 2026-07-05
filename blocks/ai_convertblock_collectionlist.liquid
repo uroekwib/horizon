@@ -137,6 +137,7 @@
     background: rgba(23,169,187,0.09);
     border: none;
     color: #17a9bb;
+    text-decoration: none;
     font-size: {{ block.settings.pill_font_size | minus: 2 }}px;
     font-weight: 400;
     white-space: nowrap;
@@ -470,11 +471,11 @@
         >
           <div class="ocf__row-{{ ai_gen_id }}">
             {% for sub in col_item.metafields.custom.subcollections.value %}
-              <button
-                type="button"
+              <a
+                href="{{ sub.url }}"
                 class="ocf__subpill-{{ ai_gen_id }}{% if sub.handle == collection.handle %} active{% endif %}"
                 data-sub-handle="{{ sub.handle }}"
-              >{{ sub.title }}</button>
+              >{{ sub.title }}</a>
             {% endfor %}
           </div>
         </div>
@@ -600,6 +601,13 @@
   var perPage = parseInt(root.dataset.productsPerPage, 10) || 8;
   var defCols = parseInt(root.dataset.desktopCols, 10) || 4;
   var initialCount = parseInt(root.dataset.initialCount, 10) || 0;
+
+  // เก็บส่วนท้ายของ <title> เดิม (เช่น " – ชื่อร้าน") ไว้ใช้ต่อเวลาสับ subcollection
+  var titleSuffix = '';
+  var titleSepMatch = document.title.match(/\s[-\u2013|]\s.+$/);
+  if (titleSepMatch) {
+    titleSuffix = titleSepMatch[0];
+  }
 
   // ใช้ locale ปัจจุบันของ Shopify เช่น / สำหรับภาษาไทย และ /en/ สำหรับภาษาอังกฤษ
   var localeRoot = (window.Shopify && Shopify.routes && Shopify.routes.root)
@@ -855,9 +863,15 @@
   observer.observe(sentinel);
 
   root.querySelectorAll('[data-sub-handle]').forEach(function (btn) {
-    btn.addEventListener('click', function () {
+    btn.addEventListener('click', function (e) {
+      // ปล่อยให้ browser จัดการปกติถ้ากด ctrl/cmd/shift หรือ middle-click (เปิด tab ใหม่)
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+
       var nextHandle = btn.dataset.subHandle;
+      var nextUrl = btn.getAttribute('href');
       if (!nextHandle || nextHandle === state.handle) return;
+
+      e.preventDefault();
 
       root.querySelectorAll('[data-sub-handle]').forEach(function (b) {
         b.classList.remove('active');
@@ -866,8 +880,34 @@
       btn.classList.add('active');
       state.handle = nextHandle;
       updateTitle(nextHandle);
+
+      if (nextUrl && window.history && window.history.pushState) {
+        window.history.pushState({ ocfHandle: nextHandle }, '', nextUrl);
+      }
+
+      if (titleMap[nextHandle]) {
+        document.title = titleMap[nextHandle] + titleSuffix;
+      }
+
       loadProducts(true);
-    }, { passive: true });
+    });
+  });
+
+  window.addEventListener('popstate', function () {
+    var pathMatch = window.location.pathname.match(/\/collections\/([^/?#]+)/);
+    var handleFromUrl = pathMatch && pathMatch[1] ? pathMatch[1] : null;
+    if (!handleFromUrl || handleFromUrl === state.handle) return;
+
+    root.querySelectorAll('[data-sub-handle]').forEach(function (b) {
+      b.classList.toggle('active', b.dataset.subHandle === handleFromUrl);
+    });
+
+    state.handle = handleFromUrl;
+    updateTitle(handleFromUrl);
+    if (titleMap[handleFromUrl]) {
+      document.title = titleMap[handleFromUrl] + titleSuffix;
+    }
+    loadProducts(true);
   });
 
   if (sortEl) {
