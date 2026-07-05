@@ -862,6 +862,19 @@
 
   observer.observe(sentinel);
 
+  function trackVirtualPageview(pageUrl, pageTitle) {
+    // GTM: push custom event ไว้เผื่อจะเอาไปต่อ Trigger อื่นในอนาคต
+    // (ไม่ยิง GA4 page_view ตรง ๆ แล้ว เพราะ GA4 Enhanced Measurement
+    //  "Page changes based on browser history events" เปิดอยู่แล้ว
+    //  มันดัก history.pushState ให้เอง ยิงซ้ำจะเบิ้ล pageview)
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: 'virtualPageview',
+      page_location: pageUrl,
+      page_title: pageTitle
+    });
+  }
+
   root.querySelectorAll('[data-sub-handle]').forEach(function (btn) {
     btn.addEventListener('click', function (e) {
       // ปล่อยให้ browser จัดการปกติถ้ากด ctrl/cmd/shift หรือ middle-click (เปิด tab ใหม่)
@@ -881,13 +894,14 @@
       state.handle = nextHandle;
       updateTitle(nextHandle);
 
+      var newTitle = titleMap[nextHandle] ? titleMap[nextHandle] + titleSuffix : document.title;
+      document.title = newTitle;
+
       if (nextUrl && window.history && window.history.pushState) {
         window.history.pushState({ ocfHandle: nextHandle }, '', nextUrl);
       }
 
-      if (titleMap[nextHandle]) {
-        document.title = titleMap[nextHandle] + titleSuffix;
-      }
+      trackVirtualPageview(window.location.href, newTitle);
 
       loadProducts(true);
     });
@@ -904,9 +918,9 @@
 
     state.handle = handleFromUrl;
     updateTitle(handleFromUrl);
-    if (titleMap[handleFromUrl]) {
-      document.title = titleMap[handleFromUrl] + titleSuffix;
-    }
+    var poppedTitle = titleMap[handleFromUrl] ? titleMap[handleFromUrl] + titleSuffix : document.title;
+    document.title = poppedTitle;
+    trackVirtualPageview(window.location.href, poppedTitle);
     loadProducts(true);
   });
 
