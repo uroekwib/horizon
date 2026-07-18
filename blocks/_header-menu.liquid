@@ -568,52 +568,136 @@
         });
       });
 
-      var hoverTimer = null;
-     function openMegaMenu(triggerNode) {
-  clearTimeout(hoverTimer);
-  if (triggerNode.getAttribute('aria-expanded') === 'true') return;
-  triggerNode.setAttribute('aria-expanded', 'true');
-  if (overlay) overlay.classList.add('active');
-  document.querySelector('.oc-header')?.classList.add('has-shadow');
-  // reset ให้ activateFirstSubInPane re-trigger ทุกครั้งที่เปิด
-  // ไม่ hit network ซ้ำเพราะ _cache ยังอยู่
-  activeSubHandle = null;
-  activateFirstSubInPane(activeCat);
-}
-      function closeMegaMenu(triggerNode) { hoverTimer = setTimeout(function () { triggerNode.setAttribute('aria-expanded', 'false'); if (overlay) overlay.classList.remove('active'); }, 180); }
+        var hoverTimer = null;
+      var CLOSE_DELAY = 180;
+
+      function clearMegaMenuCloseTimer() {
+        clearTimeout(hoverTimer);
+        hoverTimer = null;
+      }
+
+      function openMegaMenu(triggerNode) {
+        clearMegaMenuCloseTimer();
+
+        if (triggerNode.getAttribute('aria-expanded') === 'true') return;
+
+        triggerNode.setAttribute('aria-expanded', 'true');
+
+        if (overlay) {
+          overlay.classList.add('active');
+        }
+
+        document.querySelector('.oc-header')?.classList.add('has-shadow');
+
+        // reset ให้ activateFirstSubInPane re-trigger ทุกครั้งที่เปิด
+        // ไม่ hit network ซ้ำ เพราะ _cache ยังอยู่
+        activeSubHandle = null;
+        activateFirstSubInPane(activeCat);
+      }
+
+      function closeMegaMenu(triggerNode) {
+        clearMegaMenuCloseTimer();
+
+        hoverTimer = setTimeout(function () {
+          triggerNode.setAttribute('aria-expanded', 'false');
+
+          if (overlay) {
+            overlay.classList.remove('active');
+          }
+
+          document.querySelector('.oc-header')?.classList.remove('has-shadow');
+        }, CLOSE_DELAY);
+      }
 
       triggers.forEach(function (trigger) {
-        trigger.addEventListener('click', function (e) { e.preventDefault(); });
-        trigger.addEventListener('mouseenter', function () { openMegaMenu(trigger); });
-        trigger.addEventListener('mouseleave', function () { closeMegaMenu(trigger); });
+        trigger.addEventListener('click', function (e) {
+          e.preventDefault();
+        });
+
+        trigger.addEventListener('mouseenter', function () {
+          openMegaMenu(trigger);
+        });
+
+        trigger.addEventListener('mouseleave', function () {
+          closeMegaMenu(trigger);
+        });
+
         var submenu = trigger.nextElementSibling;
-        if (submenu) {
-          submenu.addEventListener('mouseenter', function () { clearTimeout(hoverTimer); });
-          submenu.addEventListener('mouseleave', function () { closeMegaMenu(trigger); });
+
+        /*
+         * จับ Hover เฉพาะกล่อง Mega Menu สีขาวจริง
+         * ไม่ใช้ submenu เพราะ submenu กว้างเต็มหน้าจอ
+         */
+        var visiblePanel = submenu
+          ? submenu.querySelector('.oc-mega__panel')
+          : null;
+
+        if (visiblePanel) {
+          visiblePanel.addEventListener('mouseenter', function () {
+            clearMegaMenuCloseTimer();
+          });
+
+          visiblePanel.addEventListener('mouseleave', function () {
+            closeMegaMenu(trigger);
+          });
         }
       });
 
-      var initActivePane = document.querySelector('.oc-mega__sub-pane.active');
+      var initActivePane = document.querySelector(
+        '.oc-mega__sub-pane.active'
+      );
+
       if (initActivePane) {
         var firstSub = initActivePane.querySelector('.oc-mega__sub');
-        var initTitleEl = initActivePane.querySelector('.oc-mega__sub-head');
-        var initTitle = initTitleEl ? initTitleEl.innerText : '';
-        if (firstSub) { loadProductsUI(firstSub.dataset.sub, firstSub.getAttribute('href'), initTitle || firstSub.innerText); }
-        else { prodScroll.innerHTML = renderEmptyState(i18n.empty_no_sub, i18n.empty_no_sub_desc); }
+        var initTitleEl = initActivePane.querySelector(
+          '.oc-mega__sub-head'
+        );
+        var initTitle = initTitleEl
+          ? initTitleEl.innerText
+          : '';
+
+        if (firstSub) {
+          loadProductsUI(
+            firstSub.dataset.sub,
+            firstSub.getAttribute('href'),
+            initTitle || firstSub.innerText
+          );
+        } else {
+          prodScroll.innerHTML = renderEmptyState(
+            i18n.empty_no_sub,
+            i18n.empty_no_sub_desc
+          );
+        }
       }
+
       requestAnimationFrame(checkSubScroll);
 
       /* OPT-E: Idle warmup — prefetch first sub of every cat */
-      var idleCb = window.requestIdleCallback || function(fn) { setTimeout(fn, 200); };
-      idleCb(function() {
-        subPanes.forEach(function(pane) {
+      var idleCb =
+        window.requestIdleCallback ||
+        function (fn) {
+          setTimeout(fn, 200);
+        };
+
+      idleCb(function () {
+        subPanes.forEach(function (pane) {
           var firstSub = pane.querySelector('.oc-mega__sub');
-          if (firstSub) prefetchProducts(firstSub.dataset.sub);
+
+          if (firstSub) {
+            prefetchProducts(firstSub.dataset.sub);
+          }
         });
       });
     }
 
-    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initV4MegaMenu); } else { setTimeout(initV4MegaMenu, 100); }
+    if (document.readyState === 'loading') {
+      document.addEventListener(
+        'DOMContentLoaded',
+        initV4MegaMenu
+      );
+    } else {
+      setTimeout(initV4MegaMenu, 100);
+    }
   })();
 </script>
 {% endcase %}
