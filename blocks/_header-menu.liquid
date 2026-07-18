@@ -712,30 +712,6 @@
 .oc-mega__empty-desc { font-size: 12px; color: var(--oc-ink-40); }
 @keyframes oc-skeleton-wave { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-/* ให้ Hover ทำงานเฉพาะพื้นที่ Mega Menu จริง */
-@media (hover: hover) and (min-width: 750px) {
-  #header-component .menu-list__submenu,
-  #header-component .menu-list__submenu-inner,
-  #header-component .menu-list__submenu .mega-menu {
-    pointer-events: none;
-  }
-
-  #header-component .menu-list__submenu .mega-menu__grid {
-    position: relative;
-    pointer-events: auto;
-  }
-
-  /* สร้างทางเชื่อมจากชื่อเมนูลงมายัง Mega Menu ป้องกันเมนูดับระหว่างเลื่อนเมาส์ */
-  #header-component .menu-list__submenu .mega-menu__grid::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: calc(-1 * var(--submenu-padding-block-start));
-    height: var(--submenu-padding-block-start);
-    pointer-events: auto;
-  }
-}
 
 {% endstylesheet %}
 
