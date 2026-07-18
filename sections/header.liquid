@@ -1108,6 +1108,20 @@
       }
     }
 
+    /* ปิดพื้นหลัง Full-width ที่ซ้อนหลัง Mega Menu */
+#header-component .header__underlay-open {
+  display: none !important;
+  height: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+#header-component .header__underlay-open::after {
+  display: none !important;
+  content: none !important;
+  box-shadow: none !important;
+}
+
     /* ── แก้ปัญหาเรื่อง responsive พัง ยืดกลับ ── */
 
     /* ── Language pill toggle ───────────────────────── */
@@ -1318,6 +1332,7 @@
           0 0 8px  rgba(129, 140, 248, 0.16),
           0 0 10px rgba(167, 139, 250, 0.14);
       }
+
 
       /* Sheen sweep overlay */
       .oc-search-static__inner::before {
