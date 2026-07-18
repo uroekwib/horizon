@@ -22,40 +22,18 @@ class HeaderMenu extends Component {
    */
   #submenuMutationObserver = null;
 
-  /**
-   * Timer for closing when mouse leaves the visible Mega Menu horizontally.
-   * @type {number | null}
-   */
-  #horizontalExitTimer = null;
-
   connectedCallback() {
     super.connectedCallback();
 
     onDocumentLoaded(this.#preloadImages);
     window.addEventListener('resize', this.#resizeListener);
-
-    document.addEventListener('pointermove', this.#horizontalExitListener, {
-      passive: true,
-    });
-
-    this.overflowMenu?.addEventListener(
-      'pointerleave',
-      this.#overflowSubmenuListener
-    );
+    this.overflowMenu?.addEventListener('pointerleave', this.#overflowSubmenuListener);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-
     window.removeEventListener('resize', this.#resizeListener);
-    document.removeEventListener('pointermove', this.#horizontalExitListener);
-
-    this.overflowMenu?.removeEventListener(
-      'pointerleave',
-      this.#overflowSubmenuListener
-    );
-
-    this.#clearHorizontalExitTimer();
+    this.overflowMenu?.removeEventListener('pointerleave', this.#overflowSubmenuListener);
     this.#cleanupMutationObserver();
   }
 
@@ -66,121 +44,10 @@ class HeaderMenu extends Component {
     setHeaderMenuStyle();
   }, 100);
 
+
   #overflowSubmenuListener = () => {
     this.#deactivate();
   };
-
-  /**
-   * Close Mega Menu when mouse moves outside the visible panel
-   * on the left or right side.
-   *
-   * @param {PointerEvent} event
-   */
-  #horizontalExitListener = (event) => {
-    if (event.pointerType !== 'mouse') return;
-
-    const activeItem = this.#state.activeItem;
-
-    if (!activeItem) {
-      this.#clearHorizontalExitTimer();
-      return;
-    }
-
-    const submenu = findSubmenu(activeItem);
-
-    if (!submenu) {
-      this.#clearHorizontalExitTimer();
-      return;
-    }
-
-    const submenuInner = submenu.querySelector(
-      '.menu-list__submenu-inner'
-    );
-
-    const megaMenu = submenu.querySelector('.mega-menu');
-    const megaMenuGrid = submenu.querySelector('.mega-menu__grid');
-
-    if (!(submenuInner instanceof HTMLElement)) return;
-
-    let visiblePanel =
-      megaMenu instanceof HTMLElement ? megaMenu : megaMenuGrid;
-
-    /*
-     * If .mega-menu is still full width,
-     * use the narrower .mega-menu__grid instead.
-     */
-    if (
-      visiblePanel instanceof HTMLElement &&
-      megaMenuGrid instanceof HTMLElement
-    ) {
-      const submenuWidth = submenu.getBoundingClientRect().width;
-      const panelWidth = visiblePanel.getBoundingClientRect().width;
-
-      if (panelWidth >= submenuWidth - 4) {
-        visiblePanel = megaMenuGrid;
-      }
-    }
-
-    if (!(visiblePanel instanceof HTMLElement)) return;
-
-    const innerRect = submenuInner.getBoundingClientRect();
-    const panelRect = visiblePanel.getBoundingClientRect();
-
-    if (
-      innerRect.width <= 0 ||
-      innerRect.height <= 0 ||
-      panelRect.width <= 0 ||
-      panelRect.height <= 0
-    ) {
-      return;
-    }
-
-    /*
-     * Allow a small safe area around the visible menu.
-     */
-    const horizontalBuffer = 16;
-    const verticalBuffer = 8;
-
-    const isWithinMenuHeight =
-      event.clientY >= innerRect.top - verticalBuffer &&
-      event.clientY <= innerRect.bottom + verticalBuffer;
-
-    const isOutsideMenuWidth =
-      event.clientX < panelRect.left - horizontalBuffer ||
-      event.clientX > panelRect.right + horizontalBuffer;
-
-    /*
-     * Mouse is inside the real Mega Menu,
-     * above it or below it: keep original behaviour.
-     */
-    if (!isWithinMenuHeight || !isOutsideMenuWidth) {
-      this.#clearHorizontalExitTimer();
-      return;
-    }
-
-    /*
-     * Already waiting to close. Do not create another timer.
-     */
-    if (this.#horizontalExitTimer !== null) return;
-
-    /*
-     * Small delay prevents accidental closing near the edge.
-     */
-    this.#horizontalExitTimer = window.setTimeout(() => {
-      this.#horizontalExitTimer = null;
-
-      if (this.#state.activeItem === activeItem) {
-        this.#deactivate(activeItem);
-      }
-    }, 120);
-  };
-
-  #clearHorizontalExitTimer() {
-    if (this.#horizontalExitTimer === null) return;
-
-    clearTimeout(this.#horizontalExitTimer);
-    this.#horizontalExitTimer = null;
-  }
 
   /**
    * @type {State}
@@ -193,9 +60,7 @@ class HeaderMenu extends Component {
    * Get the overflow menu
    */
   get overflowMenu() {
-    return /** @type {HTMLElement | null} */ (
-      this.refs.overflowMenu?.shadowRoot?.querySelector('[part="overflow"]')
-    );
+    return /** @type {HTMLElement | null} */ (this.refs.overflowMenu?.shadowRoot?.querySelector('[part="overflow"]'));
   }
 
   /**
@@ -203,17 +68,11 @@ class HeaderMenu extends Component {
    * @returns {boolean}
    */
   get overflowListHovered() {
-    return (
-      this.refs.overflowMenu?.shadowRoot
-        ?.querySelector('[part="overflow-list"]')
-        ?.matches(':hover') ?? false
-    );
+    return this.refs.overflowMenu?.shadowRoot?.querySelector('[part="overflow-list"]')?.matches(':hover') ?? false;
   }
 
   get headerComponent() {
-    return /** @type {HTMLElement | null} */ (
-      this.closest('header-component')
-    );
+    return /** @type {HTMLElement | null} */ (this.closest('header-component'));
   }
 
   /**
@@ -225,11 +84,9 @@ class HeaderMenu extends Component {
 
     if (!(event.target instanceof Element) || !this.headerComponent) return;
 
-    const item = findMenuItem(event.target);
+    let item = findMenuItem(event.target);
 
     if (!item || item == this.#state.activeItem) return;
-
-    this.#clearHorizontalExitTimer();
 
     const isDefaultSlot = event.target.slot === '';
 
@@ -259,26 +116,19 @@ class HeaderMenu extends Component {
       // Cleanup any existing mutation observer from previous menu activations
       this.#cleanupMutationObserver();
 
-      // Monitor DOM mutations to catch deferred content injection
+      // Monitor DOM mutations to catch deferred content injection (from section hydration)
       this.#submenuMutationObserver = new MutationObserver(() => {
         requestAnimationFrame(() => {
+          // Double requestAnimationFrame to ensure the height is properly calculated and not defaulting to the contain-intrinsic-size
           requestAnimationFrame(() => {
             if (submenu.offsetHeight > 0) {
-              this.headerComponent?.style.setProperty(
-                '--submenu-height',
-                `${submenu.offsetHeight}px`
-              );
-
+              this.headerComponent?.style.setProperty('--submenu-height', `${submenu.offsetHeight}px`);
               this.#cleanupMutationObserver();
             }
           });
         });
       });
-
-      this.#submenuMutationObserver.observe(submenu, {
-        childList: true,
-        subtree: true,
-      });
+      this.#submenuMutationObserver.observe(submenu, {childList: true, subtree: true});
 
       // Auto-disconnect after 500ms to prevent memory leaks
       setTimeout(() => {
@@ -288,11 +138,12 @@ class HeaderMenu extends Component {
 
     let finalHeight = submenu?.offsetHeight || 0;
 
-    // For overflow menu, use submenu content or total menu link height
+    // For overflow menu, the height needs to be either content of the submenu or the total height of the menu list links
     if (!isDefaultSlot) {
       const overflowListHeight = this.#getOverflowListLinksHeight();
-
       if (hasSubmenu) {
+        /* Note: When the submenu is inside the overflow menu, its offsetHeight is not valid due to the lack of padding
+         * we could add the padding variables to the submenu.offsetHeight, but measuring the overflowMenu.offsetHeight is just easier */
         const overflowHeight = this.overflowMenu?.offsetHeight || 0;
         finalHeight = Math.max(overflowHeight, overflowListHeight);
       } else {
@@ -301,14 +152,11 @@ class HeaderMenu extends Component {
     }
 
     if (!submenu) {
+      // If there is no content to open, don't try to open it
       finalHeight = 0;
     }
 
-    this.headerComponent.style.setProperty(
-      '--submenu-height',
-      `${finalHeight}px`
-    );
-
+    this.headerComponent.style.setProperty('--submenu-height', `${finalHeight}px`);
     this.#setFullOpenHeaderHeight(finalHeight);
     this.style.setProperty('--submenu-opacity', '1');
   };
@@ -321,27 +169,13 @@ class HeaderMenu extends Component {
     if (!(event.target instanceof Element)) return;
 
     const menu = findSubmenu(this.#state.activeItem);
-
-    const isMovingWithinMenu =
-      event.relatedTarget instanceof Node &&
-      menu?.contains(document.activeElement);
-
+    const isMovingWithinMenu = event.relatedTarget instanceof Node && menu?.contains(document.activeElement);
     const isMovingToSubmenu =
-      event.relatedTarget instanceof Node &&
-      event.type === 'blur' &&
-      menu?.contains(event.relatedTarget);
-
+      event.relatedTarget instanceof Node && event.type === 'blur' && menu?.contains(event.relatedTarget);
     const isMovingToOverflowMenu =
-      event.relatedTarget instanceof Node &&
-      event.relatedTarget.parentElement?.matches('[slot="overflow"]');
+      event.relatedTarget instanceof Node && event.relatedTarget.parentElement?.matches('[slot="overflow"]');
 
-    if (
-      isMovingWithinMenu ||
-      isMovingToOverflowMenu ||
-      isMovingToSubmenu
-    ) {
-      return;
-    }
+    if (isMovingWithinMenu || isMovingToOverflowMenu || isMovingToSubmenu) return;
 
     this.#deactivate();
   }
@@ -353,15 +187,8 @@ class HeaderMenu extends Component {
   #deactivate = (item = this.#state.activeItem) => {
     if (!item || item != this.#state.activeItem) return;
 
-    // Don't deactivate if overflow menu or overflow list is hovered
-    if (
-      this.overflowListHovered ||
-      this.overflowMenu?.matches(':hover')
-    ) {
-      return;
-    }
-
-    this.#clearHorizontalExitTimer();
+    // Don't deactivate if the overflow menu or overflow list is still being hovered
+    if (this.overflowListHovered || this.overflowMenu?.matches(':hover')) return;
 
     this.headerComponent?.style.setProperty('--submenu-height', '0px');
     this.#setFullOpenHeaderHeight(0);
@@ -374,76 +201,56 @@ class HeaderMenu extends Component {
     this.ariaExpanded = 'false';
     item.ariaExpanded = 'false';
 
+    // Remove active state from submenu after animation completes
     if (submenu) {
       delete submenu.dataset.active;
     }
   };
 
   #getOverflowListLinksHeight() {
-    const slottedMenuLinks =
-      this.overflowMenu?.querySelector('slot')?.assignedElements();
-
-    if (!slottedMenuLinks) {
-      return this.overflowMenu?.offsetHeight || 0;
-    }
+    const slottedMenuLinks = this.overflowMenu?.querySelector('slot')?.assignedElements();
+    if (!slottedMenuLinks) return this.overflowMenu?.offsetHeight || 0;
 
     /**
      * @param {(submenu: HTMLElement) => void} cb
      */
     const mapSubmenus = (cb) => {
       slottedMenuLinks.forEach((link) => {
-        const submenu = /** @type {HTMLElement | null} */ (
-          link.querySelector('[ref="submenu[]"]')
-        );
-
+        const submenu = /** @type {HTMLElement | null} */ (link.querySelector('[ref="submenu[]"]'));
         if (submenu) {
           cb(submenu);
         }
       });
-    };
+    }
 
     mapSubmenus((submenu) => {
       submenu.style.setProperty('display', 'none');
     });
-
     const height = this.overflowMenu?.offsetHeight || 0;
-
     mapSubmenus((submenu) => {
       submenu.style.removeProperty('display');
     });
-
     return height;
   }
 
   /**
-   * Calculate and set the full open header height.
+   * Calculate and set the full open header height. If the submenu is not open, the full open header height is 0.
    * @param {number} submenuHeight
    */
   #setFullOpenHeaderHeight(submenuHeight) {
     if (!this.headerComponent) return;
 
-    const isOverlapSituation =
-      this.headerComponent.hasAttribute(
-        'data-submenu-overlap-bottom-row'
-      );
+    const isOverlapSituation = this.headerComponent.hasAttribute('data-submenu-overlap-bottom-row');
 
     const headerVisibleHeight =
       isOverlapSituation && this.headerComponent.offsetHeight > 0
-        ? /** @type {HTMLElement | null} */ (
-            this.headerComponent.querySelector('.header__row--top')
-          )?.offsetHeight ?? 0
+        ? /** @type {HTMLElement | null} */ (this.headerComponent.querySelector('.header__row--top'))?.offsetHeight ?? 0
         : this.headerComponent.offsetHeight;
 
     const nothingToOpen = submenuHeight === 0;
+    const fullOpenHeaderHeight = nothingToOpen ? 0 : submenuHeight + (headerVisibleHeight ?? 0);
 
-    const fullOpenHeaderHeight = nothingToOpen
-      ? 0
-      : submenuHeight + (headerVisibleHeight ?? 0);
-
-    this.headerComponent.style.setProperty(
-      '--full-open-header-height',
-      `${fullOpenHeaderHeight}px`
-    );
+    this.headerComponent?.style.setProperty('--full-open-header-height', `${fullOpenHeaderHeight}px`);
   }
 
   /**
@@ -451,10 +258,7 @@ class HeaderMenu extends Component {
    */
   #preloadImages = () => {
     const images = this.querySelectorAll('img[loading="lazy"]');
-
-    images?.forEach((image) => {
-      image.removeAttribute('loading');
-    });
+    images?.forEach((image) => image.removeAttribute('loading'));
   };
 
   #cleanupMutationObserver() {
@@ -475,14 +279,12 @@ if (!customElements.get('header-menu')) {
 function findMenuItem(element) {
   if (!(element instanceof Element)) return null;
 
-  if (element.matches('[slot="more"]')) {
-    // Select the first overflowing menu item when hovering over More
-    return findMenuItem(
-      element.parentElement?.querySelector('[slot="overflow"]')
-    );
+  if (element?.matches('[slot="more"')) {
+    // Select the first overflowing menu item when hovering over the "More" item
+    return findMenuItem(element.parentElement?.querySelector('[slot="overflow"]'));
   }
 
-  return element.querySelector('[ref="menuitem"]');
+  return element?.querySelector('[ref="menuitem"]');
 }
 
 /**
@@ -491,8 +293,7 @@ function findMenuItem(element) {
  * @returns {HTMLElement | null}
  */
 function findSubmenu(element) {
-  const submenu =
-    element?.parentElement?.querySelector('[ref="submenu[]"]');
-
+  const submenu = element?.parentElement?.querySelector('[ref="submenu[]"]');
   return submenu instanceof HTMLElement ? submenu : null;
 }
+
