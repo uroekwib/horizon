@@ -75,9 +75,8 @@ class DeferredMedia extends Component {
 
     this.refs.deferredMediaPlayButton?.classList.add('deferred-media__playing');
 
-    if (content instanceof HTMLVideoElement && content.getAttribute('autoplay')) {
-      // force autoplay for safari
-      content.play();
+    if (content instanceof HTMLVideoElement) {
+      content.play().catch(() => {});
     }
   }
 
