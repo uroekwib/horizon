@@ -483,6 +483,9 @@
     },
     "custom_liquid_i8EYNq": {
       "type": "custom-liquid",
+      "custom_css": [
+        ".page-width-narrow,.page-width-content {max-width: 1250px; margin: 0 auto; width: 100%;}"
+      ],
       "name": "t:names.custom_liquid",
       "settings": {
         "custom_liquid": "{{ product.description }}",
