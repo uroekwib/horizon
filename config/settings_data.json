@@ -125,10 +125,27 @@
         "disabled": true,
         "settings": {}
       },
-      "14060646107696862457": {
-        "type": "shopify://apps/judge-me-reviews/blocks/judgeme_core/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+      "15683396631634586217": {
+        "type": "shopify://apps/inbox/blocks/chat/841fc607-4181-4ad1-842d-e24d7f8bad6b",
         "disabled": false,
-        "settings": {}
+        "settings": {
+          "greeting_message": "(Octopus AI) : 👋สวัสดี! ถาม-ตอบกันฉันก่อนได้เลยนะ",
+          "show_featured_products": false,
+          "featured_products": [],
+          "background_color": "#ffffff",
+          "font_color": "#000000",
+          "agent_invert_activator_colors": true,
+          "button_color": "#000000",
+          "button_icon": "chat_bubble",
+          "button_text": "chat_with_us",
+          "button_horizontal_position": "bottom_right",
+          "button_vertical_position": "lowest",
+          "agent_inherit_fonts": true,
+          "agent_font": "system_ui_n4",
+          "agent_font_size": 14,
+          "agent_activator_font_size": 15,
+          "agent_border_radius": 24
+        }
       }
     },
     "color_schemes": {
